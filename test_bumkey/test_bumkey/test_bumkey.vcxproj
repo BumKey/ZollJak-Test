@@ -149,9 +149,11 @@
   <ItemGroup>
     <ClCompile Include="kbPark.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="yongjun.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kbPark.h" />
+    <ClInclude Include="yongjun.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

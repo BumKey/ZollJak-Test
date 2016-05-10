@@ -28,10 +28,12 @@ public:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 private:
-
+	bool m_bReady;
+	bool m_bAttackAnim;
 	TextureMgr mTexMgr;
-	SceneMgr mSceneMgr;
+	SceneMgr* mSceneMgr;
 
+	SkinnedObject* mPlayer;
 	POINT mLastMousePos;
 
 };

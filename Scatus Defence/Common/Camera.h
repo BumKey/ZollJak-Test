@@ -67,7 +67,7 @@ public:
 	void RotateY(float angle);
 
 	// After modifying camera position/orientation, call to rebuild the view matrix.
-	void UpdateViewMatrix();
+	void UpdateViewMatrix(const XMFLOAT3& playerPos, float terrainHeight);
 
 private:
 

@@ -1,7 +1,7 @@
 #ifndef BASICMODEL_H
 #define BASICMODEL_H
 
-#include "MeshData.h"
+#include "BasicMeshData.h"
 #include "TextureMgr.h"
 #include "Vertex.h"
 
@@ -21,9 +21,9 @@ public:
 	// Keep CPU copies of the mesh data to read from.  
 	std::vector<Vertex::PosNormalTexTan> Vertices;
 	std::vector<USHORT> Indices;
-	std::vector<MeshData::Subset> Subsets;
+	std::vector<BasicMeshData::Subset> Subsets;
 
-	MeshData ModelMesh;
+	BasicMeshData ModelMesh;
 };
 
 //struct BasicModelInstance

@@ -1,5 +1,6 @@
 #pragma once
 #include "BasicModel.h"
+#include "SkinnedModel.h"
 #include <TextureMgr.h>
 
 
@@ -19,5 +20,7 @@ public:
 	static BasicModel* Pillar3Model;
 	static BasicModel* Pillar4Model;
 	static BasicModel* RockModel;
+
+	static SkinnedModel* Goblin;
 };
 

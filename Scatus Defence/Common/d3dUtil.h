@@ -31,23 +31,22 @@
 // TODO : 이거를 에러가 난 곳의 줄과 라인을 표시하도록 메시지박스 고칠 것.
 // DXTrace(__FILE__, (DWORD)__LINE__, hr, L#x, true); \ 
 #if defined(DEBUG) | defined(_DEBUG)
-	#ifndef HR
-	#define HR(x)                                              \
+#ifndef HR
+#define HR(x)                                              \
 	{                                                          \
 		HRESULT hr = (x);                                      \
 		if(FAILED(hr))                                         \
 		{                                                      \
-			MessageBox(0, L"Error!!", 0, 0);					\
+			DXTrace(__FILE__, (DWORD)__LINE__, hr, L#x, true); \
 		}                                                      \
 	}
-	#endif
+#endif
 
 #else
-	#ifndef HR
-	#define HR(x) (x)
-	#endif
+#ifndef HR
+#define HR(x) (x)
+#endif
 #endif 
-
 
 //---------------------------------------------------------------------------------------
 // Convenience macro for releasing COM objects.

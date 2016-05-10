@@ -9,6 +9,8 @@ BasicModel* ResourceMgr::Pillar3Model = 0;
 BasicModel* ResourceMgr::Pillar4Model = 0;
 BasicModel* ResourceMgr::RockModel = 0;
 
+SkinnedModel* ResourceMgr::Goblin = 0;
+
 void ResourceMgr::InitAll(ID3D11Device * dc, TextureMgr& texMgr)
 {
 	TreeModel = new BasicModel(dc, texMgr, "Models\\tree.m3d", L"Textures\\");
@@ -19,6 +21,8 @@ void ResourceMgr::InitAll(ID3D11Device * dc, TextureMgr& texMgr)
 	Pillar3Model = new BasicModel(dc, texMgr, "Models\\pillar5.m3d", L"Textures\\");
 	Pillar4Model = new BasicModel(dc, texMgr, "Models\\pillar6.m3d", L"Textures\\");
 	RockModel = new BasicModel(dc, texMgr, "Models\\rock.m3d", L"Textures\\");
+
+	Goblin = new SkinnedModel(dc, texMgr, "Models\\goblin.y2k", L"");
 }
 
 void ResourceMgr::DestroyAll()
@@ -31,4 +35,6 @@ void ResourceMgr::DestroyAll()
 	SafeDelete(Pillar3Model);
 	SafeDelete(Pillar4Model);
 	SafeDelete(RockModel);
+
+	SafeDelete(Goblin);
 }

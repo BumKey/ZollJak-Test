@@ -126,6 +126,67 @@ public:
 };
 #pragma endregion
 
+#pragma region TerrainEffect
+class TerrainEffect : public Effect
+{
+public:
+	TerrainEffect(ID3D11Device* device, const std::wstring& filename);
+	~TerrainEffect();
+
+	void SetViewProj(CXMMATRIX M) { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetEyePosW(const XMFLOAT3& v) { EyePosW->SetRawValue(&v, 0, sizeof(XMFLOAT3)); }
+	void SetFogColor(const FXMVECTOR v) { FogColor->SetFloatVector(reinterpret_cast<const float*>(&v)); }
+	void SetFogStart(float f) { FogStart->SetFloat(f); }
+	void SetFogRange(float f) { FogRange->SetFloat(f); }
+	void SetDirLights(const DirectionalLight* lights) { DirLights->SetRawValue(lights, 0, 3 * sizeof(DirectionalLight)); }
+	void SetMaterial(const Material& mat) { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
+
+	void SetMinDist(float f) { MinDist->SetFloat(f); }
+	void SetMaxDist(float f) { MaxDist->SetFloat(f); }
+	void SetMinTess(float f) { MinTess->SetFloat(f); }
+	void SetMaxTess(float f) { MaxTess->SetFloat(f); }
+	void SetTexelCellSpaceU(float f) { TexelCellSpaceU->SetFloat(f); }
+	void SetTexelCellSpaceV(float f) { TexelCellSpaceV->SetFloat(f); }
+	void SetWorldCellSpace(float f) { WorldCellSpace->SetFloat(f); }
+	void SetWorldFrustumPlanes(XMFLOAT4 planes[6]) { WorldFrustumPlanes->SetFloatVectorArray(reinterpret_cast<float*>(planes), 0, 6); }
+
+	void SetLayerMapArray(ID3D11ShaderResourceView* tex) { LayerMapArray->SetResource(tex); }
+	void SetBlendMap(ID3D11ShaderResourceView* tex) { BlendMap->SetResource(tex); }
+	void SetHeightMap(ID3D11ShaderResourceView* tex) { HeightMap->SetResource(tex); }
+
+
+	ID3DX11EffectTechnique* Light1Tech;
+	ID3DX11EffectTechnique* Light2Tech;
+	ID3DX11EffectTechnique* Light3Tech;
+	ID3DX11EffectTechnique* Light1FogTech;
+	ID3DX11EffectTechnique* Light2FogTech;
+	ID3DX11EffectTechnique* Light3FogTech;
+
+	ID3DX11EffectMatrixVariable* ViewProj;
+	ID3DX11EffectMatrixVariable* World;
+	ID3DX11EffectMatrixVariable* WorldInvTranspose;
+	ID3DX11EffectMatrixVariable* TexTransform;
+	ID3DX11EffectVectorVariable* EyePosW;
+	ID3DX11EffectVectorVariable* FogColor;
+	ID3DX11EffectScalarVariable* FogStart;
+	ID3DX11EffectScalarVariable* FogRange;
+	ID3DX11EffectVariable* DirLights;
+	ID3DX11EffectVariable* Mat;
+	ID3DX11EffectScalarVariable* MinDist;
+	ID3DX11EffectScalarVariable* MaxDist;
+	ID3DX11EffectScalarVariable* MinTess;
+	ID3DX11EffectScalarVariable* MaxTess;
+	ID3DX11EffectScalarVariable* TexelCellSpaceU;
+	ID3DX11EffectScalarVariable* TexelCellSpaceV;
+	ID3DX11EffectScalarVariable* WorldCellSpace;
+	ID3DX11EffectVectorVariable* WorldFrustumPlanes;
+
+	ID3DX11EffectShaderResourceVariable* LayerMapArray;
+	ID3DX11EffectShaderResourceVariable* BlendMap;
+	ID3DX11EffectShaderResourceVariable* HeightMap;
+};
+#pragma endregion
+
 #pragma region NormalMapEffect
 class NormalMapEffect : public Effect
 {
@@ -137,6 +198,7 @@ public:
 	void SetWorldViewProjTex(CXMMATRIX M) { WorldViewProjTex->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorld(CXMMATRIX M) { World->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorldInvTranspose(CXMMATRIX M) { WorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetBoneTransforms(const XMFLOAT4X4* M, int cnt) { BoneTransforms->SetMatrixArray(reinterpret_cast<const float*>(M), 0, cnt); }
 	void SetShadowTransform(CXMMATRIX M) { ShadowTransform->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetTexTransform(CXMMATRIX M) { TexTransform->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetEyePosW(const XMFLOAT3& v) { EyePosW->SetRawValue(&v, 0, sizeof(XMFLOAT3)); }
@@ -207,10 +269,67 @@ public:
 	ID3DX11EffectTechnique* Light2TexAlphaClipFogReflectTech;
 	ID3DX11EffectTechnique* Light3TexAlphaClipFogReflectTech;
 
+	ID3DX11EffectTechnique* Light1SkinnedTech;
+	ID3DX11EffectTechnique* Light2SkinnedTech;
+	ID3DX11EffectTechnique* Light3SkinnedTech;
+
+	ID3DX11EffectTechnique* Light0TexSkinnedTech;
+	ID3DX11EffectTechnique* Light1TexSkinnedTech;
+	ID3DX11EffectTechnique* Light2TexSkinnedTech;
+	ID3DX11EffectTechnique* Light3TexSkinnedTech;
+
+	ID3DX11EffectTechnique* Light0TexAlphaClipSkinnedTech;
+	ID3DX11EffectTechnique* Light1TexAlphaClipSkinnedTech;
+	ID3DX11EffectTechnique* Light2TexAlphaClipSkinnedTech;
+	ID3DX11EffectTechnique* Light3TexAlphaClipSkinnedTech;
+
+	ID3DX11EffectTechnique* Light1FogSkinnedTech;
+	ID3DX11EffectTechnique* Light2FogSkinnedTech;
+	ID3DX11EffectTechnique* Light3FogSkinnedTech;
+
+	ID3DX11EffectTechnique* Light0TexFogSkinnedTech;
+	ID3DX11EffectTechnique* Light1TexFogSkinnedTech;
+	ID3DX11EffectTechnique* Light2TexFogSkinnedTech;
+	ID3DX11EffectTechnique* Light3TexFogSkinnedTech;
+
+	ID3DX11EffectTechnique* Light0TexAlphaClipFogSkinnedTech;
+	ID3DX11EffectTechnique* Light1TexAlphaClipFogSkinnedTech;
+	ID3DX11EffectTechnique* Light2TexAlphaClipFogSkinnedTech;
+	ID3DX11EffectTechnique* Light3TexAlphaClipFogSkinnedTech;
+
+	ID3DX11EffectTechnique* Light1ReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light2ReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light3ReflectSkinnedTech;
+
+	ID3DX11EffectTechnique* Light0TexReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light1TexReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light2TexReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light3TexReflectSkinnedTech;
+
+	ID3DX11EffectTechnique* Light0TexAlphaClipReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light1TexAlphaClipReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light2TexAlphaClipReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light3TexAlphaClipReflectSkinnedTech;
+
+	ID3DX11EffectTechnique* Light1FogReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light2FogReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light3FogReflectSkinnedTech;
+
+	ID3DX11EffectTechnique* Light0TexFogReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light1TexFogReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light2TexFogReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light3TexFogReflectSkinnedTech;
+
+	ID3DX11EffectTechnique* Light0TexAlphaClipFogReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light1TexAlphaClipFogReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light2TexAlphaClipFogReflectSkinnedTech;
+	ID3DX11EffectTechnique* Light3TexAlphaClipFogReflectSkinnedTech;
+
 	ID3DX11EffectMatrixVariable* WorldViewProj;
 	ID3DX11EffectMatrixVariable* WorldViewProjTex;
 	ID3DX11EffectMatrixVariable* World;
 	ID3DX11EffectMatrixVariable* WorldInvTranspose;
+	ID3DX11EffectMatrixVariable* BoneTransforms;
 	ID3DX11EffectMatrixVariable* ShadowTransform;
 	ID3DX11EffectMatrixVariable* TexTransform;
 	ID3DX11EffectVectorVariable* EyePosW;
@@ -239,6 +358,7 @@ public:
 	void SetWorldViewProj(CXMMATRIX M) { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorld(CXMMATRIX M) { World->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorldInvTranspose(CXMMATRIX M) { WorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetBoneTransforms(const XMFLOAT4X4* M, int cnt) { BoneTransforms->SetMatrixArray(reinterpret_cast<const float*>(M), 0, cnt); }
 	void SetTexTransform(CXMMATRIX M) { TexTransform->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetEyePosW(const XMFLOAT3& v) { EyePosW->SetRawValue(&v, 0, sizeof(XMFLOAT3)); }
 
@@ -253,6 +373,8 @@ public:
 
 	ID3DX11EffectTechnique* BuildShadowMapTech;
 	ID3DX11EffectTechnique* BuildShadowMapAlphaClipTech;
+	ID3DX11EffectTechnique* BuildShadowMapSkinnedTech;
+	ID3DX11EffectTechnique* BuildShadowMapAlphaClipSkinnedTech;
 	ID3DX11EffectTechnique* TessBuildShadowMapTech;
 	ID3DX11EffectTechnique* TessBuildShadowMapAlphaClipTech;
 
@@ -260,6 +382,7 @@ public:
 	ID3DX11EffectMatrixVariable* WorldViewProj;
 	ID3DX11EffectMatrixVariable* World;
 	ID3DX11EffectMatrixVariable* WorldInvTranspose;
+	ID3DX11EffectMatrixVariable* BoneTransforms;
 	ID3DX11EffectMatrixVariable* TexTransform;
 	ID3DX11EffectVectorVariable* EyePosW;
 	ID3DX11EffectScalarVariable* HeightScale;
@@ -282,6 +405,7 @@ public:
 
 	void SetWorldView(CXMMATRIX M) { WorldView->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorldInvTransposeView(CXMMATRIX M) { WorldInvTransposeView->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetBoneTransforms(const XMFLOAT4X4* M, int cnt) { BoneTransforms->SetMatrixArray(reinterpret_cast<const float*>(M), 0, cnt); }
 	void SetWorldViewProj(CXMMATRIX M) { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetTexTransform(CXMMATRIX M) { TexTransform->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetDiffuseMap(ID3D11ShaderResourceView* tex) { DiffuseMap->SetResource(tex); }
@@ -289,8 +413,12 @@ public:
 	ID3DX11EffectTechnique* NormalDepthTech;
 	ID3DX11EffectTechnique* NormalDepthAlphaClipTech;
 
+	ID3DX11EffectTechnique* NormalDepthSkinnedTech;
+	ID3DX11EffectTechnique* NormalDepthAlphaClipSkinnedTech;
+
 	ID3DX11EffectMatrixVariable* WorldView;
 	ID3DX11EffectMatrixVariable* WorldInvTransposeView;
+	ID3DX11EffectMatrixVariable* BoneTransforms;
 	ID3DX11EffectMatrixVariable* WorldViewProj;
 	ID3DX11EffectMatrixVariable* TexTransform;
 
@@ -409,6 +537,7 @@ public:
 	static SsaoBlurEffect* SsaoBlurFX;
 	static SkyEffect* SkyFX;
 	static DebugTexEffect* DebugTexFX;
+	static TerrainEffect* TerrainFX;
 };
 #pragma endregion
 

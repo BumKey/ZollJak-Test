@@ -1,200 +1,267 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
+    <Filter Include="Content Pipeline">
+      <UniqueIdentifier>{2764b6cf-be8a-4bd0-a302-80cdffca6363}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content Pipeline\BasicModel">
+      <UniqueIdentifier>{2efef5c1-1656-42ce-9b8f-779080e9c976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content Pipeline\SkinnedModel">
+      <UniqueIdentifier>{e5e95cac-8f83-444c-a6dd-e3d99b12142b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content Pipeline\Y2KLoader">
+      <UniqueIdentifier>{b227a203-4c65-4a76-a071-3829d774aa91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect">
+      <UniqueIdentifier>{e6f6c5c5-076f-42f6-90e6-3f63f3fc4604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\FX">
+      <UniqueIdentifier>{185fbef5-5dc1-4d94-8c12-67608b173a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects">
+      <UniqueIdentifier>{f8c3ff6c-51b0-473c-a3b3-82adde540902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects\Shadow">
+      <UniqueIdentifier>{97ec7650-ad01-4d07-9390-5a053b2987d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects\Ssao">
+      <UniqueIdentifier>{a94edb50-724f-49c1-b04c-1404834494a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects\Sky">
+      <UniqueIdentifier>{d9f0c182-0fc4-4707-aa9b-b3a3efa72c2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{b20d9836-07af-48f8-afb1-4ebb49d75747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vertex">
+      <UniqueIdentifier>{47244300-373f-4207-9219-bed1054b55da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{1af35122-88ce-446a-b9bd-f53b5b5fa312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFramework">
+      <UniqueIdentifier>{67d6c433-3e27-45b8-8cb4-dea153f7abe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="State Machine">
+      <UniqueIdentifier>{c45fdacc-52a4-4e49-89c4-367a985b3a07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Common">
+    <Filter Include="Base">
       <UniqueIdentifier>{da358d25-ccb1-40ee-9c04-63758a0a2bd3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="FX">
-      <UniqueIdentifier>{185fbef5-5dc1-4d94-8c12-67608b173a06}</UniqueIdentifier>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{4665fabf-524d-41c6-b78f-b0f9be35e614}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects\Terrain">
+      <UniqueIdentifier>{3d1bfecf-fb0b-43bd-9152-6350174db446}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\d3dApp.cpp">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\d3dUtil.cpp">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\LightHelper.cpp">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\MathHelper.cpp">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\Waves.cpp">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\xnacollision.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="GameFramework.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\Camera.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\GeometryGenerator.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\TextureMgr.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicModel.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Effects.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadM3d.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshData.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderStates.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ShadowMap.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Sky.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Ssao.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneMgr.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\GameTimer.cpp">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicModel.cpp">
+      <Filter>Content Pipeline\BasicModel</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicMeshData.cpp">
+      <Filter>Content Pipeline\BasicModel</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedModel.cpp">
+      <Filter>Content Pipeline\SkinnedModel</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadY2K.cpp">
+      <Filter>Content Pipeline\Y2KLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedMeshData.cpp">
+      <Filter>Content Pipeline\SkinnedModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sky.cpp">
+      <Filter>Effect\Special Effects\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="Ssao.cpp">
+      <Filter>Effect\Special Effects\Ssao</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMap.cpp">
+      <Filter>Effect\Special Effects\Shadow</Filter>
     </ClCompile>
     <ClCompile Include="ResourceMgr.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\TextureMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFramework.cpp">
+      <Filter>GameFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStates.cpp">
+      <Filter>State Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Effect\Special Effects\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\d3dApp.h">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\d3dUtil.h">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\d3dx11effect.h">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\LightHelper.h">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\MathHelper.h">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\Waves.h">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\xnacollision.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="GameFramework.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\Camera.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\GeometryGenerator.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\TextureMgr.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicModel.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadM3d.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshData.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderStates.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ShadowMap.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Sky.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Ssao.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneMgr.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\GameTimer.h">
-      <Filter>Common</Filter>
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicModel.h">
+      <Filter>Content Pipeline\BasicModel</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicMeshData.h">
+      <Filter>Content Pipeline\BasicModel</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedModel.h">
+      <Filter>Content Pipeline\SkinnedModel</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadY2K.h">
+      <Filter>Content Pipeline\Y2KLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedMeshData.h">
+      <Filter>Content Pipeline\SkinnedModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sky.h">
+      <Filter>Effect\Special Effects\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="Ssao.h">
+      <Filter>Effect\Special Effects\Ssao</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMap.h">
+      <Filter>Effect\Special Effects\Shadow</Filter>
     </ClInclude>
     <ClInclude Include="ResourceMgr.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\TextureMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GameFramework.h">
+      <Filter>GameFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStates.h">
+      <Filter>State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Effect\Special Effects\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FX\Basic.fx">
-      <Filter>FX</Filter>
+      <Filter>Effect\FX</Filter>
     </FxCompile>
     <FxCompile Include="FX\BuildShadowMap.fx">
-      <Filter>FX</Filter>
+      <Filter>Effect\FX</Filter>
     </FxCompile>
     <FxCompile Include="FX\DebugTexture.fx">
-      <Filter>FX</Filter>
+      <Filter>Effect\FX</Filter>
     </FxCompile>
     <FxCompile Include="FX\LightHelper.fx">
-      <Filter>FX</Filter>
+      <Filter>Effect\FX</Filter>
     </FxCompile>
     <FxCompile Include="FX\NormalMap.fx">
-      <Filter>FX</Filter>
+      <Filter>Effect\FX</Filter>
     </FxCompile>
     <FxCompile Include="FX\Sky.fx">
-      <Filter>FX</Filter>
+      <Filter>Effect\FX</Filter>
     </FxCompile>
     <FxCompile Include="FX\Ssao.fx">
-      <Filter>FX</Filter>
+      <Filter>Effect\FX</Filter>
     </FxCompile>
     <FxCompile Include="FX\SsaoBlur.fx">
-      <Filter>FX</Filter>
+      <Filter>Effect\FX</Filter>
     </FxCompile>
     <FxCompile Include="FX\SsaoNormalDepth.fx">
-      <Filter>FX</Filter>
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\Terrain.fx">
+      <Filter>Effect\FX</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

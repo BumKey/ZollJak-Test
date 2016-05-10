@@ -3,8 +3,6 @@
 SceneMgr::SceneMgr(int width, int height) : md3dImmediateContext(0), mClientWidth(width), mClientHeight(height),
 mLightRotationAngle(0.0f), mScreenQuadVB(0), mScreenQuadIB(0), mSky(0), mSmap(0), mSsao(0)
 {
-	mCam.SetPosition(0.0f, 2.0f, -15.0f);
-
 	mDirLights[0].Ambient = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
 	mDirLights[0].Diffuse = XMFLOAT4(0.8f, 0.7f, 0.7f, 1.0f);
 	mDirLights[0].Specular = XMFLOAT4(0.6f, 0.6f, 0.7f, 1.0f);
@@ -35,100 +33,153 @@ SceneMgr::~SceneMgr()
 	SafeDelete(mSsao);
 }
 
-void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc)
+void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc, ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv)
 {
 	md3dImmediateContext = dc;
+	mDepthStencilView = dsv;
+	mRenderTargetView = rtv;
 
-	// 오류 원인 : float ratio = static_cast<float>(mClientWidth / mClientHeight);
-	// 이거 때문에 일주일을 고생하다니... 대체 뭔 차이엿던거지
-	// 차이가 있더라도 렌더링이 그딴식으로 되다니.. 참나
+	mScreenViewport.TopLeftX = 0;
+	mScreenViewport.TopLeftY = 0;
+	mScreenViewport.Width = static_cast<float>(mClientWidth);
+	mScreenViewport.Height = static_cast<float>(mClientHeight);
+	mScreenViewport.MinDepth = 0.0f;
+	mScreenViewport.MaxDepth = 1.0f;
 
 	float ratio = static_cast<float>(mClientWidth) / mClientHeight;
-	mCam.SetLens(0.25f*MathHelper::Pi, ratio, 1.0f, 1000.0f);
+	mCam.SetLens(0.20f*MathHelper::Pi, ratio, 1.0f, 1000.0f);
 
-	mSky = new Sky(device, L"Textures/desertcube1024.dds", 5000.0f);
+	mSky = new Sky(device, L"Textures/grasscube1024.dds", 5000.0f);
 	mSmap = new ShadowMap(device, SMapSize, SMapSize);
 	mSsao = new Ssao(device, dc, mClientWidth, mClientHeight, mCam.GetFovY(), mCam.GetFarZ());
+
+	Terrain::InitInfo tii;
+	tii.HeightMapFilename = L"Textures/terrain.raw";
+	tii.LayerMapFilename0 = L"Textures/grass2.dds";
+	tii.LayerMapFilename1 = L"Textures/darkdirt.dds";
+	tii.LayerMapFilename2 = L"Textures/red_dirt.dds";
+	tii.LayerMapFilename3 = L"Textures/lightdirt.dds";
+	tii.LayerMapFilename4 = L"Textures/dirt.dds";
+	tii.BlendMapFilename = L"Textures/blend.dds";
+	tii.HeightScale = 20.0f;
+	tii.HeightmapWidth = 2049;
+	tii.HeightmapHeight = 2049;
+	tii.CellSpacing = 0.5f;
+	mTerrain.Init(device, md3dImmediateContext, tii);
 
 	BuildScreenQuadGeometryBuffers(device);
 }
 
-void SceneMgr::DrawAllObjects()
+void SceneMgr::DrawScene()
 {
+	CreateShadowMap();
+	CreateSsaoMap();
+
+	//
+	// Restore the back and depth buffer and viewport to the OM stage.
+	//
+	ID3D11RenderTargetView* renderTargets[1] = { mRenderTargetView };
+	md3dImmediateContext->OMSetRenderTargets(1, renderTargets, mDepthStencilView);
+	md3dImmediateContext->RSSetViewports(1, &mScreenViewport);
+
+	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Silver));
+
+	// We already laid down scene depth to the depth buffer in the Normal/Depth map pass,
+	// so we can set the depth comparison test to 밇QUALS.? This prevents any overdraw
+	// in this rendering pass, as only the nearest visible pixels will pass this depth
+	// comparison test.
+
+	md3dImmediateContext->OMSetDepthStencilState(RenderStates::EqualsDSS, 0);
+
+	mPlayer->DrawToScene(md3dImmediateContext, mCam, mShadowTransform);
+	for (auto i : mBasicObjects)
+		i->DrawToScene(md3dImmediateContext, mCam, mShadowTransform);
+	for (auto i : mSkinnedObjects)
+		i->DrawToScene(md3dImmediateContext, mCam, mShadowTransform);
+
+	md3dImmediateContext->RSSetState(0);
+	md3dImmediateContext->OMSetDepthStencilState(0, 0);
+
+	mTerrain.Draw(md3dImmediateContext, mCam, mDirLights);
+	md3dImmediateContext->RSSetState(0);
+
+	mSky->Draw(md3dImmediateContext, mCam);
+
+	// restore default states, as the SkyFX changes them in the effect file.
+	md3dImmediateContext->RSSetState(0);
+	md3dImmediateContext->OMSetDepthStencilState(0, 0);
+
+	// Unbind shadow map and AmbientMap as a shader input because we are going to render
+	// to it next frame.  These textures can be at any slot, so clear all slots.
+	ID3D11ShaderResourceView* nullSRV[16] = { 0 };
+	md3dImmediateContext->PSSetShaderResources(0, 16, nullSRV);
 	// Set per frame constants.
 	Effects::NormalMapFX->SetDirLights(mDirLights);
 	Effects::NormalMapFX->SetEyePosW(mCam.GetPosition());
 	Effects::NormalMapFX->SetCubeMap(mSky->CubeMapSRV());
 	Effects::NormalMapFX->SetShadowMap(mSmap->DepthMapSRV());
 	Effects::NormalMapFX->SetSsaoMap(mSsao->AmbientSRV());
-
-	for (auto i : mObjects)
-		i->Draw(md3dImmediateContext, mCam, mShadowTransform);
 }
 
-void SceneMgr::AnimateAllObjects()
+void SceneMgr::AnimateAllObjects(float dt)
 {
-	for (auto i : mObjects)
-		i->Animate();
+	mPlayer->Animate(dt);
+	for (auto i : mSkinnedObjects)
+		i->Animate(dt);
 }
 
 void SceneMgr::UpdateScene(float dt)
 {
 	//
-	// Control the camera.
-	//
-	if (GetAsyncKeyState('W') & 0x8000)
-		mCam.Walk(10.0f*dt);
-
-	if (GetAsyncKeyState('S') & 0x8000)
-		mCam.Walk(-10.0f*dt);
-
-	if (GetAsyncKeyState('A') & 0x8000)
-		mCam.Strafe(-10.0f*dt);
-
-	if (GetAsyncKeyState('D') & 0x8000)
-		mCam.Strafe(10.0f*dt);
-
-
-	//
 	// Animate the lights (and hence shadows).
 	//
 
 	BuildShadowTransform();
+	AnimateAllObjects(dt);
 
-	mCam.UpdateViewMatrix();
+	float y = mTerrain.GetHeight(mPlayer->GetPos().x, mPlayer->GetPos().z);
+	mPlayer->Update(y);
+	mCam.UpdateViewMatrix(mPlayer->GetPos(), y);
 
 }
 
-
-void SceneMgr::CreateSsaoMap(ID3D11DepthStencilView* dsv)
+void SceneMgr::PlayerYawPitch(float dx, float dy)
 {
-	D3D11_VIEWPORT screenViewport;
-	screenViewport.TopLeftX = 0;
-	screenViewport.TopLeftY = 0;
-	screenViewport.Width = static_cast<float>(mClientWidth);
-	screenViewport.Height = static_cast<float>(mClientHeight);
-	screenViewport.MinDepth = 0.0f;
-	screenViewport.MaxDepth = 1.0f;
+	mCam.Pitch(dy);
+	//mCam.RotateY(dx);
+	mPlayer->RotateY(dx);
+}
 
+void SceneMgr::CameraLookAt(const XMFLOAT3& camPos, const XMFLOAT3& target)
+{
+	mCam.LookAt(camPos, target, XMFLOAT3(0.0f, 1.0f, 0.0f));
+}
+
+void SceneMgr::CreateSsaoMap()
+{
 	//
 	// Render the view space normals and depths.  This render target has the
 	// same dimensions as the back buffer, so we can use the screen viewport.
 	// This render pass is needed to compute the ambient occlusion.
 	// Notice that we use the main depth/stencil buffer in this pass.  
 	//
-	md3dImmediateContext->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	md3dImmediateContext->RSSetViewports(1, &screenViewport);
-	SetNormalDepthRenderTarget(dsv);
+	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	md3dImmediateContext->RSSetViewports(1, &mScreenViewport);
+	mSsao->SetNormalDepthRenderTarget(mDepthStencilView);
 
-	for (auto i : mObjects)
-		i->DrawObjectToSsaoNormalDepthMap(md3dImmediateContext, mCam);
+	mPlayer->DrawToSsaoNormalDepthMap(md3dImmediateContext, mCam);
+	for (auto iterBO : mBasicObjects)
+		iterBO->DrawToSsaoNormalDepthMap(md3dImmediateContext, mCam);
+
+	for (auto iterSO : mSkinnedObjects)
+		iterSO->DrawToSsaoNormalDepthMap(md3dImmediateContext, mCam);
 
 	//
 	// Now compute the ambient occlusion.
 	// 
-	ComputeSsao();
-	BlurAmbientMap(2);
+
+	mSsao->ComputeSsao(mCam);
+	mSsao->BlurAmbientMap(2);
 }
 
 void SceneMgr::CreateShadowMap()
@@ -139,8 +190,12 @@ void SceneMgr::CreateShadowMap()
 	XMMATRIX proj = XMLoadFloat4x4(&mLightProj);
 	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
 
-	for (auto i : mObjects)
-		i->DrawObjectToShadowMap(md3dImmediateContext, mCam, viewProj);
+	mPlayer->DrawToShadowMap(md3dImmediateContext, mCam, viewProj);
+	for (auto iterBO : mBasicObjects)
+		iterBO->DrawToShadowMap(md3dImmediateContext, mCam, viewProj);
+
+	for (auto iterSO : mSkinnedObjects)
+		iterSO->DrawToShadowMap(md3dImmediateContext, mCam, viewProj);
 
 	md3dImmediateContext->RSSetState(0);
 }
@@ -174,21 +229,6 @@ void SceneMgr::DrawScreenQuad()
 		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);
 	}
-}
-
-void SceneMgr::CameraYawPitch(float dx, float dy)
-{
-	mCam.Pitch(dy);
-	mCam.RotateY(dx);
-}
-
-void SceneMgr::DrawSky()
-{
-	mSky->Draw(md3dImmediateContext, mCam);
-
-	// restore default states, as the SkyFX changes them in the effect file.
-	md3dImmediateContext->RSSetState(0);
-	md3dImmediateContext->OMSetDepthStencilState(0, 0);
 }
 
 void SceneMgr::BuildShadowTransform()
@@ -283,21 +323,37 @@ void SceneMgr::ComputeSceneBoundingBox()
 {
 	XMFLOAT3 minPt(+MathHelper::Infinity, +MathHelper::Infinity, +MathHelper::Infinity);
 	XMFLOAT3 maxPt(-MathHelper::Infinity, -MathHelper::Infinity, -MathHelper::Infinity);
-	for (auto i : mObjects)
+	for (auto iterBO : mBasicObjects)
 	{
-		if (i->GetType() == Model_Effect::Base) {
-			for (UINT j = 0; j < i->GetModel()->Vertices.size(); ++j)
-			{
-				XMFLOAT3 P = i->GetModel()->Vertices[j].Pos;
+		
+		for (UINT j = 0; j < iterBO->GetModel()->Vertices.size(); ++j)
+		{
+			XMFLOAT3 P = iterBO->GetModel()->Vertices[j].Pos;
 
-				minPt.x = MathHelper::Min(minPt.x, P.x);
-				minPt.y = MathHelper::Min(minPt.x, P.x);
-				minPt.z = MathHelper::Min(minPt.x, P.x);
+			minPt.x = MathHelper::Min(minPt.x, P.x);
+			minPt.y = MathHelper::Min(minPt.x, P.x);
+			minPt.z = MathHelper::Min(minPt.x, P.x);
 
-				maxPt.x = MathHelper::Max(maxPt.x, P.x);
-				maxPt.y = MathHelper::Max(maxPt.x, P.x);
-				maxPt.z = MathHelper::Max(maxPt.x, P.x);
-			}
+			maxPt.x = MathHelper::Max(maxPt.x, P.x);
+			maxPt.y = MathHelper::Max(maxPt.x, P.x);
+			maxPt.z = MathHelper::Max(maxPt.x, P.x);
+		}
+	}
+
+	for (auto iterSO : mSkinnedObjects)
+	{
+
+		for (UINT j = 0; j < iterSO->GetModel()->Vertices.size(); ++j)
+		{
+			XMFLOAT3 P = iterSO->GetModel()->Vertices[j].Pos;
+
+			minPt.x = MathHelper::Min(minPt.x, P.x);
+			minPt.y = MathHelper::Min(minPt.x, P.x);
+			minPt.z = MathHelper::Min(minPt.x, P.x);
+
+			maxPt.x = MathHelper::Max(maxPt.x, P.x);
+			maxPt.y = MathHelper::Max(maxPt.x, P.x);
+			maxPt.z = MathHelper::Max(maxPt.x, P.x);
 		}
 	}
 
@@ -329,27 +385,13 @@ void SceneMgr::ReSize(UINT width, UINT height)
 		mSsao->OnSize(width, height, mCam.GetFovY(), mCam.GetFarZ());
 }
 
-void SceneMgr::SetNormalDepthRenderTarget(ID3D11DepthStencilView* dsv)
+void SceneMgr::AddBasicObject(BasicModel * mesh, XMFLOAT4X4 world, Label label)
 {
-	mSsao->SetNormalDepthRenderTarget(dsv);
+	mBasicObjects.push_back(new BasicObject(mesh, world, label));
 }
 
-void SceneMgr::ComputeSsao()
+void SceneMgr::AddSkinnedObject(SkinnedModel * mesh, InstanceInfo info)
 {
-	mSsao->ComputeSsao(mCam);
+	mSkinnedObjects.push_back(new SkinnedObject(mesh, info));
 }
 
-void SceneMgr::BlurAmbientMap(int blurCount)
-{
-	mSsao->BlurAmbientMap(blurCount);
-}
-
-void SceneMgr::AddObject(BasicModel * mesh, XMFLOAT4X4 world, Model_Effect me)
-{
-	mObjects.push_back(new GameObject(mesh, world, me));
-}
-
-DirectionalLight * SceneMgr::GetDirLight()
-{
-	return mDirLights;
-}

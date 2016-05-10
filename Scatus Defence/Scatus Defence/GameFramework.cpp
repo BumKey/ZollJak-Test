@@ -10,8 +10,6 @@ GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 	mLastMousePos.y = 0;
 
 	mSceneMgr = new SceneMgr(mClientWidth, mClientHeight);
-
-	int num = 0;
 }
 
 GameFrameWork::~GameFrameWork()

@@ -73,16 +73,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Park\Source\Repos\ZollJak-Test\Scatus Defence\Common;C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Park\Source\Repos\ZollJak-Test\Scatus Defence\Common;C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Park\Source\Repos\ZollJak-Test\Scatus Defence\Common;D:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Park\Source\Repos\ZollJak-Test\Scatus Defence\Common;D:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(LibraryPath)</LibraryPath>
     <ExecutablePath>C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(ExecutablePath)</ExecutablePath>
     <ExcludePath>$(ExcludePath)</ExcludePath>
   </PropertyGroup>

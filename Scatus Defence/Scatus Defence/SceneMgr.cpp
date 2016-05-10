@@ -134,7 +134,7 @@ void SceneMgr::UpdateScene(float dt)
 	// Animate the lights (and hence shadows).
 	//
 
-	BuildShadowTransform();
+	//BuildShadowTransform();
 	AnimateAllObjects(dt);
 
 	float y = mTerrain.GetHeight(mPlayer->GetPos().x, mPlayer->GetPos().z);

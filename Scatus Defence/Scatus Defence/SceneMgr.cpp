@@ -146,7 +146,7 @@ void SceneMgr::UpdateScene(float dt)
 void SceneMgr::PlayerYawPitch(float dx, float dy)
 {
 	mCam.Pitch(dy);
-	//mCam.RotateY(dx);
+	mCam.RotateY(dx);
 	mPlayer->RotateY(dx);
 }
 

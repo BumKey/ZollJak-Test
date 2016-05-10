@@ -3,5 +3,11 @@
 void main()
 {
 	printf("");
+
+	printf("hi");
+	printf("hi");
+	printf("hi");
+	printf("hi");
+	printf("hi");
 	printf("hi");
 }

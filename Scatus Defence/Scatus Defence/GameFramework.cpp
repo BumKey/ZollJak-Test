@@ -9,7 +9,7 @@ GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
 
-	mSceneMgr = new SceneMgr(mClientWidth, mClientHeight);
+	mCam.SetLens(0.20f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 }
 
 GameFrameWork::~GameFrameWork()
@@ -17,7 +17,6 @@ GameFrameWork::~GameFrameWork()
 	Effects::DestroyAll();
 	InputLayouts::DestroyAll();
 	RenderStates::DestroyAll();
-	delete mSceneMgr;
 }
 
 bool GameFrameWork::Init()
@@ -32,7 +31,9 @@ bool GameFrameWork::Init()
 	mTexMgr.Init(md3dDevice);
 	ResourceMgr::InitAll(md3dDevice, mTexMgr);
 
-	mSceneMgr->Init(md3dDevice, md3dImmediateContext, mDepthStencilView, mRenderTargetView);
+	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
+		mDepthStencilView, mRenderTargetView,
+		mCam, mClientWidth, mClientHeight);
 
 	InstanceDesc info;
 	for (UINT i = 0; i < 10; ++i)
@@ -41,7 +42,7 @@ bool GameFrameWork::Init()
 		info.Scale = MathHelper::RandF() + 0.5f;
 		info.Yaw = MathHelper::RandF()*MathHelper::Pi*2;
 
-		mSceneMgr->AddBasicObject(ResourceMgr::TreeModel, info, Label::AlphaBasic);
+		mObjectMgr.AddObstacle(new BasicObject(ResourceMgr::TreeModel, info, Label::AlphaBasic));
 	}
 
 	for (UINT i = 0; i < 20; ++i)
@@ -50,18 +51,20 @@ bool GameFrameWork::Init()
 		info.Scale = MathHelper::RandF() + 0.5f;
 		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
 
-		mSceneMgr->AddBasicObject(ResourceMgr::RockModel, info, Label::Basic);
+		mObjectMgr.AddObstacle(new BasicObject(ResourceMgr::RockModel, info, Label::Basic));
 	}
 
-	// mSceneMgr->AddSkinnedObject(ResourceMgr::Goblin, goblinWorld);
+	// mSceneMgr.AddSkinnedObject(ResourceMgr::Goblin, goblinWorld);
 
 	info.Pos = XMFLOAT3(100.0f, 0.3f, 100.0f);
 	info.Yaw = 0.0f;
 	info.Scale = 0.2f;
 
 	mPlayer = new Player(ResourceMgr::Goblin, info);
-	mSceneMgr->SetPlayer(mPlayer);
-	mSceneMgr->ComputeSceneBoundingBox();
+	mObjectMgr.SetPlayer(mPlayer);
+
+	mObjectMgr.Update();
+	mSceneMgr.ComputeSceneBoundingBox(mObjectMgr.GetAllObjects());
 	return true;
 }
 
@@ -69,7 +72,8 @@ void GameFrameWork::OnResize()
 {
 	D3DApp::OnResize();
 
-	mSceneMgr->ReSize(mClientWidth, mClientHeight);
+	mCam.SetLens(0.20f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	mSceneMgr.OnResize(mClientWidth, mClientHeight, mCam);
 }
 
 void GameFrameWork::UpdateScene(float dt)
@@ -121,12 +125,20 @@ void GameFrameWork::UpdateScene(float dt)
 	else if (m_bAttackAnim == false)
 		mPlayer->SetClip("stand");
 
-	mSceneMgr->UpdateScene(dt);
+	mSceneMgr.Update(dt);
+	mObjectMgr.Update(dt);
+
+	XMFLOAT3 camPos = mPlayer->GetPos();
+	camPos.y += 10.0f;
+	camPos.z -= 20.0f;
+
+	mCam.LookAt(camPos, mPlayer->GetPos(), XMFLOAT3(0.0f, 1.0f, 0.0f));
+	mCam.UpdateViewMatrix();
 }
 
 void GameFrameWork::DrawScene()
 {
-	mSceneMgr->DrawScene();
+	mSceneMgr.DrawScene(mObjectMgr.GetAllObjects(), mCam);
 	HR(mSwapChain->Present(0, 0));
 	m_bReady = true;
 }
@@ -160,7 +172,8 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
 		float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
 
-		mSceneMgr->PlayerYawPitch(dx, dy);
+		mCam.Pitch(dy);
+		mPlayer->RotateY(dx);
 
 		mLastMousePos.x = x;
 		mLastMousePos.y = y;
@@ -172,7 +185,7 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 	//	float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
 	//	float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
 
-	//	mSceneMgr->PlayerYawPitch(dx, dy);
+	//	mSceneMgr.PlayerYawPitch(dx, dy);
 
 	//	mLastMousePos.x = x;
 	//	mLastMousePos.y = y;

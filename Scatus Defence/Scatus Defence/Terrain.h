@@ -36,14 +36,15 @@ public:
 
 	float GetWidth()const;
 	float GetDepth()const;
-	float GetHeight(float x, float z)const;
+	float GetHeight(const XMFLOAT3& pos)const;
 
 	XMMATRIX GetWorld()const;
 	void SetWorld(CXMMATRIX M);
 
 	void Init(ID3D11Device* device, ID3D11DeviceContext* dc, const InitInfo& initInfo);
 
-	void Draw(ID3D11DeviceContext* dc, const Camera& cam, DirectionalLight lights[3]);
+	void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, DirectionalLight lights[3]);
+	void DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj);
 
 private:
 	void LoadHeightmap();

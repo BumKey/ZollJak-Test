@@ -163,6 +163,12 @@
     <ClCompile Include="SkinnedObject.cpp">
       <Filter>GameObject\SkinnedObject</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameModel.cpp">
+      <Filter>Content Pipeline\GameModel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\d3dApp.h">
@@ -254,6 +260,12 @@
     </ClInclude>
     <ClInclude Include="SkinnedObject.h">
       <Filter>GameObject\SkinnedObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameModel.h">
+      <Filter>Content Pipeline\GameModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

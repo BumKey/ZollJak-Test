@@ -50,11 +50,11 @@ float Terrain::GetDepth()const
 	return (mInfo.HeightmapHeight-1)*mInfo.CellSpacing;
 }
 
-float Terrain::GetHeight(float x, float z)const
+float Terrain::GetHeight(const XMFLOAT3& pos)const
 {
 	// Transform from terrain local space to "cell" space.
-	float c = (x + 0.5f*GetWidth()) /  mInfo.CellSpacing;
-	float d = (z - 0.5f*GetDepth()) / -mInfo.CellSpacing;
+	float c = (pos.x + 0.5f*GetWidth()) /  mInfo.CellSpacing;
+	float d = (pos.z - 0.5f*GetDepth()) / -mInfo.CellSpacing;
 
 	// Get the row and column we are in.
 	int row = (int)floorf(d);
@@ -130,7 +130,7 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* dc, const InitInfo
 		mInfo.BlendMapFilename.c_str(), 0, 0, &mBlendMapSRV, 0));
 }
 
-void Terrain::Draw(ID3D11DeviceContext* dc, const Camera& cam, DirectionalLight lights[3])
+void Terrain::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, DirectionalLight lights[3])
 {
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 	dc->IASetInputLayout(InputLayouts::Terrain);
@@ -186,6 +186,48 @@ void Terrain::Draw(ID3D11DeviceContext* dc, const Camera& cam, DirectionalLight 
 	// to turn off tessellation.
 	dc->HSSetShader(0, 0, 0);
 	dc->DSSetShader(0, 0, 0);
+}
+
+void Terrain::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj)
+{
+	Effects::BuildShadowMapFX->SetEyePosW(cam.GetPosition());
+	Effects::BuildShadowMapFX->SetViewProj(lightViewProj);
+
+
+	ID3DX11EffectTechnique* tessSmapTech = Effects::BuildShadowMapFX->TessBuildShadowMapTech;
+
+	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	XMMATRIX world;
+	XMMATRIX worldInvTranspose;
+	XMMATRIX worldViewProj;
+
+	dc->IASetInputLayout(InputLayouts::Terrain);
+
+	D3DX11_TECHNIQUE_DESC techDesc;
+	tessSmapTech->GetDesc(&techDesc);
+	for (UINT p = 0; p < techDesc.Passes; ++p)
+	{
+		world = XMLoadFloat4x4(&mWorld);
+		worldInvTranspose = MathHelper::InverseTranspose(world);
+		worldViewProj = world*lightViewProj;
+
+		Effects::BuildShadowMapFX->SetWorld(world);
+		Effects::BuildShadowMapFX->SetWorldInvTranspose(worldInvTranspose);
+		Effects::BuildShadowMapFX->SetWorldViewProj(worldViewProj);
+		Effects::BuildShadowMapFX->SetTexTransform(XMMatrixIdentity());
+		Effects::BuildShadowMapFX->SetHeightScale(mInfo.HeightScale);
+		Effects::BuildShadowMapFX->SetMaxTessDistance(500.0f);
+		Effects::BuildShadowMapFX->SetMinTessDistance(20.0f);
+		Effects::BuildShadowMapFX->SetMinTessFactor(0.0f);
+		Effects::BuildShadowMapFX->SetMaxTessFactor(6.0f);
+
+		tessSmapTech->GetPassByIndex(p)->Apply(0, dc);
+		ID3DX11EffectPass* pass = tessSmapTech->GetPassByIndex(p);
+		pass->Apply(0, dc);
+
+		dc->DrawIndexed(mNumPatchQuadFaces * 4, 0, 0);
+	}
 }
 
 void Terrain::LoadHeightmap()

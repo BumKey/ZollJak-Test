@@ -1,6 +1,6 @@
 #include "TextureMgr.h"
 
-TextureMgr::TextureMgr() : md3dDevice(0)
+TextureMgr::TextureMgr()
 {
 }
 
@@ -14,7 +14,7 @@ TextureMgr::~TextureMgr()
 	mTextureSRV.clear();
 }
 
-void TextureMgr::Init(ID3D11Device* device)
+void TextureMgr::Init(ID3D11Device * device)
 {
 	md3dDevice = device;
 }

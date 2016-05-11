@@ -10,5 +10,8 @@ public:
 public:
 	virtual bool SetClip(std::string clipName);
 	virtual void Animate(float dt);
+
+private:
+	SkinnedModel* mModel;
 };
 

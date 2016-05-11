@@ -23,6 +23,10 @@ BasicModel::BasicModel(ID3D11Device* device, TextureMgr& texMgr, const std::stri
 		ID3D11ShaderResourceView* normalMapSRV = texMgr.CreateTexture(texturePath + mats[i].NormalMapName);
 		NormalMapSRV.push_back(normalMapSRV);
 	}
+
+	VerticesPos.resize(Vertices.size());
+	for (int i = 0; i < Vertices.size(); ++i)
+		VerticesPos[i] = Vertices[i].Pos;
 }
 
 BasicModel::~BasicModel()

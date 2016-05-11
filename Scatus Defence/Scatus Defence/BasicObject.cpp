@@ -1,6 +1,6 @@
 #include "BasicObject.h"
 
-BasicObject::BasicObject(BasicModel * model, const InstanceDesc& info, Label label) : mModel(model), mLabel(label)
+BasicObject::BasicObject(BasicModel * model, const InstanceDesc& info, Label label) : GameObject(model), mLabel(label)
 {
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
@@ -21,14 +21,13 @@ BasicObject::BasicObject(BasicModel * model, const InstanceDesc& info, Label lab
 // 후에 스마트포인터 사용해서 메모리 효율적 관리하도록
 BasicObject::~BasicObject()
 {
-	mModel = nullptr;
 }
 
 void BasicObject::Move(XMVECTOR direction, float dt)
 {
 }
 
-void BasicObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform)
+void BasicObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -58,6 +57,7 @@ void BasicObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFL
 		dc->RSSetState(RenderStates::WireframeRS);
 
 	world = XMLoadFloat4x4(&mWorld);
+	world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
 	worldInvTranspose = MathHelper::InverseTranspose(world);
 	worldViewProj = world*view*proj;
 
@@ -117,7 +117,7 @@ void BasicObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFL
 	}
 }
 
-void BasicObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj)
+void BasicObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, FLOAT tHeight)
 {
 	Effects::BuildShadowMapFX->SetEyePosW(cam.GetPosition());
 	Effects::BuildShadowMapFX->SetViewProj(lightViewProj);
@@ -139,6 +139,7 @@ void BasicObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, 
 	D3DX11_TECHNIQUE_DESC techDesc;
 
 	world = XMLoadFloat4x4(&mWorld);
+	world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
 	worldInvTranspose = MathHelper::InverseTranspose(world);
 	worldViewProj = world*lightViewProj;
 
@@ -179,7 +180,7 @@ void BasicObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, 
 	}
 }
 
-void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam)
+void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam, FLOAT tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -201,6 +202,7 @@ void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camer
 		dc->RSSetState(RenderStates::WireframeRS);
 
 	world = XMLoadFloat4x4(&mWorld);
+	world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
 	worldInvTranspose = MathHelper::InverseTranspose(world);
 	worldView = world*view;
 	worldInvTransposeView = worldInvTranspose*view;

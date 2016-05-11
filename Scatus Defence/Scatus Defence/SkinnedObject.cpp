@@ -1,7 +1,7 @@
 #include "SkinnedObject.h"
 
 
-SkinnedObject::SkinnedObject(SkinnedModel * model, const InstanceDesc& info) : mModel(model)
+SkinnedObject::SkinnedObject(SkinnedModel * model, const InstanceDesc& info) : GameObject(model)
 {
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
@@ -86,7 +86,7 @@ void SkinnedObject::Update(float terrainHeight)
 	XMStoreFloat4x4(&mWorld, S*R*T);
 }
 
-void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform)
+void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -122,6 +122,7 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XM
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		world = XMLoadFloat4x4(&mWorld);
+		world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
 		worldInvTranspose = MathHelper::InverseTranspose(world);
 		worldViewProj = world*view*proj;
 
@@ -147,7 +148,7 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XM
 	}
 }
 
-void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam)
+void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam, FLOAT tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -168,6 +169,7 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		world = XMLoadFloat4x4(&mWorld);
+		world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
 		worldInvTranspose = MathHelper::InverseTranspose(world);
 		worldView = world*view;
 		worldInvTransposeView = worldInvTranspose*view;
@@ -190,7 +192,7 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 	}
 }
 
-void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj)
+void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, FLOAT tHeight)
 {
 	Effects::BuildShadowMapFX->SetEyePosW(cam.GetPosition());
 	Effects::BuildShadowMapFX->SetViewProj(lightViewProj);
@@ -217,6 +219,7 @@ void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		world = XMLoadFloat4x4(&mWorld);
+		world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
 		worldInvTranspose = MathHelper::InverseTranspose(world);
 		worldViewProj = world*lightViewProj;
 

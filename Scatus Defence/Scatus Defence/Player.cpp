@@ -5,6 +5,8 @@ Player::Player(SkinnedModel* model, const InstanceDesc& info) : SkinnedObject(mo
 	mTimePos = 0.0f;
 	mMovingSpeed = 5.5f;
 	mCurrClipName = "stand";
+
+	mModel = static_cast<SkinnedModel*>(GameObject::mModel);
 }
 
 

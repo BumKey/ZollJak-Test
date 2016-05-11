@@ -203,12 +203,8 @@ void Camera::RotateY(float angle)
 	XMStoreFloat3(&mLook, XMVector3TransformNormal(XMLoadFloat3(&mLook), R));
 }
 
-void Camera::UpdateViewMatrix(const XMFLOAT3& playerPos, float terrainHeight)
+void Camera::UpdateViewMatrix()
 {
-	mPosition = playerPos;
-	mPosition.y += 10.0f + terrainHeight;
-	mPosition.z -= 20.0f;
-
 	XMVECTOR R = XMLoadFloat3(&mRight);
 	XMVECTOR U = XMLoadFloat3(&mUp);
 	XMVECTOR L = XMLoadFloat3(&mLook);

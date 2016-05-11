@@ -15,15 +15,13 @@ public:
 	~BasicObject();
 
 	void Move(XMVECTOR direction, float dt);
-	void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform);
-	void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj);
-	void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam);
+	void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight);
+	void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, FLOAT tHeight);
+	void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, FLOAT tHeight);
 
 	Label GetType() { return mLabel; }
-	BasicModel * GetModel() { return mModel; }
 
 private:
-	BasicModel* mModel;	
 	Label mLabel;
 
 };

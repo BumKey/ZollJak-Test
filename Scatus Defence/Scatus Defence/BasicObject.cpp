@@ -1,7 +1,21 @@
 #include "BasicObject.h"
 
-BasicObject::BasicObject(BasicModel * model, XMFLOAT4X4 world, Label label) : mModel(model), mLabel(label)
+BasicObject::BasicObject(BasicModel * model, const InstanceDesc& info, Label label) : mModel(model), mLabel(label)
 {
+	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
+	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
+	XMMATRIX T = XMMatrixTranslation(info.Pos.x, info.Pos.y, info.Pos.z);
+
+	XMStoreFloat4x4(&mWorld, S*R*T);
+
+	mScaling = info.Scale;
+	mRotation = XMFLOAT3(0.0f, info.Yaw, 0.0f);
+	mPosition = info.Pos;
+
+	R = XMMatrixRotationY(info.Yaw);
+	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
+	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
+	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 }
 
 // 후에 스마트포인터 사용해서 메모리 효율적 관리하도록

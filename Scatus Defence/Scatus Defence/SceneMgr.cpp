@@ -380,13 +380,13 @@ void SceneMgr::ReSize(UINT width, UINT height)
 		mSsao->OnSize(width, height, mCam.GetFovY(), mCam.GetFarZ());
 }
 
-void SceneMgr::AddBasicObject(BasicModel * mesh, XMFLOAT4X4 world, Label label)
+void SceneMgr::AddBasicObject(BasicModel * mesh, const InstanceDesc& info, Label label)
 {
-	mBasicObjects.push_back(new BasicObject(mesh, world, label));
+	mBasicObjects.push_back(new BasicObject(mesh, info, label));
 }
 
-void SceneMgr::AddSkinnedObject(SkinnedModel * mesh, InstanceDesc info)
+void SceneMgr::AddSkinnedObject(SkinnedModel * mesh, const InstanceDesc& info)
 {
-	// mSkinnedObjects.push_back(new SkinnedObject(mesh, info));
+	//mSkinnedObjects.push_back(new SkinnedObject(mesh, info));
 }
 

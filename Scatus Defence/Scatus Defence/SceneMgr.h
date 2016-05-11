@@ -45,8 +45,8 @@ public:
 	void CameraLookAt(const XMFLOAT3& camPos, const XMFLOAT3& target);
 	void ComputeSceneBoundingBox();
 
-	void AddBasicObject(BasicModel* mesh, XMFLOAT4X4 world, Label label);
-	void AddSkinnedObject(SkinnedModel* mesh, InstanceDesc info);
+	void AddBasicObject(BasicModel* mesh, const InstanceDesc& info, Label label);
+	void AddSkinnedObject(SkinnedModel* mesh, const InstanceDesc& info);
 
 	void					SetPlayer(SkinnedObject* player) { mPlayer = player; }
 	DirectionalLight*		GetDirLight() { return mDirLights; }

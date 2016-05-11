@@ -11,7 +11,7 @@ enum Label {
 class BasicObject : public GameObject
 {
 public:
-	BasicObject(BasicModel* model, XMFLOAT4X4 world, Label label);
+	BasicObject(BasicModel* model, const InstanceDesc& info, Label label);
 	~BasicObject();
 
 	void Move(XMVECTOR direction, float dt);

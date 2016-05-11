@@ -34,38 +34,27 @@ bool GameFrameWork::Init()
 
 	mSceneMgr->Init(md3dDevice, md3dImmediateContext, mDepthStencilView, mRenderTargetView);
 
-	XMFLOAT4X4 treeWorld[10], rockWorld[20];
-
-	XMFLOAT2 pos;
-	XMMATRIX modelScale, modelRot, modelOffset;
-
+	InstanceDesc info;
 	for (UINT i = 0; i < 10; ++i)
 	{
-		pos = XMFLOAT2(rand() % 150, rand() % 150);
-		float randF = MathHelper::RandF() + 0.5f;
-		modelScale = XMMatrixScaling(randF, randF, randF);
-		modelRot = XMMatrixRotationY(randF);
-		modelOffset = XMMatrixTranslation(pos.x, mSceneMgr->GetTerrainHeight(pos.x, pos.y) + 0.1f, pos.y);
-		
-		XMStoreFloat4x4(&treeWorld[i], modelScale*modelRot*modelOffset);
-		mSceneMgr->AddBasicObject(ResourceMgr::TreeModel, treeWorld[i], Label::AlphaBasic);
+		info.Pos = XMFLOAT3(rand() % 150, 0.0f, rand() % 150);
+		info.Scale = MathHelper::RandF() + 0.5f;
+		info.Yaw = MathHelper::RandF()*MathHelper::Pi*2;
+
+		mSceneMgr->AddBasicObject(ResourceMgr::TreeModel, info, Label::AlphaBasic);
 	}
 
 	for (UINT i = 0; i < 20; ++i)
 	{
-		pos = XMFLOAT2(rand() % 200, rand() % 200);
-		float randF = MathHelper::RandF() + 1.0f;
-		modelScale = XMMatrixScaling(randF, randF, randF);
-		modelRot = XMMatrixRotationY(randF);
-		modelOffset = XMMatrixTranslation(pos.x, mSceneMgr->GetTerrainHeight(pos.x, pos.y) - 0.2f, pos.y);
+		info.Pos = XMFLOAT3(rand() % 150, 0.0f, rand() % 150);
+		info.Scale = MathHelper::RandF() + 0.5f;
+		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
 
-		XMStoreFloat4x4(&rockWorld[i], modelScale*modelRot*modelOffset);
-		mSceneMgr->AddBasicObject(ResourceMgr::RockModel, rockWorld[i], Label::Basic);
+		mSceneMgr->AddBasicObject(ResourceMgr::RockModel, info, Label::Basic);
 	}
 
 	// mSceneMgr->AddSkinnedObject(ResourceMgr::Goblin, goblinWorld);
 
-	InstanceDesc info;
 	info.Pos = XMFLOAT3(100.0f, 0.3f, 100.0f);
 	info.Yaw = 0.0f;
 	info.Scale = 0.2f;

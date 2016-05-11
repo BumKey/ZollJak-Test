@@ -1,9 +1,7 @@
 #include "SkinnedObject.h"
 
 
-SkinnedObject::SkinnedObject(SkinnedModel * model, const InstanceInfo& info) : mModel(model),
-mPosition(0.0f, 0.0f, 0.0f), mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f),
-mTimePos(0.0f), mMovingSpeed(5.5f), mCurrClipName("stand")
+SkinnedObject::SkinnedObject(SkinnedModel * model, const InstanceDesc& info) : mModel(model)
 {
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
@@ -26,32 +24,6 @@ mTimePos(0.0f), mMovingSpeed(5.5f), mCurrClipName("stand")
 SkinnedObject::~SkinnedObject()
 {
 	mModel = nullptr;
-}
-
-void SkinnedObject::Animate(float dt)
-{
-	mTimePos += dt;
-
-	mModel->SkinnedMeshData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
-
-	// Loop animation
-	if (mTimePos > mModel->SkinnedMeshData.GetClipEndTime(mCurrClipName))
-	{
-		mTimePos = 0.0f;
-		if (mCurrClipName == "attack01")
-			mCurrClipName = "stand";
-	}
-}
-
-bool SkinnedObject::SetClip(std::string clipName)
-{
-	if (clipName == "attack01")
-		mTimePos = 0.0f;
-
-	if (mCurrClipName == "attack01" && mTimePos < mModel->SkinnedMeshData.GetClipEndTime(mCurrClipName))
-		return false;
-	else
-		mCurrClipName = clipName;
 }
 
 void SkinnedObject::Strafe(float d)

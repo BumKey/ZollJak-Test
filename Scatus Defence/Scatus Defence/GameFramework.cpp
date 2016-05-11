@@ -65,12 +65,12 @@ bool GameFrameWork::Init()
 
 	// mSceneMgr->AddSkinnedObject(ResourceMgr::Goblin, goblinWorld);
 
-	InstanceInfo info;
+	InstanceDesc info;
 	info.Pos = XMFLOAT3(100.0f, 0.3f, 100.0f);
 	info.Yaw = 0.0f;
 	info.Scale = 0.2f;
 
-	mPlayer = new SkinnedObject(ResourceMgr::Goblin, info);
+	mPlayer = new Player(ResourceMgr::Goblin, info);
 	mSceneMgr->SetPlayer(mPlayer);
 	mSceneMgr->ComputeSceneBoundingBox();
 	return true;

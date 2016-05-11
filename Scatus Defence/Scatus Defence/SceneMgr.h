@@ -37,33 +37,28 @@ public:
 	void Init(ID3D11Device* device, ID3D11DeviceContext* dc, 
 		ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv);
 	void ReSize(UINT width, UINT height);
-	void DrawScene();
 	void AnimateAllObjects(float dt);
 	void UpdateScene(float dt);
+	void DrawScene();
 
 	void PlayerYawPitch(float dx, float dy);
 	void CameraLookAt(const XMFLOAT3& camPos, const XMFLOAT3& target);
 	void ComputeSceneBoundingBox();
 
 	void AddBasicObject(BasicModel* mesh, XMFLOAT4X4 world, Label label);
-	void AddSkinnedObject(SkinnedModel* mesh, InstanceInfo info);
+	void AddSkinnedObject(SkinnedModel* mesh, InstanceDesc info);
 
 	void					SetPlayer(SkinnedObject* player) { mPlayer = player; }
 	DirectionalLight*		GetDirLight() { return mDirLights; }
 	FLOAT					GetTerrainHeight(FLOAT x, FLOAT z)	{ return mTerrain.GetHeight(x, z); }
 
 private:
-	// About Shadow
 	void BuildShadowTransform();
-	void BindDsvAndSetNullRenderTarget();
 	void CreateShadowMap();
-
-	// About Ssao
 	void CreateSsaoMap();
 	void BuildScreenQuadGeometryBuffers(ID3D11Device* device);
-
-	// About Debug
 	void DrawScreenQuad();
+
 private:
 	ID3D11DeviceContext* md3dImmediateContext;
 	ID3D11DepthStencilView* mDepthStencilView;

@@ -4,6 +4,8 @@
 
 #include "d3dUtil.h"
 
+int (WINAPIV * __vsnwprintf)(WCHAR *, size_t, const WCHAR*, va_list) = _vsnwprintf;
+
 ID3D11ShaderResourceView* d3dHelper::CreateTexture2DArraySRV(
 		ID3D11Device* device, ID3D11DeviceContext* context,
 		std::vector<std::wstring>& filenames,

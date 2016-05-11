@@ -167,9 +167,11 @@
     <ClCompile Include="BasicObject.cpp" />
     <ClCompile Include="Effects.cpp" />
     <ClCompile Include="GameFramework.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="LoadY2K.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="BasicMeshData.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="ResourceMgr.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
@@ -198,8 +200,10 @@
     <ClInclude Include="BasicObject.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="GameFramework.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="LoadY2K.h" />
     <ClInclude Include="BasicMeshData.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="RenderStates.h" />
     <ClInclude Include="ResourceMgr.h" />
     <ClInclude Include="SceneMgr.h" />

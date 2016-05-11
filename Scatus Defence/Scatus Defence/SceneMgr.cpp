@@ -184,7 +184,7 @@ void SceneMgr::CreateSsaoMap()
 
 void SceneMgr::CreateShadowMap()
 {
-	BindDsvAndSetNullRenderTarget();
+	mSmap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
 
 	XMMATRIX view = XMLoadFloat4x4(&mLightView);
 	XMMATRIX proj = XMLoadFloat4x4(&mLightProj);
@@ -266,11 +266,6 @@ void SceneMgr::BuildShadowTransform()
 	XMStoreFloat4x4(&mLightView, V);
 	XMStoreFloat4x4(&mLightProj, P);
 	XMStoreFloat4x4(&mShadowTransform, S);
-}
-
-void SceneMgr::BindDsvAndSetNullRenderTarget()
-{
-	mSmap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
 }
 
 void SceneMgr::BuildScreenQuadGeometryBuffers(ID3D11Device* device)
@@ -390,8 +385,8 @@ void SceneMgr::AddBasicObject(BasicModel * mesh, XMFLOAT4X4 world, Label label)
 	mBasicObjects.push_back(new BasicObject(mesh, world, label));
 }
 
-void SceneMgr::AddSkinnedObject(SkinnedModel * mesh, InstanceInfo info)
+void SceneMgr::AddSkinnedObject(SkinnedModel * mesh, InstanceDesc info)
 {
-	mSkinnedObjects.push_back(new SkinnedObject(mesh, info));
+	// mSkinnedObjects.push_back(new SkinnedObject(mesh, info));
 }
 

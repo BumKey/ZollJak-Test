@@ -5,7 +5,6 @@
 #include "TextureMgr.h"
 #include "Vertex.h"
 
-// 모델을 불러오고 매쉬데이터를 저장해놓은 클래스
 class BasicModel
 {
 public:
@@ -25,11 +24,5 @@ public:
 
 	BasicMeshData ModelMesh;
 };
-
-//struct BasicModelInstance
-//{
-//	BasicModel* Model;
-//	XMFLOAT4X4 World;
-//};
 
 #endif // SKINNEDMODEL_H

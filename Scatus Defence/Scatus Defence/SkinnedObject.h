@@ -1,27 +1,16 @@
 #pragma once
-#include <Camera.h>
+#include "GameObject.h"
 #include "SkinnedModel.h"
-#include "RenderStates.h"
-#include "Effects.h"
 
-struct InstanceInfo
-{
-	XMFLOAT3 Pos;
-	FLOAT Yaw;
-	FLOAT Scale;
-};
-
-class SkinnedObject
+class SkinnedObject : public GameObject
 {
 public:
-	SkinnedObject(SkinnedModel* model, const InstanceInfo& info);
-	~SkinnedObject();
+	SkinnedObject(SkinnedModel* model, const InstanceDesc& info);
+	virtual~SkinnedObject();
 
 public:
-	bool SetClip(std::string clipName);
-	void Animate(float dt);
-	void Strafe(float d);
 	void Walk(float d);
+	void Strafe(float d);
 	void RotateY(float angle);
 	void Update(float terrainHeight);
 
@@ -29,23 +18,13 @@ public:
 	void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj);
 	void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam);
 
+	virtual bool SetClip(std::string clipName) = 0;
+	virtual void Animate(float dt) = 0;
+
 	SkinnedModel*	GetModel() { return mModel; }
-	XMFLOAT4X4		GetWorld() { return mWorld; }
-	XMFLOAT3		GetPos() { return mPosition; }
-	XMFLOAT3		GetLook() { return mCurrLook; }
 
-private:
+protected:
 	SkinnedModel* mModel;
-	XMFLOAT4X4 mWorld;
-
-	FLOAT mScaling;
-	XMFLOAT3 mRotation;
-	XMFLOAT3 mPosition;
-
-	XMFLOAT3 mRight;
-	XMFLOAT3 mUp;
-	XMFLOAT3 mCurrLook;
-	XMFLOAT3 mPrevLook;
 
 	FLOAT mTimePos;
 	FLOAT mMovingSpeed;

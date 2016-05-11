@@ -11,6 +11,7 @@
 #include "BasicModel.h"
 #include "SceneMgr.h"
 #include "ResourceMgr.h"
+#include "Player.h"
 
 class GameFrameWork : public D3DApp
 {

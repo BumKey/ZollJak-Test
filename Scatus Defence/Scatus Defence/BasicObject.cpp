@@ -1,8 +1,6 @@
 #include "BasicObject.h"
 
-BasicObject::BasicObject(BasicModel * model, XMFLOAT4X4 world, Label label) : mModel(model),
-mPosition(0.0f, 0.0f, 0.0f), mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), 
-mWorld(world), mLabel(label)
+BasicObject::BasicObject(BasicModel * model, XMFLOAT4X4 world, Label label) : mModel(model), mLabel(label)
 {
 }
 
@@ -11,8 +9,6 @@ BasicObject::~BasicObject()
 {
 	mModel = nullptr;
 }
-
-
 
 void BasicObject::Move(XMVECTOR direction, float dt)
 {

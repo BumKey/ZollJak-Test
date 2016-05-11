@@ -4,12 +4,6 @@
     <Filter Include="Content Pipeline">
       <UniqueIdentifier>{2764b6cf-be8a-4bd0-a302-80cdffca6363}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content Pipeline\BasicModel">
-      <UniqueIdentifier>{2efef5c1-1656-42ce-9b8f-779080e9c976}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Content Pipeline\SkinnedModel">
-      <UniqueIdentifier>{e5e95cac-8f83-444c-a6dd-e3d99b12142b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Content Pipeline\Y2KLoader">
       <UniqueIdentifier>{b227a203-4c65-4a76-a071-3829d774aa91}</UniqueIdentifier>
     </Filter>
@@ -59,6 +53,24 @@
     <Filter Include="Effect\Special Effects\Terrain">
       <UniqueIdentifier>{3d1bfecf-fb0b-43bd-9152-6350174db446}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content Pipeline\GameModel">
+      <UniqueIdentifier>{00578c0e-51b3-4874-8cd9-a4c769b6f80f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content Pipeline\GameModel\BasicModel">
+      <UniqueIdentifier>{2efef5c1-1656-42ce-9b8f-779080e9c976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content Pipeline\GameModel\SkinnedModel">
+      <UniqueIdentifier>{e5e95cac-8f83-444c-a6dd-e3d99b12142b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\BasicObject">
+      <UniqueIdentifier>{09bd12a2-959a-47b3-9c8d-c616f92dbee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\SkinnedObject">
+      <UniqueIdentifier>{b0bff784-4420-497f-b992-5d2fa6bf5f1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\SkinnedObject\Player">
+      <UniqueIdentifier>{72e84d32-86c3-4ce1-98c5-5a87c35e2f05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -89,19 +101,19 @@
       <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="BasicModel.cpp">
-      <Filter>Content Pipeline\BasicModel</Filter>
+      <Filter>Content Pipeline\GameModel\BasicModel</Filter>
     </ClCompile>
     <ClCompile Include="BasicMeshData.cpp">
-      <Filter>Content Pipeline\BasicModel</Filter>
+      <Filter>Content Pipeline\GameModel\BasicModel</Filter>
     </ClCompile>
     <ClCompile Include="SkinnedModel.cpp">
-      <Filter>Content Pipeline\SkinnedModel</Filter>
+      <Filter>Content Pipeline\GameModel\SkinnedModel</Filter>
     </ClCompile>
     <ClCompile Include="LoadY2K.cpp">
       <Filter>Content Pipeline\Y2KLoader</Filter>
     </ClCompile>
     <ClCompile Include="SkinnedMeshData.cpp">
-      <Filter>Content Pipeline\SkinnedModel</Filter>
+      <Filter>Content Pipeline\GameModel\SkinnedModel</Filter>
     </ClCompile>
     <ClCompile Include="Effects.cpp">
       <Filter>Effect</Filter>
@@ -136,14 +148,20 @@
     <ClCompile Include="RenderStates.cpp">
       <Filter>State Machine</Filter>
     </ClCompile>
-    <ClCompile Include="BasicObject.cpp">
-      <Filter>GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinnedObject.cpp">
-      <Filter>GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="Terrain.cpp">
       <Filter>Effect\Special Effects\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicObject.cpp">
+      <Filter>GameObject\BasicObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>GameObject\SkinnedObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedObject.cpp">
+      <Filter>GameObject\SkinnedObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,19 +193,19 @@
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="BasicModel.h">
-      <Filter>Content Pipeline\BasicModel</Filter>
+      <Filter>Content Pipeline\GameModel\BasicModel</Filter>
     </ClInclude>
     <ClInclude Include="BasicMeshData.h">
-      <Filter>Content Pipeline\BasicModel</Filter>
+      <Filter>Content Pipeline\GameModel\BasicModel</Filter>
     </ClInclude>
     <ClInclude Include="SkinnedModel.h">
-      <Filter>Content Pipeline\SkinnedModel</Filter>
+      <Filter>Content Pipeline\GameModel\SkinnedModel</Filter>
     </ClInclude>
     <ClInclude Include="LoadY2K.h">
       <Filter>Content Pipeline\Y2KLoader</Filter>
     </ClInclude>
     <ClInclude Include="SkinnedMeshData.h">
-      <Filter>Content Pipeline\SkinnedModel</Filter>
+      <Filter>Content Pipeline\GameModel\SkinnedModel</Filter>
     </ClInclude>
     <ClInclude Include="Effects.h">
       <Filter>Effect</Filter>
@@ -222,14 +240,20 @@
     <ClInclude Include="RenderStates.h">
       <Filter>State Machine</Filter>
     </ClInclude>
-    <ClInclude Include="BasicObject.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinnedObject.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="Terrain.h">
       <Filter>Effect\Special Effects\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicObject.h">
+      <Filter>GameObject\BasicObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>GameObject\SkinnedObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedObject.h">
+      <Filter>GameObject\SkinnedObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

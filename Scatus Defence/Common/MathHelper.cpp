@@ -9,7 +9,7 @@
 const float MathHelper::Infinity = FLT_MAX;
 const float MathHelper::Pi       = 3.1415926535f;
 
-float MathHelper::AngleFromXY(float x, float y)
+float MathHelper::AngleFromXY(float x, float y)//
 {
 	float theta = 0.0f;
  

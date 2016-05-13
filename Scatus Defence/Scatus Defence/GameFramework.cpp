@@ -2,14 +2,12 @@
 #include "GameFramework.h"
 
 GameFrameWork::GameFrameWork(HINSTANCE hInstance)
-	: D3DApp(hInstance), m_bReady(false), m_bAttackAnim(false)
+	: D3DApp(hInstance), mSceneMgr(mClientWidth, mClientHeight)
 {
-	mMainWndCaption = L"Scatus Defence Demo";
+	mMainWndCaption = L"MeshView Demo";
 
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
-
-	mSceneMgr = new SceneMgr(mClientWidth, mClientHeight);
 }
 
 GameFrameWork::~GameFrameWork()
@@ -17,11 +15,15 @@ GameFrameWork::~GameFrameWork()
 	Effects::DestroyAll();
 	InputLayouts::DestroyAll();
 	RenderStates::DestroyAll();
-	delete mSceneMgr;
 }
 
 bool GameFrameWork::Init()
 {
+	//콘솔창 띄우기
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+	freopen("CON", "w", stdout);
+
 	if (!D3DApp::Init())
 		return false;
 
@@ -29,50 +31,72 @@ bool GameFrameWork::Init()
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
+	mGameRogicMgr = new GameRogicManager(&mSceneMgr); //용준
 	mTexMgr.Init(md3dDevice);
+	mSceneMgr.Init(md3dDevice, md3dImmediateContext);
+	
 	ResourceMgr::InitAll(md3dDevice, mTexMgr);
 
-	mSceneMgr->Init(md3dDevice, md3dImmediateContext, mDepthStencilView, mRenderTargetView);
+	XMFLOAT4X4 treeWorld, baseWorld, stairsWorld, pillarWorld[4], rockWorld[3];
 
-	XMFLOAT4X4 treeWorld[10], rockWorld[20];
+	XMMATRIX modelScale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	XMMATRIX modelRot = XMMatrixRotationY(0.0f);
+	XMMATRIX modelOffset = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
 
-	XMFLOAT2 pos;
-	XMMATRIX modelScale, modelRot, modelOffset;
+	XMStoreFloat4x4(&treeWorld, modelScale*modelRot*modelOffset);
+	XMStoreFloat4x4(&baseWorld, modelScale*modelRot*modelOffset);
 
-	for (UINT i = 0; i < 10; ++i)
-	{
-		pos = XMFLOAT2(rand() % 150, rand() % 150);
-		float randF = MathHelper::RandF() + 0.5f;
-		modelScale = XMMatrixScaling(randF, randF, randF);
-		modelRot = XMMatrixRotationY(randF);
-		modelOffset = XMMatrixTranslation(pos.x, mSceneMgr->GetTerrainHeight(pos.x, pos.y) + 0.1f, pos.y);
-		
-		XMStoreFloat4x4(&treeWorld[i], modelScale*modelRot*modelOffset);
-		mSceneMgr->AddBasicObject(ResourceMgr::TreeModel, treeWorld[i], Label::AlphaBasic);
-	}
+	modelRot = XMMatrixRotationY(0.5f*XM_PI);
+	modelOffset = XMMatrixTranslation(0.0f, -2.5f, -12.0f);
+	XMStoreFloat4x4(&stairsWorld, modelScale*modelRot*modelOffset);
 
-	for (UINT i = 0; i < 20; ++i)
-	{
-		pos = XMFLOAT2(rand() % 200, rand() % 200);
-		float randF = MathHelper::RandF() + 1.0f;
-		modelScale = XMMatrixScaling(randF, randF, randF);
-		modelRot = XMMatrixRotationY(randF);
-		modelOffset = XMMatrixTranslation(pos.x, mSceneMgr->GetTerrainHeight(pos.x, pos.y) - 0.2f, pos.y);
+	modelScale = XMMatrixScaling(0.8f, 0.8f, 0.8f);
+	modelOffset = XMMatrixTranslation(-5.0f, 1.5f, 5.0f);
+	XMStoreFloat4x4(&pillarWorld[0], modelScale*modelRot*modelOffset);
 
-		XMStoreFloat4x4(&rockWorld[i], modelScale*modelRot*modelOffset);
-		mSceneMgr->AddBasicObject(ResourceMgr::RockModel, rockWorld[i], Label::Basic);
-	}
+	modelScale = XMMatrixScaling(0.8f, 0.8f, 0.8f);
+	modelOffset = XMMatrixTranslation(5.0f, 1.5f, 5.0f);
+	XMStoreFloat4x4(&pillarWorld[1], modelScale*modelRot*modelOffset);
 
-	// mSceneMgr->AddSkinnedObject(ResourceMgr::Goblin, goblinWorld);
+	modelScale = XMMatrixScaling(0.8f, 0.8f, 0.8f);
+	modelOffset = XMMatrixTranslation(5.0f, 1.5f, -5.0f);
+	XMStoreFloat4x4(&pillarWorld[2], modelScale*modelRot*modelOffset);
 
-	InstanceInfo info;
-	info.Pos = XMFLOAT3(100.0f, 0.3f, 100.0f);
-	info.Yaw = 0.0f;
-	info.Scale = 0.2f;
+	modelScale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	modelOffset = XMMatrixTranslation(-5.0f, 1.0f, -5.0f);
+	XMStoreFloat4x4(&pillarWorld[3], modelScale*modelRot*modelOffset);
 
-	mPlayer = new SkinnedObject(ResourceMgr::Goblin, info);
-	mSceneMgr->SetPlayer(mPlayer);
-	mSceneMgr->ComputeSceneBoundingBox();
+	modelScale = XMMatrixScaling(0.8f, 0.8f, 0.8f);
+	modelOffset = XMMatrixTranslation(-1.0f, 1.4f, -7.0f);
+	XMStoreFloat4x4(&rockWorld[0], modelScale*modelRot*modelOffset);
+
+	modelScale = XMMatrixScaling(0.8f, 0.8f, 0.8f);
+	modelOffset = XMMatrixTranslation(5.0f, 1.2f, -2.0f);
+	XMStoreFloat4x4(&rockWorld[1], modelScale*modelRot*modelOffset);
+
+	modelScale = XMMatrixScaling(0.8f, 0.8f, 0.8f);
+	modelOffset = XMMatrixTranslation(-4.0f, 1.3f, 3.0f);
+	XMStoreFloat4x4(&rockWorld[2], modelScale*modelRot*modelOffset);
+
+	// 굳이 컨테이너에 게임객체를 넣은 이유가 있는가 헷갈린다.
+	// 다형성으로 프레임워크 변화를 줄이는 정도?
+	//용준
+	mSceneMgr.AddObject(ResourceMgr::TreeModel, treeWorld, Model_Effect::Alpha, type_object,Vector2D(0,0));
+	mSceneMgr.AddObject(ResourceMgr::BaseModel, baseWorld, Model_Effect::Base, type_object, Vector2D(0, 0));
+	mSceneMgr.AddObject(ResourceMgr::StairsModel, stairsWorld, Model_Effect::Base, type_object, Vector2D(0, 0));
+	mSceneMgr.AddObject(ResourceMgr::Pillar1Model, pillarWorld[0], Model_Effect::Base, type_object, Vector2D(0, 0));
+	mSceneMgr.AddObject(ResourceMgr::Pillar2Model, pillarWorld[1], Model_Effect::Base, type_object, Vector2D(0, 0));
+	mSceneMgr.AddObject(ResourceMgr::Pillar3Model, pillarWorld[2], Model_Effect::Base, type_object, Vector2D(0, 0));
+	mSceneMgr.AddObject(ResourceMgr::Pillar4Model, pillarWorld[3], Model_Effect::Base, type_object, Vector2D(0, 0));
+	for (int i = 0; i < 3; ++i)
+		mSceneMgr.AddObject(ResourceMgr::RockModel, rockWorld[i], Model_Effect::Base, type_object, Vector2D(0, 0));
+
+	mSceneMgr.AddObject(ResourceMgr::RockModel, rockWorld[0], Model_Effect::Base, type_p_warrior, Vector2D(500, 100));
+	mSceneMgr.AddObject(ResourceMgr::RockModel, rockWorld[0], Model_Effect::Base, type_p_warrior, Vector2D(400, 100));
+	mSceneMgr.AddObject(ResourceMgr::RockModel, rockWorld[0], Model_Effect::Base, type_p_warrior, Vector2D(300, 100));
+	mSceneMgr.ComputeSceneBoundingBox();
+
+
 	return true;
 }
 
@@ -80,66 +104,56 @@ void GameFrameWork::OnResize()
 {
 	D3DApp::OnResize();
 
-	mSceneMgr->ReSize(mClientWidth, mClientHeight);
+	mSceneMgr.ReSize(mClientWidth, mClientHeight);
 }
 
 void GameFrameWork::UpdateScene(float dt)
 {
-	//
-	// Control the player.
-	//
-
-	if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
-	{
-		mPlayer->SetClip("run");
-		mPlayer->Walk(-dt);
-		mPlayer->Strafe(-dt);
-	}
-	else if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
-	{
-		mPlayer->SetClip("run");
-		mPlayer->Walk(-dt);
-		mPlayer->Strafe(dt);
-	}
-	else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
-	{
-		mPlayer->SetClip("run");
-		mPlayer->Walk(dt);
-		mPlayer->Strafe(-dt);
-	}
-	else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
-	{
-		mPlayer->SetClip("run");
-		mPlayer->Walk(dt);
-		mPlayer->Strafe(dt);
-	}
-	else if (GetAsyncKeyState('W') & 0x8000) {
-		mPlayer->SetClip("run");
-		mPlayer->Walk(-dt);
-	}
-	else if (GetAsyncKeyState('S') & 0x8000) {
-		mPlayer->SetClip("run");
-		mPlayer->Walk(dt);
-	}
-	else if (GetAsyncKeyState('A') & 0x8000) {
-		mPlayer->SetClip("run");
-		mPlayer->Strafe(-dt);
-	}
-	else if (GetAsyncKeyState('D') & 0x8000) {
-		mPlayer->SetClip("run");
-		mPlayer->Strafe(dt);
-	}
-	else if (m_bAttackAnim == false)
-		mPlayer->SetClip("stand");
-
-	mSceneMgr->UpdateScene(dt);
+	mSceneMgr.UpdateScene(dt);
+	mGameRogicMgr->Update();
 }
 
 void GameFrameWork::DrawScene()
 {
-	mSceneMgr->DrawScene();
+	mSceneMgr.CreateShadowMap();
+	mSceneMgr.CreateSsaoMap(mDepthStencilView);
+
+	//
+	// Restore the back and depth buffer and viewport to the OM stage.
+	//
+	ID3D11RenderTargetView* renderTargets[1] = { mRenderTargetView };
+	md3dImmediateContext->OMSetRenderTargets(1, renderTargets, mDepthStencilView);
+	md3dImmediateContext->RSSetViewports(1, &mScreenViewport);
+
+	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Silver));
+
+	// We already laid down scene depth to the depth buffer in the Normal/Depth map pass,
+	// so we can set the depth comparison test to 밇QUALS.? This prevents any overdraw
+	// in this rendering pass, as only the nearest visible pixels will pass this depth
+	// comparison test.
+
+	md3dImmediateContext->OMSetDepthStencilState(RenderStates::EqualsDSS, 0);
+
+	mSceneMgr.DrawAllObjects();
+
+	// Turn off wireframe.
+	md3dImmediateContext->RSSetState(0);
+
+	// Restore from RenderStates::EqualsDSS
+	md3dImmediateContext->OMSetDepthStencilState(0, 0);
+
+	// Debug view SSAO or Shadow map.
+	// 실제 코드가서 조절
+	mSceneMgr.DrawScreenQuad();
+
+	mSceneMgr.DrawSky();
+
+	// Unbind shadow map and AmbientMap as a shader input because we are going to render
+	// to it next frame.  These textures can be at any slot, so clear all slots.
+	ID3D11ShaderResourceView* nullSRV[16] = { 0 };
+	md3dImmediateContext->PSSetShaderResources(0, 16, nullSRV);
+
 	HR(mSwapChain->Present(0, 0));
-	m_bReady = true;
 }
 
 void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
@@ -147,55 +161,29 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 
-	if ((btnState & MK_LBUTTON) != 0)
-	{
-		m_bAttackAnim = true;
-		mPlayer->SetClip("attack01");
-	}
-
 	SetCapture(mhMainWnd);
+	mGameRogicMgr->OnMouseDown(btnState, x, y);
 }
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 {
-	m_bAttackAnim = false;
 	ReleaseCapture();
+	mGameRogicMgr->OnMouseUp(btnState, x, y);
 }
 
 void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 {
-	static bool switcher(false);
-	if ((btnState & MK_RBUTTON) != 0)
+	if ((btnState & MK_LBUTTON) != 0)
 	{
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
 		float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
 
-		mSceneMgr->PlayerYawPitch(dx, dy);
-
-		mLastMousePos.x = x;
-		mLastMousePos.y = y;
+		mSceneMgr.CameraYawPitch(dx, dy);
 	}
 
-	//if(switcher)
-	//{
-	//	// Make each pixel correspond to a quarter of a degree.
-	//	float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
-	//	float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
-
-	//	mSceneMgr->PlayerYawPitch(dx, dy);
-
-	//	mLastMousePos.x = x;
-	//	mLastMousePos.y = y;
-	//	switcher = false;
-	//}
-	//else
-	//{
-	//	mLastMousePos.x = x;
-	//	mLastMousePos.y = y;
-	//	if(m_bReady)
-	//		switcher = true;
-	//}
-	
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
+	mGameRogicMgr->OnMouseMove(btnState, x, y);
 }
 

@@ -1,11 +1,11 @@
 #include "BasicModel.h"
-#include "LoadY2K.h"
+#include "LoadM3d.h"
 
 BasicModel::BasicModel(ID3D11Device* device, TextureMgr& texMgr, const std::string& modelFilename, const std::wstring& texturePath)
 {
-	std::vector<Y2kMaterial> mats;
-	Y2KLoader y2kLoader;
-	y2kLoader.LoadY2K(modelFilename, Vertices, Indices, Subsets, mats);
+	std::vector<M3dMaterial> mats;
+	M3DLoader m3dLoader;
+	m3dLoader.LoadM3d(modelFilename, Vertices, Indices, Subsets, mats);
 
 	ModelMesh.SetVertices(device, &Vertices[0], Vertices.size());
 	ModelMesh.SetIndices(device, &Indices[0], Indices.size());

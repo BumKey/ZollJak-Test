@@ -10,13 +10,14 @@
 #include "TextureMgr.h"
 #include "BasicModel.h"
 #include "SceneMgr.h"
-#include "ResourceMgr.h"
 
+#include "GameRogicManager.h"
 class GameFrameWork : public D3DApp
 {
 public:
 	GameFrameWork(HINSTANCE hInstance);
 	~GameFrameWork();
+	
 
 	bool Init();
 	void OnResize();
@@ -28,12 +29,10 @@ public:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 private:
-	bool m_bReady;
-	bool m_bAttackAnim;
-	TextureMgr mTexMgr;
-	SceneMgr* mSceneMgr;
 
-	SkinnedObject* mPlayer;
+	TextureMgr mTexMgr;
+	SceneMgr mSceneMgr;
+	GameRogicManager *mGameRogicMgr;
 	POINT mLastMousePos;
 
 };

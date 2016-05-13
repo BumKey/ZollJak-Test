@@ -171,67 +171,10 @@ NormalMapEffect::NormalMapEffect(ID3D11Device* device, const std::wstring& filen
 	Light2TexAlphaClipFogReflectTech = mFX->GetTechniqueByName("Light2TexAlphaClipFogReflect");
 	Light3TexAlphaClipFogReflectTech = mFX->GetTechniqueByName("Light3TexAlphaClipFogReflect");
 
-	Light1SkinnedTech = mFX->GetTechniqueByName("Light1Skinned");
-	Light2SkinnedTech = mFX->GetTechniqueByName("Light2Skinned");
-	Light3SkinnedTech = mFX->GetTechniqueByName("Light3Skinned");
-
-	Light0TexSkinnedTech = mFX->GetTechniqueByName("Light0TexSkinned");
-	Light1TexSkinnedTech = mFX->GetTechniqueByName("Light1TexSkinned");
-	Light2TexSkinnedTech = mFX->GetTechniqueByName("Light2TexSkinned");
-	Light3TexSkinnedTech = mFX->GetTechniqueByName("Light3TexSkinned");
-
-	Light0TexAlphaClipSkinnedTech = mFX->GetTechniqueByName("Light0TexAlphaClipSkinned");
-	Light1TexAlphaClipSkinnedTech = mFX->GetTechniqueByName("Light1TexAlphaClipSkinned");
-	Light2TexAlphaClipSkinnedTech = mFX->GetTechniqueByName("Light2TexAlphaClipSkinned");
-	Light3TexAlphaClipSkinnedTech = mFX->GetTechniqueByName("Light3TexAlphaClipSkinned");
-
-	Light1FogSkinnedTech = mFX->GetTechniqueByName("Light1FogSkinned");
-	Light2FogSkinnedTech = mFX->GetTechniqueByName("Light2FogSkinned");
-	Light3FogSkinnedTech = mFX->GetTechniqueByName("Light3FogSkinned");
-
-	Light0TexFogSkinnedTech = mFX->GetTechniqueByName("Light0TexFogSkinned");
-	Light1TexFogSkinnedTech = mFX->GetTechniqueByName("Light1TexFogSkinned");
-	Light2TexFogSkinnedTech = mFX->GetTechniqueByName("Light2TexFogSkinned");
-	Light3TexFogSkinnedTech = mFX->GetTechniqueByName("Light3TexFogSkinned");
-
-	Light0TexAlphaClipFogSkinnedTech = mFX->GetTechniqueByName("Light0TexAlphaClipFogSkinned");
-	Light1TexAlphaClipFogSkinnedTech = mFX->GetTechniqueByName("Light1TexAlphaClipFogSkinned");
-	Light2TexAlphaClipFogSkinnedTech = mFX->GetTechniqueByName("Light2TexAlphaClipFogSkinned");
-	Light3TexAlphaClipFogSkinnedTech = mFX->GetTechniqueByName("Light3TexAlphaClipFogSkinned");
-
-	Light1ReflectSkinnedTech = mFX->GetTechniqueByName("Light1ReflectSkinned");
-	Light2ReflectSkinnedTech = mFX->GetTechniqueByName("Light2ReflectSkinned");
-	Light3ReflectSkinnedTech = mFX->GetTechniqueByName("Light3ReflectSkinned");
-
-	Light0TexReflectSkinnedTech = mFX->GetTechniqueByName("Light0TexReflectSkinned");
-	Light1TexReflectSkinnedTech = mFX->GetTechniqueByName("Light1TexReflectSkinned");
-	Light2TexReflectSkinnedTech = mFX->GetTechniqueByName("Light2TexReflectSkinned");
-	Light3TexReflectSkinnedTech = mFX->GetTechniqueByName("Light3TexReflectSkinned");
-
-	Light0TexAlphaClipReflectSkinnedTech = mFX->GetTechniqueByName("Light0TexAlphaClipReflectSkinned");
-	Light1TexAlphaClipReflectSkinnedTech = mFX->GetTechniqueByName("Light1TexAlphaClipReflectSkinned");
-	Light2TexAlphaClipReflectSkinnedTech = mFX->GetTechniqueByName("Light2TexAlphaClipReflectSkinned");
-	Light3TexAlphaClipReflectSkinnedTech = mFX->GetTechniqueByName("Light3TexAlphaClipReflectSkinned");
-
-	Light1FogReflectSkinnedTech = mFX->GetTechniqueByName("Light1FogReflectSkinned");
-	Light2FogReflectSkinnedTech = mFX->GetTechniqueByName("Light2FogReflectSkinned");
-	Light3FogReflectSkinnedTech = mFX->GetTechniqueByName("Light3FogReflectSkinned");
-
-	Light0TexFogReflectSkinnedTech = mFX->GetTechniqueByName("Light0TexFogReflectSkinned");
-	Light1TexFogReflectSkinnedTech = mFX->GetTechniqueByName("Light1TexFogReflectSkinned");
-	Light2TexFogReflectSkinnedTech = mFX->GetTechniqueByName("Light2TexFogReflectSkinned");
-	Light3TexFogReflectSkinnedTech = mFX->GetTechniqueByName("Light3TexFogReflectSkinned");
-
-	Light0TexAlphaClipFogReflectSkinnedTech = mFX->GetTechniqueByName("Light0TexAlphaClipFogReflectSkinned");
-	Light1TexAlphaClipFogReflectSkinnedTech = mFX->GetTechniqueByName("Light1TexAlphaClipFogReflectSkinned");
-	Light2TexAlphaClipFogReflectSkinnedTech = mFX->GetTechniqueByName("Light2TexAlphaClipFogReflectSkinned");
-	Light3TexAlphaClipFogReflectSkinnedTech = mFX->GetTechniqueByName("Light3TexAlphaClipFogReflectSkinned");
-
 	WorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
 	WorldViewProjTex = mFX->GetVariableByName("gWorldViewProjTex")->AsMatrix();
 	World = mFX->GetVariableByName("gWorld")->AsMatrix();
 	WorldInvTranspose = mFX->GetVariableByName("gWorldInvTranspose")->AsMatrix();
-	BoneTransforms = mFX->GetVariableByName("gBoneTransforms")->AsMatrix();
 	ShadowTransform = mFX->GetVariableByName("gShadowTransform")->AsMatrix();
 	TexTransform = mFX->GetVariableByName("gTexTransform")->AsMatrix();
 	EyePosW = mFX->GetVariableByName("gEyePosW")->AsVector();
@@ -259,9 +202,6 @@ BuildShadowMapEffect::BuildShadowMapEffect(ID3D11Device* device, const std::wstr
 	BuildShadowMapTech = mFX->GetTechniqueByName("BuildShadowMapTech");
 	BuildShadowMapAlphaClipTech = mFX->GetTechniqueByName("BuildShadowMapAlphaClipTech");
 
-	BuildShadowMapSkinnedTech = mFX->GetTechniqueByName("BuildShadowMapSkinnedTech");
-	BuildShadowMapAlphaClipSkinnedTech = mFX->GetTechniqueByName("BuildShadowMapAlphaClipSkinnedTech");
-
 	TessBuildShadowMapTech = mFX->GetTechniqueByName("TessBuildShadowMapTech");
 	TessBuildShadowMapAlphaClipTech = mFX->GetTechniqueByName("TessBuildShadowMapAlphaClipTech");
 
@@ -269,7 +209,6 @@ BuildShadowMapEffect::BuildShadowMapEffect(ID3D11Device* device, const std::wstr
 	WorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
 	World = mFX->GetVariableByName("gWorld")->AsMatrix();
 	WorldInvTranspose = mFX->GetVariableByName("gWorldInvTranspose")->AsMatrix();
-	BoneTransforms = mFX->GetVariableByName("gBoneTransforms")->AsMatrix();
 	TexTransform = mFX->GetVariableByName("gTexTransform")->AsMatrix();
 	EyePosW = mFX->GetVariableByName("gEyePosW")->AsVector();
 	HeightScale = mFX->GetVariableByName("gHeightScale")->AsScalar();
@@ -293,12 +232,8 @@ SsaoNormalDepthEffect::SsaoNormalDepthEffect(ID3D11Device* device, const std::ws
 	NormalDepthTech = mFX->GetTechniqueByName("NormalDepth");
 	NormalDepthAlphaClipTech = mFX->GetTechniqueByName("NormalDepthAlphaClip");
 
-	NormalDepthSkinnedTech = mFX->GetTechniqueByName("NormalDepthSkinned");
-	NormalDepthAlphaClipSkinnedTech = mFX->GetTechniqueByName("NormalDepthAlphaClipSkinned");
-
 	WorldView = mFX->GetVariableByName("gWorldView")->AsMatrix();
 	WorldInvTransposeView = mFX->GetVariableByName("gWorldInvTransposeView")->AsMatrix();
-	BoneTransforms = mFX->GetVariableByName("gBoneTransforms")->AsMatrix();
 	WorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
 	TexTransform = mFX->GetVariableByName("gTexTransform")->AsMatrix();
 	DiffuseMap = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
@@ -365,44 +300,6 @@ SkyEffect::~SkyEffect()
 }
 #pragma endregion
 
-#pragma region TerrainEffect
-TerrainEffect::TerrainEffect(ID3D11Device* device, const std::wstring& filename)
-	: Effect(device, filename)
-{
-	Light1Tech = mFX->GetTechniqueByName("Light1");
-	Light2Tech = mFX->GetTechniqueByName("Light2");
-	Light3Tech = mFX->GetTechniqueByName("Light3");
-	Light1FogTech = mFX->GetTechniqueByName("Light1Fog");
-	Light2FogTech = mFX->GetTechniqueByName("Light2Fog");
-	Light3FogTech = mFX->GetTechniqueByName("Light3Fog");
-
-	ViewProj = mFX->GetVariableByName("gViewProj")->AsMatrix();
-	EyePosW = mFX->GetVariableByName("gEyePosW")->AsVector();
-	FogColor = mFX->GetVariableByName("gFogColor")->AsVector();
-	FogStart = mFX->GetVariableByName("gFogStart")->AsScalar();
-	FogRange = mFX->GetVariableByName("gFogRange")->AsScalar();
-	DirLights = mFX->GetVariableByName("gDirLights");
-	Mat = mFX->GetVariableByName("gMaterial");
-
-	MinDist = mFX->GetVariableByName("gMinDist")->AsScalar();
-	MaxDist = mFX->GetVariableByName("gMaxDist")->AsScalar();
-	MinTess = mFX->GetVariableByName("gMinTess")->AsScalar();
-	MaxTess = mFX->GetVariableByName("gMaxTess")->AsScalar();
-	TexelCellSpaceU = mFX->GetVariableByName("gTexelCellSpaceU")->AsScalar();
-	TexelCellSpaceV = mFX->GetVariableByName("gTexelCellSpaceV")->AsScalar();
-	WorldCellSpace = mFX->GetVariableByName("gWorldCellSpace")->AsScalar();
-	WorldFrustumPlanes = mFX->GetVariableByName("gWorldFrustumPlanes")->AsVector();
-
-	LayerMapArray = mFX->GetVariableByName("gLayerMapArray")->AsShaderResource();
-	BlendMap = mFX->GetVariableByName("gBlendMap")->AsShaderResource();
-	HeightMap = mFX->GetVariableByName("gHeightMap")->AsShaderResource();
-}
-
-TerrainEffect::~TerrainEffect()
-{
-}
-#pragma endregion
-
 #pragma region DebugTexEffect
 DebugTexEffect::DebugTexEffect(ID3D11Device* device, const std::wstring& filename)
 	: Effect(device, filename)
@@ -434,7 +331,6 @@ SsaoEffect*            Effects::SsaoFX = 0;
 SsaoBlurEffect*        Effects::SsaoBlurFX = 0;
 SkyEffect*             Effects::SkyFX = 0;
 DebugTexEffect*        Effects::DebugTexFX = 0;
-TerrainEffect* Effects::TerrainFX = 0;
 
 void Effects::InitAll(ID3D11Device* device)
 {
@@ -446,7 +342,6 @@ void Effects::InitAll(ID3D11Device* device)
 	SsaoBlurFX = new SsaoBlurEffect(device, L"FX/SsaoBlur.fxo");
 	SkyFX = new SkyEffect(device, L"FX/Sky.fxo");
 	DebugTexFX = new DebugTexEffect(device, L"FX/DebugTexture.fxo");
-	TerrainFX = new TerrainEffect(device, L"FX/Terrain.fxo");
 }
 
 void Effects::DestroyAll()
@@ -459,7 +354,6 @@ void Effects::DestroyAll()
 	SafeDelete(SsaoBlurFX);
 	SafeDelete(SkyFX);
 	SafeDelete(DebugTexFX);
-	SafeDelete(TerrainFX);
 }
 
 #pragma endregion

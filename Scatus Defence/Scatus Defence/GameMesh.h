@@ -3,12 +3,13 @@
 #include "Vertex.h"
 
 
-class GameModel
+class GameMesh
 {
 public:
-	GameModel();
-	~GameModel();
+	GameMesh();
+	~GameMesh();
 
+public:
 	UINT SubsetCount;
 
 	std::vector<Material> Mat;
@@ -20,6 +21,6 @@ public:
 	std::vector<USHORT> Indices;
 	std::vector<BasicMeshData::Subset> Subsets;
 
-	BasicMeshData ModelMesh;
+	BasicMeshData MeshData;
 };
 

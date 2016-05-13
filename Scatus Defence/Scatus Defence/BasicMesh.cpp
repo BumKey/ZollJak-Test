@@ -1,15 +1,15 @@
-#include "BasicModel.h"
+#include "BasicMesh.h"
 #include "LoadY2K.h"
 
-BasicModel::BasicModel(ID3D11Device* device, TextureMgr& texMgr, const std::string& modelFilename, const std::wstring& texturePath)
+BasicMesh::BasicMesh(ID3D11Device* device, TextureMgr& texMgr, const std::string& modelFilename, const std::wstring& texturePath)
 {
 	std::vector<Y2kMaterial> mats;
 	Y2KLoader y2kLoader;
 	y2kLoader.LoadY2K(modelFilename, Vertices, Indices, Subsets, mats);
 
-	ModelMesh.SetVertices(device, &Vertices[0], Vertices.size());
-	ModelMesh.SetIndices(device, &Indices[0], Indices.size());
-	ModelMesh.SetSubsetTable(Subsets);
+	MeshData.SetVertices(device, &Vertices[0], Vertices.size());
+	MeshData.SetIndices(device, &Indices[0], Indices.size());
+	MeshData.SetSubsetTable(Subsets);
 
 	SubsetCount = mats.size();
 
@@ -29,6 +29,6 @@ BasicModel::BasicModel(ID3D11Device* device, TextureMgr& texMgr, const std::stri
 		VerticesPos[i] = Vertices[i].Pos;
 }
 
-BasicModel::~BasicModel()
+BasicMesh::~BasicMesh()
 {
 }

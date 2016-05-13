@@ -47,22 +47,22 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 	mScreenViewport.MinDepth = 0.0f;
 	mScreenViewport.MaxDepth = 1.0f;
 
-	mSky = new Sky(device, L"Textures/grasscube1024.dds", 5000.0f);
+	mSky = new Sky(device, L"Textures/grasscube1024.dds", 4000.0f);
 	mSmap = new ShadowMap(device, SMapSize, SMapSize);
 	mSsao = new Ssao(device, md3dImmediateContext, width, height, cam.GetFovY(), cam.GetFarZ());
 
 	Terrain::InitInfo tii;
-	tii.HeightMapFilename = L"Textures/terrain.raw";
+	tii.HeightMapFilename = L"Textures/terrain3.raw";
 	tii.LayerMapFilename0 = L"Textures/grass2.dds";
 	tii.LayerMapFilename1 = L"Textures/darkdirt.dds";
 	tii.LayerMapFilename2 = L"Textures/red_dirt.dds";
 	tii.LayerMapFilename3 = L"Textures/lightdirt.dds";
 	tii.LayerMapFilename4 = L"Textures/dirt.dds";
 	tii.BlendMapFilename = L"Textures/blend.dds";
-	tii.HeightScale = 20.0f;
-	tii.HeightmapWidth = 2049;
-	tii.HeightmapHeight = 2049;
-	tii.CellSpacing = 0.5f;
+	tii.HeightScale = 70.0f;
+	tii.HeightmapWidth = 513;
+	tii.HeightmapHeight = 513;
+	tii.CellSpacing = 2.0f;
 	mTerrain.Init(device, md3dImmediateContext, tii);
 
 	BuildScreenQuadGeometryBuffers(device);
@@ -288,10 +288,9 @@ void SceneMgr::ComputeSceneBoundingBox(const std::vector<GameObject*>& allObject
 	XMFLOAT3 maxPt(-MathHelper::Infinity, -MathHelper::Infinity, -MathHelper::Infinity);
 	for (auto iter : allObjects)
 	{
-		
-		for (UINT j = 0; j < iter->GetModel()->VerticesPos.size(); ++j)
+		for (UINT j = 0; j < iter->GetMesh()->VerticesPos.size(); ++j)
 		{
-			XMFLOAT3 P = iter->GetModel()->VerticesPos[j];
+			XMFLOAT3 P = iter->GetMesh()->VerticesPos[j];
 
 			minPt.x = MathHelper::Min(minPt.x, P.x);
 			minPt.y = MathHelper::Min(minPt.x, P.x);
@@ -319,8 +318,12 @@ void SceneMgr::ComputeSceneBoundingBox(const std::vector<GameObject*>& allObject
 	mSceneBounds.Radius = sqrtf(extent.x*extent.x + extent.y*extent.y + extent.z*extent.z);
 }
 
-void SceneMgr::OnResize(UINT width, UINT height, const Camera& cam)
+void SceneMgr::OnResize(UINT width, UINT height, const Camera& cam,
+	ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv)
 {
+	mDepthStencilView = dsv;
+	mRenderTargetView = rtv;
+
 	mScreenViewport.TopLeftX = 0;
 	mScreenViewport.TopLeftY = 0;
 	mScreenViewport.Width = static_cast<float>(width);

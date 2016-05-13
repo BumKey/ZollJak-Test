@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "BasicModel.h"
+#include "BasicMesh.h"
 
 
 enum Label {
@@ -11,13 +11,20 @@ enum Label {
 class BasicObject : public GameObject
 {
 public:
-	BasicObject(BasicModel* model, const InstanceDesc& info, Label label);
+	BasicObject(BasicMesh* Mesh, const InstanceDesc& info, Label label);
 	~BasicObject();
 
-	void Move(XMVECTOR direction, float dt);
-	void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight);
-	void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, FLOAT tHeight);
-	void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, FLOAT tHeight);
+public:
+	virtual void Walk(float d);
+	virtual void Strafe(float d);
+	virtual void RotateY(float angle);
+	virtual void Update();
+
+	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight);
+	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, FLOAT tHeight);
+	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, FLOAT tHeight);
+
+	virtual void Release(ResourceMgr& rMgr);
 
 	Label GetType() { return mLabel; }
 

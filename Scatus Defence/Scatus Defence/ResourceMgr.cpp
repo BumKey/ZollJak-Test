@@ -1,40 +1,60 @@
 #include "ResourceMgr.h"
 
-BasicModel* ResourceMgr::TreeModel = 0;
-BasicModel* ResourceMgr::BaseModel = 0;
-BasicModel* ResourceMgr::StairsModel = 0;
-BasicModel* ResourceMgr::Pillar1Model = 0;
-BasicModel* ResourceMgr::Pillar2Model = 0;
-BasicModel* ResourceMgr::Pillar3Model = 0;
-BasicModel* ResourceMgr::Pillar4Model = 0;
-BasicModel* ResourceMgr::RockModel = 0;
+ID3D11ShaderResourceView* ResourceMgr::GoblinDiffuseMapSRV[] = { 0 };
 
-SkinnedModel* ResourceMgr::Goblin = 0;
-
-void ResourceMgr::InitAll(ID3D11Device * dc, TextureMgr& texMgr)
+ResourceMgr::ResourceMgr() : mGoblinReferences(0)
 {
-	TreeModel = new BasicModel(dc, texMgr, "Models\\tree.m3d", L"Textures\\");
-	BaseModel = new BasicModel(dc, texMgr, "Models\\base.m3d", L"Textures\\");
-	StairsModel = new BasicModel(dc, texMgr, "Models\\stairs.m3d", L"Textures\\");
-	Pillar1Model = new BasicModel(dc, texMgr, "Models\\pillar1.m3d", L"Textures\\");
-	Pillar2Model = new BasicModel(dc, texMgr, "Models\\pillar2.m3d", L"Textures\\");
-	Pillar3Model = new BasicModel(dc, texMgr, "Models\\pillar5.m3d", L"Textures\\");
-	Pillar4Model = new BasicModel(dc, texMgr, "Models\\pillar6.m3d", L"Textures\\");
-	RockModel = new BasicModel(dc, texMgr, "Models\\rock.m3d", L"Textures\\");
-
-	Goblin = new SkinnedModel(dc, texMgr, "Models\\goblin.y2k", L"");
 }
 
-void ResourceMgr::DestroyAll()
+ResourceMgr::~ResourceMgr()
 {
-	SafeDelete(TreeModel);
-	SafeDelete(BaseModel);
-	SafeDelete(StairsModel);
-	SafeDelete(Pillar1Model);
-	SafeDelete(Pillar2Model);
-	SafeDelete(Pillar3Model);
-	SafeDelete(Pillar4Model);
-	SafeDelete(RockModel);
+	SafeDelete(TreeMesh);
+	/*SafeDelete(BaseMesh);
+	SafeDelete(StairsMesh);
+	SafeDelete(Pillar1Mesh);
+	SafeDelete(Pillar2Mesh);
+	SafeDelete(Pillar3Mesh);
+	SafeDelete(Pillar4Mesh);*/
+	SafeDelete(RockMesh);
+}
 
-	SafeDelete(Goblin);
+void ResourceMgr::Init(ID3D11Device * dc, TextureMgr* texMgr)
+{
+	mDevice = dc;
+	mTexMgr = texMgr;
+
+	TreeMesh = new BasicMesh(mDevice, *mTexMgr, "Models\\tree.m3d", L"Textures\\");
+	//BaseMesh = new BasicMesh(dc, texMgr, "Meshs\\base.m3d", L"Textures\\");
+	//StairsMesh = new BasicMesh(dc, texMgr, "Meshs\\stairs.m3d", L"Textures\\");
+	//Pillar1Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar1.m3d", L"Textures\\");
+	//Pillar2Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar2.m3d", L"Textures\\");
+	//Pillar3Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar5.m3d", L"Textures\\");
+	//Pillar4Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar6.m3d", L"Textures\\");
+	RockMesh = new BasicMesh(mDevice, *mTexMgr, "Models\\rock.m3d", L"Textures\\");
+
+}
+
+SkinnedMesh * ResourceMgr::GetGoblinMesh()
+{
+	if (mGoblinReferences <= 0) {
+		mGoblinMesh = new SkinnedMesh(mDevice, *mTexMgr, "Models\\goblin.y2k", L"");
+		GoblinDiffuseMapSRV[0] = mTexMgr->CreateTexture(L"Textures\\goblin\\goblin_diff_R.jpg");
+		GoblinDiffuseMapSRV[1] = mTexMgr->CreateTexture(L"Textures\\goblin\\goblin_diff_B.jpg");
+		++mGoblinReferences;
+	}
+	else
+		++mGoblinReferences;
+
+	return mGoblinMesh;
+}
+
+void ResourceMgr::ReleaseGoblinMesh()
+{
+	--mGoblinReferences; 
+	if (mGoblinReferences <= 0)
+	{
+		SafeDelete(mGoblinMesh);
+		for (auto i : GoblinDiffuseMapSRV)
+			mTexMgr->Delete(i);
+	}
 }

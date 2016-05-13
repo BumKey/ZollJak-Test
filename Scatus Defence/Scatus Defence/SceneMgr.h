@@ -1,17 +1,17 @@
 #pragma once
-#include <list>
-#include <GeometryGenerator.h>
+#include "GeometryGenerator.h"
 #include "Effects.h"
 #include "BasicObject.h"
 #include "SkinnedObject.h"
 #include "RenderStates.h"
 #include "ResourceMgr.h"
-#include <Camera.h>
-#include <MathHelper.h>
+#include "Camera.h"
+#include "MathHelper.h"
 #include "Terrain.h"
 #include "Sky.h"
 #include "ShadowMap.h"
 #include "Ssao.h"
+#include <list>
 
 #define SMapSize		2048
 
@@ -35,12 +35,14 @@ public:
 	void Init(ID3D11Device* device, ID3D11DeviceContext * dc, 
 		ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv, 
 		const Camera& cam, UINT width, UINT height);
+	void OnResize(UINT width, UINT height, const Camera& cam,
+		ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv);
 	void ComputeSceneBoundingBox(const std::vector<GameObject*>& allObjects);
-	void OnResize(UINT width, UINT height, const Camera& cam);
 	void Update(float dt);
 	void DrawScene(const std::vector<GameObject*>& allObjects, const Camera& cam);
 
 	DirectionalLight*		GetDirLight() { return mDirLights; }
+	FLOAT					GetTerrainHeight(XMFLOAT3 pos) { return mTerrain.GetHeight(pos); }
 
 private:
 	void BuildShadowTransform();

@@ -3,6 +3,7 @@
 //***************************************************************************************
 
 #include "Camera.h"
+#include "Player.h"
 
 Camera::Camera()
 	: mPosition(0.0f, 0.0f, 0.0f), 
@@ -245,6 +246,16 @@ void Camera::UpdateViewMatrix()
 	mView(1,3) = 0.0f;
 	mView(2,3) = 0.0f;
 	mView(3,3) = 1.0f;
+}
+
+void Camera::Update(const XMFLOAT3& playerPos, const FLOAT& tHeight)
+{
+	XMFLOAT3 camPos = playerPos;
+	camPos.y += tHeight + 10.0f;
+	camPos.z -= 20.0f;
+
+	mPosition = camPos;
+	UpdateViewMatrix();
 }
 
 

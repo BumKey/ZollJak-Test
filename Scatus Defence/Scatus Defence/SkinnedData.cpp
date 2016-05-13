@@ -1,4 +1,4 @@
-#include "SkinnedMeshData.h"
+#include "SkinnedData.h"
 #include "BasicMeshData.h"
 
 Keyframe::Keyframe()
@@ -115,24 +115,24 @@ void AnimationClip::Interpolate(float t, std::vector<XMFLOAT4X4>& boneTransforms
 	}
 }
 
-float SkinnedMeshData::GetClipStartTime(const std::string& clipName)const
+float SkinnedData::GetClipStartTime(const std::string& clipName)const
 {
 	auto clip = mAnimations.find(clipName);
 	return clip->second.GetClipStartTime();
 }
 
-float SkinnedMeshData::GetClipEndTime(const std::string& clipName)const
+float SkinnedData::GetClipEndTime(const std::string& clipName)const
 {
 	auto clip = mAnimations.find(clipName);
 	return clip->second.GetClipEndTime();
 }
 
-UINT SkinnedMeshData::BoneCount()const
+UINT SkinnedData::BoneCount()const
 {
 	return mBoneHierarchy.size();
 }
 
-void SkinnedMeshData::Set(std::vector<int>& boneHierarchy,
+void SkinnedData::Set(std::vector<int>& boneHierarchy,
 	std::vector<XMFLOAT4X4>& boneOffsets,
 	std::map<std::string, AnimationClip>& animations)
 {
@@ -141,7 +141,7 @@ void SkinnedMeshData::Set(std::vector<int>& boneHierarchy,
 	mAnimations = animations;
 }
 
-void SkinnedMeshData::GetFinalTransforms(const std::string& clipName, float timePos, std::vector<XMFLOAT4X4>& finalTransforms)const
+void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePos, std::vector<XMFLOAT4X4>& finalTransforms)const
 {
 	UINT numBones = mBoneOffsets.size();
 

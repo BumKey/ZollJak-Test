@@ -3,7 +3,7 @@
 // 임의의 수치임
 ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0)
 {
-	mMaxMonsters = mStage * 10;
+	mMaxMonsters = mStage * 20;
 	mMaxStructures = mStage * 5;
 }
 
@@ -33,10 +33,12 @@ void ObjectMgr::AddProjectile(BasicObject * basicObject)
 
 void ObjectMgr::AddMonster(SkinnedObject * skinnedObject)
 {
-	if (mMonsters.size() <= mMaxMonsters)
+	if (mMonsters.size() <= mMaxMonsters) {
 		mMonsters.push_back(skinnedObject);
-
-	++mTotalObjectNum;
+		++mTotalObjectNum;
+	}
+	else
+		SafeDelete(skinnedObject);
 }
 
 void ObjectMgr::Update()
@@ -72,6 +74,15 @@ void ObjectMgr::Update(float dt)
 		i->Animate(dt);
 	}
 
-	mPlayer->PlayerInput(dt);
 	mPlayer->Animate(dt);
+	for (auto i : mAllObjects)
+		i->Update();
+}
+
+void ObjectMgr::ReleaseAll(ResourceMgr& resourceMgr)
+{
+	mAllObjects.clear();
+	mObstacles.clear();
+	mStructures.clear();
+	mMonsters.clear();
 }

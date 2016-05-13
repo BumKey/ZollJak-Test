@@ -1,15 +1,15 @@
-#include "SkinnedModel.h"
+#include "SkinnedMesh.h"
 #include "LoadY2K.h"
 
-SkinnedModel::SkinnedModel(ID3D11Device* device, TextureMgr& texMgr, const std::string& modelFilename, const std::wstring& texturePath)
+SkinnedMesh::SkinnedMesh(ID3D11Device* device, TextureMgr& texMgr, const std::string& meshFilename, const std::wstring& texturePath)
 {
 	std::vector<Y2kMaterial> mats;
 	Y2KLoader y2kLoader;
-	y2kLoader.LoadY2K(modelFilename, Vertices, Indices, Subsets, mats, SkinnedMeshData);
+	y2kLoader.LoadY2K(meshFilename, Vertices, Indices, Subsets, mats, SkinnedData);
 
-	ModelMesh.SetVertices(device, &Vertices[0], Vertices.size());
-	ModelMesh.SetIndices(device, &Indices[0], Indices.size());
-	ModelMesh.SetSubsetTable(Subsets);
+	MeshData.SetVertices(device, &Vertices[0], Vertices.size());
+	MeshData.SetIndices(device, &Indices[0], Indices.size());
+	MeshData.SetSubsetTable(Subsets);
 
 	SubsetCount = mats.size();
 
@@ -29,6 +29,6 @@ SkinnedModel::SkinnedModel(ID3D11Device* device, TextureMgr& texMgr, const std::
 		VerticesPos[i] = Vertices[i].Pos;
 }
 
-SkinnedModel::~SkinnedModel()
+SkinnedMesh::~SkinnedMesh()
 {
 }

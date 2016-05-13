@@ -1,6 +1,6 @@
 #include "BasicObject.h"
 
-BasicObject::BasicObject(BasicModel * model, const InstanceDesc& info, Label label) : GameObject(model), mLabel(label)
+BasicObject::BasicObject(BasicMesh * mesh, const InstanceDesc& info, Label label) : GameObject(mesh), mLabel(label)
 {
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
@@ -23,7 +23,19 @@ BasicObject::~BasicObject()
 {
 }
 
-void BasicObject::Move(XMVECTOR direction, float dt)
+void BasicObject::Walk(float d)
+{
+}
+
+void BasicObject::Strafe(float d)
+{
+}
+
+void BasicObject::RotateY(float angle)
+{
+}
+
+void BasicObject::Update()
 {
 }
 
@@ -77,14 +89,14 @@ void BasicObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFL
 			Effects::NormalMapFX->SetShadowTransform(world*st);
 			Effects::NormalMapFX->SetTexTransform(XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-			for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 			{
-				Effects::NormalMapFX->SetMaterial(mModel->Mat[subset]);
-				Effects::NormalMapFX->SetDiffuseMap(mModel->DiffuseMapSRV[subset]);
-				Effects::NormalMapFX->SetNormalMap(mModel->NormalMapSRV[subset]);
+				Effects::NormalMapFX->SetMaterial(mMesh->Mat[subset]);
+				Effects::NormalMapFX->SetDiffuseMap(mMesh->DiffuseMapSRV[subset]);
+				Effects::NormalMapFX->SetNormalMap(mMesh->NormalMapSRV[subset]);
 
 				tech->GetPassByIndex(p)->Apply(0, dc);
-				mModel->ModelMesh.Draw(dc, subset);
+				mMesh->MeshData.Draw(dc, subset);
 			}
 		}
 		break;
@@ -103,14 +115,14 @@ void BasicObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFL
 			Effects::NormalMapFX->SetShadowTransform(world*st);
 			Effects::NormalMapFX->SetTexTransform(XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-			for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 			{
-				Effects::NormalMapFX->SetMaterial(mModel->Mat[subset]);
-				Effects::NormalMapFX->SetDiffuseMap(mModel->DiffuseMapSRV[subset]);
-				Effects::NormalMapFX->SetNormalMap(mModel->NormalMapSRV[subset]);
+				Effects::NormalMapFX->SetMaterial(mMesh->Mat[subset]);
+				Effects::NormalMapFX->SetDiffuseMap(mMesh->DiffuseMapSRV[subset]);
+				Effects::NormalMapFX->SetNormalMap(mMesh->NormalMapSRV[subset]);
 
 				alphaClippedTech->GetPassByIndex(p)->Apply(0, dc);
-				mModel->ModelMesh.Draw(dc, subset);
+				mMesh->MeshData.Draw(dc, subset);
 			}
 		}
 		break;
@@ -154,9 +166,9 @@ void BasicObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, 
 
 			tech->GetPassByIndex(p)->Apply(0, dc);
 
-			for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 			{
-				mModel->ModelMesh.Draw(dc, subset);
+				mMesh->MeshData.Draw(dc, subset);
 			}
 		}
 	}
@@ -170,11 +182,11 @@ void BasicObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, 
 			Effects::BuildShadowMapFX->SetWorldViewProj(worldViewProj);
 			Effects::BuildShadowMapFX->SetTexTransform(XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-			for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 			{
-				Effects::BuildShadowMapFX->SetDiffuseMap(mModel->DiffuseMapSRV[subset]);
+				Effects::BuildShadowMapFX->SetDiffuseMap(mMesh->DiffuseMapSRV[subset]);
 				alphaClippedTech->GetPassByIndex(p)->Apply(0, dc);
-				mModel->ModelMesh.Draw(dc, subset);
+				mMesh->MeshData.Draw(dc, subset);
 			}
 		}
 	}
@@ -219,9 +231,9 @@ void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camer
 			Effects::SsaoNormalDepthFX->SetTexTransform(XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
 			tech->GetPassByIndex(p)->Apply(0, dc);
-			for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 			{
-				mModel->ModelMesh.Draw(dc, subset);
+				mMesh->MeshData.Draw(dc, subset);
 			}
 		}
 	}
@@ -237,13 +249,18 @@ void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camer
 			Effects::SsaoNormalDepthFX->SetWorldViewProj(worldViewProj);
 			Effects::SsaoNormalDepthFX->SetTexTransform(XMMatrixScaling(1.0f, 1.0f, 1.0f));
 
-			for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 			{
-				Effects::SsaoNormalDepthFX->SetDiffuseMap(mModel->DiffuseMapSRV[subset]);
+				Effects::SsaoNormalDepthFX->SetDiffuseMap(mMesh->DiffuseMapSRV[subset]);
 				alphaClippedTech->GetPassByIndex(p)->Apply(0, dc);
-				mModel->ModelMesh.Draw(dc, subset);
+				mMesh->MeshData.Draw(dc, subset);
 			}
 		}
 	}
 	dc->RSSetState(0);
+}
+
+void BasicObject::Release(ResourceMgr& rMgr)
+{
+	mMesh = nullptr;
 }

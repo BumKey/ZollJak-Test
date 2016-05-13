@@ -1,7 +1,7 @@
 #include "SkinnedObject.h"
 
 
-SkinnedObject::SkinnedObject(SkinnedModel * model, const InstanceDesc& info) : GameObject(model)
+SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh), mMesh(mesh)
 {
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
@@ -18,12 +18,11 @@ SkinnedObject::SkinnedObject(SkinnedModel * model, const InstanceDesc& info) : G
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 
-	mFinalTransforms.resize(model->SkinnedMeshData.BoneCount());
+	mFinalTransforms.resize(mMesh->SkinnedData.BoneCount());
 }
 
 SkinnedObject::~SkinnedObject()
 {
-	mModel = nullptr;
 }
 
 void SkinnedObject::Strafe(float d)
@@ -56,7 +55,7 @@ void SkinnedObject::RotateY(float angle)
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 }
 
-void SkinnedObject::Update(float terrainHeight)
+void SkinnedObject::Update()
 {
 	XMVECTOR vR = XMLoadFloat3(&mRight);
 	XMVECTOR vU = XMLoadFloat3(&mUp);
@@ -81,7 +80,7 @@ void SkinnedObject::Update(float terrainHeight)
 	XMMATRIX S = XMMatrixScaling(mScaling, mScaling, mScaling);
 	//XMMATRIX R = XMMatrixRotationQuaternion(Q);
 	XMMATRIX R = XMMatrixRotationY(mRotation.y);
-	XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y+terrainHeight, mPosition.z);
+	XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
 }
@@ -136,14 +135,14 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XM
 			&mFinalTransforms[0],
 			mFinalTransforms.size());
 
-		for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+		for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 		{
-			Effects::NormalMapFX->SetMaterial(mModel->Mat[subset]);
-			Effects::NormalMapFX->SetDiffuseMap(mModel->DiffuseMapSRV[subset]);
-			Effects::NormalMapFX->SetNormalMap(mModel->NormalMapSRV[subset]);
+			Effects::NormalMapFX->SetMaterial(mMesh->Mat[subset]);
+			Effects::NormalMapFX->SetDiffuseMap(mMesh->DiffuseMapSRV[subset]);
+			Effects::NormalMapFX->SetNormalMap(mMesh->NormalMapSRV[subset]);
 
 			activeSkinnedTech->GetPassByIndex(p)->Apply(0, dc);
-			mModel->ModelMesh.Draw(dc, subset);
+			mMesh->MeshData.Draw(dc, subset);
 		}
 	}
 }
@@ -185,11 +184,19 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 
 		animatedTech->GetPassByIndex(p)->Apply(0, dc);
 
-		for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+		for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 		{
-			mModel->ModelMesh.Draw(dc, subset);
+			mMesh->MeshData.Draw(dc, subset);
 		}
 	}
+}
+
+bool SkinnedObject::AnimEnd(std::string clipName)
+{
+	if (abs(mTimePos - mMesh->SkinnedData.GetClipEndTime(clipName)) <= 0.1f)
+		return true;
+
+	return false;
 }
 
 void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, FLOAT tHeight)
@@ -234,9 +241,9 @@ void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam
 
 		animatedSmapTech->GetPassByIndex(p)->Apply(0, dc);
 
-		for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+		for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 		{
-			mModel->ModelMesh.Draw(dc, subset);
+			mMesh->MeshData.Draw(dc, subset);
 		}
 	}
 }

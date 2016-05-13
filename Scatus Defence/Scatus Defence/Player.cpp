@@ -1,12 +1,10 @@
 #include "Player.h"
 
-Player::Player(SkinnedModel* model, const InstanceDesc& info) : SkinnedObject(model, info)
+Player::Player(SkinnedMesh* Mesh, const InstanceDesc& info) : SkinnedObject(Mesh, info)
 {
 	mTimePos = 0.0f;
 	mMovingSpeed = 5.5f;
 	mCurrClipName = "stand";
-
-	mModel = static_cast<SkinnedModel*>(GameObject::mModel);
 }
 
 
@@ -19,7 +17,7 @@ bool Player::SetClip(std::string clipName)
 	if (clipName == "attack01")
 		mTimePos = 0.0f;
 
-	if (mCurrClipName == "attack01" && mTimePos < mModel->SkinnedMeshData.GetClipEndTime(mCurrClipName))
+	if (mCurrClipName == "attack01" && mTimePos < mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
 		return false;
 	else
 		mCurrClipName = clipName;
@@ -29,14 +27,19 @@ void Player::Animate(float dt)
 {
 	mTimePos += dt;
 
-	mModel->SkinnedMeshData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
+	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
 
 	// Loop animation
-	if (mTimePos > mModel->SkinnedMeshData.GetClipEndTime(mCurrClipName))
+	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
 	{
 		mTimePos = 0.0f;
-		if (mCurrClipName == "attack01")
+		if (mCurrClipName == "attack01")		// attack01은 루프 안쓰는 애니메이션
 			mCurrClipName = "stand";
 	}
+}
+
+void Player::Release(ResourceMgr & rMgr)
+{
+	rMgr.ReleaseGoblinMesh(); // 임시
 }
 

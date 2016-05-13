@@ -4,14 +4,12 @@
 class Player : public SkinnedObject
 {
 public:
-	Player(SkinnedModel* model, const InstanceDesc& info);
+	Player(SkinnedMesh* Mesh, const InstanceDesc& info);
 	~Player();
 
 public:
 	virtual bool SetClip(std::string clipName);
 	virtual void Animate(float dt);
-
-private:
-	SkinnedModel* mModel;
+	virtual void Release(ResourceMgr& rMgr);
 };
 

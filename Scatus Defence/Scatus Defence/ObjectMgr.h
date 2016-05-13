@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "BasicObject.h"
 #include "SkinnedObject.h"
+#include "ResourceMgr.h"
 #include "Player.h"
 #include <list>
 #include <vector>
@@ -21,11 +22,14 @@ public:
 	void AddProjectile(BasicObject* basicObject);
 	void AddMonster(SkinnedObject* skinnedObject);
 
-	std::vector<GameObject*>& GetAllObjects() { return mAllObjects; } const
+	const std::vector<GameObject*>& GetAllObjects() { return mAllObjects; }
 	void SetPlayer(Player* player) { mPlayer = player; }
 
 	void Update();
 	void Update(float dt);
+
+	void ReleaseAll(ResourceMgr& resourceMgr);
+
 private:
 	UINT mStage;
 	UINT mMaxMonsters;

@@ -13,8 +13,8 @@ SpecPower: 0
 Reflectivity: 0 0 0
 AlphaClip: 0
 Effect: Normal
-DiffuseMap: textures\goblin_diff.jpg
-NormalMap: None
+DiffuseMap: textures\goblin\goblin_diff.jpg
+NormalMap: textures\goblin\goblin_nor.jpg
 
 ***************SubsetTable*******************
 SubsetID: 0 VertexStart: 0 VetexCount: 0 FaceStart: 0 FaceCount: 948

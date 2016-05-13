@@ -73,8 +73,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>C:\Users\Park\Source\Repos\ZollJak-Test\Scatus Defence\Common;C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Park\Source\Repos\ZollJak-Test\Scatus Defence\Common;C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Admin\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Admin\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

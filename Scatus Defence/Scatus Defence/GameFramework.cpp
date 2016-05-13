@@ -6,7 +6,6 @@ GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 {
 	mMainWndCaption = L"Scatus Defence Demo";
 
-	int ij;
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
 

@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Content Pipeline">
+      <UniqueIdentifier>{2764b6cf-be8a-4bd0-a302-80cdffca6363}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content Pipeline\Y2KLoader">
+      <UniqueIdentifier>{b227a203-4c65-4a76-a071-3829d774aa91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect">
+      <UniqueIdentifier>{e6f6c5c5-076f-42f6-90e6-3f63f3fc4604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\FX">
+      <UniqueIdentifier>{185fbef5-5dc1-4d94-8c12-67608b173a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects">
+      <UniqueIdentifier>{f8c3ff6c-51b0-473c-a3b3-82adde540902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects\Shadow">
+      <UniqueIdentifier>{97ec7650-ad01-4d07-9390-5a053b2987d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects\Ssao">
+      <UniqueIdentifier>{a94edb50-724f-49c1-b04c-1404834494a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects\Sky">
+      <UniqueIdentifier>{d9f0c182-0fc4-4707-aa9b-b3a3efa72c2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{b20d9836-07af-48f8-afb1-4ebb49d75747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vertex">
+      <UniqueIdentifier>{47244300-373f-4207-9219-bed1054b55da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{1af35122-88ce-446a-b9bd-f53b5b5fa312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFramework">
+      <UniqueIdentifier>{67d6c433-3e27-45b8-8cb4-dea153f7abe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="State Machine">
+      <UniqueIdentifier>{c45fdacc-52a4-4e49-89c4-367a985b3a07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{da358d25-ccb1-40ee-9c04-63758a0a2bd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{4665fabf-524d-41c6-b78f-b0f9be35e614}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Special Effects\Terrain">
+      <UniqueIdentifier>{3d1bfecf-fb0b-43bd-9152-6350174db446}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content Pipeline\GameModel">
+      <UniqueIdentifier>{00578c0e-51b3-4874-8cd9-a4c769b6f80f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content Pipeline\GameModel\BasicModel">
+      <UniqueIdentifier>{2efef5c1-1656-42ce-9b8f-779080e9c976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content Pipeline\GameModel\SkinnedModel">
+      <UniqueIdentifier>{e5e95cac-8f83-444c-a6dd-e3d99b12142b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\BasicObject">
+      <UniqueIdentifier>{09bd12a2-959a-47b3-9c8d-c616f92dbee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\SkinnedObject">
+      <UniqueIdentifier>{b0bff784-4420-497f-b992-5d2fa6bf5f1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\SkinnedObject\Player">
+      <UniqueIdentifier>{72e84d32-86c3-4ce1-98c5-5a87c35e2f05}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\d3dApp.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\d3dUtil.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\LightHelper.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\MathHelper.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Waves.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\xnacollision.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\GeometryGenerator.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\GameTimer.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicModel.cpp">
+      <Filter>Content Pipeline\GameModel\BasicModel</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicMeshData.cpp">
+      <Filter>Content Pipeline\GameModel\BasicModel</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedModel.cpp">
+      <Filter>Content Pipeline\GameModel\SkinnedModel</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadY2K.cpp">
+      <Filter>Content Pipeline\Y2KLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedMeshData.cpp">
+      <Filter>Content Pipeline\GameModel\SkinnedModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Sky.cpp">
+      <Filter>Effect\Special Effects\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="Ssao.cpp">
+      <Filter>Effect\Special Effects\Ssao</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMap.cpp">
+      <Filter>Effect\Special Effects\Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\TextureMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFramework.cpp">
+      <Filter>GameFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStates.cpp">
+      <Filter>State Machine</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Effect\Special Effects\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicObject.cpp">
+      <Filter>GameObject\BasicObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>GameObject\SkinnedObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedObject.cpp">
+      <Filter>GameObject\SkinnedObject</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameModel.cpp">
+      <Filter>Content Pipeline\GameModel</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\d3dApp.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\d3dUtil.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\d3dx11effect.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\LightHelper.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\MathHelper.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Waves.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\xnacollision.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\GeometryGenerator.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\GameTimer.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicModel.h">
+      <Filter>Content Pipeline\GameModel\BasicModel</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicMeshData.h">
+      <Filter>Content Pipeline\GameModel\BasicModel</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedModel.h">
+      <Filter>Content Pipeline\GameModel\SkinnedModel</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadY2K.h">
+      <Filter>Content Pipeline\Y2KLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedMeshData.h">
+      <Filter>Content Pipeline\GameModel\SkinnedModel</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sky.h">
+      <Filter>Effect\Special Effects\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="Ssao.h">
+      <Filter>Effect\Special Effects\Ssao</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMap.h">
+      <Filter>Effect\Special Effects\Shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\TextureMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="GameFramework.h">
+      <Filter>GameFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStates.h">
+      <Filter>State Machine</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Effect\Special Effects\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicObject.h">
+      <Filter>GameObject\BasicObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>GameObject\SkinnedObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedObject.h">
+      <Filter>GameObject\SkinnedObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameModel.h">
+      <Filter>Content Pipeline\GameModel</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="FX\Basic.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\BuildShadowMap.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\DebugTexture.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\LightHelper.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\NormalMap.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\Sky.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\Ssao.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\SsaoBlur.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\SsaoNormalDepth.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+    <FxCompile Include="FX\Terrain.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

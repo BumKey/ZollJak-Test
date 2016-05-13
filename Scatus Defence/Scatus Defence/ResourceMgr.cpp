@@ -31,7 +31,6 @@ void ResourceMgr::Init(ID3D11Device * dc, TextureMgr* texMgr)
 	//Pillar3Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar5.m3d", L"Textures\\");
 	//Pillar4Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar6.m3d", L"Textures\\");
 	RockMesh = new BasicMesh(mDevice, *mTexMgr, "Models\\rock.m3d", L"Textures\\");
-
 }
 
 SkinnedMesh * ResourceMgr::GetGoblinMesh()

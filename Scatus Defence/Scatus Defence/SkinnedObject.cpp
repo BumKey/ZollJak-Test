@@ -1,6 +1,5 @@
 #include "SkinnedObject.h"
 
-
 SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh), mMesh(mesh)
 {
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);

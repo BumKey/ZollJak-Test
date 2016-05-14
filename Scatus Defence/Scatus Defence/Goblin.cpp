@@ -1,15 +1,31 @@
 #include "Goblin.h"
 
 Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, GoblinType type)
-	: SkinnedObject(mesh, info), mType(type)
+	: Monster(mesh, info), mType(type)
 {
 	mTimePos = 0.0f;
 	mMovingSpeed = 5.5f;
-	mCurrClipName = "stand";
+
+	mGoblinAnimNames[GoblinAnim::attack1] = "attack01";
+	mGoblinAnimNames[GoblinAnim::attack2] = "attack02";
+	mGoblinAnimNames[GoblinAnim::damage] = "damage";
+	mGoblinAnimNames[GoblinAnim::dead] = "dead";
+	mGoblinAnimNames[GoblinAnim::drop_down] = "drop_down";
+	mGoblinAnimNames[GoblinAnim::run] = "run";
+	mGoblinAnimNames[GoblinAnim::sit_up] = "sit_up";
+	mGoblinAnimNames[GoblinAnim::stand] = "stand";
+	mGoblinAnimNames[GoblinAnim::look_around] = "stand2";
+
+	mCurrClipName = mGoblinAnimNames[GoblinAnim::stand];
 }
 
 Goblin::~Goblin()
 {
+}
+
+std::string Goblin::GetAnimName(GoblinAnim eAnim)
+{
+	return mGoblinAnimNames[eAnim];
 }
 
 void Goblin::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight)
@@ -90,11 +106,10 @@ void Goblin::Release(ResourceMgr & rMgr)
 
 bool Goblin::SetClip(std::string clipName)
 {
-	if (clipName == "attack01")
-		mTimePos = 0.0f;
-
 	// 공격 애니메이션 아직 안 끝났으면 바꾸지X
-	if (mCurrClipName == "attack01" && mTimePos < mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
+	if ((mCurrClipName == mGoblinAnimNames[GoblinAnim::attack1] ||
+		mCurrClipName == mGoblinAnimNames[GoblinAnim::attack2]) &&
+		mTimePos < mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
 		return false;
 	else
 		mCurrClipName = clipName;
@@ -110,7 +125,8 @@ void Goblin::Animate(float dt)
 	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
 	{
 		mTimePos = 0.0f;
-		if (mCurrClipName == "attack01")		// attack01은 루프 안쓰는 애니메이션
-			mCurrClipName = "stand";
+		if (mCurrClipName == mGoblinAnimNames[GoblinAnim::attack1] ||
+			mCurrClipName == mGoblinAnimNames[GoblinAnim::attack2])		// attack01은 루프 안쓰는 애니메이션
+			mCurrClipName = mGoblinAnimNames[GoblinAnim::stand];
 	}
 }

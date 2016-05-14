@@ -72,9 +72,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <ExecutablePath>C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Administrator\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -91,12 +91,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <PrecompiledHeaderFile>Core.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,10 +155,6 @@
     <ClCompile Include="BasicMesh.cpp" />
     <ClCompile Include="BasicObject.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Core.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Core.h</PrecompiledHeaderFile>
-    </ClCompile>
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="Effects.cpp" />
@@ -174,6 +169,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="BasicMeshData.cpp" />
     <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="Monster.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RenderStates.cpp" />
@@ -195,7 +191,6 @@
     <ClInclude Include="BasicMesh.h" />
     <ClInclude Include="BasicObject.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Core.h" />
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="Effects.h" />
@@ -209,6 +204,7 @@
     <ClInclude Include="LoadY2K.h" />
     <ClInclude Include="BasicMeshData.h" />
     <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="Monster.h" />
     <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RenderStates.h" />

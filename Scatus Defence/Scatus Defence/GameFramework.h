@@ -1,5 +1,8 @@
-#include "Core.h"
-
+#include "d3dApp.h"
+#include "TextureMgr.h"
+#include "SceneMgr.h"
+#include "ObjectMgr.h"
+#include "ResourceMgr.h"
 
 class GameFrameWork : public D3DApp
 {

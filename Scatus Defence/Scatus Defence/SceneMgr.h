@@ -42,7 +42,7 @@ public:
 	void DrawScene(const std::vector<GameObject*>& allObjects, const Camera& cam);
 
 	DirectionalLight*		GetDirLight() { return mDirLights; }
-	FLOAT					GetTerrainHeight(XMFLOAT3 pos) { return mTerrain.GetHeight(pos); }
+	FLOAT					GetTerrainHeight(XMFLOAT3 pos) const { return mTerrain.GetHeight(pos); }
 
 private:
 	void BuildShadowTransform();

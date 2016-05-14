@@ -34,6 +34,8 @@ public:
 	XMFLOAT4X4		GetWorld() const { return mWorld; }
 	XMFLOAT3		GetPos() const { return mPosition; }
 	XMFLOAT3		GetLook() const { return mCurrLook; }
+	XMFLOAT3		GetRight() const { return mRight; }
+	XMFLOAT3		GetUp() const { return mUp; }
 	UINT			GetID() const { return mID; }
 	UINT			GetObjectGeneratedCount() const { return GeneratedCount; }
 

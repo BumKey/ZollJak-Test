@@ -11,6 +11,9 @@
 #pragma once
 #include "d3dUtil.h"
 
+class Player;
+class SceneMgr;
+
 class Camera
 {
 public:
@@ -65,7 +68,7 @@ public:
 	void RotateY(float angle);
 
 	// After modifying camera position/orientation, call to rebuild the view matrix.
-	void Update(const XMFLOAT3& playerPos, const FLOAT& tHeight);
+	void Update(const Player* player, const SceneMgr& sceneMgr);
 
 private:
 	void UpdateViewMatrix();
@@ -77,6 +80,7 @@ private:
 	XMFLOAT3 mUp;
 	XMFLOAT3 mLook;
 
+	float mRot;
 	// Cache frustum properties.
 	float mNearZ;
 	float mFarZ;

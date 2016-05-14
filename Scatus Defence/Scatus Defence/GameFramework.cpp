@@ -1,5 +1,6 @@
 #pragma once
 #include "GameFramework.h"
+#include "Goblin.h"
 
 GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 	: D3DApp(hInstance), m_bReady(false), m_bAttackAnim(false)
@@ -41,7 +42,7 @@ bool GameFrameWork::Init()
 	InstanceDesc info;
 
 	// 250이 거의 끝자리
-	info.Pos = XMFLOAT3(100.0f, 0.1f, -180.0f);
+	info.Pos = XMFLOAT3(100.0f, 0.05f, -180.0f);
 	info.Yaw = 0.0f;
 	info.Scale = 0.2f;
 
@@ -157,7 +158,7 @@ void GameFrameWork::UpdateScene(float dt)
 
 	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
-	mCam.Update(mPlayer->GetPos(), mSceneMgr.GetTerrainHeight(mPlayer->GetPos()));
+	mCam.Update(mPlayer, mSceneMgr);
 }
 
 void GameFrameWork::DrawScene()
@@ -194,8 +195,10 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
 		float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
 
-		mCam.Pitch(dy);
-		mCam.RotateY(dx/3.0f);
+		// Update안의 LookAt 세번째 변수 mUp으로 해주면
+		// 어지럽지만 나름 멋있는 효과가?!
+		mCam.Pitch(dy);			
+		//mCam.RotateY(dx/3.0f);
 		mPlayer->RotateY(dx*2.0f);
 
 		mLastMousePos.x = x;

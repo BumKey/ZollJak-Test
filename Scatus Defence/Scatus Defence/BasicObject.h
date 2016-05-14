@@ -1,41 +1,34 @@
 #pragma once
-#include <Camera.h>
-#include "BasicModel.h"
-#include "RenderStates.h"
-#include "Effects.h"
+#include "GameObject.h"
+#include "BasicMesh.h"
+
 
 enum Label {
 	Basic,
 	AlphaBasic
 };
 
-class BasicObject 
+class BasicObject : public GameObject
 {
 public:
-	BasicObject(BasicModel* model, XMFLOAT4X4 world, Label label);
+	BasicObject(BasicMesh* Mesh, const InstanceDesc& info, Label label);
 	~BasicObject();
 
-	void Move(XMVECTOR direction, float dt);
-	void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform);
-	void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj);
-	void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam);
+public:
+	virtual void Walk(float d);
+	virtual void Strafe(float d);
+	virtual void RotateY(float angle);
+	virtual void Update();
+
+	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight);
+	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, FLOAT tHeight);
+	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, FLOAT tHeight);
+
+	virtual void Release(ResourceMgr& rMgr);
 
 	Label GetType() { return mLabel; }
-	BasicModel * GetModel() { return mModel; }
-	XMFLOAT4X4 GetWorld() { return mWorld; }
 
 private:
-	BasicModel* mModel;	
-	XMFLOAT4X4 mWorld;
-
-	FLOAT mScaling;
-	XMFLOAT3 mRotation;
-	XMFLOAT3 mPosition;
-
-	XMFLOAT3 mRight;
-	XMFLOAT3 mUp;
-	XMFLOAT3 mCurrLook;
-
 	Label mLabel;
 
 };

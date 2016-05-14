@@ -3,7 +3,7 @@
 
 #include "BasicMeshData.h"
 #include "LightHelper.h"
-#include "SkinnedMeshData.h"
+#include "SkinnedData.h"
 #include "Vertex.h"
 
 struct Y2kMaterial
@@ -28,7 +28,7 @@ public:
 		std::vector<USHORT>& indices,
 		std::vector<BasicMeshData::Subset>& subsets,
 		std::vector<Y2kMaterial>& mats,
-		SkinnedMeshData& skinInfo);
+		SkinnedData& skinInfo);
 
 private:
 	void ReadMaterials(std::ifstream& fin, UINT numMaterials, std::vector<Y2kMaterial>& mats);

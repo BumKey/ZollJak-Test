@@ -1,7 +1,6 @@
 #include "SceneMgr.h"
 
-SceneMgr::SceneMgr(int width, int height) : md3dImmediateContext(0), mClientWidth(width), mClientHeight(height),
-mLightRotationAngle(0.0f), mScreenQuadVB(0), mScreenQuadIB(0), mSky(0), mSmap(0), mSsao(0)
+SceneMgr::SceneMgr() : mLightRotationAngle(0.0f), mScreenQuadVB(0), mScreenQuadIB(0), mSky(0), mSmap(0), mSsao(0)
 {
 	mDirLights[0].Ambient = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
 	mDirLights[0].Diffuse = XMFLOAT4(0.8f, 0.7f, 0.7f, 1.0f);
@@ -33,7 +32,9 @@ SceneMgr::~SceneMgr()
 	SafeDelete(mSsao);
 }
 
-void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc, ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv)
+void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
+	ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv,
+	const Camera& cam, UINT width, UINT height)
 {
 	md3dImmediateContext = dc;
 	mDepthStencilView = dsv;
@@ -41,39 +42,36 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc, ID3D11DepthS
 
 	mScreenViewport.TopLeftX = 0;
 	mScreenViewport.TopLeftY = 0;
-	mScreenViewport.Width = static_cast<float>(mClientWidth);
-	mScreenViewport.Height = static_cast<float>(mClientHeight);
+	mScreenViewport.Width = static_cast<float>(width);
+	mScreenViewport.Height = static_cast<float>(height);
 	mScreenViewport.MinDepth = 0.0f;
 	mScreenViewport.MaxDepth = 1.0f;
 
-	float ratio = static_cast<float>(mClientWidth) / mClientHeight;
-	mCam.SetLens(0.20f*MathHelper::Pi, ratio, 1.0f, 1000.0f);
-
-	mSky = new Sky(device, L"Textures/grasscube1024.dds", 5000.0f);
+	mSky = new Sky(device, L"Textures/grasscube1024.dds", 4000.0f);
 	mSmap = new ShadowMap(device, SMapSize, SMapSize);
-	mSsao = new Ssao(device, dc, mClientWidth, mClientHeight, mCam.GetFovY(), mCam.GetFarZ());
+	mSsao = new Ssao(device, md3dImmediateContext, width, height, cam.GetFovY(), cam.GetFarZ());
 
 	Terrain::InitInfo tii;
-	tii.HeightMapFilename = L"Textures/terrain.raw";
+	tii.HeightMapFilename = L"Textures/terrain3.raw";
 	tii.LayerMapFilename0 = L"Textures/grass2.dds";
 	tii.LayerMapFilename1 = L"Textures/darkdirt.dds";
 	tii.LayerMapFilename2 = L"Textures/red_dirt.dds";
 	tii.LayerMapFilename3 = L"Textures/lightdirt.dds";
 	tii.LayerMapFilename4 = L"Textures/dirt.dds";
 	tii.BlendMapFilename = L"Textures/blend.dds";
-	tii.HeightScale = 20.0f;
-	tii.HeightmapWidth = 2049;
-	tii.HeightmapHeight = 2049;
-	tii.CellSpacing = 0.5f;
+	tii.HeightScale = 70.0f;
+	tii.HeightmapWidth = 513;
+	tii.HeightmapHeight = 513;
+	tii.CellSpacing = 2.0f;
 	mTerrain.Init(device, md3dImmediateContext, tii);
 
 	BuildScreenQuadGeometryBuffers(device);
 }
 
-void SceneMgr::DrawScene()
+void SceneMgr::DrawScene(const std::vector<GameObject*>& allObjects, const Camera& cam)
 {
-	CreateShadowMap();
-	CreateSsaoMap();
+	CreateShadowMap(allObjects, cam);
+	CreateSsaoMap(allObjects, cam);
 
 	//
 	// Restore the back and depth buffer and viewport to the OM stage.
@@ -91,19 +89,18 @@ void SceneMgr::DrawScene()
 
 	md3dImmediateContext->OMSetDepthStencilState(RenderStates::EqualsDSS, 0);
 
-	mPlayer->DrawToScene(md3dImmediateContext, mCam, mShadowTransform);
-	for (auto i : mBasicObjects)
-		i->DrawToScene(md3dImmediateContext, mCam, mShadowTransform);
-	for (auto i : mSkinnedObjects)
-		i->DrawToScene(md3dImmediateContext, mCam, mShadowTransform);
+	for (auto i : allObjects) {
+		XMFLOAT3 pos = i->GetPos();
+		i->DrawToScene(md3dImmediateContext, cam, mShadowTransform, mTerrain.GetHeight(pos));
+	}
 
 	md3dImmediateContext->RSSetState(0);
 	md3dImmediateContext->OMSetDepthStencilState(0, 0);
 
-	mTerrain.Draw(md3dImmediateContext, mCam, mDirLights);
+	mTerrain.DrawToScene(md3dImmediateContext, cam, mDirLights);
 	md3dImmediateContext->RSSetState(0);
 
-	mSky->Draw(md3dImmediateContext, mCam);
+	mSky->Draw(md3dImmediateContext, cam);
 
 	// restore default states, as the SkyFX changes them in the effect file.
 	md3dImmediateContext->RSSetState(0);
@@ -115,47 +112,22 @@ void SceneMgr::DrawScene()
 	md3dImmediateContext->PSSetShaderResources(0, 16, nullSRV);
 	// Set per frame constants.
 	Effects::NormalMapFX->SetDirLights(mDirLights);
-	Effects::NormalMapFX->SetEyePosW(mCam.GetPosition());
+	Effects::NormalMapFX->SetEyePosW(cam.GetPosition());
 	Effects::NormalMapFX->SetCubeMap(mSky->CubeMapSRV());
 	Effects::NormalMapFX->SetShadowMap(mSmap->DepthMapSRV());
 	Effects::NormalMapFX->SetSsaoMap(mSsao->AmbientSRV());
 }
 
-void SceneMgr::AnimateAllObjects(float dt)
-{
-	mPlayer->Animate(dt);
-	for (auto i : mSkinnedObjects)
-		i->Animate(dt);
-}
-
-void SceneMgr::UpdateScene(float dt)
+void SceneMgr::Update(float dt)
 {
 	//
 	// Animate the lights (and hence shadows).
 	//
 
 	BuildShadowTransform();
-	AnimateAllObjects(dt);
-
-	float y = mTerrain.GetHeight(mPlayer->GetPos().x, mPlayer->GetPos().z);
-	mPlayer->Update(y);
-	mCam.UpdateViewMatrix(mPlayer->GetPos(), y);
-
 }
 
-void SceneMgr::PlayerYawPitch(float dx, float dy)
-{
-	mCam.Pitch(dy);
-	//mCam.RotateY(dx);
-	mPlayer->RotateY(dx);
-}
-
-void SceneMgr::CameraLookAt(const XMFLOAT3& camPos, const XMFLOAT3& target)
-{
-	mCam.LookAt(camPos, target, XMFLOAT3(0.0f, 1.0f, 0.0f));
-}
-
-void SceneMgr::CreateSsaoMap()
+void SceneMgr::CreateSsaoMap(const std::vector<GameObject*>& allObjects, const Camera& cam)
 {
 	//
 	// Render the view space normals and depths.  This render target has the
@@ -167,35 +139,31 @@ void SceneMgr::CreateSsaoMap()
 	md3dImmediateContext->RSSetViewports(1, &mScreenViewport);
 	mSsao->SetNormalDepthRenderTarget(mDepthStencilView);
 
-	mPlayer->DrawToSsaoNormalDepthMap(md3dImmediateContext, mCam);
-	for (auto iterBO : mBasicObjects)
-		iterBO->DrawToSsaoNormalDepthMap(md3dImmediateContext, mCam);
-
-	for (auto iterSO : mSkinnedObjects)
-		iterSO->DrawToSsaoNormalDepthMap(md3dImmediateContext, mCam);
+	for (auto i : allObjects) {
+		XMFLOAT3 pos = i->GetPos();
+		i->DrawToSsaoNormalDepthMap(md3dImmediateContext, cam, mTerrain.GetHeight(pos));
+	}
 
 	//
 	// Now compute the ambient occlusion.
 	// 
 
-	mSsao->ComputeSsao(mCam);
+	mSsao->ComputeSsao(cam);
 	mSsao->BlurAmbientMap(2);
 }
 
-void SceneMgr::CreateShadowMap()
+void SceneMgr::CreateShadowMap(const std::vector<GameObject*>& allObjects, const Camera& cam)
 {
-	BindDsvAndSetNullRenderTarget();
+	mSmap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
 
 	XMMATRIX view = XMLoadFloat4x4(&mLightView);
 	XMMATRIX proj = XMLoadFloat4x4(&mLightProj);
 	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
 
-	mPlayer->DrawToShadowMap(md3dImmediateContext, mCam, viewProj);
-	for (auto iterBO : mBasicObjects)
-		iterBO->DrawToShadowMap(md3dImmediateContext, mCam, viewProj);
-
-	for (auto iterSO : mSkinnedObjects)
-		iterSO->DrawToShadowMap(md3dImmediateContext, mCam, viewProj);
+	for (auto i : allObjects) {
+		XMFLOAT3 pos = i->GetPos();
+		i->DrawToShadowMap(md3dImmediateContext, cam, viewProj, mTerrain.GetHeight(pos));
+	}
 
 	md3dImmediateContext->RSSetState(0);
 }
@@ -268,11 +236,6 @@ void SceneMgr::BuildShadowTransform()
 	XMStoreFloat4x4(&mShadowTransform, S);
 }
 
-void SceneMgr::BindDsvAndSetNullRenderTarget()
-{
-	mSmap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
-}
-
 void SceneMgr::BuildScreenQuadGeometryBuffers(ID3D11Device* device)
 {
 	GeometryGenerator::MeshData quad;
@@ -319,33 +282,15 @@ void SceneMgr::BuildScreenQuadGeometryBuffers(ID3D11Device* device)
 	HR(device->CreateBuffer(&ibd, &iinitData, &mScreenQuadIB));
 }
 
-void SceneMgr::ComputeSceneBoundingBox()
+void SceneMgr::ComputeSceneBoundingBox(const std::vector<GameObject*>& allObjects)
 {
 	XMFLOAT3 minPt(+MathHelper::Infinity, +MathHelper::Infinity, +MathHelper::Infinity);
 	XMFLOAT3 maxPt(-MathHelper::Infinity, -MathHelper::Infinity, -MathHelper::Infinity);
-	for (auto iterBO : mBasicObjects)
+	for (auto iter : allObjects)
 	{
-		
-		for (UINT j = 0; j < iterBO->GetModel()->Vertices.size(); ++j)
+		for (UINT j = 0; j < iter->GetMesh()->VerticesPos.size(); ++j)
 		{
-			XMFLOAT3 P = iterBO->GetModel()->Vertices[j].Pos;
-
-			minPt.x = MathHelper::Min(minPt.x, P.x);
-			minPt.y = MathHelper::Min(minPt.x, P.x);
-			minPt.z = MathHelper::Min(minPt.x, P.x);
-
-			maxPt.x = MathHelper::Max(maxPt.x, P.x);
-			maxPt.y = MathHelper::Max(maxPt.x, P.x);
-			maxPt.z = MathHelper::Max(maxPt.x, P.x);
-		}
-	}
-
-	for (auto iterSO : mSkinnedObjects)
-	{
-
-		for (UINT j = 0; j < iterSO->GetModel()->Vertices.size(); ++j)
-		{
-			XMFLOAT3 P = iterSO->GetModel()->Vertices[j].Pos;
+			XMFLOAT3 P = iter->GetMesh()->VerticesPos[j];
 
 			minPt.x = MathHelper::Min(minPt.x, P.x);
 			minPt.y = MathHelper::Min(minPt.x, P.x);
@@ -373,25 +318,20 @@ void SceneMgr::ComputeSceneBoundingBox()
 	mSceneBounds.Radius = sqrtf(extent.x*extent.x + extent.y*extent.y + extent.z*extent.z);
 }
 
-void SceneMgr::ReSize(UINT width, UINT height)
+void SceneMgr::OnResize(UINT width, UINT height, const Camera& cam,
+	ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv)
 {
-	mClientWidth = width;
-	mClientHeight = height;
+	mDepthStencilView = dsv;
+	mRenderTargetView = rtv;
 
-	float ratio = static_cast<float>(mClientWidth) / mClientHeight;
-	mCam.SetLens(0.25f*MathHelper::Pi, ratio, 1.0f, 1000.0f);
+	mScreenViewport.TopLeftX = 0;
+	mScreenViewport.TopLeftY = 0;
+	mScreenViewport.Width = static_cast<float>(width);
+	mScreenViewport.Height = static_cast<float>(height);
+	mScreenViewport.MinDepth = 0.0f;
+	mScreenViewport.MaxDepth = 1.0f;
 
 	if(mSsao)
-		mSsao->OnSize(width, height, mCam.GetFovY(), mCam.GetFarZ());
-}
-
-void SceneMgr::AddBasicObject(BasicModel * mesh, XMFLOAT4X4 world, Label label)
-{
-	mBasicObjects.push_back(new BasicObject(mesh, world, label));
-}
-
-void SceneMgr::AddSkinnedObject(SkinnedModel * mesh, InstanceInfo info)
-{
-	mSkinnedObjects.push_back(new SkinnedObject(mesh, info));
+		mSsao->OnSize(width, height, cam.GetFovY(), cam.GetFarZ());
 }
 

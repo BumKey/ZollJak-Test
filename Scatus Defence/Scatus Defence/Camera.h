@@ -8,10 +8,11 @@
 //    matrix can be obtained.
 //***************************************************************************************
 
-#ifndef CAMERA_H
-#define CAMERA_H
-
+#pragma once
 #include "d3dUtil.h"
+
+class Player;
+class SceneMgr;
 
 class Camera
 {
@@ -67,16 +68,19 @@ public:
 	void RotateY(float angle);
 
 	// After modifying camera position/orientation, call to rebuild the view matrix.
-	void UpdateViewMatrix(const XMFLOAT3& playerPos, float terrainHeight);
+	void Update(const Player* player, const SceneMgr& sceneMgr);
 
 private:
+	void UpdateViewMatrix();
 
+private:
 	// Camera coordinate system with coordinates relative to world space.
 	XMFLOAT3 mPosition;
 	XMFLOAT3 mRight;
 	XMFLOAT3 mUp;
 	XMFLOAT3 mLook;
 
+	float mRot;
 	// Cache frustum properties.
 	float mNearZ;
 	float mFarZ;
@@ -89,5 +93,3 @@ private:
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
 };
-
-#endif // CAMERA_H

@@ -15,6 +15,7 @@ public:
 	~TextureMgr();
 
 	void Init(ID3D11Device* device);
+	void Delete(ID3D11ShaderResourceView* srv);
 
 	ID3D11ShaderResourceView* CreateTexture(std::wstring filename);
 

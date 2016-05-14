@@ -1,19 +1,18 @@
 #pragma once
-#include <list>
-#include <GeometryGenerator.h>
+#include "GeometryGenerator.h"
 #include "Effects.h"
 #include "BasicObject.h"
 #include "SkinnedObject.h"
 #include "RenderStates.h"
 #include "ResourceMgr.h"
-#include <Camera.h>
-#include <MathHelper.h>
+#include "Camera.h"
+#include "MathHelper.h"
 #include "Terrain.h"
 #include "Sky.h"
 #include "ShadowMap.h"
 #include "Ssao.h"
+#include <list>
 
-#define MAX_OBJECTS		100
 #define SMapSize		2048
 
 struct BoundingSphere
@@ -25,59 +24,38 @@ struct BoundingSphere
 
 /// <summary>
 /// 클래스 유형 : 컨트롤러
-/// 장면 어디에 객체, 조명등을 넣을 건지,
-/// 어떤 장면 효과를 쓸 것인 지 관장하는 클래스
+/// 장면의 그리기와 관련된 기능을 관장하는 클래스
 class SceneMgr
 {
 public:
-	SceneMgr(int width, int height);
+	SceneMgr();
 	~SceneMgr();
 
 public:
-	void Init(ID3D11Device* device, ID3D11DeviceContext* dc, 
+	void Init(ID3D11Device* device, ID3D11DeviceContext * dc, 
+		ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv, 
+		const Camera& cam, UINT width, UINT height);
+	void OnResize(UINT width, UINT height, const Camera& cam,
 		ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv);
-	void ReSize(UINT width, UINT height);
-	void DrawScene();
-	void AnimateAllObjects(float dt);
-	void UpdateScene(float dt);
+	void ComputeSceneBoundingBox(const std::vector<GameObject*>& allObjects);
+	void Update(float dt);
+	void DrawScene(const std::vector<GameObject*>& allObjects, const Camera& cam);
 
-	void PlayerYawPitch(float dx, float dy);
-	void CameraLookAt(const XMFLOAT3& camPos, const XMFLOAT3& target);
-	void ComputeSceneBoundingBox();
-
-	void AddBasicObject(BasicModel* mesh, XMFLOAT4X4 world, Label label);
-	void AddSkinnedObject(SkinnedModel* mesh, InstanceInfo info);
-
-	void					SetPlayer(SkinnedObject* player) { mPlayer = player; }
 	DirectionalLight*		GetDirLight() { return mDirLights; }
-	FLOAT					GetTerrainHeight(FLOAT x, FLOAT z)	{ return mTerrain.GetHeight(x, z); }
+	FLOAT					GetTerrainHeight(XMFLOAT3 pos) const { return mTerrain.GetHeight(pos); }
 
 private:
-	// About Shadow
 	void BuildShadowTransform();
-	void BindDsvAndSetNullRenderTarget();
-	void CreateShadowMap();
-
-	// About Ssao
-	void CreateSsaoMap();
+	void CreateShadowMap(const std::vector<GameObject*>& allObjects, const Camera& cam);
+	void CreateSsaoMap(const std::vector<GameObject*>& allObjects, const Camera& cam);
 	void BuildScreenQuadGeometryBuffers(ID3D11Device* device);
-
-	// About Debug
 	void DrawScreenQuad();
+
 private:
 	ID3D11DeviceContext* md3dImmediateContext;
 	ID3D11DepthStencilView* mDepthStencilView;
 	ID3D11RenderTargetView* mRenderTargetView;
 	D3D11_VIEWPORT mScreenViewport;
-
-	UINT mClientWidth;
-	UINT mClientHeight;
-
-	Camera mCam;							
-	SkinnedObject* mPlayer;
-
-	std::list<BasicObject*>  mBasicObjects;		
-	std::list<SkinnedObject*>  mSkinnedObjects;
 
 	XMFLOAT4X4 mLightView;
 	XMFLOAT4X4 mLightProj;

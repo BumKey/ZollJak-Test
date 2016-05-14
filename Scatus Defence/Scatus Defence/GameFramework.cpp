@@ -1,5 +1,6 @@
 #pragma once
 #include "GameFramework.h"
+#include "Goblin.h"
 
 GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 	: D3DApp(hInstance), m_bReady(false), m_bAttackAnim(false)
@@ -9,9 +10,7 @@ GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
 
-	mSceneMgr = new SceneMgr(mClientWidth, mClientHeight);
-
-	int num = 0;
+	mCam.SetLens(0.20f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 }
 
 GameFrameWork::~GameFrameWork()
@@ -19,7 +18,9 @@ GameFrameWork::~GameFrameWork()
 	Effects::DestroyAll();
 	InputLayouts::DestroyAll();
 	RenderStates::DestroyAll();
-	delete mSceneMgr;
+
+	mObjectMgr.ReleaseAll(mResourceMgr);	// 지금은 큰 의미는 없음.
+	mPlayer->Release(mResourceMgr);
 }
 
 bool GameFrameWork::Init()
@@ -32,49 +33,62 @@ bool GameFrameWork::Init()
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
 	mTexMgr.Init(md3dDevice);
-	ResourceMgr::InitAll(md3dDevice, mTexMgr);
+	mResourceMgr.Init(md3dDevice, &mTexMgr);
 
-	mSceneMgr->Init(md3dDevice, md3dImmediateContext, mDepthStencilView, mRenderTargetView);
+	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
+		mDepthStencilView, mRenderTargetView,
+		mCam, mClientWidth, mClientHeight);
 
-	XMFLOAT4X4 treeWorld[10], rockWorld[20];
+	InstanceDesc info;
 
-	XMFLOAT2 pos;
-	XMMATRIX modelScale, modelRot, modelOffset;
+	// 250이 거의 끝자리
+	info.Pos = XMFLOAT3(100.0f, 0.05f, -180.0f);
+	info.Yaw = 0.0f;
+	info.Scale = 0.2f;
+
+	mPlayer = new Player(mResourceMgr.GetGoblinMesh(), info);
+	mObjectMgr.SetPlayer(mPlayer);
 
 	for (UINT i = 0; i < 10; ++i)
 	{
-		pos = XMFLOAT2(rand() % 150, rand() % 150);
-		float randF = MathHelper::RandF() + 0.5f;
-		modelScale = XMMatrixScaling(randF, randF, randF);
-		modelRot = XMMatrixRotationY(randF);
-		modelOffset = XMMatrixTranslation(pos.x, mSceneMgr->GetTerrainHeight(pos.x, pos.y) + 0.1f, pos.y);
-		
-		XMStoreFloat4x4(&treeWorld[i], modelScale*modelRot*modelOffset);
-		mSceneMgr->AddBasicObject(ResourceMgr::TreeModel, treeWorld[i], Label::AlphaBasic);
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x +50.0f - rand() % 100,
+			0, mPlayer->GetPos().z + 50.0f -rand() % 100);
+		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
+		info.Yaw = MathHelper::RandF()*MathHelper::Pi*2;
+
+		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.TreeMesh, info, Label::AlphaBasic));
 	}
 
 	for (UINT i = 0; i < 20; ++i)
 	{
-		pos = XMFLOAT2(rand() % 200, rand() % 200);
-		float randF = MathHelper::RandF() + 1.0f;
-		modelScale = XMMatrixScaling(randF, randF, randF);
-		modelRot = XMMatrixRotationY(randF);
-		modelOffset = XMMatrixTranslation(pos.x, mSceneMgr->GetTerrainHeight(pos.x, pos.y) - 0.2f, pos.y);
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
+			0, mPlayer->GetPos().z + 50.0f - rand() % 100);
+		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
+		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
 
-		XMStoreFloat4x4(&rockWorld[i], modelScale*modelRot*modelOffset);
-		mSceneMgr->AddBasicObject(ResourceMgr::RockModel, rockWorld[i], Label::Basic);
+		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.RockMesh, info, Label::Basic));
 	}
 
-	// mSceneMgr->AddSkinnedObject(ResourceMgr::Goblin, goblinWorld);
+	for (UINT i = 0; i < 10; ++i)
+	{
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
+			0, mPlayer->GetPos().z + 50.0f - rand() % 100);
+		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
+		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
+		
+		GoblinType type;
+		if (i % 2) type = GoblinType::Red;
+		else	   type = GoblinType::Blue;
+		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetGoblinMesh(), info, type));
+	}
 
-	InstanceInfo info;
-	info.Pos = XMFLOAT3(100.0f, 0.3f, 100.0f);
-	info.Yaw = 0.0f;
-	info.Scale = 0.2f;
+	XMFLOAT3 camPos = mPlayer->GetPos();
+	camPos.y += 10.0f;
+	camPos.z -= 20.0f;
+	mCam.LookAt(camPos, mPlayer->GetPos(), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
-	mPlayer = new SkinnedObject(ResourceMgr::Goblin, info);
-	mSceneMgr->SetPlayer(mPlayer);
-	mSceneMgr->ComputeSceneBoundingBox();
+	mObjectMgr.Update();
+	mSceneMgr.ComputeSceneBoundingBox(mObjectMgr.GetAllObjects());
 	return true;
 }
 
@@ -82,7 +96,9 @@ void GameFrameWork::OnResize()
 {
 	D3DApp::OnResize();
 
-	mSceneMgr->ReSize(mClientWidth, mClientHeight);
+	mCam.SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	mSceneMgr.OnResize(mClientWidth, mClientHeight, mCam, 
+		mDepthStencilView, mRenderTargetView);
 }
 
 void GameFrameWork::UpdateScene(float dt)
@@ -91,55 +107,63 @@ void GameFrameWork::UpdateScene(float dt)
 	// Control the player.
 	//
 
-	if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
+	if (m_bAttackAnim == false)
 	{
-		mPlayer->SetClip("run");
-		mPlayer->Walk(-dt);
-		mPlayer->Strafe(-dt);
+		if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
+		{
+			mPlayer->SetClip("run");
+			mPlayer->Walk(-dt);
+			mPlayer->Strafe(-dt);
+		}
+		else if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
+		{
+			mPlayer->SetClip("run");
+			mPlayer->Walk(-dt);
+			mPlayer->Strafe(dt);
+		}
+		else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
+		{
+			mPlayer->SetClip("run");
+			mPlayer->Walk(dt);
+			mPlayer->Strafe(-dt);
+		}
+		else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
+		{
+			mPlayer->SetClip("run");
+			mPlayer->Walk(dt);
+			mPlayer->Strafe(dt);
+		}
+		else if (GetAsyncKeyState('W') & 0x8000) {
+			mPlayer->SetClip("run");
+			mPlayer->Walk(-dt);
+		}
+		else if (GetAsyncKeyState('S') & 0x8000) {
+			mPlayer->SetClip("run");
+			mPlayer->Walk(dt);
+		}
+		else if (GetAsyncKeyState('A') & 0x8000) {
+			mPlayer->SetClip("run");
+			mPlayer->Strafe(-dt);
+		}
+		else if (GetAsyncKeyState('D') & 0x8000) {
+			mPlayer->SetClip("run");
+			mPlayer->Strafe(dt);
+		}
+		else
+			mPlayer->SetClip("stand");
 	}
-	else if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
-	{
-		mPlayer->SetClip("run");
-		mPlayer->Walk(-dt);
-		mPlayer->Strafe(dt);
-	}
-	else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
-	{
-		mPlayer->SetClip("run");
-		mPlayer->Walk(dt);
-		mPlayer->Strafe(-dt);
-	}
-	else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
-	{
-		mPlayer->SetClip("run");
-		mPlayer->Walk(dt);
-		mPlayer->Strafe(dt);
-	}
-	else if (GetAsyncKeyState('W') & 0x8000) {
-		mPlayer->SetClip("run");
-		mPlayer->Walk(-dt);
-	}
-	else if (GetAsyncKeyState('S') & 0x8000) {
-		mPlayer->SetClip("run");
-		mPlayer->Walk(dt);
-	}
-	else if (GetAsyncKeyState('A') & 0x8000) {
-		mPlayer->SetClip("run");
-		mPlayer->Strafe(-dt);
-	}
-	else if (GetAsyncKeyState('D') & 0x8000) {
-		mPlayer->SetClip("run");
-		mPlayer->Strafe(dt);
-	}
-	else if (m_bAttackAnim == false)
-		mPlayer->SetClip("stand");
+	
+	if(m_bAttackAnim && mPlayer->AnimEnd("attack01"))
+		m_bAttackAnim = false;
 
-	mSceneMgr->UpdateScene(dt);
+	mObjectMgr.Update(dt);
+	mSceneMgr.Update(dt);
+	mCam.Update(mPlayer, mSceneMgr);
 }
 
 void GameFrameWork::DrawScene()
 {
-	mSceneMgr->DrawScene();
+	mSceneMgr.DrawScene(mObjectMgr.GetAllObjects(), mCam);
 	HR(mSwapChain->Present(0, 0));
 	m_bReady = true;
 }
@@ -149,7 +173,7 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 
-	if ((btnState & MK_LBUTTON) != 0)
+	if ((btnState & MK_LBUTTON) != 0 && !m_bAttackAnim)
 	{
 		m_bAttackAnim = true;
 		mPlayer->SetClip("attack01");
@@ -160,32 +184,35 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 {
-	m_bAttackAnim = false;
 	ReleaseCapture();
 }
 
 void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 {
-	static bool switcher(false);
 	if ((btnState & MK_RBUTTON) != 0)
 	{
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
 		float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
 
-		mSceneMgr->PlayerYawPitch(dx, dy);
+		// Update안의 LookAt 세번째 변수 mUp으로 해주면
+		// 어지럽지만 나름 멋있는 효과가?!
+		mCam.Pitch(dy);			
+		//mCam.RotateY(dx/3.0f);
+		mPlayer->RotateY(dx*2.0f);
 
 		mLastMousePos.x = x;
 		mLastMousePos.y = y;
 	}
 
+	//static bool switcher(false);
 	//if(switcher)
 	//{
 	//	// Make each pixel correspond to a quarter of a degree.
 	//	float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
 	//	float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
 
-	//	mSceneMgr->PlayerYawPitch(dx, dy);
+	//	mSceneMgr.PlayerYawPitch(dx, dy);
 
 	//	mLastMousePos.x = x;
 	//	mLastMousePos.y = y;

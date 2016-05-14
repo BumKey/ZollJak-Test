@@ -40,7 +40,7 @@ bool Y2KLoader::LoadY2K(const std::string& filename,
 	std::vector<USHORT>& indices,
 	std::vector<BasicMeshData::Subset>& subsets,
 	std::vector<Y2kMaterial>& mats,
-	SkinnedMeshData& skinInfo)
+	SkinnedData& skinInfo)
 {
 	std::ifstream fin(filename);
 

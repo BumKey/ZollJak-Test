@@ -3,12 +3,14 @@
 //***************************************************************************************
 
 #include "Camera.h"
+#include "Player.h"
+#include "SceneMgr.h"
 
 Camera::Camera()
 	: mPosition(0.0f, 0.0f, 0.0f), 
 	  mRight(1.0f, 0.0f, 0.0f),
 	  mUp(0.0f, 1.0f, 0.0f),
-	  mLook(0.0f, 0.0f, 1.0f)
+	  mLook(0.0f, 0.0f, 1.0f), mRot(0.0f)
 {
 	SetLens(0.25f*MathHelper::Pi, 1.0f, 1.0f, 1000.0f);
 }
@@ -185,7 +187,8 @@ void Camera::Walk(float d)
 void Camera::Pitch(float angle)
 {
 	// Rotate up and look vector about the right vector.
-
+	if(abs(mRot) < 30.0f)
+		mRot += angle;
 	XMMATRIX R = XMMatrixRotationAxis(XMLoadFloat3(&mRight), angle);
 
 	XMStoreFloat3(&mUp,   XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
@@ -203,12 +206,8 @@ void Camera::RotateY(float angle)
 	XMStoreFloat3(&mLook, XMVector3TransformNormal(XMLoadFloat3(&mLook), R));
 }
 
-void Camera::UpdateViewMatrix(const XMFLOAT3& playerPos, float terrainHeight)
+void Camera::UpdateViewMatrix()
 {
-	mPosition = playerPos;
-	mPosition.y += 10.0f + terrainHeight;
-	mPosition.z -= 20.0f;
-
 	XMVECTOR R = XMLoadFloat3(&mRight);
 	XMVECTOR U = XMLoadFloat3(&mUp);
 	XMVECTOR L = XMLoadFloat3(&mLook);
@@ -249,6 +248,34 @@ void Camera::UpdateViewMatrix(const XMFLOAT3& playerPos, float terrainHeight)
 	mView(1,3) = 0.0f;
 	mView(2,3) = 0.0f;
 	mView(3,3) = 1.0f;
+}
+
+void Camera::Update(const Player* player, const SceneMgr& sceneMgr)
+{
+	XMVECTOR vLook = XMLoadFloat3(&player->GetLook());
+	XMVECTOR vUp = XMLoadFloat3(&player->GetUp());
+
+	XMVector3Normalize(vLook);
+	XMVector3Normalize(vUp);
+
+	XMVECTOR vCamT = vLook - vUp/2;
+	XMFLOAT3 camPos, lookPos, playerPos, fCamT, fLookT;
+	XMStoreFloat3(&fCamT, vCamT);
+	XMStoreFloat3(&fLookT, vLook);
+
+	playerPos = player->GetPos();
+	camPos.x = playerPos.x + fCamT.x*12.0f;
+	camPos.y = playerPos.y + fCamT.y*12.0f;
+	camPos.z = playerPos.z + fCamT.z*12.0f;
+
+	camPos.y += sceneMgr.GetTerrainHeight(camPos);
+
+	lookPos.x = playerPos.x;
+	lookPos.y = playerPos.y + sceneMgr.GetTerrainHeight(playerPos) - mRot*10.0f;
+	lookPos.z = playerPos.z;
+
+	LookAt(camPos, lookPos, XMFLOAT3(0.0f, 1.0f, 0.0f));
+	UpdateViewMatrix();
 }
 
 

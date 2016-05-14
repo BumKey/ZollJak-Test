@@ -1,5 +1,5 @@
-#ifndef SkinnedMeshData_H
-#define SkinnedMeshData_H
+#ifndef SKINNED_DATA_H
+#define SKINNED_DATA_H
 
 #include "d3dUtil.h"
 #include <map>
@@ -51,7 +51,7 @@ struct AnimationClip
     std::vector<BoneAnimation> BoneAnimations; 	
 };
 
-class SkinnedMeshData
+class SkinnedData
 {
 public:
 
@@ -80,4 +80,4 @@ private:
 	std::map<std::string, AnimationClip> mAnimations;
 };
 
-#endif // SkinnedMeshData_H
+#endif // SKINNED_DATA_H

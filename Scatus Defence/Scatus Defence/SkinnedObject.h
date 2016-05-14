@@ -1,51 +1,32 @@
 #pragma once
-#include <Camera.h>
-#include "SkinnedModel.h"
-#include "RenderStates.h"
-#include "Effects.h"
+#include "GameObject.h"
+#include "SkinnedMesh.h"
 
-struct InstanceInfo
-{
-	XMFLOAT3 Pos;
-	FLOAT Yaw;
-	FLOAT Scale;
-};
-
-class SkinnedObject
+class SkinnedObject : public GameObject
 {
 public:
-	SkinnedObject(SkinnedModel* model, const InstanceInfo& info);
-	~SkinnedObject();
+	SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info);
+	virtual~SkinnedObject();
 
 public:
-	bool SetClip(std::string clipName);
-	void Animate(float dt);
-	void Strafe(float d);
-	void Walk(float d);
-	void RotateY(float angle);
-	void Update(float terrainHeight);
+	virtual void Walk(float d);
+	virtual void Strafe(float d);
+	virtual void RotateY(float angle);
+	virtual void Update();
 
-	void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform);
-	void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj);
-	void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam);
+	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight);
+	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, FLOAT tHeight);
+	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, FLOAT tHeight);
 
-	SkinnedModel*	GetModel() { return mModel; }
-	XMFLOAT4X4		GetWorld() { return mWorld; }
-	XMFLOAT3		GetPos() { return mPosition; }
-	XMFLOAT3		GetLook() { return mCurrLook; }
+	virtual void Release(ResourceMgr& rMgr) = 0;
 
-private:
-	SkinnedModel* mModel;
-	XMFLOAT4X4 mWorld;
+	virtual bool SetClip(std::string clipName) = 0;
+	virtual void Animate(float dt) = 0;
 
-	FLOAT mScaling;
-	XMFLOAT3 mRotation;
-	XMFLOAT3 mPosition;
+	bool  AnimEnd(std::string clipName);
 
-	XMFLOAT3 mRight;
-	XMFLOAT3 mUp;
-	XMFLOAT3 mCurrLook;
-	XMFLOAT3 mPrevLook;
+protected:
+	SkinnedMesh* mMesh;
 
 	FLOAT mTimePos;
 	FLOAT mMovingSpeed;

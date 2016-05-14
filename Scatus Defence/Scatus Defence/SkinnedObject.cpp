@@ -1,9 +1,6 @@
 #include "SkinnedObject.h"
 
-
-SkinnedObject::SkinnedObject(SkinnedModel * model, const InstanceInfo& info) : mModel(model),
-mPosition(0.0f, 0.0f, 0.0f), mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f),
-mTimePos(0.0f), mMovingSpeed(5.5f), mCurrClipName("stand")
+SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh), mMesh(mesh)
 {
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
@@ -20,38 +17,11 @@ mTimePos(0.0f), mMovingSpeed(5.5f), mCurrClipName("stand")
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 
-	mFinalTransforms.resize(model->SkinnedMeshData.BoneCount());
+	mFinalTransforms.resize(mMesh->SkinnedData.BoneCount());
 }
 
 SkinnedObject::~SkinnedObject()
 {
-	mModel = nullptr;
-}
-
-void SkinnedObject::Animate(float dt)
-{
-	mTimePos += dt;
-
-	mModel->SkinnedMeshData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
-
-	// Loop animation
-	if (mTimePos > mModel->SkinnedMeshData.GetClipEndTime(mCurrClipName))
-	{
-		mTimePos = 0.0f;
-		if (mCurrClipName == "attack01")
-			mCurrClipName = "stand";
-	}
-}
-
-bool SkinnedObject::SetClip(std::string clipName)
-{
-	if (clipName == "attack01")
-		mTimePos = 0.0f;
-
-	if (mCurrClipName == "attack01" && mTimePos < mModel->SkinnedMeshData.GetClipEndTime(mCurrClipName))
-		return false;
-	else
-		mCurrClipName = clipName;
 }
 
 void SkinnedObject::Strafe(float d)
@@ -84,7 +54,7 @@ void SkinnedObject::RotateY(float angle)
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 }
 
-void SkinnedObject::Update(float terrainHeight)
+void SkinnedObject::Update()
 {
 	XMVECTOR vR = XMLoadFloat3(&mRight);
 	XMVECTOR vU = XMLoadFloat3(&mUp);
@@ -109,12 +79,12 @@ void SkinnedObject::Update(float terrainHeight)
 	XMMATRIX S = XMMatrixScaling(mScaling, mScaling, mScaling);
 	//XMMATRIX R = XMMatrixRotationQuaternion(Q);
 	XMMATRIX R = XMMatrixRotationY(mRotation.y);
-	XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y+terrainHeight, mPosition.z);
+	XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
 }
 
-void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform)
+void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -150,6 +120,7 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XM
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		world = XMLoadFloat4x4(&mWorld);
+		world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
 		worldInvTranspose = MathHelper::InverseTranspose(world);
 		worldViewProj = world*view*proj;
 
@@ -163,19 +134,19 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XM
 			&mFinalTransforms[0],
 			mFinalTransforms.size());
 
-		for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+		for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 		{
-			Effects::NormalMapFX->SetMaterial(mModel->Mat[subset]);
-			Effects::NormalMapFX->SetDiffuseMap(mModel->DiffuseMapSRV[subset]);
-			Effects::NormalMapFX->SetNormalMap(mModel->NormalMapSRV[subset]);
+			Effects::NormalMapFX->SetMaterial(mMesh->Mat[subset]);
+			Effects::NormalMapFX->SetDiffuseMap(mMesh->DiffuseMapSRV[subset]);
+			Effects::NormalMapFX->SetNormalMap(mMesh->NormalMapSRV[subset]);
 
 			activeSkinnedTech->GetPassByIndex(p)->Apply(0, dc);
-			mModel->ModelMesh.Draw(dc, subset);
+			mMesh->MeshData.Draw(dc, subset);
 		}
 	}
 }
 
-void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam)
+void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam, FLOAT tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -196,6 +167,7 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		world = XMLoadFloat4x4(&mWorld);
+		world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
 		worldInvTranspose = MathHelper::InverseTranspose(world);
 		worldView = world*view;
 		worldInvTransposeView = worldInvTranspose*view;
@@ -211,14 +183,22 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 
 		animatedTech->GetPassByIndex(p)->Apply(0, dc);
 
-		for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+		for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 		{
-			mModel->ModelMesh.Draw(dc, subset);
+			mMesh->MeshData.Draw(dc, subset);
 		}
 	}
 }
 
-void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj)
+bool SkinnedObject::AnimEnd(std::string clipName)
+{
+	if (abs(mTimePos - mMesh->SkinnedData.GetClipEndTime(clipName)) <= 0.1f)
+		return true;
+
+	return false;
+}
+
+void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, FLOAT tHeight)
 {
 	Effects::BuildShadowMapFX->SetEyePosW(cam.GetPosition());
 	Effects::BuildShadowMapFX->SetViewProj(lightViewProj);
@@ -245,6 +225,7 @@ void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		world = XMLoadFloat4x4(&mWorld);
+		world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
 		worldInvTranspose = MathHelper::InverseTranspose(world);
 		worldViewProj = world*lightViewProj;
 
@@ -259,9 +240,9 @@ void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam
 
 		animatedSmapTech->GetPassByIndex(p)->Apply(0, dc);
 
-		for (UINT subset = 0; subset < mModel->SubsetCount; ++subset)
+		for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
 		{
-			mModel->ModelMesh.Draw(dc, subset);
+			mMesh->MeshData.Draw(dc, subset);
 		}
 	}
 }

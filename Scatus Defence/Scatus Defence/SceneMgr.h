@@ -37,17 +37,17 @@ public:
 		const Camera& cam, UINT width, UINT height);
 	void OnResize(UINT width, UINT height, const Camera& cam,
 		ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv);
-	void ComputeSceneBoundingBox(const std::list<GameObject*>& allObjects);
+	void ComputeSceneBoundingBox(const std::vector<GameObject*>& allObjects);
 	void Update(float dt);
-	void DrawScene(const std::list<GameObject*>& allObjects, const Camera& cam);
+	void DrawScene(const std::vector<GameObject*>& allObjects, const Camera& cam);
 
 	DirectionalLight*		GetDirLight() { return mDirLights; }
 	FLOAT					GetTerrainHeight(XMFLOAT3 pos) const { return mTerrain.GetHeight(pos); }
 
 private:
 	void BuildShadowTransform();
-	void CreateShadowMap(const std::list<GameObject*>& allObjects, const Camera& cam);
-	void CreateSsaoMap(const std::list<GameObject*>& allObjects, const Camera& cam);
+	void CreateShadowMap(const std::vector<GameObject*>& allObjects, const Camera& cam);
+	void CreateSsaoMap(const std::vector<GameObject*>& allObjects, const Camera& cam);
 	void BuildScreenQuadGeometryBuffers(ID3D11Device* device);
 	void DrawScreenQuad();
 

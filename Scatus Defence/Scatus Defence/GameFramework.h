@@ -3,7 +3,7 @@
 #include "SceneMgr.h"
 #include "ObjectMgr.h"
 #include "ResourceMgr.h"
-#include "GameRogicManager.h"
+
 class GameFrameWork : public D3DApp
 {
 public:
@@ -26,7 +26,7 @@ private:
 	ResourceMgr mResourceMgr;
 	ObjectMgr	mObjectMgr;
 	SceneMgr	mSceneMgr;
-	GameRogicManager *mGameRogicMgr;
+
 	Camera mCam;
 	Player* mPlayer;
 

@@ -68,7 +68,7 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 	BuildScreenQuadGeometryBuffers(device);
 }
 
-void SceneMgr::DrawScene(const std::list<GameObject*>& allObjects, const Camera& cam)
+void SceneMgr::DrawScene(const std::vector<GameObject*>& allObjects, const Camera& cam)
 {
 	CreateShadowMap(allObjects, cam);
 	CreateSsaoMap(allObjects, cam);
@@ -127,7 +127,7 @@ void SceneMgr::Update(float dt)
 	BuildShadowTransform();
 }
 
-void SceneMgr::CreateSsaoMap(const std::list<GameObject*>& allObjects, const Camera& cam)
+void SceneMgr::CreateSsaoMap(const std::vector<GameObject*>& allObjects, const Camera& cam)
 {
 	//
 	// Render the view space normals and depths.  This render target has the
@@ -152,7 +152,7 @@ void SceneMgr::CreateSsaoMap(const std::list<GameObject*>& allObjects, const Cam
 	mSsao->BlurAmbientMap(2);
 }
 
-void SceneMgr::CreateShadowMap(const std::list<GameObject*>& allObjects, const Camera& cam)
+void SceneMgr::CreateShadowMap(const std::vector<GameObject*>& allObjects, const Camera& cam)
 {
 	mSmap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
 
@@ -282,7 +282,7 @@ void SceneMgr::BuildScreenQuadGeometryBuffers(ID3D11Device* device)
 	HR(device->CreateBuffer(&ibd, &iinitData, &mScreenQuadIB));
 }
 
-void SceneMgr::ComputeSceneBoundingBox(const std::list<GameObject*>& allObjects)
+void SceneMgr::ComputeSceneBoundingBox(const std::vector<GameObject*>& allObjects)
 {
 	XMFLOAT3 minPt(+MathHelper::Infinity, +MathHelper::Infinity, +MathHelper::Infinity);
 	XMFLOAT3 maxPt(-MathHelper::Infinity, -MathHelper::Infinity, -MathHelper::Infinity);

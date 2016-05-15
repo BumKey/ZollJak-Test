@@ -25,14 +25,8 @@ public:
 
 	virtual bool SetClip(std::string clipName);
 	virtual void Animate(float dt);
-
-	virtual Properties * Get_Properties() { return &goblin_properties; }
-	virtual int Get_States() { return goblin_properties.state; }
-	virtual int SetObj_State(int new_state) { goblin_properties.state = new_state; return new_state; }
-	virtual int Get_Obj_type() { return goblin_properties.obj_type; };
-private:
-	GoblinProperties goblin_properties;
 	
+private:
 	GoblinType mType;
 	std::unordered_map<GoblinAnim, std::string> mGoblinAnimNames;
 };

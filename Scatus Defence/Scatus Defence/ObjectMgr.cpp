@@ -39,7 +39,7 @@ bool ObjectMgr::AddStructure(BasicObject * basicObject)
 bool ObjectMgr::AddProjectile(BasicObject * basicObject)
 {
 	mProjectiles.push_back(basicObject);
-	//++mTotalObjectNum;
+	++mTotalObjectNum;
 	return true;
 }
 
@@ -48,7 +48,7 @@ bool ObjectMgr::AddMonster(GameObject* skinnedObject)
 	if (mMonsters.size() <= mMaxMonsters) {
 		mMonsters.push_back(skinnedObject);
 		mAllObjects.push_back(skinnedObject);
-		//++mTotalObjectNum;
+		++mTotalObjectNum;
 		return true;
 	}
 	else {
@@ -65,7 +65,7 @@ bool ObjectMgr::AddOurTeam(GameObject* skinnedObject)
 	if (mOurTeam.size() <= mMaxMonsters) {
 		mOurTeam.push_back(skinnedObject);
 		mAllObjects.push_back(skinnedObject);
-		//++mTotalObjectNum;
+		++mTotalObjectNum;
 		return true;
 	}
 	else {
@@ -95,6 +95,7 @@ void ObjectMgr::Update()
 
 void ObjectMgr::Update(float dt)
 {
+	//후 이걸 호출안하면 왜 제대로 못그려주는지는 나도 잘모르겠으. . . 
 	mAllObjects.clear();
 	//mAllObjects.reserve(mTotalObjectNum); 리스트로 바꿔서 필요없어짐
 
@@ -109,7 +110,7 @@ void ObjectMgr::Update(float dt)
 		mAllObjects.push_back(i);
 		//i->Animate(dt);
 	}
-
+	
 	mPlayer->Animate(dt);
 	for (auto i : mAllObjects)
 		i->Update();

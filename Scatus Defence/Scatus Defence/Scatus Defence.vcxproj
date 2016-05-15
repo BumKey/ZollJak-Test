@@ -190,6 +190,7 @@
     <ClCompile Include="Ssao.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TextureMgr.cpp" />
+    <ClCompile Include="UI_Image.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="Waves.cpp" />
     <ClCompile Include="xnacollision.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="Ssao.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TextureMgr.h" />
+    <ClInclude Include="UI_Image.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Waves.h" />
     <ClInclude Include="xnacollision.h" />

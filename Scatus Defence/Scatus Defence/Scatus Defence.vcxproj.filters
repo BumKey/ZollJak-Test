@@ -202,6 +202,9 @@
     <ClCompile Include="Monster.cpp">
       <Filter>GameObject\SkinnedObject\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="UI_Image.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicMeshData.h">
@@ -316,6 +319,7 @@
     <ClInclude Include="Properties.h">
       <Filter>GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="UI_Image.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FX\Basic.fx">

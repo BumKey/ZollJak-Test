@@ -31,6 +31,10 @@ void BasicObject::Strafe(float d)
 {
 }
 
+void BasicObject::MoveTo(Vector2D direction, float dt)
+{
+}
+
 void BasicObject::RotateY(float angle)
 {
 }

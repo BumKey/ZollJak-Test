@@ -48,7 +48,7 @@ public:
 	int attack_type;
 	int Upgrade_weapon;
 	int Upgrade_guard;
-	int state;
+	state_type state;
 	int army_list;
 	int obj_type;
 	float attackspeed;

@@ -15,8 +15,6 @@ struct InstanceDesc
 	FLOAT Scale;
 };
 
-
-
 class GameObject
 {
 public:
@@ -26,6 +24,7 @@ public:
 public:
 	virtual void Walk(float d) = 0;
 	virtual void Strafe(float d) = 0;
+	virtual void MoveTo(Vector2D direction, float dt) = 0; //xz평면 안에서의 이동
 	virtual void RotateY(float angle) = 0;
 	virtual void Update() = 0;
 
@@ -35,16 +34,6 @@ public:
 
 	virtual void Release(ResourceMgr& rMgr) = 0;
 
-	virtual int Get_Obj_type() { return 0; };
-	virtual int SetObj_State(int new_state) { return 0; } // 오브젝트 상태설정
-	virtual Properties * Get_Properties() { return NULL; } // 오브젝트 속성반환
-	virtual int Get_States() { return 0; } // 오브젝트 상태반환
-	void SettingTarget(std::list<GameObject*> Oppenent); // 오브젝트가 가진 적들의 리스트
-	void Attack(GameObject * Target); // 공격
-	int Get_Object_type() { return m_Object_type; }
-	Vector2D Heading()const { return m_vHeading; }
-	void      SetHeading(Vector2D new_heading);
-
 	GameMesh*		GetMesh() const { return mMesh; }
 	XMFLOAT4X4		GetWorld() const { return mWorld; }
 	XMFLOAT3		GetPos() const { return mPosition; }
@@ -53,21 +42,23 @@ public:
 	XMFLOAT3		GetUp() const { return mUp; }
 	UINT			GetID() const { return mID; }
 	UINT			GetObjectGeneratedCount() const { return GeneratedCount; }
-	Vector2D		GetPos2D() const {return Vector2D(mPosition.x, mPosition.y); }
-	void Move2D(Vector2D direction, float dt); //xz평면 안에서의 이동
-	void  printlocation(); //객체 위치값출력 반환
+	Properties		GetProperty() const { return mProperty; }
+	state_type		GetState() const{ return mProperty.state; }
+	Vector2D		GetPos2D() const { return Vector2D(mPosition.x, mPosition.z); }
+	GameObject*		GetTarget() { return mTarget; }
 
-	GameObject * current_target_obj;
-	std::list<GameObject*> Oppenents;
+	void			SetState(state_type state) { mProperty.state = state; }
+	void			SetHP(int hp) { mProperty.hp_now = hp; }
+	void			SetTarget(GameObject* target) {  if(mTarget) mTarget = target; }
+
+	void  PrintLocation(); //객체 위치값출력 반환
 private:
 	UINT mID;
 	static UINT GeneratedCount;
-	int m_Object_type; // 오브젝트의 세부적인 종류를 나타내는 변수 
 
 protected:
 	XMFLOAT4X4 mWorld;
 	GameMesh* mMesh;
-	Vector2D    m_vHeading;
 
 	FLOAT	 mScaling;
 	XMFLOAT3 mRotation;
@@ -76,9 +67,9 @@ protected:
 	XMFLOAT3 mRight;
 	XMFLOAT3 mUp;
 	XMFLOAT3 mCurrLook;
-	XMFLOAT3 mPrevLook;
+	XMFLOAT3 mOriginLook;
 
-
-
+	Properties mProperty;
+	GameObject* mTarget;
 };
 

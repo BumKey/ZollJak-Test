@@ -17,6 +17,7 @@ public:
 public:
 	virtual void Walk(float d);
 	virtual void Strafe(float d);
+	virtual void MoveTo(Vector2D direction, float dt);
 	virtual void RotateY(float angle);
 	virtual void Update();
 

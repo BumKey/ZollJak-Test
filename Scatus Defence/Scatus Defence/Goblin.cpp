@@ -4,7 +4,7 @@ Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, GoblinType type)
 	: Monster(mesh, info), mType(type)
 {
 	mTimePos = 0.0f;
-	mMovingSpeed = 5.5f;
+	mMovingSpeed = 0.1f;
 
 	mGoblinAnimNames[GoblinAnim::attack1] = "attack01";
 	mGoblinAnimNames[GoblinAnim::attack2] = "attack02";
@@ -14,9 +14,10 @@ Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, GoblinType type)
 	mGoblinAnimNames[GoblinAnim::run] = "run";
 	mGoblinAnimNames[GoblinAnim::sit_up] = "sit_up";
 	mGoblinAnimNames[GoblinAnim::stand] = "stand";
+	mGoblinAnimNames[GoblinAnim::walk] = "walk";
 	mGoblinAnimNames[GoblinAnim::look_around] = "stand2";
 
-	mCurrClipName = mGoblinAnimNames[GoblinAnim::stand];
+	SetState(type_idle);
 }
 
 Goblin::~Goblin()
@@ -104,19 +105,39 @@ void Goblin::Release(ResourceMgr & rMgr)
 	rMgr.ReleaseGoblinMesh();
 }
 
-bool Goblin::SetClip(std::string clipName)
+void Goblin::SetClip()
 {
-	// 공격 애니메이션 아직 안 끝났으면 바꾸지X
-	if ((mCurrClipName == mGoblinAnimNames[GoblinAnim::attack1] ||
-		mCurrClipName == mGoblinAnimNames[GoblinAnim::attack2]) &&
-		mTimePos < mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
-		return false;
-	else
-		mCurrClipName = clipName;
+	if (mProperty.state == state_type::type_idle)
+		mCurrClipName = mGoblinAnimNames[GoblinAnim::stand];
+
+	if (mProperty.state == state_type::type_attack)
+		mCurrClipName = mGoblinAnimNames[GoblinAnim::attack1];
+
+	//if (mProperty.state == state_type::type_battle)
+	//	mCurrClipName = mGoblinAnimNames[GoblinAnim::attack2];
+
+	if (mProperty.state == state_type::type_run)
+		mCurrClipName = mGoblinAnimNames[GoblinAnim::run];
+
+	if (mProperty.state == state_type::type_walk)
+		mCurrClipName = mGoblinAnimNames[GoblinAnim::walk];
+
+	if (mProperty.state == state_type::type_die)
+		mCurrClipName = mGoblinAnimNames[GoblinAnim::dead];
+
+	//// 공격 애니메이션 아직 안 끝났으면 바꾸지X
+	//if ((mCurrClipName == mGoblinAnimNames[GoblinAnim::attack1] ||
+	//	mCurrClipName == mGoblinAnimNames[GoblinAnim::attack2]) &&
+	//	mTimePos < mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
+	//	return false;
+	//else
+	//	mCurrClipName = clipName;
 }
 
 void Goblin::Animate(float dt)
 {
+	SetClip();
+
 	mTimePos += dt;
 
 	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);

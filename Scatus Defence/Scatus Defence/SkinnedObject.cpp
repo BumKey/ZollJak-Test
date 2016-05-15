@@ -24,15 +24,6 @@ SkinnedObject::~SkinnedObject()
 {
 }
 
-void SkinnedObject::Strafe(float d)
-{
-	// mPosition += d*mRight
-	XMVECTOR s = XMVectorReplicate(d*mMovingSpeed);
-	XMVECTOR r = XMLoadFloat3(&mRight);
-	XMVECTOR p = XMLoadFloat3(&mPosition);
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
-}
-
 void SkinnedObject::Walk(float d)
 {
 	// mPosition += d*mLook
@@ -40,13 +31,53 @@ void SkinnedObject::Walk(float d)
 	XMVECTOR l = XMLoadFloat3(&mCurrLook);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
+
+	mProperty.state = state_type::type_run;
 }
+
+void SkinnedObject::Strafe(float d)
+{
+	// mPosition += d*mRight
+	XMVECTOR s = XMVectorReplicate(d*mMovingSpeed);
+	XMVECTOR r = XMLoadFloat3(&mRight);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
+
+	mProperty.state = state_type::type_run;
+}
+
+void SkinnedObject::MoveTo(Vector2D targetPos, float dt)
+{
+	XMFLOAT3 fTargetPos;
+	fTargetPos.x = targetPos.x - mPosition.x;
+	fTargetPos.y = 0;
+	fTargetPos.z = targetPos.y - mPosition.z;
+
+	XMVECTOR vPlayer = XMLoadFloat3(&mPosition);
+	XMVECTOR vTarget = XMLoadFloat3(&fTargetPos);
+	XMVector3Normalize(vPlayer);
+	XMVector3Normalize(vTarget);
+
+	XMVECTOR s = XMVectorReplicate(dt*mMovingSpeed);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+
+	// 방향으로 이동
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
+
+	// 방향으로 회전
+	XMVECTOR vAngle = XMVector3AngleBetweenVectors(vPlayer, vTarget);
+	mRotation.y = XMVectorGetY(vAngle);
+
+	mProperty.state = state_type::type_walk;
+}
+
+
 
 void SkinnedObject::RotateY(float angle)
 {
-	// Rotate the basis vectors about the world y-axis.
-	mPrevLook = mCurrLook;
 	mRotation.y += angle;
+
+	// Rotate the basis vectors about the world y-axis.
 	XMMATRIX R = XMMatrixRotationY(angle);
 
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
@@ -54,27 +85,73 @@ void SkinnedObject::RotateY(float angle)
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 }
 
+void SkinnedObject::Attack(GameObject* target)
+{
+	if (target != NULL)
+	{
+		SetTarget(target);
+		mProperty.state = type_attack;
+
+		if (target->GetState() != type_die)
+		{
+			int target_hp = target->GetProperty().hp_now;
+			int armor = target->GetProperty().guardpoint;
+			int damage = target->GetProperty().attakpoint;
+
+			target->SetHP(target_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+
+			printf("공격을 성공했습니다. 상대의 체력 : %d \n", target->GetProperty().hp_now);
+
+			if (target->GetProperty().hp_now <= -500)
+			{
+				printf("사망자 이름 : %s\n", target->GetProperty().name);
+			}
+			if (target->GetProperty().hp_now <= 0)
+			{
+				target->SetState(type_die);
+				printf("타겟 사망");
+				this->SetState(type_idle);
+			}
+		}
+	}
+	else
+	{
+		printf("타겟이 지정되지 않았습니다.");
+
+	}
+}
+
 void SkinnedObject::Update()
 {
 	XMVECTOR vR = XMLoadFloat3(&mRight);
 	XMVECTOR vU = XMLoadFloat3(&mUp);
 	XMVECTOR vCL = XMLoadFloat3(&mCurrLook);
-	XMVECTOR vPL = XMLoadFloat3(&mPrevLook);
+	XMVECTOR vOL = XMLoadFloat3(&mOriginLook);
 	XMVECTOR vP = XMLoadFloat3(&mPosition);
 
 	vCL = XMVector3Normalize(vCL);
-	vPL = XMVector3Normalize(vPL);
+	vOL = XMVector3Normalize(vOL);
 	vU = XMVector3Normalize(XMVector3Cross(vCL, vR));
 	vR = XMVector3Cross(vU, vCL);
 
 	XMStoreFloat3(&mRight, vR);
 	XMStoreFloat3(&mUp, vU);
 	XMStoreFloat3(&mCurrLook, vCL);
-	XMStoreFloat3(&mPrevLook, vPL);
+	XMStoreFloat3(&mOriginLook, vOL);
 	
-	XMVECTOR Q0 = XMLoadFloat3(&mPrevLook);
-	XMVECTOR Q1 = XMLoadFloat3(&mCurrLook);
-	XMVECTOR Q = XMQuaternionSlerp(Q0, -Q1, 0.1f);
+	//XMVECTOR Q0 = XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, -1.0f));
+	//XMVECTOR Q1 = XMLoadFloat3(&mCurrLook);
+	//XMVECTOR Q = XMQuaternionSlerp(Q0, Q1, 0.5f);
+
+	/*XMVECTOR vAngle = XMVector3AngleBetweenVectors(vOL, vCL);
+	XMVECTOR vDot = XMVector3Dot(vOL, vCL);
+	float fAngle = XMVectorGetZ(vAngle);
+	float fdAngle = XMConvertToDegrees(fAngle);
+	if (XMVectorGetX(vDot) < 0)
+		fAngle = MathHelper::Pi - fAngle;*/
+
+	if (mRotation.y >= MathHelper::Pi*2.0f)
+		mRotation.y = 0.0f;
 
 	XMMATRIX S = XMMatrixScaling(mScaling, mScaling, mScaling);
 	//XMMATRIX R = XMMatrixRotationQuaternion(Q);

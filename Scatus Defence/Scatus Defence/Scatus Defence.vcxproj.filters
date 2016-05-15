@@ -80,8 +80,8 @@
     <Filter Include="GameObject\SkinnedObject\Player\p_Warrior">
       <UniqueIdentifier>{a76b644d-c056-49a9-a1fd-7845848bb4ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Managers\RogicManager">
-      <UniqueIdentifier>{06c6ac79-e9f4-4237-b372-3df3b19f2d3c}</UniqueIdentifier>
+    <Filter Include="Property">
+      <UniqueIdentifier>{8949c7ef-c023-4ef5-bc46-c82c007bb56e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -181,26 +181,26 @@
     <ClCompile Include="Goblin.cpp">
       <Filter>GameObject\SkinnedObject\Monster\Goblin</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>GameObject\SkinnedObject\Monster</Filter>
-    </ClCompile>
     <ClCompile Include="2DMap.cpp">
       <Filter>main</Filter>
     </ClCompile>
     <ClCompile Include="p_Warrior.cpp">
       <Filter>GameObject\SkinnedObject\Player\p_Warrior</Filter>
     </ClCompile>
-    <ClCompile Include="RogicTimer.cpp">
-      <Filter>Managers\RogicManager</Filter>
-    </ClCompile>
-    <ClCompile Include="GameRogicManager.cpp">
-      <Filter>Managers\RogicManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Properties.cpp">
-      <Filter>GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="Monster.cpp">
       <Filter>GameObject\SkinnedObject\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="Properties.cpp">
+      <Filter>Property</Filter>
+    </ClCompile>
+    <ClCompile Include="RogicTimer.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="GameRogicManager.cpp">
+      <Filter>Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -307,14 +307,14 @@
     <ClInclude Include="p_Warrior.h">
       <Filter>GameObject\SkinnedObject\Player\p_Warrior</Filter>
     </ClInclude>
-    <ClInclude Include="GameRogicManager.h">
-      <Filter>Managers\RogicManager</Filter>
+    <ClInclude Include="Properties.h">
+      <Filter>Property</Filter>
     </ClInclude>
     <ClInclude Include="RogicTimer.h">
-      <Filter>Managers\RogicManager</Filter>
+      <Filter>Base</Filter>
     </ClInclude>
-    <ClInclude Include="Properties.h">
-      <Filter>GameObject</Filter>
+    <ClInclude Include="GameRogicManager.h">
+      <Filter>Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

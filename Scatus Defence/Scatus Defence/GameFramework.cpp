@@ -36,9 +36,8 @@ bool GameFrameWork::Init()
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
+	mResourceMgr.Init(md3dDevice);
 	mGameRogicMgr = new GameRogicManager(&mObjectMgr, &mResourceMgr); //용준
-	mTexMgr.Init(md3dDevice);
-	mResourceMgr.Init(md3dDevice, &mTexMgr);
 
 	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
 		mDepthStencilView, mRenderTargetView,
@@ -47,12 +46,18 @@ bool GameFrameWork::Init()
 	InstanceDesc info;
 
 	// 250이 거의 끝자리
-	info.Pos = XMFLOAT3(100.0f, 0.05f, -180.0f);
+	info.Pos = XMFLOAT3(170.0f, 0.05f, -280.0f);
 	info.Yaw = 0.0f;
 	info.Scale = 0.2f;
 
 	mPlayer = new Player(mResourceMgr.GetGoblinMesh(), info);
 	mObjectMgr.SetPlayer(mPlayer);
+
+	info.Pos = XMFLOAT3(195.0f, 0.05f, -300.0f);
+	info.Yaw = 0.0f;
+	info.Scale = 0.3f;
+
+	mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.Temple, info, Label::Basic));
 
 	for (UINT i = 0; i < 10; ++i)
 	{
@@ -69,22 +74,38 @@ bool GameFrameWork::Init()
 		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
 			0, mPlayer->GetPos().z + 50.0f - rand() % 100);
 		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
+		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2.0f;
 
 		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.RockMesh, info, Label::Basic));
 	}
 
 	for (UINT i = 0; i < 10; ++i)
 	{
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
-			0, mPlayer->GetPos().z + 50.0f - rand() % 100);
-		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
+			0, mPlayer->GetPos().z + 50.0f + rand() % 150);
+		info.Scale = 0.1f + MathHelper::RandF() / 5.0f;
+		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2.0f;
 		
 		GoblinType type;
-		if (i % 2) type = GoblinType::Red;
-		else	   type = GoblinType::Blue;
-		//mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetGoblinMesh(), info, type));
+		if (i % 2) {
+			type = GoblinType::Blue;
+			info.Scale = 0.3f;
+		}
+		else if (i == 4 || i == 6)
+		{
+			type = GoblinType::Red;
+			info.Scale = 0.6f;
+		}
+		else if (i == 2)
+		{
+			type = GoblinType::Red;
+			info.Scale = 1.0f;
+		}
+		else {
+			type = GoblinType::Blue;
+			info.Scale = 0.4f;
+		}
+		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetGoblinMesh(), info, type));
 	}
 
 	XMFLOAT3 camPos = mPlayer->GetPos();
@@ -92,7 +113,7 @@ bool GameFrameWork::Init()
 	camPos.z -= 20.0f;
 	mCam.LookAt(camPos, mPlayer->GetPos(), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
-	//mObjectMgr.Update();
+	mObjectMgr.Update();
 	mSceneMgr.ComputeSceneBoundingBox(mObjectMgr.GetAllObjects());
 	return true;
 }
@@ -163,7 +184,7 @@ void GameFrameWork::UpdateScene(float dt)
 
 	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
-	mGameRogicMgr->Update();
+	mGameRogicMgr->Update(dt);
 	mCam.Update(mPlayer, mSceneMgr);
 }
 
@@ -176,10 +197,9 @@ void GameFrameWork::DrawScene()
 
 void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
-	mGameRogicMgr->OnMouseDown(btnState, x, y);
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
-
+	mGameRogicMgr->OnMouseDown = true;
 	if ((btnState & MK_LBUTTON) != 0 && !m_bAttackAnim)
 	{
 		m_bAttackAnim = true;
@@ -187,14 +207,11 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	}
 
 	SetCapture(mhMainWnd);
-
-	
 }
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	ReleaseCapture();
-	mGameRogicMgr->OnMouseUp(btnState, x, y);
 }
 
 void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
@@ -210,10 +227,10 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 		mCam.Pitch(dy);			
 		//mCam.RotateY(dx/3.0f);
 		mPlayer->RotateY(dx*2.0f);
+		mPlayer->SetState(type_attack);
 
 		mLastMousePos.x = x;
 		mLastMousePos.y = y;
-		mGameRogicMgr->OnMouseMove(btnState, x, y);
 	}
 
 	//static bool switcher(false);

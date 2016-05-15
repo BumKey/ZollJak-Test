@@ -26,6 +26,7 @@ private:
 	ResourceMgr mResourceMgr;
 	ObjectMgr	mObjectMgr;
 	SceneMgr	mSceneMgr;
+	TextureMgr mTexMgr;
 	GameRogicManager *mGameRogicMgr;
 	Camera mCam;
 	Player* mPlayer;

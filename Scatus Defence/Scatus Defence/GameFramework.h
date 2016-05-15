@@ -23,7 +23,6 @@ private:
 	bool m_bReady;
 	bool m_bAttackAnim;
 
-	TextureMgr  mTexMgr;
 	ResourceMgr mResourceMgr;
 	ObjectMgr	mObjectMgr;
 	SceneMgr	mSceneMgr;

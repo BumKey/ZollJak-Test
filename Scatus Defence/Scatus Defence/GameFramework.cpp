@@ -32,8 +32,7 @@ bool GameFrameWork::Init()
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
-	mTexMgr.Init(md3dDevice);
-	mResourceMgr.Init(md3dDevice, &mTexMgr);
+	mResourceMgr.Init(md3dDevice);
 
 	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
 		mDepthStencilView, mRenderTargetView,
@@ -49,6 +48,11 @@ bool GameFrameWork::Init()
 	mPlayer = new Player(mResourceMgr.GetGoblinMesh(), info);
 	mObjectMgr.SetPlayer(mPlayer);
 
+	info.Pos = XMFLOAT3(80.0f, 0.02f, -200.0f);
+	info.Yaw = 0.0f;
+	info.Scale = 0.2f;
+	
+	mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.Temple, info, Label::Basic));
 	for (UINT i = 0; i < 10; ++i)
 	{
 		info.Pos = XMFLOAT3(mPlayer->GetPos().x +50.0f - rand() % 100,

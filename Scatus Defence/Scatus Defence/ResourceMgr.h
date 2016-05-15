@@ -11,7 +11,7 @@ public:
 	ResourceMgr();
 	~ResourceMgr();
 
-	void Init(ID3D11Device* dc, TextureMgr* texMgr);
+	void Init(ID3D11Device* dc);
 
 	// Obstacles
 	BasicMesh* TreeMesh;
@@ -22,6 +22,7 @@ public:
 	BasicMesh* Pillar3Mesh;
 	BasicMesh* Pillar4Mesh;
 	BasicMesh* RockMesh;
+	BasicMesh* Temple;
 
 	SkinnedMesh* GetGoblinMesh();
 	static ID3D11ShaderResourceView* GoblinDiffuseMapSRV[2];
@@ -29,7 +30,7 @@ public:
 
 private:
 	ID3D11Device* mDevice;
-	TextureMgr* mTexMgr;
+	TextureMgr mTexMgr;
 
 	UINT mGoblinReferences;
 

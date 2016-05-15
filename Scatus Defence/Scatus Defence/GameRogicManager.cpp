@@ -259,7 +259,7 @@ void GameRogicManager::SetPlayer()
 		for (auto i :m_ObjMgr->GetAllObjects())
 		{
 			if (i->Get_Object_type() == type_p_warrior) {
-				mPlayer = (p_Warrior*)i; // 문제가 될 수 있는 부분
+				mPlayer = (p_Warrior*)i;
 			}
 		}
 

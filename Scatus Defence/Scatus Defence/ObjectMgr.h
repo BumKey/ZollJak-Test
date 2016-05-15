@@ -28,8 +28,8 @@ public:
 	const std::list<GameObject*>& GetAllMonsters() { return mMonsters;}// 리스트로변경
 	const std::list<GameObject*>& GetAllOurTeam() { return mOurTeam; }// 리스트로변경
 	
-	void SetPlayer(Player* player) { mAllObjects.push_back(player); mPlayer = player; }
-	Player* GetPlayer() { return mPlayer; }
+	void SetPlayer(Player* player) { mPlayer = player; }
+
 	void Update();
 	void Update(float dt);
 

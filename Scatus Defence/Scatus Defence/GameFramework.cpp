@@ -88,7 +88,7 @@ bool GameFrameWork::Init()
 		GoblinType type;
 		if (i % 2) type = GoblinType::Red;
 		else	   type = GoblinType::Blue;
-		//mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetGoblinMesh(), info, type));
+		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetGoblinMesh(), info, type));
 	}
 
 	XMFLOAT3 camPos = mPlayer->GetPos();
@@ -96,7 +96,7 @@ bool GameFrameWork::Init()
 	camPos.z -= 20.0f;
 	mCam.LookAt(camPos, mPlayer->GetPos(), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
-	//mObjectMgr.Update();
+	mObjectMgr.Update();
 	mSceneMgr.ComputeSceneBoundingBox(mObjectMgr.GetAllObjects());
 	return true;
 }
@@ -167,7 +167,7 @@ void GameFrameWork::UpdateScene(float dt)
 
 	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
-	mGameRogicMgr->Update();
+	
 	mCam.Update(mPlayer, mSceneMgr);
 }
 
@@ -180,7 +180,6 @@ void GameFrameWork::DrawScene()
 
 void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
-	mGameRogicMgr->OnMouseDown(btnState, x, y);
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 
@@ -192,7 +191,7 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 
 	SetCapture(mhMainWnd);
 
-	
+	mGameRogicMgr->OnMouseDown(btnState, x, y);
 }
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)

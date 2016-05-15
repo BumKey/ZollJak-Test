@@ -75,7 +75,6 @@ void GameRogicManager::Gamestart()
 	Setting_teamlist();
 	//m_pMap->print();
 	//게임 각종 오브젝트 추가
-	mPlayer = m_ObjMgr->GetPlayer();
 
 	
 }
@@ -160,10 +159,10 @@ void GameRogicManager::StartWave()
 	for (int i = 0; i < 2;i++)
 	{
 		add_Monster();
-		//auto it = m_ObjMgr->GetAllMonsters().end();
-		//it--;
+		auto it = m_ObjMgr->GetAllMonsters().end();
+		it--;
 	
-		//printf("고블린 %d의 위치 x: %f y:%f\n", i, (*it)->GetPos2D().x, (*it)->GetPos2D().y);
+		printf("고블린 %d의 위치 x: %f y:%f\n", i, (*it)->GetPos2D().x, (*it)->GetPos2D().y);
 	}
 
 	// 새로운 적들 생성

@@ -25,6 +25,10 @@ GameFrameWork::~GameFrameWork()
 
 bool GameFrameWork::Init()
 {
+	//콘솔창 띄우기
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+	freopen("CON", "w", stdout);
 	if (!D3DApp::Init())
 		return false;
 
@@ -32,6 +36,7 @@ bool GameFrameWork::Init()
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
+	mGameRogicMgr = new GameRogicManager(&mObjectMgr, &mResourceMgr); //용준
 	mTexMgr.Init(md3dDevice);
 	mResourceMgr.Init(md3dDevice, &mTexMgr);
 
@@ -158,6 +163,7 @@ void GameFrameWork::UpdateScene(float dt)
 
 	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
+	
 	mCam.Update(mPlayer, mSceneMgr);
 }
 
@@ -180,11 +186,14 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	}
 
 	SetCapture(mhMainWnd);
+
+	mGameRogicMgr->OnMouseDown(btnState, x, y);
 }
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	ReleaseCapture();
+	mGameRogicMgr->OnMouseUp(btnState, x, y);
 }
 
 void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
@@ -203,6 +212,7 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 
 		mLastMousePos.x = x;
 		mLastMousePos.y = y;
+		mGameRogicMgr->OnMouseMove(btnState, x, y);
 	}
 
 	//static bool switcher(false);

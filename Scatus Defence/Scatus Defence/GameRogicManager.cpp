@@ -148,14 +148,14 @@ void GameRogicManager::StartWave()
 	printf("\n 몬스터를 생성중입니다\n", wave_level);
 	m_pMap->print();
 
-	for (int i = 0; i < 2;i++)
-	{
-		// add_Monster();
-		//auto it = m_ObjMgr->GetAllMonsters().end();
-		//it--;
-	
-		//printf("고블린 %d의 위치 x: %f y:%f\n", i, (*it)->GetPos2D().x, (*it)->GetPos2D().y);
-	}
+	//for (int i = 0; i < 2;i++)
+	//{
+	//	 add_Monster();
+	//	auto it = m_ObjMgr->GetAllMonsters().end();
+	//	it--;
+	//
+	//	printf("고블린 %d의 위치 x: %f y:%f\n", i, (*it)->GetPos2D().x, (*it)->GetPos2D().y);
+	//}
 
 	// 새로운 적들 생성
 	//wavingstart로 상태변경
@@ -211,7 +211,6 @@ void GameRogicManager::add_Monster()
 	if (rand() % 2) type = GoblinType::Red;
 	else	   type = GoblinType::Blue;
 	mObjMgr->AddMonster(new Goblin(mResourceMgr->GetGoblinMesh(), info, type));
-	
 }
 void GameRogicManager::MoveAI()
 {

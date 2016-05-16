@@ -39,7 +39,7 @@ void BasicObject::RotateY(float angle)
 {
 }
 
-void BasicObject::Update()
+void BasicObject::Update(float dt)
 {
 }
 

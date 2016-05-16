@@ -26,6 +26,8 @@ SkinnedObject::~SkinnedObject()
 
 void SkinnedObject::Walk(float d)
 {
+	mDirection = mCurrLook;
+
 	// mPosition += d*mLook
 	XMVECTOR s = XMVectorReplicate(d*mMovingSpeed);
 	XMVECTOR l = XMLoadFloat3(&mCurrLook);
@@ -37,6 +39,8 @@ void SkinnedObject::Walk(float d)
 
 void SkinnedObject::Strafe(float d)
 {
+	mDirection = mRight;
+
 	// mPosition += d*mRight
 	XMVECTOR s = XMVectorReplicate(d*mMovingSpeed);
 	XMVECTOR r = XMLoadFloat3(&mRight);
@@ -48,15 +52,14 @@ void SkinnedObject::Strafe(float d)
 
 void SkinnedObject::MoveTo(Vector2D targetPos, float dt)
 {
-	XMFLOAT3 fTargetPos;
-	fTargetPos.x = targetPos.x - mPosition.x;
-	fTargetPos.y = 0;
-	fTargetPos.z = targetPos.y - mPosition.z;
+	XMFLOAT3 fTarget;
+	fTarget.x = targetPos.x - mPosition.x;
+	fTarget.y = 0;
+	fTarget.z = targetPos.y - mPosition.z;
 
-	XMVECTOR vPlayer = XMLoadFloat3(&mPosition);
-	XMVECTOR vTarget = XMLoadFloat3(&fTargetPos);
-	XMVector3Normalize(vPlayer);
+	XMVECTOR vTarget = XMLoadFloat3(&fTarget);
 	XMVector3Normalize(vTarget);
+	XMStoreFloat3(&fTarget, vTarget);
 
 	XMVECTOR s = XMVectorReplicate(dt*mMovingSpeed);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
@@ -65,8 +68,16 @@ void SkinnedObject::MoveTo(Vector2D targetPos, float dt)
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
 
 	// 방향으로 회전
-	XMVECTOR vAngle = XMVector3AngleBetweenVectors(vPlayer, vTarget);
-	mRotation.y = XMVectorGetY(vAngle);
+	float dot = -fTarget.x*mCurrLook.x - fTarget.z*mCurrLook.z;
+	float det = -fTarget.x*mCurrLook.z + fTarget.z*mCurrLook.x;
+	float angle = atan2(det, dot);
+
+	mRotation.y += angle*dt*MathHelper::Pi;
+	mPrevLook = mCurrLook;
+	XMMATRIX R = XMMatrixRotationY(angle*dt*MathHelper::Pi);
+	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
+	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
+	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 
 	mProperty.state = state_type::type_walk;
 }
@@ -76,7 +87,7 @@ void SkinnedObject::MoveTo(Vector2D targetPos, float dt)
 void SkinnedObject::RotateY(float angle)
 {
 	mRotation.y += angle;
-
+	mPrevLook = mCurrLook;
 	// Rotate the basis vectors about the world y-axis.
 	XMMATRIX R = XMMatrixRotationY(angle);
 
@@ -90,7 +101,7 @@ void SkinnedObject::Attack(GameObject* target)
 	if (target != NULL)
 	{
 		SetTarget(target);
-		mProperty.state = type_attack;
+		mProperty.state =  state_type::type_attack;
 
 		if (target->GetState() != type_die)
 		{
@@ -121,12 +132,12 @@ void SkinnedObject::Attack(GameObject* target)
 	}
 }
 
-void SkinnedObject::Update()
+void SkinnedObject::Update(float dt)
 {
 	XMVECTOR vR = XMLoadFloat3(&mRight);
 	XMVECTOR vU = XMLoadFloat3(&mUp);
 	XMVECTOR vCL = XMLoadFloat3(&mCurrLook);
-	XMVECTOR vOL = XMLoadFloat3(&mOriginLook);
+	XMVECTOR vOL = XMLoadFloat3(&mPrevLook);
 	XMVECTOR vP = XMLoadFloat3(&mPosition);
 
 	vCL = XMVector3Normalize(vCL);
@@ -137,19 +148,8 @@ void SkinnedObject::Update()
 	XMStoreFloat3(&mRight, vR);
 	XMStoreFloat3(&mUp, vU);
 	XMStoreFloat3(&mCurrLook, vCL);
-	XMStoreFloat3(&mOriginLook, vOL);
+	XMStoreFloat3(&mPrevLook, vOL);
 	
-	//XMVECTOR Q0 = XMLoadFloat3(&XMFLOAT3(0.0f, 0.0f, -1.0f));
-	//XMVECTOR Q1 = XMLoadFloat3(&mCurrLook);
-	//XMVECTOR Q = XMQuaternionSlerp(Q0, Q1, 0.5f);
-
-	/*XMVECTOR vAngle = XMVector3AngleBetweenVectors(vOL, vCL);
-	XMVECTOR vDot = XMVector3Dot(vOL, vCL);
-	float fAngle = XMVectorGetZ(vAngle);
-	float fdAngle = XMConvertToDegrees(fAngle);
-	if (XMVectorGetX(vDot) < 0)
-		fAngle = MathHelper::Pi - fAngle;*/
-
 	if (mRotation.y >= MathHelper::Pi*2.0f)
 		mRotation.y = 0.0f;
 

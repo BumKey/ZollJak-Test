@@ -79,31 +79,31 @@ bool GameFrameWork::Init()
 		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.RockMesh, info, Label::Basic));
 	}
 
-	for (UINT i = 0; i < 10; ++i)
+	for (UINT i = 0; i < 100; ++i)
 	{
 		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
 			0, mPlayer->GetPos().z + 50.0f + rand() % 150);
 		info.Scale = 0.1f + MathHelper::RandF() / 5.0f;
-		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2.0f;
+		info.Yaw = 0;
 		
 		GoblinType type;
 		if (i % 2) {
 			type = GoblinType::Blue;
-			info.Scale = 0.3f;
+			info.Scale = 0.4f;
 		}
-		else if (i == 4 || i == 6)
+		else if (i % 3)
 		{
 			type = GoblinType::Red;
-			info.Scale = 0.6f;
+			info.Scale = 0.3f;
 		}
-		else if (i == 2)
+		else if (i % 5)
 		{
 			type = GoblinType::Red;
 			info.Scale = 1.0f;
 		}
 		else {
 			type = GoblinType::Blue;
-			info.Scale = 0.4f;
+			info.Scale = 0.6f;
 		}
 		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetGoblinMesh(), info, type));
 	}

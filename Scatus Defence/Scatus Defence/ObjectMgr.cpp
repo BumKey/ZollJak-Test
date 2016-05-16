@@ -115,7 +115,7 @@ void ObjectMgr::Update(float dt)
 	
 	mPlayer->Animate(dt);
 	for (auto i : mAllObjects)
-		i->Update();
+		i->Update(dt);
 }
 
 void ObjectMgr::ReleaseAll(ResourceMgr& resourceMgr)

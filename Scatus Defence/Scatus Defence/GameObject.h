@@ -22,11 +22,11 @@ public:
 	virtual ~GameObject();
 
 public:
-	virtual void Walk(float d) = 0;
-	virtual void Strafe(float d) = 0;
+	virtual void Walk(float dt) = 0;
+	virtual void Strafe(float dt) = 0;
 	virtual void MoveTo(Vector2D direction, float dt) = 0; //xz평면 안에서의 이동
 	virtual void RotateY(float angle) = 0;
-	virtual void Update() = 0;
+	virtual void Update(float dt) = 0;
 
 	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight) = 0;
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, FLOAT tHeight) = 0;
@@ -49,7 +49,7 @@ public:
 
 	void			SetState(state_type state) { mProperty.state = state; }
 	void			SetHP(int hp) { mProperty.hp_now = hp; }
-	void			SetTarget(GameObject* target) {  if(mTarget) mTarget = target; }
+	void			SetTarget(GameObject* target) { if (target) mTarget = target; }
 
 	void  PrintLocation(); //객체 위치값출력 반환
 private:
@@ -67,7 +67,8 @@ protected:
 	XMFLOAT3 mRight;
 	XMFLOAT3 mUp;
 	XMFLOAT3 mCurrLook;
-	XMFLOAT3 mOriginLook;
+	XMFLOAT3 mPrevLook;
+	XMFLOAT3 mDirection;
 
 	Properties mProperty;
 	GameObject* mTarget;

@@ -4,7 +4,8 @@ Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, GoblinType type)
 	: Monster(mesh, info), mType(type)
 {
 	mTimePos = 0.0f;
-	mMovingSpeed = 0.1f;
+	mMovingSpeed = MathHelper::RandF()/10.0f + 0.05f;
+	mAnimSpeed = mMovingSpeed*6.5f;
 
 	mGoblinAnimNames[GoblinAnim::attack1] = "attack01";
 	mGoblinAnimNames[GoblinAnim::attack2] = "attack02";
@@ -138,7 +139,7 @@ void Goblin::Animate(float dt)
 {
 	SetClip();
 
-	mTimePos += dt;
+	mTimePos += dt*mAnimSpeed;
 
 	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
 

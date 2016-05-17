@@ -31,6 +31,15 @@ float MathHelper::AngleFromXY(float x, float y)
 	return theta;
 }
 
+XMVECTOR MathHelper::TargetVector(XMFLOAT2 target, XMFLOAT2 origin)
+{
+	XMFLOAT3 fTarget(target.x - origin.x, 0, target.y - origin.y);
+	XMVECTOR vTarget = XMLoadFloat3(&fTarget);
+	XMVector3Normalize(vTarget);
+
+	return vTarget;
+}
+
 XMVECTOR MathHelper::RandUnitVec3()
 {
 	XMVECTOR One  = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);

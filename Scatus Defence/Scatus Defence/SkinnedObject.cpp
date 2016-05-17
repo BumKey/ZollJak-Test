@@ -52,37 +52,27 @@ void SkinnedObject::Strafe(float d)
 
 void SkinnedObject::MoveTo(Vector2D targetPos, float dt)
 {
-	XMFLOAT3 fTarget;
-	fTarget.x = targetPos.x - mPosition.x;
-	fTarget.y = 0;
-	fTarget.z = targetPos.y - mPosition.z;
-
-	XMVECTOR vmTarget = XMLoadFloat3(&fTarget);
-	XMVector3Normalize(vmTarget);
-	XMStoreFloat3(&fTarget, vmTarget);
+	XMFLOAT2 target(targetPos.x, targetPos.y);
+	XMFLOAT2 origin(mPosition.x, mPosition.z);
+	XMVECTOR vTarget = MathHelper::TargetVector(target, origin);
 
 	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 
 	// 방향으로 이동
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vmTarget, p));
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
 
 	// 방향으로 회전
-	float dot = -fTarget.x*mCurrLook.x - fTarget.z*mCurrLook.z;
-	float det = -fTarget.x*mCurrLook.z + fTarget.z*mCurrLook.x;
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
 	float angle = atan2(det, dot);
 
-	mRotation.y += angle*dt*MathHelper::Pi;
-	mPrevLook = mCurrLook;
-	XMMATRIX R = XMMatrixRotationY(angle*dt*MathHelper::Pi);
-	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
-	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
-	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
+	RotateY(angle*dt*MathHelper::Pi);
 
 	mProperty.state = state_type::type_walk;
 }
-
-
 
 void SkinnedObject::RotateY(float angle)
 {
@@ -96,9 +86,22 @@ void SkinnedObject::RotateY(float angle)
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 }
 
-void SkinnedObject::Attack()
+void SkinnedObject::Attack(float dt)
 {
 	mProperty.state =  state_type::type_attack;
+
+	// 방향으로 회전
+	XMFLOAT2 target(mTarget->GetPos().x, mTarget->GetPos().z);
+	XMFLOAT2 origin(mPosition.x, mPosition.z);
+	XMVECTOR vTarget = MathHelper::TargetVector(target, origin);
+
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
+	float angle = atan2(det, dot);
+
+	RotateY(angle*dt*MathHelper::Pi);
 
 	if (mTarget->GetState() != type_die)
 	{

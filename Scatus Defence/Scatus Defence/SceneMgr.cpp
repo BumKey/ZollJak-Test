@@ -195,7 +195,7 @@ void SceneMgr::DrawScreenQuad()
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		Effects::DebugTexFX->SetWorldViewProj(world);
-		Effects::DebugTexFX->SetTexture(mSmap->DepthMapSRV());
+		Effects::DebugTexFX->SetTexture(mSsao->AmbientSRV());
 
 		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);

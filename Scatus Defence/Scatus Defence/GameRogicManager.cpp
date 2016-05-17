@@ -260,7 +260,7 @@ void GameRogicManager::AIManager(float dt)
 			{
 				if (Vec2DDistance(currPos, targetPos) <= 3.0f)
 				{
-					iterM->Attack();
+					iterM->Attack(dt);
 					printf("배틀실행");
 				}
 				else
@@ -279,7 +279,7 @@ void GameRogicManager::AIManager(float dt)
 			if (mRogicTimer.AttackTimer(iterM->GetProperty().attackspeed))//공격시간이 되면 공격
 			{
 				iterM->SetState(type_battle);
-				iterM->Attack();  //공격시간의 간격을 두기 위한 타이머 설정
+				iterM->Attack(dt);  //공격시간의 간격을 두기 위한 타이머 설정
 			}
 		}
 		j++;

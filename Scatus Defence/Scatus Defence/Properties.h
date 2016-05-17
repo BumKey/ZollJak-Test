@@ -35,12 +35,12 @@ public:
 	char * name;
 	int id;
 	int pw;
+	int level;
 	int gold;
 	int exp_now;
 	int hp_now;
 	int hp_max;
 	int exp_max;
-	int movespeed;
 	int respawn_loc;
 	int attakpoint;
 	int guardpoint;
@@ -52,7 +52,7 @@ public:
 	int army_list;
 	int obj_type;
 	float attackspeed;
-	int level;
+	float movespeed;
 	float attackrange;
 	Properties();
 	~Properties();

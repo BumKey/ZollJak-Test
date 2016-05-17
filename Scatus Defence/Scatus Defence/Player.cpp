@@ -3,8 +3,9 @@
 Player::Player(SkinnedMesh* Mesh, const InstanceDesc& info) : SkinnedObject(Mesh, info)
 {
 	mTimePos = 0.0f;
-	mMovingSpeed = 5.5f;
+	mProperty.movespeed = 5.5f;
 	mCurrClipName = "stand";
+	mProperty.hp_now = 100;
 }
 
 

@@ -79,7 +79,7 @@ bool GameFrameWork::Init()
 		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.RockMesh, info, Label::Basic));
 	}
 
-	for (UINT i = 0; i < 100; ++i)
+	for (UINT i = 0; i < 10; ++i)
 	{
 		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
 			0, mPlayer->GetPos().z + 50.0f + rand() % 150);

@@ -4,8 +4,8 @@ Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, GoblinType type)
 	: Monster(mesh, info), mType(type)
 {
 	mTimePos = 0.0f;
-	mMovingSpeed = MathHelper::RandF()/10.0f + 0.05f;
-	mAnimSpeed = mMovingSpeed*6.5f;
+	mProperty.movespeed = MathHelper::RandF()/10.0f + 0.05f;
+	mProperty.attackspeed = MathHelper::RandF()/2.0f + 0.5f;
 
 	mGoblinAnimNames[GoblinAnim::attack1] = "attack01";
 	mGoblinAnimNames[GoblinAnim::attack2] = "attack02";
@@ -111,8 +111,14 @@ void Goblin::SetClip()
 	if (mProperty.state == state_type::type_idle)
 		mCurrClipName = mGoblinAnimNames[GoblinAnim::stand];
 
-	if (mProperty.state == state_type::type_attack)
-		mCurrClipName = mGoblinAnimNames[GoblinAnim::attack1];
+	if (mProperty.state == state_type::type_attack &&
+		mCurrClipName != mGoblinAnimNames[GoblinAnim::attack1] &&
+		mCurrClipName != mGoblinAnimNames[GoblinAnim::attack2]) {
+		if(rand()%2)
+			mCurrClipName = mGoblinAnimNames[GoblinAnim::attack1];
+		else
+			mCurrClipName = mGoblinAnimNames[GoblinAnim::attack2];
+	}
 
 	//if (mProperty.state == state_type::type_battle)
 	//	mCurrClipName = mGoblinAnimNames[GoblinAnim::attack2];
@@ -139,7 +145,10 @@ void Goblin::Animate(float dt)
 {
 	SetClip();
 
-	mTimePos += dt*mAnimSpeed;
+	if (mProperty.state == state_type::type_attack)
+		mTimePos += dt*mProperty.attackspeed;
+	else 
+		mTimePos += dt*mProperty.movespeed*10.0f;
 
 	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
 
@@ -149,6 +158,7 @@ void Goblin::Animate(float dt)
 		mTimePos = 0.0f;
 		if (mCurrClipName == mGoblinAnimNames[GoblinAnim::attack1] ||
 			mCurrClipName == mGoblinAnimNames[GoblinAnim::attack2])		// attack01은 루프 안쓰는 애니메이션
-			mCurrClipName = mGoblinAnimNames[GoblinAnim::stand];
+			mProperty.state = state_type::type_idle;
+		
 	}
 }

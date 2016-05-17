@@ -29,7 +29,7 @@ void SkinnedObject::Walk(float d)
 	mDirection = mCurrLook;
 
 	// mPosition += d*mLook
-	XMVECTOR s = XMVectorReplicate(d*mMovingSpeed);
+	XMVECTOR s = XMVectorReplicate(d*mProperty.movespeed);
 	XMVECTOR l = XMLoadFloat3(&mCurrLook);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
@@ -42,7 +42,7 @@ void SkinnedObject::Strafe(float d)
 	mDirection = mRight;
 
 	// mPosition += d*mRight
-	XMVECTOR s = XMVectorReplicate(d*mMovingSpeed);
+	XMVECTOR s = XMVectorReplicate(d*mProperty.movespeed);
 	XMVECTOR r = XMLoadFloat3(&mRight);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
@@ -57,15 +57,15 @@ void SkinnedObject::MoveTo(Vector2D targetPos, float dt)
 	fTarget.y = 0;
 	fTarget.z = targetPos.y - mPosition.z;
 
-	XMVECTOR vTarget = XMLoadFloat3(&fTarget);
-	XMVector3Normalize(vTarget);
-	XMStoreFloat3(&fTarget, vTarget);
+	XMVECTOR vmTarget = XMLoadFloat3(&fTarget);
+	XMVector3Normalize(vmTarget);
+	XMStoreFloat3(&fTarget, vmTarget);
 
-	XMVECTOR s = XMVectorReplicate(dt*mMovingSpeed);
+	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 
 	// 방향으로 이동
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vmTarget, p));
 
 	// 방향으로 회전
 	float dot = -fTarget.x*mCurrLook.x - fTarget.z*mCurrLook.z;
@@ -96,39 +96,30 @@ void SkinnedObject::RotateY(float angle)
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 }
 
-void SkinnedObject::Attack(GameObject* target)
+void SkinnedObject::Attack()
 {
-	if (target != NULL)
-	{
-		SetTarget(target);
-		mProperty.state =  state_type::type_attack;
+	mProperty.state =  state_type::type_attack;
 
-		if (target->GetState() != type_die)
+	if (mTarget->GetState() != type_die)
+	{
+		int mTarget_hp = mTarget->GetProperty().hp_now;
+		int armor = mTarget->GetProperty().guardpoint;
+		int damage = mTarget->GetProperty().attakpoint;
+
+		mTarget->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+
+		printf("공격을 성공했습니다. 상대의 체력 : %d \n", mTarget->GetProperty().hp_now);
+
+		if (mTarget->GetProperty().hp_now <= -500)
 		{
-			int target_hp = target->GetProperty().hp_now;
-			int armor = target->GetProperty().guardpoint;
-			int damage = target->GetProperty().attakpoint;
-
-			target->SetHP(target_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
-
-			printf("공격을 성공했습니다. 상대의 체력 : %d \n", target->GetProperty().hp_now);
-
-			if (target->GetProperty().hp_now <= -500)
-			{
-				printf("사망자 이름 : %s\n", target->GetProperty().name);
-			}
-			if (target->GetProperty().hp_now <= 0)
-			{
-				target->SetState(type_die);
-				printf("타겟 사망");
-				this->SetState(type_idle);
-			}
+			printf("사망자 이름 : %s\n", mTarget->GetProperty().name);
 		}
-	}
-	else
-	{
-		printf("타겟이 지정되지 않았습니다.");
-
+		if (mTarget->GetProperty().hp_now <= 0)
+		{
+			mTarget->SetState(type_die);
+			printf("타겟 사망");
+			SetState(type_idle);
+		}
 	}
 }
 

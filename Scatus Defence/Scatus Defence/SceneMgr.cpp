@@ -102,6 +102,8 @@ void SceneMgr::DrawScene(const std::vector<GameObject*>& allObjects, const Camer
 
 	mSky->Draw(md3dImmediateContext, cam);
 
+	DrawScreenQuad();
+
 	// restore default states, as the SkyFX changes them in the effect file.
 	md3dImmediateContext->RSSetState(0);
 	md3dImmediateContext->OMSetDepthStencilState(0, 0);
@@ -164,6 +166,7 @@ void SceneMgr::CreateShadowMap(const std::vector<GameObject*>& allObjects, const
 		XMFLOAT3 pos = i->GetPos();
 		i->DrawToShadowMap(md3dImmediateContext, cam, viewProj, mTerrain.GetHeight(pos));
 	}
+	// mTerrain.DrawToShadowMap(md3dImmediateContext, cam, viewProj);
 
 	md3dImmediateContext->RSSetState(0);
 }
@@ -192,7 +195,7 @@ void SceneMgr::DrawScreenQuad()
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		Effects::DebugTexFX->SetWorldViewProj(world);
-		Effects::DebugTexFX->SetTexture(mSsao->AmbientSRV());
+		Effects::DebugTexFX->SetTexture(mSmap->DepthMapSRV());
 
 		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);

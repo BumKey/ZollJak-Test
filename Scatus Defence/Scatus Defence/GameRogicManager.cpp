@@ -219,7 +219,6 @@ void GameRogicManager::MoveAI()
 void GameRogicManager::AIManager(float dt)
 {
 	int j = 0;
-	j = 0;
 	// 적들의 행동지정	
 	//타겟변경은 나중에 0.5초마다 한번씩
 	for (auto iterM : mObjMgr->GetMonsters())
@@ -240,7 +239,6 @@ void GameRogicManager::AIManager(float dt)
 				iterM->SetTarget(nullptr); // 나중에 신전 객체 등장하면 신전 객체로 바꿔줘야함
 			}
 
-			iterM->MoveTo(targetPos, dt);
 
 			printf("고블린 %d의 위치 x: %f y:%f\n", j, currPos.x, currPos.y);
 			if (iterM->GetTarget() == NULL) //신전이 목표일때
@@ -262,9 +260,11 @@ void GameRogicManager::AIManager(float dt)
 			{
 				if (Vec2DDistance(currPos, targetPos) <= 3.0f)
 				{
-					iterM->SetState(type_battle);
+					iterM->Attack();
 					printf("배틀실행");
 				}
+				else
+					iterM->MoveTo(targetPos, dt);
 			}
 
 		}
@@ -279,11 +279,11 @@ void GameRogicManager::AIManager(float dt)
 			if (mRogicTimer.AttackTimer(iterM->GetProperty().attackspeed))//공격시간이 되면 공격
 			{
 				iterM->SetState(type_battle);
-				iterM->Attack(iterM->GetTarget());  //공격시간의 간격을 두기 위한 타이머 설정
+				iterM->Attack();  //공격시간의 간격을 두기 위한 타이머 설정
 			}
 		}
+		j++;
 	}
-	j++;
 }
 
 

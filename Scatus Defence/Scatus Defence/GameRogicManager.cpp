@@ -191,6 +191,7 @@ void GameRogicManager::Waiting_Wave()
 
 void GameRogicManager::printloc()
 {
+	printf("\n");
 	mObjMgr->GetPlayer()->PrintLocation();
 	for (auto i : mObjMgr->GetMonsters())
 	{
@@ -228,7 +229,7 @@ void GameRogicManager::AIManager(float dt)
 		{
 			//이동
 			iterM->SetTarget(mPlayer);
-			printf("적 세팅");
+			//printf("적 세팅");
 			//기지와 나사이의 거리가 적과 나 사이의 거리보다 가깝다면 타겟을 기지로 변경) 
 		
 			Vector2D currPos = iterM->GetPos2D();
@@ -239,8 +240,7 @@ void GameRogicManager::AIManager(float dt)
 				iterM->SetTarget(nullptr); // 나중에 신전 객체 등장하면 신전 객체로 바꿔줘야함
 			}
 
-
-			printf("고블린 %d의 위치 x: %f y:%f\n", j, currPos.x, currPos.y);
+			//printf("고블린 %d의 위치 x: %f y:%f\n", j, currPos.x, currPos.y);
 			if (iterM->GetTarget() == NULL) //신전이 목표일때
 			{
 

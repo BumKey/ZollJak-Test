@@ -107,9 +107,10 @@ void SkinnedObject::Attack(float dt)
 	{
 		int mTarget_hp = mTarget->GetProperty().hp_now;
 		int armor = mTarget->GetProperty().guardpoint;
-		int damage = mTarget->GetProperty().attakpoint;
+		float damage = mProperty.attakpoint;
 
-		mTarget->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+		//mTarget->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+		//mTarget->SetHP(mTarget_hp - damage);
 
 		printf("공격을 성공했습니다. 상대의 체력 : %d \n", mTarget->GetProperty().hp_now);
 

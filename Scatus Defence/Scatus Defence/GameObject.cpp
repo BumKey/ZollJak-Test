@@ -16,6 +16,6 @@ GameObject::~GameObject()
 
 void  GameObject::PrintLocation()
 {
-	printf("%s 위치 출력: <%f, %f, &f> \n", 
+	printf("%s 위치 출력: <%f, %f, %f> \n", 
 		mProperty.name, mPosition.x, mPosition.y, mPosition.z);
 }

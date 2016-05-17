@@ -54,7 +54,6 @@ public:
 
 	static XMVECTOR TargetVector(XMFLOAT2 target, XMFLOAT2 origin);
 
-	static 
 	static XMMATRIX InverseTranspose(CXMMATRIX M)
 	{
 		// Inverse-transpose is just applied to normals.  So zero out 

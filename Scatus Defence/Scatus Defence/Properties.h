@@ -42,7 +42,6 @@ public:
 	int hp_max;
 	int exp_max;
 	int respawn_loc;
-	int attakpoint;
 	int guardpoint;
 	int restoring_hp;
 	int attack_type;
@@ -54,6 +53,7 @@ public:
 	float attackspeed;
 	float movespeed;
 	float attackrange;
+	float attakpoint;
 	Properties();
 	~Properties();
 	void printPropeties();

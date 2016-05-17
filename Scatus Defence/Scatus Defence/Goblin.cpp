@@ -6,6 +6,7 @@ Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, GoblinType type)
 	mTimePos = 0.0f;
 	mProperty.movespeed = MathHelper::RandF(0.07f, 0.2f);
 	mProperty.attackspeed = MathHelper::RandF(0.6f, 1.1f);
+	mProperty.attakpoint = 0.5f;
 
 	mGoblinAnimNames[GoblinAnim::attack1] = "attack01";
 	mGoblinAnimNames[GoblinAnim::attack2] = "attack02";

@@ -156,7 +156,7 @@ void SkinnedObject::Update(float dt)
 	XMStoreFloat4x4(&mWorld, S*R*T);
 }
 
-void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight)
+void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -218,7 +218,7 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XM
 	}
 }
 
-void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam, FLOAT tHeight)
+void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam, const FLOAT& tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -270,7 +270,7 @@ bool SkinnedObject::AnimEnd(std::string clipName)
 	return false;
 }
 
-void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, FLOAT tHeight)
+void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, const FLOAT& tHeight)
 {
 	Effects::BuildShadowMapFX->SetEyePosW(cam.GetPosition());
 	Effects::BuildShadowMapFX->SetViewProj(lightViewProj);

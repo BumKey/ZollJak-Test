@@ -27,15 +27,11 @@ cbuffer cbPerFrame
 	float gWorldCellSpace;
 	float2 gTexScale = 50.0f;
 	
-	float4 gWorldFrustumPlanes[6];
-};
-
-cbuffer cbPerObject
-{
-	// Terrain coordinate specified directly 
-	// at center of world space.
-	
 	float4x4 gViewProj;
+	float4x4 gShadowTransform;
+
+	float4 gWorldFrustumPlanes[6];
+
 	Material gMaterial;
 };
 
@@ -43,6 +39,7 @@ cbuffer cbPerObject
 Texture2DArray gLayerMapArray;
 Texture2D gBlendMap;
 Texture2D gHeightMap;
+Texture2D gShadowMap;
 
 SamplerState samLinear
 {
@@ -58,6 +55,17 @@ SamplerState samHeightmap
 
 	AddressU = CLAMP;
 	AddressV = CLAMP;
+};
+
+SamplerComparisonState samShadow
+{
+	Filter = COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+	AddressU = BORDER;
+	AddressV = BORDER;
+	AddressW = BORDER;
+	BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	ComparisonFunc = LESS;
 };
 
 struct VertexIn
@@ -223,7 +231,7 @@ HullOut HS(InputPatch<VertexOut, 4> p,
 	// Pass through shader.
 	hout.PosW     = p[i].PosW;
 	hout.Tex      = p[i].Tex;
-	
+
 	return hout;
 }
 
@@ -233,6 +241,7 @@ struct DomainOut
     float3 PosW     : POSITION;
 	float2 Tex      : TEXCOORD0;
 	float2 TiledTex : TEXCOORD1;
+	float4 ShadowPosH : TEXCOORD2;
 };
 
 // The domain shader is called for every vertex created by the tessellator.  
@@ -269,6 +278,9 @@ DomainOut DS(PatchTess patchTess,
 	// Project to homogeneous clip space.
 	dout.PosH    = mul(float4(dout.PosW, 1.0f), gViewProj);
 	
+	// Generate projective tex-coords to project shadow map onto scene.
+	dout.ShadowPosH = mul(float4(dout.PosW, 1.0f), gShadowTransform);
+
 	return dout;
 }
 
@@ -336,6 +348,10 @@ float4 PS(DomainOut pin,
 		float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
 		float4 spec    = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
+		// For now, Only the first light casts a shadow.
+		float3 shadow = float3(1.0f, 1.0f, 1.0f);
+		shadow[0] = CalcShadowFactor(samShadow, gShadowMap, pin.ShadowPosH);
+
 		// Sum the light contribution from each light source.  
 		[unroll]
 		for(int i = 0; i < gLightCount; ++i)
@@ -345,8 +361,8 @@ float4 PS(DomainOut pin,
 				A, D, S);
 
 			ambient += A;
-			diffuse += D;
-			spec    += S;
+			diffuse += shadow[i]*D;
+			spec    += shadow[i]*S;
 		}
 
 		litColor = texColor*(ambient + diffuse) + spec;

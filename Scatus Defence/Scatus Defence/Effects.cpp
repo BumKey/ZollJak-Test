@@ -382,6 +382,7 @@ TerrainEffect::TerrainEffect(ID3D11Device* device, const std::wstring& filename)
 	FogStart = mFX->GetVariableByName("gFogStart")->AsScalar();
 	FogRange = mFX->GetVariableByName("gFogRange")->AsScalar();
 	DirLights = mFX->GetVariableByName("gDirLights");
+	ShadowTransform = mFX->GetVariableByName("gShadowTransform")->AsMatrix();
 	Mat = mFX->GetVariableByName("gMaterial");
 
 	MinDist = mFX->GetVariableByName("gMinDist")->AsScalar();
@@ -396,6 +397,7 @@ TerrainEffect::TerrainEffect(ID3D11Device* device, const std::wstring& filename)
 	LayerMapArray = mFX->GetVariableByName("gLayerMapArray")->AsShaderResource();
 	BlendMap = mFX->GetVariableByName("gBlendMap")->AsShaderResource();
 	HeightMap = mFX->GetVariableByName("gHeightMap")->AsShaderResource();
+	ShadowMap = mFX->GetVariableByName("gShadowMap")->AsShaderResource();
 }
 
 TerrainEffect::~TerrainEffect()

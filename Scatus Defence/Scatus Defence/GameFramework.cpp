@@ -114,7 +114,7 @@ bool GameFrameWork::Init()
 	mCam.LookAt(camPos, mPlayer->GetPos(), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	mObjectMgr.Update();
-	mSceneMgr.ComputeSceneBoundingBox(mObjectMgr.GetAllObjects());
+	mSceneMgr.ComputeSceneBoundingBox(mPlayer->GetPos());
 	return true;
 }
 

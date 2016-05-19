@@ -20,7 +20,7 @@ public:
 public:
 	std::string GetAnimName(GoblinAnim eAnim);
 
-	virtual void DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight);
+	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight);
 	virtual void Release(ResourceMgr& rMgr);
 
 	virtual void Animate(float dt);

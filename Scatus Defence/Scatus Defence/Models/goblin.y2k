@@ -6,10 +6,10 @@
 #AnimationClips: 10
 
 ***************Materials*********************
-Ambient: 0.588235 0.588235 0.588235
-Diffuse: 0.588235 0.588235 0.588235
+Ambient: 0.688235 0.688235 0.688235
+Diffuse: 0.688235 0.688235 0.688235
 Specular: 0.9 0.9 0.9
-SpecPower: 0
+SpecPower: 4
 Reflectivity: 0 0 0
 AlphaClip: 0
 Effect: Normal

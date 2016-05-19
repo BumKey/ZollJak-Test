@@ -43,8 +43,8 @@ public:
 
 	void Init(ID3D11Device* device, ID3D11DeviceContext* dc, const InitInfo& initInfo);
 
-	void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, DirectionalLight lights[3]);
-	void DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj);
+	void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform,
+		ID3D11ShaderResourceView* shadowMapSRV, const DirectionalLight lights[3]);
 
 private:
 	void LoadHeightmap();

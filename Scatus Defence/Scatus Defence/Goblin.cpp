@@ -31,7 +31,7 @@ std::string Goblin::GetAnimName(GoblinAnim eAnim)
 	return mGoblinAnimNames[eAnim];
 }
 
-void Goblin::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight)
+void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -58,7 +58,7 @@ void Goblin::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X
 	if (GetAsyncKeyState('1') & 0x8000)
 		dc->RSSetState(RenderStates::WireframeRS);
 
-	ID3DX11EffectTechnique* activeSkinnedTech = Effects::NormalMapFX->Light3TexSkinnedTech;
+	ID3DX11EffectTechnique* activeSkinnedTech = Effects::NormalMapFX->Light3TexFogSkinnedTech;
 	dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
 
 	// Draw the animated characters.

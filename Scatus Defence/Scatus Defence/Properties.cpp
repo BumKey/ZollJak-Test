@@ -67,7 +67,7 @@ GoblinProperties::GoblinProperties()
 	guardpoint = 30;
 	state = type_idle;
 	attackspeed = 5;
-	obj_type = type_monster;
+	obj_type = goblin;
 	attackrange = 5;
 }
 GoblinProperties::~GoblinProperties()

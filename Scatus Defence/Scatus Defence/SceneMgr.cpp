@@ -2,10 +2,10 @@
 
 SceneMgr::SceneMgr() : mLightRotationAngle(0.0f), mScreenQuadVB(0), mScreenQuadIB(0), mSky(0), mSmap(0), mSsao(0)
 {
-	mDirLights[0].Ambient = XMFLOAT4(0.6f, 0.6f, 0.5f, 1.0f);
-	mDirLights[0].Diffuse = XMFLOAT4(0.6f, 0.6f, 0.5f, 1.0f);
+	mDirLights[0].Ambient = XMFLOAT4(0.6f, 0.6f, 0.45f, 1.0f);
+	mDirLights[0].Diffuse = XMFLOAT4(0.6f, 0.6f, 0.45f, 1.0f);
 	mDirLights[0].Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	mDirLights[0].Direction = XMFLOAT3(0.84735f, -0.57735f, -0.57735f);
+	mDirLights[0].Direction = XMFLOAT3(0.58f, -0.63735f, 0.57735f);
 
 	mDirLights[1].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	mDirLights[1].Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -326,10 +326,10 @@ void SceneMgr::ComputeSceneBoundingBox(const XMFLOAT3& playerPos)
 
 	float halfW = mTerrain.GetWidth() / 2.0f;
 	float halfD = mTerrain.GetDepth() / 2.0f;
-	mSceneBounds.Radius = sqrtf((halfW*halfW) + (halfD*halfD))/7.0f;
-	mSceneBounds.Center.x = playerPos.x;
+	mSceneBounds.Radius = sqrtf((halfW*halfW) + (halfD*halfD))/5.0f;
+	mSceneBounds.Center.x = playerPos.x + 50.0f;
 	mSceneBounds.Center.y = 0.0f;
-	mSceneBounds.Center.z = playerPos.z;
+	mSceneBounds.Center.z = playerPos.z - 50.0f;
 
 }
 

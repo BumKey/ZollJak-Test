@@ -2,7 +2,7 @@
 
 ID3D11ShaderResourceView* ResourceMgr::GoblinDiffuseMapSRV[] = { 0 };
 
-ResourceMgr::ResourceMgr() : mGoblinReferences(0)
+ResourceMgr::ResourceMgr()
 {
 }
 
@@ -35,27 +35,40 @@ void ResourceMgr::Init(ID3D11Device * dc)
 
 }
 
-SkinnedMesh * ResourceMgr::GetGoblinMesh()
+SkinnedMesh * ResourceMgr::GetSkinnedMesh(Object_type oType)
 {
-	if (mGoblinReferences <= 0) {
-		mGoblinMesh = new SkinnedMesh(mDevice, mTexMgr, "Models\\goblin.y2k", L"");
-		GoblinDiffuseMapSRV[0] = mTexMgr.CreateTexture(L"Textures\\goblin\\goblin_diff_R.jpg");
-		GoblinDiffuseMapSRV[1] = mTexMgr.CreateTexture(L"Textures\\goblin\\goblin_diff_B.jpg");
-		++mGoblinReferences;
+	if (mReferences[oType] <= 0) {
+		switch (oType)
+		{
+		case Object_type::goblin:
+			mMeshes[oType] = new SkinnedMesh(mDevice, mTexMgr, "Models\\goblin.y2k", L"");
+			GoblinDiffuseMapSRV[0] = mTexMgr.CreateTexture(L"Textures\\goblin\\goblin_diff_R.jpg");
+			GoblinDiffuseMapSRV[1] = mTexMgr.CreateTexture(L"Textures\\goblin\\goblin_diff_B.jpg");
+			break;
+		case Object_type::cyclop:
+			mMeshes[oType] = new SkinnedMesh(mDevice, mTexMgr, "Models\\cyclop.y2k", L"Textures\\cyclop\\");
+			break;
+
+			++mReferences[oType];
+		}
+		
 	}
 	else
-		++mGoblinReferences;
+		++mReferences[oType];
 
-	return mGoblinMesh;
+	return mMeshes[oType];
 }
 
-void ResourceMgr::ReleaseGoblinMesh()
+void ResourceMgr::ReleaseMesh(Object_type oType)
 {
-	--mGoblinReferences; 
-	if (mGoblinReferences <= 0)
+	--mReferences[oType]; 
+	if (mReferences[oType] <= 0)
 	{
-		SafeDelete(mGoblinMesh);
-		for (auto i : GoblinDiffuseMapSRV)
-			mTexMgr.Delete(i);
+		SafeDelete(mMeshes[oType]);
+		if (oType == Object_type::goblin) {
+			for (auto i : GoblinDiffuseMapSRV)
+				mTexMgr.Delete(i);
+		}
 	}
 }
+

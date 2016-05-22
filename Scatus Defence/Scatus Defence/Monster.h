@@ -1,5 +1,6 @@
 #pragma once
 #include "SkinnedObject.h"
+
 class Monster : public SkinnedObject
 {
 public:

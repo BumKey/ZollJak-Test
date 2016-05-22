@@ -153,9 +153,9 @@ void Terrain::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFL
 	Effects::TerrainFX->SetViewProj(viewProj);
 	Effects::TerrainFX->SetEyePosW(cam.GetPosition());
 	Effects::TerrainFX->SetDirLights(lights);
-	Effects::TerrainFX->SetFogColor(Colors::LightSteelBlue);
+	Effects::TerrainFX->SetFogColor(Colors::Silver);
 	Effects::TerrainFX->SetFogStart(30.0f);
-	Effects::TerrainFX->SetFogRange(300.0f);
+	Effects::TerrainFX->SetFogRange(500.0f);
 	Effects::TerrainFX->SetMinDist(20.0f);
 	Effects::TerrainFX->SetMaxDist(500.0f);
 	Effects::TerrainFX->SetMinTess(0.0f);
@@ -175,7 +175,7 @@ void Terrain::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFL
 
 	Effects::TerrainFX->SetMaterial(mMat);
 
-	ID3DX11EffectTechnique* tech = Effects::TerrainFX->Light1FogTech;
+	ID3DX11EffectTechnique* tech = Effects::TerrainFX->Light1Tech;
     D3DX11_TECHNIQUE_DESC techDesc;
     tech->GetDesc( &techDesc );
 

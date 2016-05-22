@@ -83,6 +83,9 @@
     <Filter Include="Property">
       <UniqueIdentifier>{8949c7ef-c023-4ef5-bc46-c82c007bb56e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\SkinnedObject\Monster\Cyclop">
+      <UniqueIdentifier>{9c8ff78d-da43-4149-aa3d-71379f8f20be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicMeshData.cpp">
@@ -202,6 +205,9 @@
     <ClCompile Include="GameRogicManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="Cyclop.cpp">
+      <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicMeshData.h">
@@ -315,6 +321,9 @@
     </ClInclude>
     <ClInclude Include="GameRogicManager.h">
       <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Cyclop.h">
+      <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

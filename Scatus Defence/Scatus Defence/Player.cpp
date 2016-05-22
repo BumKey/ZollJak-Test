@@ -41,6 +41,6 @@ void Player::Animate(float dt)
 
 void Player::Release(ResourceMgr & rMgr)
 {
-	rMgr.ReleaseGoblinMesh(); // 임시
+	rMgr.ReleaseMesh(mObjectType); // 임시
 }
 

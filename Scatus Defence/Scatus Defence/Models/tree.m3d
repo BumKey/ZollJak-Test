@@ -8,8 +8,8 @@
 ***************Materials*********************
 Ambient: 0.4 0.4 0.4
 Diffuse: 0.9 0.9 0.9
-Specular: 0.2 0.4 0.2
-SpecPower: 8
+Specular: 0.4 0.4 0.4
+SpecPower: 16
 Reflectivity: 0 0 0
 AlphaClip: 1
 Effect: Normal
@@ -18,8 +18,8 @@ NormalMap: tree01-leaves_normal.dds
 
 Ambient: 0.4 0.4 0.4
 Diffuse: 0.9 0.9 0.9
-Specular: 0.2 0.4 0.2
-SpecPower: 8
+Specular: 0.4 0.4 0.4
+SpecPower: 16
 Reflectivity: 0 0 0
 AlphaClip: 0
 Effect: Normal

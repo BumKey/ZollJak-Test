@@ -1,6 +1,5 @@
 #pragma once
 #include "GameFramework.h"
-#include "Goblin.h"
 
 GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 	: D3DApp(hInstance), m_bReady(false), m_bAttackAnim(false)
@@ -47,14 +46,14 @@ bool GameFrameWork::Init()
 
 	// 250이 거의 끝자리
 	info.Pos = XMFLOAT3(170.0f, 0.05f, -280.0f);
-	info.Yaw = 0.0f;
+	info.Rot.y = 0.0f;
 	info.Scale = 0.2f;
 
-	mPlayer = new Player(mResourceMgr.GetGoblinMesh(), info);
+	mPlayer = new Player(mResourceMgr.GetSkinnedMesh(Object_type::goblin), info);
 	mObjectMgr.SetPlayer(mPlayer);
 
 	info.Pos = XMFLOAT3(195.0f, 0.05f, -300.0f);
-	info.Yaw = 0.0f;
+	info.Rot.y = 0.0f;
 	info.Scale = 0.3f;
 
 	mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.Temple, info, Label::Basic));
@@ -62,9 +61,9 @@ bool GameFrameWork::Init()
 	for (UINT i = 0; i < 10; ++i)
 	{
 		info.Pos = XMFLOAT3(mPlayer->GetPos().x +50.0f - rand() % 100,
-			0, mPlayer->GetPos().z + 50.0f -rand() % 100);
+			-0.1f, mPlayer->GetPos().z + 50.0f -rand() % 100);
 		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-		info.Yaw = MathHelper::RandF()*MathHelper::Pi*2;
+		info.Rot.y = MathHelper::RandF()*MathHelper::Pi*2;
 
 		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.TreeMesh, info, Label::AlphaBasic));
 	}
@@ -72,9 +71,9 @@ bool GameFrameWork::Init()
 	for (UINT i = 0; i < 20; ++i)
 	{
 		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
-			0, mPlayer->GetPos().z + 50.0f - rand() % 100);
+			-0.1f, mPlayer->GetPos().z + 50.0f - rand() % 100);
 		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-		info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2.0f;
+		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2.0f;
 
 		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.RockMesh, info, Label::Basic));
 	}
@@ -82,30 +81,40 @@ bool GameFrameWork::Init()
 	for (UINT i = 0; i < 10; ++i)
 	{
 		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
-			0, mPlayer->GetPos().z + 50.0f + rand() % 150);
+			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
 		info.Scale = 0.1f + MathHelper::RandF() / 5.0f;
-		info.Yaw = 0;
+		info.Rot.y = 0;
 		
-		GoblinType type;
+		Goblin::Type type;
 		if (i % 2) {
-			type = GoblinType::Blue;
+			type = Goblin::Type::Blue;
 			info.Scale = 0.4f;
 		}
 		else if (i % 3)
 		{
-			type = GoblinType::Red;
+			type = Goblin::Type::Red;
 			info.Scale = 0.3f;
 		}
 		else if (i % 5)
 		{
-			type = GoblinType::Red;
-			info.Scale = 1.0f;
+			type = Goblin::Type::Red;
+			info.Scale = 0.7f;
 		}
 		else {
-			type = GoblinType::Blue;
+			type = Goblin::Type::Blue;
 			info.Scale = 0.6f;
 		}
-		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetGoblinMesh(), info, type));
+		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetSkinnedMesh(Object_type::goblin), info, type));
+	}
+
+	for (UINT i = 0; i < 2; ++i) {
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
+			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
+		info.Scale = 8.0f + MathHelper::RandF();
+		info.Rot.x = XMConvertToRadians(90);
+		info.Rot.y = 0.0f;
+
+		mObjectMgr.AddMonster(new Cyclop(mResourceMgr.GetSkinnedMesh(Object_type::cyclop), info));
 	}
 
 	XMFLOAT3 camPos = mPlayer->GetPos();
@@ -240,7 +249,7 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 	//	float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
 	//	float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
 
-	//	mSceneMgr.PlayerYawPitch(dx, dy);
+	//	mSceneMgr.PlayerRot.yPitch(dx, dy);
 
 	//	mLastMousePos.x = x;
 	//	mLastMousePos.y = y;

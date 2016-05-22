@@ -3,16 +3,16 @@
 BasicObject::BasicObject(BasicMesh * mesh, const InstanceDesc& info, Label label) : GameObject(mesh), mLabel(label)
 {
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
-	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
+	XMMATRIX R = XMMatrixRotationRollPitchYaw(info.Rot.x, info.Rot.y, info.Rot.z);
 	XMMATRIX T = XMMatrixTranslation(info.Pos.x, info.Pos.y, info.Pos.z);
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
 
 	mScaling = info.Scale;
-	mRotation = XMFLOAT3(0.0f, info.Yaw, 0.0f);
+	mRotation = XMFLOAT3(0.0f, info.Rot.y, 0.0f);
 	mPosition = info.Pos;
 
-	R = XMMatrixRotationY(info.Yaw);
+	R = XMMatrixRotationY(info.Rot.y);
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));

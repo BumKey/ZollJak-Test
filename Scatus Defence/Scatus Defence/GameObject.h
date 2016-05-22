@@ -11,8 +11,14 @@
 struct InstanceDesc
 {
 	XMFLOAT3 Pos;
-	FLOAT Yaw;
+	XMFLOAT3 Rot;
 	FLOAT Scale;
+
+	InstanceDesc() {
+		Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		Scale = 1.0f;
+	}
 };
 
 class GameObject
@@ -45,7 +51,8 @@ public:
 	Properties		GetProperty() const { return mProperty; }
 	state_type		GetState() const{ return mProperty.state; }
 	Vector2D		GetPos2D() const { return Vector2D(mPosition.x, mPosition.z); }
-	GameObject*		GetTarget() { return mTarget; }
+	GameObject*		GetTarget() const { return mTarget; }
+	Object_type		GetType() const { return mObjectType; }
 
 	void			SetState(state_type state) { mProperty.state = state; }
 	void			SetHP(int hp) { mProperty.hp_now = hp; }
@@ -71,6 +78,7 @@ protected:
 	XMFLOAT3 mDirection;
 
 	Properties mProperty;
+	Object_type mObjectType;
 	GameObject* mTarget;
 };
 

@@ -9,7 +9,7 @@
 Ambient: 0.688235 0.688235 0.688235
 Diffuse: 0.688235 0.688235 0.688235
 Specular: 0.9 0.9 0.9
-SpecPower: 4
+SpecPower: 8
 Reflectivity: 0 0 0
 AlphaClip: 0
 Effect: Normal

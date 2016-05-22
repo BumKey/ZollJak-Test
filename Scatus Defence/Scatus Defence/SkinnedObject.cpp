@@ -2,17 +2,12 @@
 
 SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh), mMesh(mesh)
 {
-	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
-	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
-	XMMATRIX T = XMMatrixTranslation(info.Pos.x, info.Pos.y, info.Pos.z);
-
-	XMStoreFloat4x4(&mWorld, S*R*T);
-
+	
 	mScaling = info.Scale;
-	mRotation = XMFLOAT3(0.0f, info.Yaw, 0.0f);
+	mRotation = info.Rot;
 	mPosition = info.Pos;
 
-	R = XMMatrixRotationY(info.Yaw);
+	XMMATRIX R = XMMatrixRotationY(info.Rot.y);
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
@@ -150,7 +145,7 @@ void SkinnedObject::Update(float dt)
 
 	XMMATRIX S = XMMatrixScaling(mScaling, mScaling, mScaling);
 	//XMMATRIX R = XMMatrixRotationQuaternion(Q);
-	XMMATRIX R = XMMatrixRotationY(mRotation.y);
+	XMMATRIX R = XMMatrixRotationRollPitchYaw(mRotation.x, mRotation.y, mRotation.z);
 	XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
@@ -260,6 +255,11 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 			mMesh->MeshData.Draw(dc, subset);
 		}
 	}
+}
+
+void SkinnedObject::Release(ResourceMgr & rMgr)
+{
+	rMgr.ReleaseMesh(mObjectType);
 }
 
 bool SkinnedObject::AnimEnd(std::string clipName)

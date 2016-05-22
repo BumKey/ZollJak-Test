@@ -12,9 +12,9 @@ enum state_type
 	type_null,
 	type_battle,
 	type_walk,
+	type_run,
 	type_die,
 	type_build,
-	type_run,
 	type_attack,
 	type_attacked,
 	type_idle
@@ -25,7 +25,8 @@ enum Object_type
 	type_p_warrior, // 캐릭터 전사
 	type_p_archer, // 캐릭터 아처
 	type_p_builder, // 캐릭터 건축가
-	type_monster,// 적- 고블린
+	goblin, // 적- 고블린
+	cyclop,
 	type_object,// 기타 오브젝트(지형등)
 };
 

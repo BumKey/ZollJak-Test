@@ -1,0 +1,4 @@
+Convert transformation matrices from OpenGL standard coordinate system (X-Right, Y-Up, Z-Out) to DirectX(X-Right, Y-Up, Z-In):
+1. Get translation component of the matrix, negate its Z component
+2. Get rotation component of the matrix, negate its X and Y component
+

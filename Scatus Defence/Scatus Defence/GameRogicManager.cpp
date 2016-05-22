@@ -201,17 +201,17 @@ void GameRogicManager::printloc()
 
 void GameRogicManager::add_Monster()
 {
-	InstanceDesc info;
-	
-	info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
-		0, mPlayer->GetPos().z + 50.0f - rand() % 100);
-	info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-	info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
+	//InstanceDesc info;
+	//
+	//info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
+	//	0, mPlayer->GetPos().z + 50.0f - rand() % 100);
+	//info.Scale = MathHelper::RandF()*2.0f + 0.5f;
+	//info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
 
-	GoblinType type;
-	if (rand() % 2) type = GoblinType::Red;
-	else	   type = GoblinType::Blue;
-	mObjMgr->AddMonster(new Goblin(mResourceMgr->GetGoblinMesh(), info, type));
+	//GoblinType type;
+	//if (rand() % 2) type = GoblinType::Red;
+	//else	   type = GoblinType::Blue;
+	//mObjMgr->AddMonster(new Goblin(mResourceMgr->GetGoblinMesh(), info, type));
 }
 void GameRogicManager::MoveAI()
 {

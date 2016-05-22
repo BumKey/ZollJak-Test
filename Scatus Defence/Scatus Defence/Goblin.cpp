@@ -1,23 +1,25 @@
 #include "Goblin.h"
 
-Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, GoblinType type)
-	: Monster(mesh, info), mType(type)
+Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type)
+	: Monster(mesh, info), mGoblinType(type)
 {
 	mTimePos = 0.0f;
 	mProperty.movespeed = MathHelper::RandF(0.07f, 0.2f);
 	mProperty.attackspeed = MathHelper::RandF(0.6f, 1.1f);
 	mProperty.attakpoint = 0.5f;
 
-	mGoblinAnimNames[GoblinAnim::attack1] = "attack01";
-	mGoblinAnimNames[GoblinAnim::attack2] = "attack02";
-	mGoblinAnimNames[GoblinAnim::damage] = "damage";
-	mGoblinAnimNames[GoblinAnim::dead] = "dead";
-	mGoblinAnimNames[GoblinAnim::drop_down] = "drop_down";
-	mGoblinAnimNames[GoblinAnim::run] = "run";
-	mGoblinAnimNames[GoblinAnim::sit_up] = "sit_up";
-	mGoblinAnimNames[GoblinAnim::stand] = "stand";
-	mGoblinAnimNames[GoblinAnim::walk] = "walk";
-	mGoblinAnimNames[GoblinAnim::look_around] = "stand2";
+	mObjectType = Object_type::goblin;
+
+	mAnimNames[Anim::attack1] = "attack01";
+	mAnimNames[Anim::attack2] = "attack02";
+	mAnimNames[Anim::damage] = "damage";
+	mAnimNames[Anim::dead] = "dead";
+	mAnimNames[Anim::drop_down] = "drop_down";
+	mAnimNames[Anim::run] = "run";
+	mAnimNames[Anim::sit_up] = "sit_up";
+	mAnimNames[Anim::stand] = "stand";
+	mAnimNames[Anim::walk] = "walk";
+	mAnimNames[Anim::look_around] = "stand2";
 
 	SetState(type_idle);
 }
@@ -26,9 +28,9 @@ Goblin::~Goblin()
 {
 }
 
-std::string Goblin::GetAnimName(GoblinAnim eAnim)
+std::string Goblin::GetAnimName(Anim eAnim)
 {
-	return mGoblinAnimNames[eAnim];
+	return mAnimNames[eAnim];
 }
 
 void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
@@ -58,7 +60,7 @@ void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLO
 	if (GetAsyncKeyState('1') & 0x8000)
 		dc->RSSetState(RenderStates::WireframeRS);
 
-	ID3DX11EffectTechnique* activeSkinnedTech = Effects::NormalMapFX->Light3TexFogSkinnedTech;
+	ID3DX11EffectTechnique* activeSkinnedTech = Effects::NormalMapFX->Light3TexSkinnedTech;
 	dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
 
 	// Draw the animated characters.
@@ -84,15 +86,15 @@ void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLO
 		Effects::NormalMapFX->SetMaterial(mMesh->Mat[0]);
 		//Effects::NormalMapFX->SetNormalMap(mMesh->NormalMapSRV[subset]);
 
-		switch (mType)
+		switch (mGoblinType)
 		{
-		case GoblinType::Red:
+		case Type::Red:
 			Effects::NormalMapFX->SetDiffuseMap(ResourceMgr::GoblinDiffuseMapSRV[0]);
 			break;
-		case GoblinType::Green:
+		case Type::Green:
 			Effects::NormalMapFX->SetDiffuseMap(mMesh->DiffuseMapSRV[0]);
 			break;
-		case GoblinType::Blue:
+		case Type::Blue:
 			Effects::NormalMapFX->SetDiffuseMap(ResourceMgr::GoblinDiffuseMapSRV[1]);
 			break;
 		}
@@ -102,40 +104,36 @@ void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLO
 	}
 }
 
-void Goblin::Release(ResourceMgr & rMgr)
-{
-	rMgr.ReleaseGoblinMesh();
-}
 
 void Goblin::SetClip()
 {
 	if (mProperty.state == state_type::type_idle)
-		mCurrClipName = mGoblinAnimNames[GoblinAnim::stand];
+		mCurrClipName = mAnimNames[Anim::stand];
 
 	if (mProperty.state == state_type::type_attack &&
-		mCurrClipName != mGoblinAnimNames[GoblinAnim::attack1] &&
-		mCurrClipName != mGoblinAnimNames[GoblinAnim::attack2]) {
+		mCurrClipName != mAnimNames[Anim::attack1] &&
+		mCurrClipName != mAnimNames[Anim::attack2]) {
 		if(rand()%2)
-			mCurrClipName = mGoblinAnimNames[GoblinAnim::attack1];
+			mCurrClipName = mAnimNames[Anim::attack1];
 		else
-			mCurrClipName = mGoblinAnimNames[GoblinAnim::attack2];
+			mCurrClipName = mAnimNames[Anim::attack2];
 	}
 
 	//if (mProperty.state == state_type::type_battle)
-	//	mCurrClipName = mGoblinAnimNames[GoblinAnim::attack2];
+	//	mCurrClipName = mAnimNames[Anim::attack2];
 
 	if (mProperty.state == state_type::type_run)
-		mCurrClipName = mGoblinAnimNames[GoblinAnim::run];
+		mCurrClipName = mAnimNames[Anim::run];
 
 	if (mProperty.state == state_type::type_walk)
-		mCurrClipName = mGoblinAnimNames[GoblinAnim::walk];
+		mCurrClipName = mAnimNames[Anim::walk];
 
 	if (mProperty.state == state_type::type_die)
-		mCurrClipName = mGoblinAnimNames[GoblinAnim::dead];
+		mCurrClipName = mAnimNames[Anim::dead];
 
 	//// 공격 애니메이션 아직 안 끝났으면 바꾸지X
-	//if ((mCurrClipName == mGoblinAnimNames[GoblinAnim::attack1] ||
-	//	mCurrClipName == mGoblinAnimNames[GoblinAnim::attack2]) &&
+	//if ((mCurrClipName == mAnimNames[Anim::attack1] ||
+	//	mCurrClipName == mAnimNames[Anim::attack2]) &&
 	//	mTimePos < mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
 	//	return false;
 	//else
@@ -157,9 +155,8 @@ void Goblin::Animate(float dt)
 	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
 	{
 		mTimePos = 0.0f;
-		if (mCurrClipName == mGoblinAnimNames[GoblinAnim::attack1] ||
-			mCurrClipName == mGoblinAnimNames[GoblinAnim::attack2])		// attack01은 루프 안쓰는 애니메이션
+		if (mCurrClipName == mAnimNames[Anim::attack1] ||
+			mCurrClipName == mAnimNames[Anim::attack2])		// attack01은 루프 안쓰는 애니메이션
 			mProperty.state = state_type::type_idle;
-		
 	}
 }

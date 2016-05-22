@@ -19,7 +19,8 @@ public:
 	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight);
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight);
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight);
-	virtual void Release(ResourceMgr& rMgr) = 0;
+
+	virtual void Release(ResourceMgr& rMgr);
 
 	virtual void Animate(float dt) = 0;
 
@@ -32,6 +33,7 @@ protected:
 	FLOAT mTimePos;
 
 	std::string mCurrClipName;
+	std::unordered_map<UINT, std::string> mAnimNames;
 	std::vector<XMFLOAT4X4> mFinalTransforms;
 };
 

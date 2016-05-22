@@ -4,6 +4,9 @@
 #include "ObjectMgr.h"
 #include "ResourceMgr.h"
 #include "GameRogicManager.h"
+#include "Goblin.h"
+#include "Cyclop.h"
+
 class GameFrameWork : public D3DApp
 {
 public:

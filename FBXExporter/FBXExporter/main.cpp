@@ -11,7 +11,7 @@
 void main()
 {
 	std::string inFileName;
-	std::string outFileName = "cyclop_tanget.y2k";
+	std::string outFileName = "cyclop_tanget3.y2k";
 	std::ofstream fout(OUTPUT_FILE_PATH + outFileName);
 	FBXExporter myExporter;
 	myExporter.SetClipNum(9);

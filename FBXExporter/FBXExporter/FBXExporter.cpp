@@ -30,11 +30,11 @@ FBXExporter::~FBXExporter()
 
 	mBones.clear();
 
-	for (auto itr = mMaterialLookUp.begin(); itr != mMaterialLookUp.end(); ++itr)
+	for (auto itr = mMaterials.begin(); itr != mMaterials.end(); ++itr)
 	{
 		delete itr->second;
 	}
-	mMaterialLookUp.clear();
+	mMaterials.clear();
 }
 #pragma endregion
 
@@ -168,16 +168,6 @@ void FBXExporter::ProcessMesh(FbxMesh* mesh)
 	int vertexCounter = 0;
 	mTriangles.reserve(mPrevTriangleCount + triangleCount);
 
-	bool bTan(true), bBinormal(true);
-	if (mesh->GetElementBinormalCount() == 0) {
-		std::cout << "This mesh has no binormal value" << std::endl;
-		bBinormal = false;
-	}
-	if (mesh->GetElementTangentCount() == 0) {
-		std::cout << "This mesh has no tangent value" << std::endl;
-		bTan = false;
-	}
-
 	for (UINT i = 0; i < triangleCount; ++i)
 	{
 		Triangle triangle;
@@ -194,7 +184,6 @@ void FBXExporter::ProcessMesh(FbxMesh* mesh)
 			CtrlPoint ctrlPoint = mControlPoints[mPrevCtrlPointCount + ctrlPointIndex];
 
 			ReadNormal(mesh, ctrlPointIndex, vertexCounter, normal);
-			if (bTan) ReadTangent(mesh, ctrlPointIndex, vertexCounter, tangent);
 			for (int k = 0; k < 1; ++k)		// Set UV depend on Diffuse map
 			{
 				ReadUV(mesh, ctrlPointIndex, mesh->GetTextureUVIndex(i, j), k, UV);
@@ -203,7 +192,6 @@ void FBXExporter::ProcessMesh(FbxMesh* mesh)
 			Vertex::Skinned vertex;
 			vertex.Position = ctrlPoint.Position;
 			vertex.Normal = normal;
-			vertex.TangentU = tangent;
 			vertex.Tex = UV;
 			// Copy the blending info from each control point
 			for (UINT i = 0; i < ctrlPoint.BlendingInfo.size(); ++i)
@@ -499,7 +487,7 @@ void FBXExporter::ReadSkinnedData(FbxMesh* mesh)
 	{
 	
 		ReadBoneOffset(mesh);
-		//RemoveUnSkinnedBonesFromHierachy();
+		RemoveUnSkinnedBonesFromHierachy();
 		if (mOverWrite == false)
 			ReadBoneWeightsAndIndices(mesh);
 	}
@@ -535,7 +523,8 @@ void FBXExporter::RemoveUnSkinnedBonesFromHierachy()
 {
 	for (UINT i = 1; i < mBones.size(); ++i)
 	{
-		if (mBones[i].BoneOffset == FbxAMatrix())
+		// For Goblin
+		/*if (mBones[i].BoneOffset == FbxAMatrix())
 		{
 			for (UINT j = i + 1; j < mBones.size(); ++j) {
 				if (mBones[j].ParentIndex >= i)
@@ -544,7 +533,11 @@ void FBXExporter::RemoveUnSkinnedBonesFromHierachy()
 
 			mBones.erase(mBones.begin() + i);
 			--i;
-		}
+		}*/
+
+		// For model that has several meshes(weapons, sheild, etc..)
+		if (mBones[i].ParentIndex == -1)
+			mBones[i].ParentIndex = 0;
 	}
 }
 
@@ -661,7 +654,7 @@ void FBXExporter::ProcessMaterials(FbxNode* node)
 		UINT uniqueMatID = surfaceMaterial->GetUniqueID();
 
 		ProcessMaterialAttribute(surfaceMaterial, uniqueMatID);
-		ProcessMaterialTexture(surfaceMaterial, mMaterialLookUp[uniqueMatID]);
+		ProcessMaterialTexture(surfaceMaterial, mMaterials[uniqueMatID]);
 	}
 	
 }
@@ -690,7 +683,7 @@ void FBXExporter::AssociateMaterialToMesh(FbxNode* node)
 					for (UINT i = 0; i < meshPolyCount; ++i)
 					{
 						UINT materialIndex = materialIndices->GetAt(i);
-						mTriangles[mPrevTriangleCount + i].SubsetID = materialIndex + mMaterialLookUp.size();
+						mTriangles[mPrevTriangleCount + i].SubsetID = materialIndex + mMaterials.size();
 					}
 				}
 			}
@@ -701,7 +694,7 @@ void FBXExporter::AssociateMaterialToMesh(FbxNode* node)
 				UINT materialIndex = materialIndices->GetAt(0);
 				for (UINT i = 0; i < meshPolyCount; ++i)
 				{
-					mTriangles[mPrevTriangleCount + i].SubsetID = materialIndex + mMaterialLookUp.size();
+					mTriangles[mPrevTriangleCount + i].SubsetID = materialIndex + mMaterials.size();
 				}
 			}
 			break;
@@ -769,7 +762,7 @@ void FBXExporter::ProcessMaterialAttribute(FbxSurfaceMaterial* inMaterial, UINT 
 		double1 = reinterpret_cast<FbxSurfacePhong *>(inMaterial)->ReflectionFactor;
 		currMaterial->ReflectionFactor = double1;
 
-		mMaterialLookUp[inMaterialIndex] = currMaterial;
+		mMaterials[inMaterialIndex] = currMaterial;
 	}
 	else if (inMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId))
 	{
@@ -798,7 +791,7 @@ void FBXExporter::ProcessMaterialAttribute(FbxSurfaceMaterial* inMaterial, UINT 
 		double1 = lambert->TransparencyFactor;
 		currMaterial->TransparencyFactor = double1;
 
-		mMaterialLookUp[inMaterialIndex] = currMaterial;
+		mMaterials[inMaterialIndex] = currMaterial;
 	}
 }
 
@@ -878,6 +871,73 @@ void FBXExporter::FinalProcedure()
 		}
 	}
 
+	// Calculate Tagent
+	for (UINT i = 0; i < mTriangles.size(); ++i)
+	{
+		for (UINT j = 0; j < 3; j++)
+		{
+			XMFLOAT3 vertex0, vertex1, vertex2;
+			XMVECTOR e0, e1;
+			vertex0 = uniqueVertices[mTriangles[i].Indices[j]].Position;
+			vertex1 = uniqueVertices[mTriangles[i].Indices[(j+1)%3]].Position;
+			vertex2 = uniqueVertices[mTriangles[i].Indices[(j+2)%3]].Position;
+
+			e0 = XMLoadFloat3(&(vertex1 - vertex0));
+			e1 = XMLoadFloat3(&(vertex2 - vertex0));
+
+			XMFLOAT2 uv0, uv1, uv2;
+			XMVECTOR d_uv0, d_uv1;
+			uv0 = uniqueVertices[mTriangles[i].Indices[j]].Tex;
+			uv1 = uniqueVertices[mTriangles[i].Indices[(j+1)%3]].Tex;
+			uv2 = uniqueVertices[mTriangles[i].Indices[(j+1)%3]].Tex;
+
+			d_uv0 = XMLoadFloat2(&(uv1 - uv0));
+			d_uv1 = XMLoadFloat2(&(uv2 - uv0));
+
+			XMVECTOR zeroVector = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+			XMMATRIX UV(d_uv0, d_uv1, zeroVector, zeroVector);
+			XMMATRIX E(e0, e1, zeroVector, zeroVector);
+
+		/*	FLOAT det = d_uv0 *d_uv1.y - d_uv0.y*d_uv1.x;
+			FLOAT Tx = (d_uv1.y * e0.x - d_uv0.y*e1.x)/det;
+			FLOAT Ty = (d_uv1.y * e0.y - d_uv0.y*e1.y)/det;
+			FLOAT Tz = (d_uv1.y * e0.z - d_uv0.y*e1.z)/det;
+			FLOAT length = sqrtf(Tx*Tx + Ty*Ty + Tz*Tz);*/
+
+			XMMATRIX result = XMMatrixTranspose(UV)*E;
+			FLOAT Tx = result._21;
+			FLOAT Ty = result._22;
+			FLOAT Tz = result._23;
+
+			// Binormal
+			XMFLOAT3 binormal = Float3Normalize(XMFLOAT3(Tx, Ty, Tz));
+			uniqueVertices[mTriangles[i].Indices[j]].Binormals.push_back(binormal);
+		}
+	}
+
+	for (auto& iter : uniqueVertices)
+	{
+		// Get the tangent value to cross normal and Binormal
+		XMFLOAT3 tangentU, binormal(0.0f, 0.0f, 0.0f);
+		for (auto b : iter.Binormals)
+		{
+			binormal.x += b.x;
+			binormal.y += b.y;
+			binormal.z += b.z;
+		}
+		binormal.x /= iter.Binormals.size();
+		binormal.y /= iter.Binormals.size();
+		binormal.z /= iter.Binormals.size();
+
+		XMVECTOR vBi = XMLoadFloat3(&binormal);
+		XMVECTOR vTan = XMVector3Cross(XMLoadFloat3(&iter.Normal), vBi);
+		XMStoreFloat3(&tangentU, XMVector3Normalize(vTan));
+		iter.TangentU.x = tangentU.x;
+		iter.TangentU.y = tangentU.y;
+		iter.TangentU.z = tangentU.z;
+		iter.TangentU.w = 1.0f;
+	}
+
 	mVertices.clear();
 	mVertices = uniqueVertices;
 	uniqueVertices.clear();
@@ -886,14 +946,14 @@ void FBXExporter::FinalProcedure()
 	// shader's workload
 	std::sort(mTriangles.begin(), mTriangles.end());
 
-	// Make SubsetTable from mSubsetMap
+	// Make SubsetTable 
 	UINT count(0);
 	std::unordered_map<UINT, UINT> material_TriangleCount;
 
 	for (auto iterT : mTriangles)
 		++material_TriangleCount[iterT.SubsetID];
 
-	mSubsets.resize(mMaterialLookUp.size());
+	mSubsets.resize(mMaterials.size());
 	
 
 	for (UINT i = 0; i < mSubsets.size(); ++i)
@@ -905,7 +965,7 @@ void FBXExporter::FinalProcedure()
 	}
 
 	// If model doesn't have normal map
-	for (auto iterM : mMaterialLookUp)
+	for (auto iterM : mMaterials)
 	{
 		if (iterM.second->DiffuseMapName == "")
 			iterM.second->DiffuseMapName = "None";
@@ -937,7 +997,7 @@ void FBXExporter::WriteMesh(std::ostream& fout)
 	{
 		// Notice: 원 테이크만 지원
 		fout << "***************Y2K-File-Header***************" << endl;
-		fout << "#Materials: " << mMaterialLookUp.size() << endl;
+		fout << "#Materials: " << mMaterials.size() << endl;
 		fout << "#Vertices: " << mVertices.size() << endl;
 		fout << "#Triangles: " << mTriangles.size() << endl;
 		fout << "#Bones: " << mBones.size() << endl;
@@ -946,7 +1006,7 @@ void FBXExporter::WriteMesh(std::ostream& fout)
 	else
 	{
 		fout << "***************KPU-File-Header***************" << endl;
-		fout << "#Materials: "	<< mMaterialLookUp.size() << endl;
+		fout << "#Materials: "	<< mMaterials.size() << endl;
 		fout << "#Vertices: "	<< mVertices.size() << endl;
 		fout << "#Triangles: "  << mTriangles.size() << endl;
 		fout << "#Bones: "		<< 0 << endl;		// 이 정보는 필요없다. 모델이 애니메이션 없으면
@@ -954,7 +1014,7 @@ void FBXExporter::WriteMesh(std::ostream& fout)
 	}
 
 	fout << "***************Materials*********************" << endl;
-	for (auto iterM : mMaterialLookUp)
+	for (auto iterM : mMaterials)
 	{
 		fout << "Ambient: "		<< iterM.second->Ambient << endl;
 		fout << "Diffuse: "		<< iterM.second->Diffuse << endl;

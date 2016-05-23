@@ -82,3 +82,31 @@ std::ostream& operator<<(std::ostream& os, const XMFLOAT4& f4)
 	os << f4.x << " " << f4.y << " " << f4.z << " " << f4.w;
 	return os;
 }
+
+XMFLOAT3 operator-(XMFLOAT3 l, XMFLOAT3 r)
+{
+	return XMFLOAT3(l.x - r.x, l.y - r.y, l.z - r.z);
+}
+
+XMFLOAT2 operator-(XMFLOAT2 l, XMFLOAT2 r)
+{
+	return XMFLOAT2(l.x - r.x, l.y - r.y);
+}
+
+XMFLOAT3 Float3Normalize(const XMFLOAT3& in)
+{
+	XMFLOAT3 out;
+
+	XMVECTOR vIn = XMLoadFloat3(&in);
+	XMStoreFloat3(&out, XMVector3Normalize(vIn));
+	return out;
+}
+
+XMFLOAT2 Float2Normalize(const XMFLOAT2& in)
+{
+	XMFLOAT2 out;
+
+	XMVECTOR vIn = XMLoadFloat2(&in);
+	XMStoreFloat2(&out, XMVector3Normalize(vIn));
+	return out;
+}

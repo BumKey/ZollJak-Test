@@ -74,6 +74,6 @@ private:
 	std::vector<Vertex::Skinned> mVertices;
 	std::vector<Subset> mSubsets;
 
-	std::unordered_map<UINT, Material*> mMaterialLookUp;
+	std::unordered_map<UINT, Material*> mMaterials;
 	std::unordered_map<UINT, CtrlPoint> mControlPoints;
 };

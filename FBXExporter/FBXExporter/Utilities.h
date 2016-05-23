@@ -105,3 +105,8 @@ struct Subset
 std::ostream& operator<<(std::ostream& os, const XMFLOAT2& f2);
 std::ostream& operator<<(std::ostream& os, const XMFLOAT3& f3);
 std::ostream& operator<<(std::ostream& os, const XMFLOAT4& f4);
+XMFLOAT3 operator-(XMFLOAT3 l, XMFLOAT3 r);
+XMFLOAT2 operator-(XMFLOAT2 l, XMFLOAT2 r);
+
+XMFLOAT3 Float3Normalize(const XMFLOAT3& in);
+XMFLOAT2 Float2Normalize(const XMFLOAT2& in);

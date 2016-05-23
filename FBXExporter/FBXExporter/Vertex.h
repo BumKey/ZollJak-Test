@@ -10,6 +10,7 @@ namespace Vertex
 		Basic() { ZeroMemory(this, sizeof(Basic)); }
 
 		XMFLOAT3 Position;
+		std::vector<XMFLOAT3> Binormals;
 		XMFLOAT4 TangentU;
 		XMFLOAT3 Normal;
 		XMFLOAT2 Tex;
@@ -78,6 +79,15 @@ namespace Vertex
 			}
 			bool result = Basic::operator==(static_cast<Basic>(rhs));
 			return  result && sameBlendingInfo;
+		}
+
+		void operator=(const Skinned& rhs)
+		{
+			Position = rhs.Position;
+			Normal = rhs.Normal;
+			Tex = rhs.Tex;
+			TangentU = rhs.TangentU;
+			VertexBlendingInfos = rhs.VertexBlendingInfos;
 		}
 	};
 }

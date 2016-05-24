@@ -871,7 +871,7 @@ void FBXExporter::FinalProcedure()
 		}
 	}
 
-	// Calculate Tagent
+	// Calculate tangent
 	for (UINT i = 0; i < mTriangles.size(); ++i)
 	{
 		for (UINT j = 0; j < 3; j++)
@@ -879,43 +879,42 @@ void FBXExporter::FinalProcedure()
 			XMFLOAT3 vertex0, vertex1, vertex2;
 			XMVECTOR e0, e1;
 			vertex0 = uniqueVertices[mTriangles[i].Indices[j]].Position;
-			vertex1 = uniqueVertices[mTriangles[i].Indices[(j+1)%3]].Position;
-			vertex2 = uniqueVertices[mTriangles[i].Indices[(j+2)%3]].Position;
+			vertex1 = uniqueVertices[mTriangles[i].Indices[(j + 1) % 3]].Position;
+			vertex2 = uniqueVertices[mTriangles[i].Indices[(j + 2) % 3]].Position;
 
 			e0 = XMLoadFloat3(&(vertex1 - vertex0));
 			e1 = XMLoadFloat3(&(vertex2 - vertex0));
 
-			XMFLOAT2 uv0, uv1, uv2, d_uv0, d_uv1;
+			XMFLOAT2 uv0, uv1, uv2;
+			XMVECTOR d_uv0, d_uv1;
 			uv0 = uniqueVertices[mTriangles[i].Indices[j]].Tex;
-			uv1 = uniqueVertices[mTriangles[i].Indices[(j+1)%3]].Tex;
-			uv2 = uniqueVertices[mTriangles[i].Indices[(j+2)%3]].Tex;
+			uv1 = uniqueVertices[mTriangles[i].Indices[(j + 1) % 3]].Tex;
+			uv2 = uniqueVertices[mTriangles[i].Indices[(j + 2) % 3]].Tex;
 
-			d_uv0 = uv1 - uv0;
-			d_uv1 = uv2 - uv0;
+			d_uv0 = XMLoadFloat2(&(uv1 - uv0));
+			d_uv1 = XMLoadFloat2(&(uv2 - uv0));
 
-			FLOAT det = d_uv0.x*d_uv1.y - d_uv0.y*d_uv1.x;
-			assert(det != 0);
-			FLOAT a = d_uv1.y / det;
-			FLOAT b = -d_uv0.y / det;
-			FLOAT c = -d_uv1.x / det;
-			FLOAT d = d_uv0.x / det;
-			
-			XMMATRIX UV(
-				a, b, 0.0f, 0.0f,
-				c, d, 0.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, 0.0f, 0.0f, 0.0f);
+			XMVECTOR a = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+			XMVECTOR b = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+			XMMATRIX UV(d_uv0, d_uv1, a, b);
+			XMMATRIX E(e0, e1, a, b);
 
-			XMVECTOR zeroVector = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-			XMMATRIX E(e0, e1, zeroVector, zeroVector);
+			/*	FLOAT det = d_uv0 *d_uv1.y - d_uv0.y*d_uv1.x;
+			FLOAT Tx = (d_uv1.y * e0.x - d_uv0.y*e1.x)/det;
+			FLOAT Ty = (d_uv1.y * e0.y - d_uv0.y*e1.y)/det;
+			FLOAT Tz = (d_uv1.y * e0.z - d_uv0.y*e1.z)/det;
+			FLOAT length = sqrtf(Tx*Tx + Ty*Ty + Tz*Tz);*/
 
-			XMMATRIX result = UV*E;
-			XMVECTOR vBinormal = XMLoadFloat3(&XMFLOAT3(result(0, 1), result(1, 1), result(2, 1)));
-			XMVector3Normalize(vBinormal);
+			XMVECTOR det;
+			XMMATRIX result = XMMatrixInverse(&det, UV)*E;
+			if (XMVectorGetX(det) == 0.0f)
+				continue;
+			FLOAT Tx = result._21;
+			FLOAT Ty = result._22;
+			FLOAT Tz = result._23;
 
 			// Binormal
-			XMFLOAT3 binormal;
-			XMStoreFloat3(&binormal, vBinormal);
+			XMFLOAT3 binormal = Float3Normalize(XMFLOAT3(Tx, Ty, Tz));
 			uniqueVertices[mTriangles[i].Indices[j]].Binormals.push_back(binormal);
 		}
 	}
@@ -934,10 +933,11 @@ void FBXExporter::FinalProcedure()
 		binormal.y /= iter.Binormals.size();
 		binormal.z /= iter.Binormals.size();
 
-		XMVECTOR vNo = XMVector3Normalize(XMLoadFloat3(&iter.Normal));
 		XMVECTOR vBi = XMLoadFloat3(&binormal);
-		XMVECTOR vTan = XMVector3Cross(vNo, vBi);
-		XMStoreFloat3(&tangentU, XMVector3Normalize(vTan));
+		XMVECTOR w0 = XMVector3Normalize(XMLoadFloat3(&iter.Normal));
+		XMVECTOR w2 = XMVector3Normalize(XMVector3Cross(w0, vBi));
+		XMVECTOR vTan = XMVector3Cross(w2, w0);
+		XMStoreFloat3(&tangentU, vTan);
 		iter.TangentU.x = tangentU.x;
 		iter.TangentU.y = tangentU.y;
 		iter.TangentU.z = tangentU.z;

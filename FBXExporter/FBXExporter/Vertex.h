@@ -20,15 +20,15 @@ namespace Vertex
 			uint32_t position;
 			uint32_t normal;
 			uint32_t tex;
-			uint32_t tan;
+			//uint32_t tan;
 
 			XMVectorEqualR(&position, XMLoadFloat3(&(Position)), XMLoadFloat3(&rhs.Position));
 			XMVectorEqualR(&normal, XMLoadFloat3(&(Normal)), XMLoadFloat3(&rhs.Normal));
 			XMVectorEqualR(&tex, XMLoadFloat2(&Tex), XMLoadFloat2(&rhs.Tex));
-			XMVectorEqualR(&tan, XMLoadFloat4(&TangentU), XMLoadFloat4(&rhs.TangentU));
+			//XMVectorEqualR(&tan, XMLoadFloat4(&TangentU), XMLoadFloat4(&rhs.TangentU));
 
-			return XMComparisonAllTrue(position) && XMComparisonAllTrue(normal) 
-				&& XMComparisonAllTrue(tex) && XMComparisonAllTrue(tan);
+			return XMComparisonAllTrue(position) && XMComparisonAllTrue(normal)
+				&& XMComparisonAllTrue(tex); //&& XMComparisonAllTrue(tan);
 		}
 	};
 

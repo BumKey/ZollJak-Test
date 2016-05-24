@@ -164,63 +164,47 @@ void FBXExporter::ProcessControlPoints(FbxMesh* mesh)
 
 void FBXExporter::ProcessMesh(FbxMesh* mesh)
 {
-	UINT triangleCount = mesh->GetPolygonCount();
-	int vertexCounter = 0;
-	mTriangles.reserve(mPrevTriangleCount + triangleCount);
+	UINT currtriangleCount = mesh->GetPolygonCount();
+	int polyVertex = 0;
+	mTriangles.reserve(mPrevTriangleCount + currtriangleCount);
 
-	for (UINT i = 0; i < triangleCount; ++i)
+	for (UINT i = 0; i < currtriangleCount; ++i)
 	{
 		Triangle triangle;
 		mTriangles.push_back(triangle);
 
 		for (UINT j = 0; j < 3; ++j)
 		{
-			XMFLOAT3 normal;
-			XMFLOAT4 tangent;
-			XMFLOAT2 UV;
-			ZeroMemory(&tangent, sizeof(XMFLOAT4));
+			UINT ctrlPointIndex = mPrevCtrlPointCount + mesh->GetPolygonVertex(i, j);
+			mIndices.push_back(ctrlPointIndex);
+			ReadNormal(mesh, ctrlPointIndex, polyVertex);
+			ReadUV(mesh, i, j);
 
-			int ctrlPointIndex = mesh->GetPolygonVertex(i, j);
-			CtrlPoint ctrlPoint = mControlPoints[mPrevCtrlPointCount + ctrlPointIndex];
-
-			ReadNormal(mesh, ctrlPointIndex, vertexCounter, normal);
-			for (int k = 0; k < 1; ++k)		// Set UV depend on Diffuse map
-			{
-				ReadUV(mesh, ctrlPointIndex, mesh->GetTextureUVIndex(i, j), k, UV);
-			}
-
-			Vertex::Skinned vertex;
-			vertex.Position = ctrlPoint.Position;
-			vertex.Normal = normal;
-			vertex.Tex = UV;
 			// Copy the blending info from each control point
-			for (UINT i = 0; i < ctrlPoint.BlendingInfo.size(); ++i)
-			{
-				Vertex::VertexBlendingInfo currBlendingInfo;
-				currBlendingInfo.BlendingIndex = ctrlPoint.BlendingInfo[i].mBlendingIndex;
-				currBlendingInfo.BlendingWeight = ctrlPoint.BlendingInfo[i].mBlendingWeight;
-				vertex.VertexBlendingInfos.push_back(currBlendingInfo);
-			}
-			// Sort the blending info so that later we can remove
-			// duplicated vertices
-			vertex.SortBlendingInfoByWeight();
-
-			mVertices.push_back(vertex);
-			mTriangles.back().Indices.push_back(vertexCounter);
-			++vertexCounter;
+			//for (UINT i = 0; i < ctrlPoint.BlendingInfo.size(); ++i)
+			//{
+			//	Vertex::VertexBlendingInfo currBlendingInfo;
+			//	currBlendingInfo.BlendingIndex = ctrlPoint.BlendingInfo[i].mBlendingIndex;
+			//	currBlendingInfo.BlendingWeight = ctrlPoint.BlendingInfo[i].mBlendingWeight;
+			//	vertex.VertexBlendingInfos.push_back(currBlendingInfo);
+			//}
+			//// Sort the blending info so that later we can remove
+			//// duplicated vertices
+			//vertex.SortBlendingInfoByWeight();
+			 
+			++polyVertex;
 		}
 	}
 }
 
 
-void FBXExporter::ReadUV(FbxMesh* mesh, int ctrlPointIndex, int UVIndex, int UVlayerNum, XMFLOAT2& uv)
+void FBXExporter::ReadUV(FbxMesh* mesh, UINT triangleIndex, UINT positionInTriangle)
 {
-	if (UVlayerNum >= 2 || mesh->GetElementUVCount() <= UVlayerNum)
-	{
-		std::cout << "Invalid UV Layer Number" << std::endl;
-	}
-	FbxGeometryElementUV* vertexUV = mesh->GetElementUV(UVlayerNum);
+	FbxGeometryElementUV* vertexUV = mesh->GetElementUV(0);
+	UINT ctrlPointIndex = mPrevCtrlPointCount + mesh->GetPolygonVertex(triangleIndex, positionInTriangle);
+	UINT uvIndex = mesh->GetTextureUVIndex(triangleIndex, positionInTriangle);
 
+	XMFLOAT2 uv;
 	switch (vertexUV->GetMappingMode())
 	{
 	case FbxGeometryElement::eByControlPoint:
@@ -252,8 +236,8 @@ void FBXExporter::ReadUV(FbxMesh* mesh, int ctrlPointIndex, int UVIndex, int UVl
 		case FbxGeometryElement::eDirect:
 		case FbxGeometryElement::eIndexToDirect:
 		{
-			uv.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(UVIndex).mData[0]);
-			uv.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(UVIndex).mData[1]);
+			uv.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(uvIndex).mData[0]);
+			uv.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(uvIndex).mData[1]);
 		}
 		break;
 
@@ -262,11 +246,22 @@ void FBXExporter::ReadUV(FbxMesh* mesh, int ctrlPointIndex, int UVIndex, int UVl
 		}
 		break;
 	}
+	UVInfo uvInfo;
+	uvInfo.UV = uv;
+	uvInfo.TriangleIndex = mPrevTriangleCount + triangleIndex;
+	uvInfo.PositionInTriangle = positionInTriangle;
+
+	std::vector<UVInfo> uvInfos = mControlPoints[ctrlPointIndex].UVInfos;
+	auto iter = std::find(uvInfos.begin(), uvInfos.end(), uvInfo);
+	if(iter == uvInfos.end())
+		mControlPoints[ctrlPointIndex].UVInfos.push_back(uvInfo);
 }
 
-void FBXExporter::ReadNormal(FbxMesh* mesh, int ctrlPointIndex, int inVertexCounter, XMFLOAT3& outNormal)
+void FBXExporter::ReadNormal(FbxMesh* mesh, int ctrlPointIndex, int inpolyVertex)
 {
 	FbxGeometryElementNormal* vertexNormal = mesh->GetElementNormal(0);
+
+	XMFLOAT3 outNormal;
 	switch (vertexNormal->GetMappingMode())
 	{
 	case FbxGeometryElement::eByControlPoint:
@@ -299,15 +294,15 @@ void FBXExporter::ReadNormal(FbxMesh* mesh, int ctrlPointIndex, int inVertexCoun
 		{
 		case FbxGeometryElement::eDirect:
 		{
-			outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[0]);
-			outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[1]);
-			outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[2]);
+			outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inpolyVertex).mData[0]);
+			outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inpolyVertex).mData[1]);
+			outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inpolyVertex).mData[2]);
 		}
 		break;
 
 		case FbxGeometryElement::eIndexToDirect:
 		{
-			int index = vertexNormal->GetIndexArray().GetAt(inVertexCounter);
+			int index = vertexNormal->GetIndexArray().GetAt(inpolyVertex);
 			outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[0]);
 			outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[1]);
 			outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[2]);
@@ -319,9 +314,15 @@ void FBXExporter::ReadNormal(FbxMesh* mesh, int ctrlPointIndex, int inVertexCoun
 		}
 		break;
 	}
+
+	std::vector<XMFLOAT3> normals = mControlPoints[ctrlPointIndex].Normals;
+	auto iter = std::find(normals.begin(), normals.end(), outNormal);
+	if(iter == normals.end())
+		mControlPoints[ctrlPointIndex].Normals.push_back(outNormal);
+
 }
 
-void FBXExporter::ReadBinormal(FbxMesh* mesh, int ctrlPointIndex, int inVertexCounter, XMFLOAT3& outBinormal)
+void FBXExporter::ReadBinormal(FbxMesh* mesh, int ctrlPointIndex, int inpolyVertex, XMFLOAT3& outBinormal)
 {
 	FbxGeometryElementBinormal* vertexBinormal = mesh->GetElementBinormal(0);
 	switch (vertexBinormal->GetMappingMode())
@@ -356,15 +357,15 @@ void FBXExporter::ReadBinormal(FbxMesh* mesh, int ctrlPointIndex, int inVertexCo
 		{
 		case FbxGeometryElement::eDirect:
 		{
-			outBinormal.x = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inVertexCounter).mData[0]);
-			outBinormal.y = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inVertexCounter).mData[1]);
-			outBinormal.z = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inVertexCounter).mData[2]);
+			outBinormal.x = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inpolyVertex).mData[0]);
+			outBinormal.y = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inpolyVertex).mData[1]);
+			outBinormal.z = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inpolyVertex).mData[2]);
 		}
 		break;
 
 		case FbxGeometryElement::eIndexToDirect:
 		{
-			int index = vertexBinormal->GetIndexArray().GetAt(inVertexCounter);
+			int index = vertexBinormal->GetIndexArray().GetAt(inpolyVertex);
 			outBinormal.x = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(index).mData[0]);
 			outBinormal.y = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(index).mData[1]);
 			outBinormal.z = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(index).mData[2]);
@@ -379,7 +380,7 @@ void FBXExporter::ReadBinormal(FbxMesh* mesh, int ctrlPointIndex, int inVertexCo
 
 }
 
-void FBXExporter::ReadTangent(FbxMesh* mesh, int ctrlPointIndex, int inVertexCounter, XMFLOAT4& outTangent)
+void FBXExporter::ReadTangent(FbxMesh* mesh, int ctrlPointIndex, int inpolyVertex, XMFLOAT4& outTangent)
 {
 	FbxGeometryElementTangent* vertexTangent = mesh->GetElementTangent(0);
 	switch (vertexTangent->GetMappingMode())
@@ -416,16 +417,16 @@ void FBXExporter::ReadTangent(FbxMesh* mesh, int ctrlPointIndex, int inVertexCou
 		{
 		case FbxGeometryElement::eDirect:
 		{
-			outTangent.x = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inVertexCounter).mData[0]);
-			outTangent.y = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inVertexCounter).mData[1]);
-			outTangent.z = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inVertexCounter).mData[2]);
-			outTangent.w = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inVertexCounter).mData[3]);
+			outTangent.x = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inpolyVertex).mData[0]);
+			outTangent.y = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inpolyVertex).mData[1]);
+			outTangent.z = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inpolyVertex).mData[2]);
+			outTangent.w = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inpolyVertex).mData[3]);
 		}
 		break;
 
 		case FbxGeometryElement::eIndexToDirect:
 		{
-			int index = vertexTangent->GetIndexArray().GetAt(inVertexCounter);
+			int index = vertexTangent->GetIndexArray().GetAt(inpolyVertex);
 			outTangent.x = static_cast<float>(vertexTangent->GetDirectArray().GetAt(index).mData[0]);
 			outTangent.y = static_cast<float>(vertexTangent->GetDirectArray().GetAt(index).mData[1]);
 			outTangent.z = static_cast<float>(vertexTangent->GetDirectArray().GetAt(index).mData[2]);
@@ -573,11 +574,11 @@ void FBXExporter::ReadBoneWeightsAndIndices(FbxMesh * mesh)
 	BlendingIndexWeightPair blendingIndexWeightPair;
 	blendingIndexWeightPair.mBlendingIndex = 0;
 	blendingIndexWeightPair.mBlendingWeight = 0;
-	for (UINT i = mPrevCtrlPointCount; i < mControlPoints.size(); ++i)
+	for (UINT i = 0; i < mesh->GetControlPointsCount(); ++i)
 	{
-		for (UINT j = mControlPoints[i].BlendingInfo.size(); j <= 4; ++j)
+		for (UINT j = mControlPoints[mPrevCtrlPointCount + i].BlendingInfo.size(); j < 4; ++j)
 		{
-			mControlPoints[i].BlendingInfo.push_back(blendingIndexWeightPair);
+			mControlPoints[mPrevCtrlPointCount + i].BlendingInfo.push_back(blendingIndexWeightPair);
 		}
 	}
 }
@@ -815,7 +816,7 @@ void FBXExporter::ProcessMaterialTexture(FbxSurfaceMaterial * inMaterial, Materi
 				}
 				else
 				{
-					FbxTexture* texture = property.GetSrcObject<FbxTexture>(i);
+					FbxTexture* texture = property.GetSrcObject<FbxFileTexture>(i);
 					if (texture)
 					{
 						std::string textureType = property.GetNameAsCStr();
@@ -848,105 +849,200 @@ void FBXExporter::ProcessMaterialTexture(FbxSurfaceMaterial * inMaterial, Materi
 void FBXExporter::FinalProcedure()
 {
 	// First get a list of unique vertices
-	std::vector<Vertex::Skinned> uniqueVertices;
-	for (UINT i = 0; i < mTriangles.size(); ++i)
+	//std::vector<Vertex::Skinned> uniqueVertices;
+	//for (UINT i = 0; i < mTriangles.size(); ++i)
+	//{
+	//	for (UINT j = 0; j < 3; ++j)
+	//	{
+	//		// If current vertex has not been added to
+	//		// our unique vertex list, then we add it
+	//		if (FindVertex(mVertices[i * 3 + j], uniqueVertices) == -1)
+	//		{
+	//			uniqueVertices.push_back(mVertices[i * 3 + j]);
+	//		}
+	//	}
+	//}
+
+	UINT ctrlPointSize = mControlPoints.size();
+	mVertices.resize(ctrlPointSize);
+
+	for (UINT i = 0; i < ctrlPointSize; ++i)
 	{
-		for (UINT j = 0; j < 3; ++j)
+		const CtrlPoint ctrlPoint = mControlPoints[i];
+		mVertices[i].Position = ctrlPoint.Position;
+
+		XMFLOAT3 normal;
+		for (auto n : ctrlPoint.Normals)
+			normal = normal + n;
+
+		XMVECTOR vNormal = XMVector3Normalize(XMLoadFloat3(&normal));
+		XMStoreFloat3(&normal, vNormal);
+		mVertices[i].Normal = normal;
+
+		// Copy the blending info from each control point
+		for (UINT j = 0; j < ctrlPoint.BlendingInfo.size(); ++j)
 		{
-			// If current vertex has not been added to
-			// our unique vertex list, then we add it
-			if (FindVertex(mVertices[i * 3 + j], uniqueVertices) == -1)
+			Vertex::VertexBlendingInfo blendingInfo;
+			blendingInfo.BlendingIndex = ctrlPoint.BlendingInfo[j].mBlendingIndex;
+			blendingInfo.BlendingWeight = ctrlPoint.BlendingInfo[j].mBlendingWeight;
+			mVertices[i].VertexBlendingInfos.push_back(blendingInfo);
+		}
+
+		// Push back new vertex If it has different UV
+		// Other information is same.
+		
+		for (UINT j = 0; j < ctrlPoint.UVInfos.size(); ++j)
+		{
+			UVInfo uvInfo = ctrlPoint.UVInfos[j];
+			if (mIndices[uvInfo.TriangleIndex * 3 + uvInfo.PositionInTriangle] == i)
 			{
-				uniqueVertices.push_back(mVertices[i * 3 + j]);
+				mVertices[i].Tex = uvInfo.UV;
+			}
+			else {
+				mIndices[uvInfo.TriangleIndex * 3 + uvInfo.PositionInTriangle] = mVertices.size();
+
+				Vertex::Skinned vertex;
+				vertex.Position = mVertices[i].Position;
+				vertex.Normal = mVertices[i].Normal;
+				vertex.VertexBlendingInfos = mVertices[i].VertexBlendingInfos;
+
+				vertex.Tex = ctrlPoint.UVInfos[j].UV;
+				mVertices.push_back(vertex);
 			}
 		}
 	}
-
 	// Now we update the index buffer
-	for (UINT i = 0; i < mTriangles.size(); ++i)
-	{
-		for (UINT j = 0; j < 3; ++j)
-		{
-			mTriangles[i].Indices[j] = FindVertex(mVertices[i * 3 + j], uniqueVertices);
-		}
-	}
+	//for (UINT i = 0; i < mTriangles.size(); ++i)
+	//{
+	//	for (UINT j = 0; j < 3; ++j)
+	//	{
+	//		mTriangles[i].Indices[j] = FindVertex(mVertices[i * 3 + j], uniqueVertices);
+	//	}
+	//}
+
+	//for (UINT i = 0; i < mIndices.size(); i += 3)
+	//{
+	//	for (UINT j = 0; j < 3; j++)
+	//	{
+	//		XMFLOAT3 vertex0, vertex1, vertex2;
+	//		XMVECTOR e0, e1;
+	//		vertex0 = mVertices[i + j].Position;
+	//		vertex1 = mVertices[i + (j + 1) % 3].Position;
+	//		vertex2 = mVertices[i + (j + 2) % 3].Position;
+
+	//		e0 = XMLoadFloat3(&(vertex1 - vertex0));
+	//		e1 = XMLoadFloat3(&(vertex2 - vertex0));
+
+	//		XMFLOAT2 uv0, uv1, uv2;
+	//		XMVECTOR d_uv0, d_uv1;
+	//		uv0 = mVertices[i+ j].Tex;
+	//		uv1 = mVertices[i + (j + 1) % 3].Tex;
+	//		uv2 = mVertices[i + (j + 2) % 3].Tex;
+
+	//		d_uv0 = XMLoadFloat2(&(uv1 - uv0));
+	//		d_uv1 = XMLoadFloat2(&(uv2 - uv0));
+
+	//		XMVECTOR a = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	//		XMVECTOR b = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	//		XMMATRIX UV(d_uv0, d_uv1, a, b);
+	//		XMMATRIX E(e0, e1, a, b);
+
+	//		/*	FLOAT det = d_uv0 *d_uv1.y - d_uv0.y*d_uv1.x;
+	//		FLOAT Tx = (d_uv1.y * e0.x - d_uv0.y*e1.x)/det;
+	//		FLOAT Ty = (d_uv1.y * e0.y - d_uv0.y*e1.y)/det;
+	//		FLOAT Tz = (d_uv1.y * e0.z - d_uv0.y*e1.z)/det;
+	//		FLOAT length = sqrtf(Tx*Tx + Ty*Ty + Tz*Tz);*/
+
+	//		XMVECTOR det;
+	//		XMMATRIX result = XMMatrixInverse(&det, UV)*E;
+	//		if (XMVectorGetX(det) == 0.0f)
+	//			continue;
+	//		FLOAT Tx = result._21;
+	//		FLOAT Ty = result._22;
+	//		FLOAT Tz = result._23;
+
+	//		// Binormal
+	//		XMFLOAT3 binormal = Float3Normalize(XMFLOAT3(Tx, Ty, Tz));
+	//		mVertices[i + j].Binormals.push_back(binormal);
+	//	}
+	//}
 
 	// Calculate tangent
-	for (UINT i = 0; i < mTriangles.size(); ++i)
-	{
-		for (UINT j = 0; j < 3; j++)
-		{
-			XMFLOAT3 vertex0, vertex1, vertex2;
-			XMVECTOR e0, e1;
-			vertex0 = uniqueVertices[mTriangles[i].Indices[j]].Position;
-			vertex1 = uniqueVertices[mTriangles[i].Indices[(j + 1) % 3]].Position;
-			vertex2 = uniqueVertices[mTriangles[i].Indices[(j + 2) % 3]].Position;
+	//for (UINT i = 0; i < mTriangles.size(); ++i)
+	//{
+	//	for (UINT j = 0; j < 3; j++)
+	//	{
+	//		XMFLOAT3 vertex0, vertex1, vertex2;
+	//		XMVECTOR e0, e1;
+	//		vertex0 = uniqueVertices[mTriangles[i].Indices[j]].Position;
+	//		vertex1 = uniqueVertices[mTriangles[i].Indices[(j + 1) % 3]].Position;
+	//		vertex2 = uniqueVertices[mTriangles[i].Indices[(j + 2) % 3]].Position;
 
-			e0 = XMLoadFloat3(&(vertex1 - vertex0));
-			e1 = XMLoadFloat3(&(vertex2 - vertex0));
+	//		e0 = XMLoadFloat3(&(vertex1 - vertex0));
+	//		e1 = XMLoadFloat3(&(vertex2 - vertex0));
 
-			XMFLOAT2 uv0, uv1, uv2;
-			XMVECTOR d_uv0, d_uv1;
-			uv0 = uniqueVertices[mTriangles[i].Indices[j]].Tex;
-			uv1 = uniqueVertices[mTriangles[i].Indices[(j + 1) % 3]].Tex;
-			uv2 = uniqueVertices[mTriangles[i].Indices[(j + 2) % 3]].Tex;
+	//		XMFLOAT2 uv0, uv1, uv2;
+	//		XMVECTOR d_uv0, d_uv1;
+	//		uv0 = uniqueVertices[mTriangles[i].Indices[j]].Tex;
+	//		uv1 = uniqueVertices[mTriangles[i].Indices[(j + 1) % 3]].Tex;
+	//		uv2 = uniqueVertices[mTriangles[i].Indices[(j + 2) % 3]].Tex;
 
-			d_uv0 = XMLoadFloat2(&(uv1 - uv0));
-			d_uv1 = XMLoadFloat2(&(uv2 - uv0));
+	//		d_uv0 = XMLoadFloat2(&(uv1 - uv0));
+	//		d_uv1 = XMLoadFloat2(&(uv2 - uv0));
 
-			XMVECTOR a = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-			XMVECTOR b = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-			XMMATRIX UV(d_uv0, d_uv1, a, b);
-			XMMATRIX E(e0, e1, a, b);
+	//		XMVECTOR a = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	//		XMVECTOR b = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	//		XMMATRIX UV(d_uv0, d_uv1, a, b);
+	//		XMMATRIX E(e0, e1, a, b);
 
-			/*	FLOAT det = d_uv0 *d_uv1.y - d_uv0.y*d_uv1.x;
-			FLOAT Tx = (d_uv1.y * e0.x - d_uv0.y*e1.x)/det;
-			FLOAT Ty = (d_uv1.y * e0.y - d_uv0.y*e1.y)/det;
-			FLOAT Tz = (d_uv1.y * e0.z - d_uv0.y*e1.z)/det;
-			FLOAT length = sqrtf(Tx*Tx + Ty*Ty + Tz*Tz);*/
+	//		/*	FLOAT det = d_uv0 *d_uv1.y - d_uv0.y*d_uv1.x;
+	//		FLOAT Tx = (d_uv1.y * e0.x - d_uv0.y*e1.x)/det;
+	//		FLOAT Ty = (d_uv1.y * e0.y - d_uv0.y*e1.y)/det;
+	//		FLOAT Tz = (d_uv1.y * e0.z - d_uv0.y*e1.z)/det;
+	//		FLOAT length = sqrtf(Tx*Tx + Ty*Ty + Tz*Tz);*/
 
-			XMVECTOR det;
-			XMMATRIX result = XMMatrixInverse(&det, UV)*E;
-			if (XMVectorGetX(det) == 0.0f)
-				continue;
-			FLOAT Tx = result._21;
-			FLOAT Ty = result._22;
-			FLOAT Tz = result._23;
+	//		XMVECTOR det;
+	//		XMMATRIX result = XMMatrixInverse(&det, UV)*E;
+	//		if (XMVectorGetX(det) == 0.0f)
+	//			continue;
+	//		FLOAT Tx = result._21;
+	//		FLOAT Ty = result._22;
+	//		FLOAT Tz = result._23;
 
-			// Binormal
-			XMFLOAT3 binormal = Float3Normalize(XMFLOAT3(Tx, Ty, Tz));
-			uniqueVertices[mTriangles[i].Indices[j]].Binormals.push_back(binormal);
-		}
-	}
+	//		// Binormal
+	//		XMFLOAT3 binormal = Float3Normalize(XMFLOAT3(Tx, Ty, Tz));
+	//		uniqueVertices[mTriangles[i].Indices[j]].Binormals.push_back(binormal);
+	//	}
+	//}
 
-	for (auto& iter : uniqueVertices)
-	{
-		// Get the tangent value to cross normal and Binormal
-		XMFLOAT3 tangentU, binormal(0.0f, 0.0f, 0.0f);
-		for (auto b : iter.Binormals)
-		{
-			binormal.x += b.x;
-			binormal.y += b.y;
-			binormal.z += b.z;
-		}
-		binormal.x /= iter.Binormals.size();
-		binormal.y /= iter.Binormals.size();
-		binormal.z /= iter.Binormals.size();
+	//for (auto& iter : uniqueVertices)
+	//{
+	//	// Get the tangent value to cross normal and Binormal
+	//	XMFLOAT3 tangentU, binormal(0.0f, 0.0f, 0.0f);
+	//	for (auto b : iter.Binormals)
+	//	{
+	//		binormal.x += b.x;
+	//		binormal.y += b.y;
+	//		binormal.z += b.z;
+	//	}
+	//	binormal.x /= iter.Binormals.size();
+	//	binormal.y /= iter.Binormals.size();
+	//	binormal.z /= iter.Binormals.size();
 
-		XMVECTOR vBi = XMLoadFloat3(&binormal);
-		XMVECTOR w0 = XMVector3Normalize(XMLoadFloat3(&iter.Normal));
-		XMVECTOR w2 = XMVector3Normalize(XMVector3Cross(w0, vBi));
-		XMVECTOR vTan = XMVector3Cross(w2, w0);
-		XMStoreFloat3(&tangentU, vTan);
-		iter.TangentU.x = tangentU.x;
-		iter.TangentU.y = tangentU.y;
-		iter.TangentU.z = tangentU.z;
-		iter.TangentU.w = 1.0f;
-	}
+	//	XMVECTOR vBi = XMLoadFloat3(&binormal);
+	//	XMVECTOR w0 = XMVector3Normalize(XMLoadFloat3(&iter.Normal));
+	//	XMVECTOR w2 = XMVector3Normalize(XMVector3Cross(w0, vBi));
+	//	XMVECTOR vTan = XMVector3Cross(w2, w0);
+	//	XMStoreFloat3(&tangentU, vTan);
+	//	iter.TangentU.x = tangentU.x;
+	//	iter.TangentU.y = tangentU.y;
+	//	iter.TangentU.z = tangentU.z;
+	//	iter.TangentU.w = 1.0f;
+	//}
 
-	mVertices.clear();
-	mVertices = uniqueVertices;
-	uniqueVertices.clear();
+	//mVertices.clear();
+	//mVertices = uniqueVertices;
+	//uniqueVertices.clear();
 
 	// Now we sort the triangles by materials to reduce 
 	// shader's workload
@@ -1079,8 +1175,17 @@ void FBXExporter::WriteMesh(std::ostream& fout)
 		}
 	}
 	fout << "***************Triangles*********************" << endl;
-	for (UINT i = 0; i < mTriangles.size(); ++i)
-		fout << mTriangles[i].Indices[0] << " " << mTriangles[i].Indices[1] << " " << mTriangles[i].Indices[2] << endl;
+	UINT count(0);
+	for (UINT i = 0; i < mIndices.size(); ++i)
+	{
+		fout << mIndices[i] << " ";
+		++count;
+		if (count >= 3)
+		{
+			fout << endl;
+			count = 0;
+		}
+	}
 
 	fout << endl;
 }

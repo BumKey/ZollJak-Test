@@ -83,14 +83,24 @@ std::ostream& operator<<(std::ostream& os, const XMFLOAT4& f4)
 	return os;
 }
 
-XMFLOAT3 operator-(XMFLOAT3 l, XMFLOAT3 r)
-{
-	return XMFLOAT3(l.x - r.x, l.y - r.y, l.z - r.z);
+XMFLOAT3 operator-(XMFLOAT3 l, XMFLOAT3 r)		{ return XMFLOAT3(l.x - r.x, l.y - r.y, l.z - r.z); }
+XMFLOAT3 operator+(XMFLOAT3 l, XMFLOAT3 r)		{ return XMFLOAT3(l.x + r.x, l.y + r.y, l.z + r.z); }
+XMFLOAT3 operator/(XMFLOAT3 l, XMFLOAT3 r)		{ return XMFLOAT3(l.x / r.x, l.y / r.y, l.z / r.z); }
+XMFLOAT3 operator/(XMFLOAT3 l, FLOAT r)			{ return XMFLOAT3(l.x / r, l.y / r, l.z / r); }
+bool operator==(XMFLOAT3 l, XMFLOAT3 r) { 
+	if (l.x == r.x && l.y == r.y && l.z == r.z)
+		return true;
+	else
+		return false;
 }
 
-XMFLOAT2 operator-(XMFLOAT2 l, XMFLOAT2 r)
-{
-	return XMFLOAT2(l.x - r.x, l.y - r.y);
+XMFLOAT2 operator+(XMFLOAT2 l, XMFLOAT2 r)		{ return XMFLOAT2(l.x + r.x, l.y + r.y); }
+XMFLOAT2 operator-(XMFLOAT2 l, XMFLOAT2 r)		{ return XMFLOAT2(l.x - r.x, l.y - r.y); }
+bool operator==(XMFLOAT2 l, XMFLOAT2 r) {
+	if (l.x == r.x && l.y == r.y)
+		return true;
+	else
+		return false;
 }
 
 XMFLOAT3 Float3Normalize(const XMFLOAT3& in)

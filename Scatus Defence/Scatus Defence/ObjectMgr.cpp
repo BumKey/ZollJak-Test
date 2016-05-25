@@ -11,40 +11,76 @@ ObjectMgr::~ObjectMgr()
 {
 }
 
-void ObjectMgr::AddObstacle(BasicObject * basicObject)
+bool ObjectMgr::AddObstacle(BasicObject * basicObject)
 {
 	mObstacles.push_back(basicObject);
+	mAllObjects.push_back(basicObject);
 	++mTotalObjectNum;
+	return true;
+
 }
 
-void ObjectMgr::AddStructure(BasicObject * basicObject)
+bool ObjectMgr::AddStructure(BasicObject * basicObject)
 {
 	if (mStructures.size() <= mMaxStructures)
-		mStructures.push_back(basicObject);
+	{	mStructures.push_back(basicObject);
+		mAllObjects.push_back(basicObject);
+		++mTotalObjectNum;
+		return true;
+	}
+	else
+	{
+		//최대 개수 초과 생성불가 UI출력
+		return false;
+	}
 
-	++mTotalObjectNum;
 }
 
-void ObjectMgr::AddProjectile(BasicObject * basicObject)
+bool ObjectMgr::AddProjectile(BasicObject * basicObject)
 {
 	mProjectiles.push_back(basicObject);
-	++mTotalObjectNum;
+	//++mTotalObjectNum;
+	return true;
 }
 
-void ObjectMgr::AddMonster(SkinnedObject * skinnedObject)
+bool ObjectMgr::AddMonster(GameObject* skinnedObject)
 {
 	if (mMonsters.size() <= mMaxMonsters) {
 		mMonsters.push_back(skinnedObject);
-		++mTotalObjectNum;
+		mAllObjects.push_back(skinnedObject);
+		//++mTotalObjectNum;
+		return true;
 	}
-	else
+	else {
+
 		SafeDelete(skinnedObject);
+		return false;
+
+	}
+	
+}
+
+bool ObjectMgr::AddOurTeam(GameObject* skinnedObject)
+{
+	if (mOurTeam.size() <= mMaxMonsters) {
+		mOurTeam.push_back(skinnedObject);
+		mAllObjects.push_back(skinnedObject);
+		//++mTotalObjectNum;
+		return true;
+	}
+	else {
+
+		SafeDelete(skinnedObject);
+		return false;
+
+	}
+	
 }
 
 void ObjectMgr::Update()
 {
 	mAllObjects.clear();
-	mAllObjects.reserve(mTotalObjectNum);
+	//mAllObjects.reserve(mTotalObjectNum);
 
 	mAllObjects.push_back(mPlayer);
 	for (auto i : mObstacles)
@@ -60,7 +96,7 @@ void ObjectMgr::Update()
 void ObjectMgr::Update(float dt)
 {
 	mAllObjects.clear();
-	mAllObjects.reserve(mTotalObjectNum);
+	//mAllObjects.reserve(mTotalObjectNum); 리스트로 바꿔서 필요없어짐
 
 	mAllObjects.push_back(mPlayer);
 	for (auto i : mObstacles)
@@ -71,7 +107,7 @@ void ObjectMgr::Update(float dt)
 
 	for (auto i : mMonsters) {
 		mAllObjects.push_back(i);
-		i->Animate(dt);
+		//i->Animate(dt);
 	}
 
 	mPlayer->Animate(dt);
@@ -85,4 +121,74 @@ void ObjectMgr::ReleaseAll(ResourceMgr& resourceMgr)
 	mObstacles.clear();
 	mStructures.clear();
 	mMonsters.clear();
+	mOurTeam.clear();
+}
+
+void ObjectMgr::ReleaseAllMonsers(ResourceMgr& resourceMgr)
+{
+
+	mMonsters.clear();
+	for (std::list<GameObject*>::iterator i = mAllObjects.begin(); i != mAllObjects.end();)
+	{
+		if ((*i)->Get_Object_type() == type_monster)
+		{
+			i = mAllObjects.erase(i);
+
+
+		}
+		else
+		{
+			++i;
+		}
+
+	}
+}
+
+void ObjectMgr::ReleaseAllDeads(ResourceMgr& resourceMgr)
+{
+	for (std::list<GameObject*>::iterator i = mAllObjects.begin(); i != mAllObjects.end();)
+	{
+		if ((*i)->Get_States() == type_die)
+		{
+			i = mAllObjects.erase(i);
+
+
+		}
+		else
+		{
+			++i;
+		}
+
+	}
+
+	for (std::list<GameObject*>::iterator i = mMonsters.begin(); i != mMonsters.end();)
+	{
+		if ((*i)->Get_States() == type_die)
+		{
+			i = mMonsters.erase(i);
+
+
+		}
+		else
+		{
+			++i;
+		}
+
+	}
+
+	for (std::list<GameObject*>::iterator i = mOurTeam.begin(); i != mOurTeam.end();)
+	{
+		if ((*i)->Get_States() == type_die)
+		{
+			i = mOurTeam.erase(i);
+
+
+		}
+		else
+		{
+			++i;
+		}
+
+	}
+
 }

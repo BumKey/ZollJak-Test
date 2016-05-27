@@ -251,19 +251,16 @@ void FBXExporter::ReadUV(FbxMesh* mesh, UINT triangleIndex, UINT positionInTrian
 	uvInfo.TriangleIndex.push_back(mPrevTriangleCount + triangleIndex);
 	uvInfo.PositionInTriangle.push_back(positionInTriangle);
 
-	std::vector<UVInfo> uvInfos = mControlPoints[mPrevCtrlPointCount + ctrlPointIndex].UVInfos;
+	std::vector<UVInfo>& uvInfos = mControlPoints[mPrevCtrlPointCount + ctrlPointIndex].UVInfos;
 	// 추가되는 UV 같은 값이라도 삼각형이 다르면 그 정보 추가해줘야 함.
 	auto &iter = std::find(uvInfos.begin(), uvInfos.end(), uvInfo);
 	if (iter == uvInfos.end())	// uv같은 값이 없다면
-		mControlPoints[mPrevCtrlPointCount + ctrlPointIndex].UVInfos.push_back(uvInfo);
+		uvInfos.push_back(uvInfo);
 	else
 	{
 		// 있다면 삼각형 정보 추가
-		for (auto& i : mControlPoints[mPrevCtrlPointCount + ctrlPointIndex].UVInfos)
-		{
-			i.TriangleIndex.push_back(mPrevTriangleCount + triangleIndex);
-			i.PositionInTriangle.push_back(positionInTriangle);
-		}
+		iter->TriangleIndex.push_back(mPrevTriangleCount + triangleIndex);
+		iter->PositionInTriangle.push_back(positionInTriangle);
 	}
 	
 }
@@ -839,14 +836,16 @@ void FBXExporter::ProcessMaterialTexture(FbxSurfaceMaterial * inMaterial, Materi
 							{
 								ioMaterial->DiffuseMapName = fileTexture->GetRelativeFileName();
 							}
-							else if (textureType == "SpecularColor")
+							else
+								int z = 0;
+							/*else if (textureType == "SpecularColor")
 							{
 								ioMaterial->SpecularMapName = fileTexture->GetRelativeFileName();
 							}
 							else if (textureType == "NormalMap")
 							{
 								ioMaterial->NormalMapName = fileTexture->GetRelativeFileName();
-							}
+							}*/
 						}
 					}
 				}
@@ -859,21 +858,6 @@ void FBXExporter::ProcessMaterialTexture(FbxSurfaceMaterial * inMaterial, Materi
 #pragma region FinalProcedure
 void FBXExporter::FinalProcedure()
 {
-	// First get a list of unique vertices
-	//std::vector<Vertex::Skinned> uniqueVertices;
-	//for (UINT i = 0; i < mTriangles.size(); ++i)
-	//{
-	//	for (UINT j = 0; j < 3; ++j)
-	//	{
-	//		// If current vertex has not been added to
-	//		// our unique vertex list, then we add it
-	//		if (FindVertex(mVertices[i * 3 + j], uniqueVertices) == -1)
-	//		{
-	//			uniqueVertices.push_back(mVertices[i * 3 + j]);
-	//		}
-	//	}
-	//}
-
 	UINT ctrlPointSize = mControlPoints.size();
 	mVertices.resize(ctrlPointSize);
 
@@ -906,11 +890,11 @@ void FBXExporter::FinalProcedure()
 			UVInfo uvInfo = ctrlPoint.UVInfos[j];
 
 			if (j == 0)
-			{
 				mVertices[i].Tex = uvInfo.UV;
-			}
-			else {
-				for (UINT k = 0; k < uvInfo.TriangleIndex.size(); ++k) {
+			else 
+			{
+				for (UINT k = 0; k < uvInfo.TriangleIndex.size(); ++k) 
+				{
 					UINT uvIndex = uvInfo.TriangleIndex[k] * 3 + uvInfo.PositionInTriangle[k];
 					mIndices[uvIndex] = mVertices.size();
 				}
@@ -925,138 +909,81 @@ void FBXExporter::FinalProcedure()
 			}
 		}
 	}
-	// Now we update the index buffer
-	//for (UINT i = 0; i < mTriangles.size(); ++i)
-	//{
-	//	for (UINT j = 0; j < 3; ++j)
-	//	{
-	//		mTriangles[i].Indices[j] = FindVertex(mVertices[i * 3 + j], uniqueVertices);
-	//	}
-	//}
 
-	//for (UINT i = 0; i < mIndices.size(); i += 3)
-	//{
-	//	for (UINT j = 0; j < 3; j++)
-	//	{
-	//		XMFLOAT3 vertex0, vertex1, vertex2;
-	//		XMVECTOR e0, e1;
-	//		vertex0 = mVertices[i + j].Position;
-	//		vertex1 = mVertices[i + (j + 1) % 3].Position;
-	//		vertex2 = mVertices[i + (j + 2) % 3].Position;
+	// Caculate Binormal by looping triangles
+	for (UINT i = 0; i < mTriangles.size(); ++i)
+	{
+		for (UINT j = 0; j < 3; j++)
+		{
+			XMFLOAT3 vertex0, vertex1, vertex2;
+			XMVECTOR e0, e1;
+			vertex0 = mVertices[mIndices[i*3 + j]].Position;
+			vertex1 = mVertices[mIndices[i*3 + (j + 1) % 3]].Position;
+			vertex2 = mVertices[mIndices[i*3 + (j + 2) % 3]].Position;
 
-	//		e0 = XMLoadFloat3(&(vertex1 - vertex0));
-	//		e1 = XMLoadFloat3(&(vertex2 - vertex0));
+			e0 = XMLoadFloat3(&(vertex1 - vertex0));
+			e1 = XMLoadFloat3(&(vertex2 - vertex0));
 
-	//		XMFLOAT2 uv0, uv1, uv2;
-	//		XMVECTOR d_uv0, d_uv1;
-	//		uv0 = mVertices[i+ j].Tex;
-	//		uv1 = mVertices[i + (j + 1) % 3].Tex;
-	//		uv2 = mVertices[i + (j + 2) % 3].Tex;
+			XMFLOAT2 uv0, uv1, uv2;
+			XMVECTOR d_uv0, d_uv1;
+			uv0 = mVertices[mIndices[i*3 + j]].Tex;
+			uv1 = mVertices[mIndices[i*3 + (j + 1) % 3]].Tex;
+			uv2 = mVertices[mIndices[i*3 + (j + 2) % 3]].Tex;
 
-	//		d_uv0 = XMLoadFloat2(&(uv1 - uv0));
-	//		d_uv1 = XMLoadFloat2(&(uv2 - uv0));
+			d_uv0 = XMLoadFloat2(&(uv1 - uv0));
+			d_uv1 = XMLoadFloat2(&(uv2 - uv0));
 
-	//		XMVECTOR a = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	//		XMVECTOR b = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-	//		XMMATRIX UV(d_uv0, d_uv1, a, b);
-	//		XMMATRIX E(e0, e1, a, b);
+			XMVECTOR a = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+			XMVECTOR b = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+			XMMATRIX UV(d_uv0, d_uv1, a, b);
+			XMMATRIX E(e0, e1, a, b);
 
-	//		/*	FLOAT det = d_uv0 *d_uv1.y - d_uv0.y*d_uv1.x;
-	//		FLOAT Tx = (d_uv1.y * e0.x - d_uv0.y*e1.x)/det;
-	//		FLOAT Ty = (d_uv1.y * e0.y - d_uv0.y*e1.y)/det;
-	//		FLOAT Tz = (d_uv1.y * e0.z - d_uv0.y*e1.z)/det;
-	//		FLOAT length = sqrtf(Tx*Tx + Ty*Ty + Tz*Tz);*/
+			/*	FLOAT det = d_uv0 *d_uv1.y - d_uv0.y*d_uv1.x;
+			FLOAT Tx = (d_uv1.y * e0.x - d_uv0.y*e1.x)/det;
+			FLOAT Ty = (d_uv1.y * e0.y - d_uv0.y*e1.y)/det;
+			FLOAT Tz = (d_uv1.y * e0.z - d_uv0.y*e1.z)/det;
+			FLOAT length = sqrtf(Tx*Tx + Ty*Ty + Tz*Tz);*/
 
-	//		XMVECTOR det;
-	//		XMMATRIX result = XMMatrixInverse(&det, UV)*E;
-	//		if (XMVectorGetX(det) == 0.0f)
-	//			continue;
-	//		FLOAT Tx = result._21;
-	//		FLOAT Ty = result._22;
-	//		FLOAT Tz = result._23;
+			XMVECTOR det;
+			XMMATRIX result = XMMatrixInverse(&det, UV)*E;
+			if (XMVectorGetX(det) == 0.0f)
+				continue;
 
-	//		// Binormal
-	//		XMFLOAT3 binormal = Float3Normalize(XMFLOAT3(Tx, Ty, Tz));
-	//		mVertices[i + j].Binormals.push_back(binormal);
-	//	}
-	//}
+			FLOAT Bx = result._21;
+			FLOAT By = result._22;
+			FLOAT Bz = result._23;
 
-	// Calculate tangent
-	//for (UINT i = 0; i < mTriangles.size(); ++i)
-	//{
-	//	for (UINT j = 0; j < 3; j++)
-	//	{
-	//		XMFLOAT3 vertex0, vertex1, vertex2;
-	//		XMVECTOR e0, e1;
-	//		vertex0 = uniqueVertices[mTriangles[i].Indices[j]].Position;
-	//		vertex1 = uniqueVertices[mTriangles[i].Indices[(j + 1) % 3]].Position;
-	//		vertex2 = uniqueVertices[mTriangles[i].Indices[(j + 2) % 3]].Position;
+			// Binormal
+			XMFLOAT3 binormal = Float3Normalize(XMFLOAT3(Bx, By, Bz));
+			mVertices[mIndices[i*3 + j]].Binormals.push_back(binormal);
+		}
+	}
 
-	//		e0 = XMLoadFloat3(&(vertex1 - vertex0));
-	//		e1 = XMLoadFloat3(&(vertex2 - vertex0));
+	// Calculate tangent by cross the normal and binormal
+	for (auto& iter : mVertices)
+	{
+		// Get the tangent value to cross normal and Binormal
+		XMFLOAT3 tangentU, binormal(0.0f, 0.0f, 0.0f);
+		for (auto b : iter.Binormals)
+		{
+			binormal.x += b.x;
+			binormal.y += b.y;
+			binormal.z += b.z;
+		}
+		binormal.x /= iter.Binormals.size();
+		binormal.y /= iter.Binormals.size();
+		binormal.z /= iter.Binormals.size();
 
-	//		XMFLOAT2 uv0, uv1, uv2;
-	//		XMVECTOR d_uv0, d_uv1;
-	//		uv0 = uniqueVertices[mTriangles[i].Indices[j]].Tex;
-	//		uv1 = uniqueVertices[mTriangles[i].Indices[(j + 1) % 3]].Tex;
-	//		uv2 = uniqueVertices[mTriangles[i].Indices[(j + 2) % 3]].Tex;
-
-	//		d_uv0 = XMLoadFloat2(&(uv1 - uv0));
-	//		d_uv1 = XMLoadFloat2(&(uv2 - uv0));
-
-	//		XMVECTOR a = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	//		XMVECTOR b = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-	//		XMMATRIX UV(d_uv0, d_uv1, a, b);
-	//		XMMATRIX E(e0, e1, a, b);
-
-	//		/*	FLOAT det = d_uv0 *d_uv1.y - d_uv0.y*d_uv1.x;
-	//		FLOAT Tx = (d_uv1.y * e0.x - d_uv0.y*e1.x)/det;
-	//		FLOAT Ty = (d_uv1.y * e0.y - d_uv0.y*e1.y)/det;
-	//		FLOAT Tz = (d_uv1.y * e0.z - d_uv0.y*e1.z)/det;
-	//		FLOAT length = sqrtf(Tx*Tx + Ty*Ty + Tz*Tz);*/
-
-	//		XMVECTOR det;
-	//		XMMATRIX result = XMMatrixInverse(&det, UV)*E;
-	//		if (XMVectorGetX(det) == 0.0f)
-	//			continue;
-	//		FLOAT Tx = result._21;
-	//		FLOAT Ty = result._22;
-	//		FLOAT Tz = result._23;
-
-	//		// Binormal
-	//		XMFLOAT3 binormal = Float3Normalize(XMFLOAT3(Tx, Ty, Tz));
-	//		uniqueVertices[mTriangles[i].Indices[j]].Binormals.push_back(binormal);
-	//	}
-	//}
-
-	//for (auto& iter : uniqueVertices)
-	//{
-	//	// Get the tangent value to cross normal and Binormal
-	//	XMFLOAT3 tangentU, binormal(0.0f, 0.0f, 0.0f);
-	//	for (auto b : iter.Binormals)
-	//	{
-	//		binormal.x += b.x;
-	//		binormal.y += b.y;
-	//		binormal.z += b.z;
-	//	}
-	//	binormal.x /= iter.Binormals.size();
-	//	binormal.y /= iter.Binormals.size();
-	//	binormal.z /= iter.Binormals.size();
-
-	//	XMVECTOR vBi = XMLoadFloat3(&binormal);
-	//	XMVECTOR w0 = XMVector3Normalize(XMLoadFloat3(&iter.Normal));
-	//	XMVECTOR w2 = XMVector3Normalize(XMVector3Cross(w0, vBi));
-	//	XMVECTOR vTan = XMVector3Cross(w2, w0);
-	//	XMStoreFloat3(&tangentU, vTan);
-	//	iter.TangentU.x = tangentU.x;
-	//	iter.TangentU.y = tangentU.y;
-	//	iter.TangentU.z = tangentU.z;
-	//	iter.TangentU.w = 1.0f;
-	//}
-
-	//mVertices.clear();
-	//mVertices = uniqueVertices;
-	//uniqueVertices.clear();
+		XMVECTOR vBi = XMLoadFloat3(&binormal);
+		XMVECTOR w0 = XMVector3Normalize(XMLoadFloat3(&iter.Normal));
+		XMVECTOR w2 = XMVector3Normalize(XMVector3Cross(w0, vBi));
+		XMVECTOR vTan = XMVector3Cross(w2, w0);
+		XMStoreFloat3(&tangentU, vTan);
+		iter.TangentU.x = tangentU.x;
+		iter.TangentU.y = tangentU.y;
+		iter.TangentU.z = tangentU.z;
+		iter.TangentU.w = -1.0f;
+	}
 
 	// Now we sort the triangles by materials to reduce 
 	// shader's workload
@@ -1102,6 +1029,7 @@ void FBXExporter::FinalProcedure()
 		}
 	}
 
+	// replace space to "_"
 	for (auto& b : mBones) 
 	{
 		size_t t = b.Name.find(" ");
@@ -1112,18 +1040,6 @@ void FBXExporter::FinalProcedure()
 	}
 }
 
-int FBXExporter::FindVertex(const Vertex::Skinned& inTargetVertex, const std::vector<Vertex::Skinned>& uniqueVertices)
-{
-	for (UINT i = 0; i < uniqueVertices.size(); ++i)
-	{
-		if (inTargetVertex == uniqueVertices[i])
-		{
-			return i;
-		}
-	}
-
-	return -1;
-}
 #pragma endregion  : Final procedure to export y2k file format.
 
 #pragma region File

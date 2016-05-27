@@ -201,7 +201,7 @@ void FBXExporter::ProcessMesh(FbxMesh* mesh)
 void FBXExporter::ReadUV(FbxMesh* mesh, UINT triangleIndex, UINT positionInTriangle)
 {
 	FbxGeometryElementUV* vertexUV = mesh->GetElementUV(0);
-	UINT ctrlPointIndex = mPrevCtrlPointCount + mesh->GetPolygonVertex(triangleIndex, positionInTriangle);
+	UINT ctrlPointIndex = mesh->GetPolygonVertex(triangleIndex, positionInTriangle);
 	UINT uvIndex = mesh->GetTextureUVIndex(triangleIndex, positionInTriangle);
 
 	XMFLOAT2 uv;
@@ -248,13 +248,24 @@ void FBXExporter::ReadUV(FbxMesh* mesh, UINT triangleIndex, UINT positionInTrian
 	}
 	UVInfo uvInfo;
 	uvInfo.UV = uv;
-	uvInfo.TriangleIndex = mPrevTriangleCount + triangleIndex;
-	uvInfo.PositionInTriangle = positionInTriangle;
+	uvInfo.TriangleIndex.push_back(mPrevTriangleCount + triangleIndex);
+	uvInfo.PositionInTriangle.push_back(positionInTriangle);
 
-	std::vector<UVInfo> uvInfos = mControlPoints[ctrlPointIndex].UVInfos;
-	auto iter = std::find(uvInfos.begin(), uvInfos.end(), uvInfo);
-	if(iter == uvInfos.end())
-		mControlPoints[ctrlPointIndex].UVInfos.push_back(uvInfo);
+	std::vector<UVInfo> uvInfos = mControlPoints[mPrevCtrlPointCount + ctrlPointIndex].UVInfos;
+	// 추가되는 UV 같은 값이라도 삼각형이 다르면 그 정보 추가해줘야 함.
+	auto &iter = std::find(uvInfos.begin(), uvInfos.end(), uvInfo);
+	if (iter == uvInfos.end())	// uv같은 값이 없다면
+		mControlPoints[mPrevCtrlPointCount + ctrlPointIndex].UVInfos.push_back(uvInfo);
+	else
+	{
+		// 있다면 삼각형 정보 추가
+		for (auto& i : mControlPoints[mPrevCtrlPointCount + ctrlPointIndex].UVInfos)
+		{
+			i.TriangleIndex.push_back(mPrevTriangleCount + triangleIndex);
+			i.PositionInTriangle.push_back(positionInTriangle);
+		}
+	}
+	
 }
 
 void FBXExporter::ReadNormal(FbxMesh* mesh, int ctrlPointIndex, int inpolyVertex)
@@ -868,10 +879,10 @@ void FBXExporter::FinalProcedure()
 
 	for (UINT i = 0; i < ctrlPointSize; ++i)
 	{
-		const CtrlPoint ctrlPoint = mControlPoints[i];
+		CtrlPoint ctrlPoint = mControlPoints[i];
 		mVertices[i].Position = ctrlPoint.Position;
 
-		XMFLOAT3 normal;
+		XMFLOAT3 normal(0.0f, 0.0f, 0.0f);
 		for (auto n : ctrlPoint.Normals)
 			normal = normal + n;
 
@@ -890,23 +901,26 @@ void FBXExporter::FinalProcedure()
 
 		// Push back new vertex If it has different UV
 		// Other information is same.
-		
 		for (UINT j = 0; j < ctrlPoint.UVInfos.size(); ++j)
 		{
 			UVInfo uvInfo = ctrlPoint.UVInfos[j];
-			if (mIndices[uvInfo.TriangleIndex * 3 + uvInfo.PositionInTriangle] == i)
+
+			if (j == 0)
 			{
 				mVertices[i].Tex = uvInfo.UV;
 			}
 			else {
-				mIndices[uvInfo.TriangleIndex * 3 + uvInfo.PositionInTriangle] = mVertices.size();
+				for (UINT k = 0; k < uvInfo.TriangleIndex.size(); ++k) {
+					UINT uvIndex = uvInfo.TriangleIndex[k] * 3 + uvInfo.PositionInTriangle[k];
+					mIndices[uvIndex] = mVertices.size();
+				}
 
 				Vertex::Skinned vertex;
 				vertex.Position = mVertices[i].Position;
 				vertex.Normal = mVertices[i].Normal;
 				vertex.VertexBlendingInfos = mVertices[i].VertexBlendingInfos;
 
-				vertex.Tex = ctrlPoint.UVInfos[j].UV;
+				vertex.Tex = uvInfo.UV;
 				mVertices.push_back(vertex);
 			}
 		}
@@ -1071,9 +1085,30 @@ void FBXExporter::FinalProcedure()
 	{
 		if (iterM.second->DiffuseMapName == "")
 			iterM.second->DiffuseMapName = "None";
+		else
+		{
+			size_t t = iterM.second->DiffuseMapName.find("\\", 1);
+			if (t != iterM.second->DiffuseMapName.size())
+				iterM.second->DiffuseMapName.erase(0, t+1);
+		}
 
 		if (iterM.second->NormalMapName == "")
 			iterM.second->NormalMapName = "None";
+		else
+		{
+			size_t t = iterM.second->NormalMapName.find("\\", 1);
+			if (t != iterM.second->NormalMapName.size())
+				iterM.second->NormalMapName.erase(0, t+1);
+		}
+	}
+
+	for (auto& b : mBones) 
+	{
+		size_t t = b.Name.find(" ");
+		while (t < b.Name.size()) {
+			b.Name.erase(t, 1);
+			b.Name.insert(t, "_");
+		}
 	}
 }
 
@@ -1198,14 +1233,14 @@ void FBXExporter::WriteAnimation(std::ostream& fout)
 		fout << "***************BoneOffsets*******************" << endl;
 		for (UINT i = 0; i < mBones.size(); ++i)
 		{
-			fout << "BoneOffset" << i << " ";
+			fout << "BoneOffset<" << mBones[i].Name << ">: ";
 			Utilities::WriteMatrix(fout, mBones[i].BoneOffset, true);
 		}
 
 		fout << endl;
 		fout << "***************BoneHierarchy*****************" << endl;
-		for (UINT i = 0; i < mBones.size(); ++i)
-			fout << "ParentIndexOfBone" << i << " " << mBones[i].ParentIndex << endl;
+		for (UINT i = 0; i < mBones.size(); ++i) 
+			fout << "ParentIndexOfBone<" << mBones[i].Name << "> " << mBones[i].ParentIndex << endl;
 
 		fout << endl;
 		fout << "***************AnimationClips****************" << endl;

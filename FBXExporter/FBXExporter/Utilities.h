@@ -36,8 +36,8 @@ struct BlendingIndexWeightPair
 
 struct UVInfo
 {
-	UINT TriangleIndex, PositionInTriangle;
 	XMFLOAT2 UV;
+	std::vector<UINT> TriangleIndex, PositionInTriangle;
 
 	bool operator==(const UVInfo& rhs)
 	{

@@ -6,19 +6,19 @@
 //#define INPUT_FILE_PATH "C:\\Users\\Administrator\\Documents\\Test\\Assets\\Cyclop\\Cyclop_Soldier\\"
 //#define INPUT_FILE_PATH "C:\\Users\\Administrator\\Documents\\Test\\Assets\\overlord\\models\\overlord\\"
 
-#define OUTPUT_FILE_PATH "Output\\"
+#define OUTPUT_FILE_PATH "C:\\Users\\Administrator\\Desktop\\Programming\\Direct3D\\d3d11CodeSet3\\Chapter 25 Character Animation\\SkinnedMesh\\Models\\"
 
 void main()
 {
 	std::string inFileName;
-	std::string outFileName = "cyclop_New3.y2k";
+	std::string outFileName = "cyclop_test05.y2k";
 	std::ofstream fout(OUTPUT_FILE_PATH + outFileName);
 	FBXExporter myExporter;
 	myExporter.SetClipNum(9);
 
-	inFileName = "cyclop_soldier_attack_1.fbx";
+	inFileName = "cyclop_soldier_idle.fbx";
 	myExporter.LoadFile(INPUT_FILE_PATH + inFileName);
-	myExporter.Export(outFileName, "attack01", fout, false);
+	myExporter.Export(outFileName, "idle", fout, false);
 
 	inFileName = "cyclop_soldier_attack_2.fbx";
 	myExporter.LoadFile(INPUT_FILE_PATH + inFileName);
@@ -32,9 +32,9 @@ void main()
 	myExporter.LoadFile(INPUT_FILE_PATH + inFileName);
 	myExporter.Export(outFileName, "hit", fout, true);
 
-	inFileName = "cyclop_soldier_idle.fbx";
+	inFileName = "cyclop_soldier_attack_1.fbx";
 	myExporter.LoadFile(INPUT_FILE_PATH + inFileName);
-	myExporter.Export(outFileName, "idle", fout, true);
+	myExporter.Export(outFileName, "attack01", fout, false);
 
 	inFileName = "cyclop_soldier_run.fbx";
 	myExporter.LoadFile(INPUT_FILE_PATH + inFileName);

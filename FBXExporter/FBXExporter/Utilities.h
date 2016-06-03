@@ -6,23 +6,6 @@
 #include <unordered_map>
 #include "Vertex.h"
 
-std::ostream& operator<<(std::ostream& os, const XMFLOAT2& f2);
-std::ostream& operator<<(std::ostream& os, const XMFLOAT3& f3);
-std::ostream& operator<<(std::ostream& os, const XMFLOAT4& f4);
-
-XMFLOAT3 operator+(XMFLOAT3 l, XMFLOAT3 r);
-XMFLOAT3 operator-(XMFLOAT3 l, XMFLOAT3 r);
-XMFLOAT3 operator/(XMFLOAT3 l, XMFLOAT3 r);
-XMFLOAT3 operator/(XMFLOAT3 l, FLOAT r);
-bool operator==(XMFLOAT3 l, XMFLOAT3 r);
-
-XMFLOAT2 operator+(XMFLOAT2 l, XMFLOAT2 r);
-XMFLOAT2 operator-(XMFLOAT2 l, XMFLOAT2 r);
-bool operator==(XMFLOAT2 l, XMFLOAT2 r);
-
-XMFLOAT3 Float3Normalize(const XMFLOAT3& in);
-XMFLOAT2 Float2Normalize(const XMFLOAT2& in);
-
 struct BlendingIndexWeightPair
 {
 	unsigned int mBlendingIndex;
@@ -34,29 +17,24 @@ struct BlendingIndexWeightPair
 	{}
 };
 
-struct UVInfo
-{
-	XMFLOAT2 UV;
-	std::vector<UINT> TriangleIndex, PositionInTriangle;
-
-	bool operator==(const UVInfo& rhs)
-	{
-		if (abs(UV.x - rhs.UV.x) <= 0.001f &&
-			abs(UV.y - rhs.UV.y) <= 0.001f)
-			return true;
-		else
-			return false;
-	}
-};
-
+// Each Control Point in FBX is basically a vertex
+// in the physical world. For example, a cube has 8
+// vertices(Control Points) in FBX
+// Bones are associated with Control Points in FBX
+// The mapping is one Bone corresponding to 4
+// Control Points(Reverse of what is done in a game engine)
+// As a result, this struct stores a XMFLOAT3 and a 
+// vector of Bone indices
 struct CtrlPoint
 {
-	CtrlPoint() { ZeroMemory(this, sizeof(this)); }
+	CtrlPoint() { BlendingInfo.reserve(4); }
 
 	XMFLOAT3 Position;
-	std::vector<XMFLOAT3> Normals;
-	std::vector<UVInfo> UVInfos;
 	std::vector<BlendingIndexWeightPair> BlendingInfo;
+	std::vector<XMFLOAT3> Normal;
+	std::vector<XMFLOAT4> Tangent;
+	std::vector<XMFLOAT2> UV;
+
 };
 
 ///<summary>
@@ -86,6 +64,7 @@ struct Bone
 
 struct Triangle
 {
+	std::vector<UINT> Indices; 
 	std::string MaterialName;
 	UINT SubsetID;
 
@@ -122,3 +101,12 @@ struct Subset
 	UINT FaceStart;
 	UINT FaceCount;
 };
+
+std::ostream& operator<<(std::ostream& os, const XMFLOAT2& f2);
+std::ostream& operator<<(std::ostream& os, const XMFLOAT3& f3);
+std::ostream& operator<<(std::ostream& os, const XMFLOAT4& f4);
+XMFLOAT3 operator-(XMFLOAT3 l, XMFLOAT3 r);
+XMFLOAT2 operator-(XMFLOAT2 l, XMFLOAT2 r);
+
+XMFLOAT3 Float3Normalize(const XMFLOAT3& in);
+XMFLOAT2 Float2Normalize(const XMFLOAT2& in);

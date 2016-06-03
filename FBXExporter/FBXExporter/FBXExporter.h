@@ -27,8 +27,8 @@ private:	// You should strict to ordoer of processes
 	void ProcessControlPoints(FbxMesh* mesh);
 	void ProcessMesh(FbxMesh* mesh);
 
-	void ReadUV(FbxMesh* inMesh, UINT triangleIndex, UINT positionInTriangle);
-	void ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter);
+	void ReadUV(FbxMesh* inMesh, int inCtrlPointIndex, int inTextureUVIndex, int inUVLayer, XMFLOAT2& outUV);
+	void ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, XMFLOAT3& outNormal);
 	void ReadBinormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, XMFLOAT3& outBinormal);
 	void ReadTangent(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, XMFLOAT4& outTangent);
 
@@ -70,7 +70,6 @@ private:
 
 	std::vector<Triangle> mTriangles;
 	std::vector<Vertex::Skinned> mVertices;
-	std::vector<UINT> mIndices;
 	std::vector<Subset> mSubsets;
 
 	std::unordered_map<UINT, Material*> mMaterials;

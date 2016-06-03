@@ -44,14 +44,12 @@ private:	// You should strict to ordoer of processes
 	void ReadBoneOffset(FbxMesh* mesh);
 	void RemoveUnSkinnedBonesFromHierachy();
 	void ReadKeyframes(FbxNode* none, Bone& bone);
-
+	UINT FindBoneIndexUsingName(const std::string& inJointName);
 
 	void FinalProcedure();
 	void WriteMesh(std::ostream& inStream);
 	void WriteAnimation(std::ostream& inStream);
 
-	int FindVertex(const Vertex::Skinned& inTargetVertex, const std::vector<Vertex::Skinned>& uniqueVertices);
-	UINT FindBoneIndexUsingName(const std::string& inJointName);
 
 private:
 	FbxManager* mFbxMgr;

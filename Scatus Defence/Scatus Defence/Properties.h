@@ -12,36 +12,49 @@ enum state_type
 	type_null,
 	type_battle,
 	type_walk,
+	type_run,
 	type_die,
 	type_build,
-	type_run,
 	type_attack,
 	type_attacked,
 	type_idle
 };
+
+enum Object_type
+{
+	type_p_warrior, // 캐릭터 전사
+	type_p_archer, // 캐릭터 아처
+	type_p_builder, // 캐릭터 건축가
+	goblin, // 적- 고블린
+	cyclop,
+	type_object,// 기타 오브젝트(지형등)
+};
+
 class Properties
 {
 public:
 	char * name;
 	int id;
 	int pw;
+	int level;
 	int gold;
 	int exp_now;
 	int hp_now;
 	int hp_max;
 	int exp_max;
-	int movespeed;
 	int respawn_loc;
-	int attakpoint;
 	int guardpoint;
 	int restoring_hp;
 	int attack_type;
 	int Upgrade_weapon;
 	int Upgrade_guard;
-	int state;
+	state_type state;
 	int army_list;
+	int obj_type;
 	float attackspeed;
-	int level;
+	float movespeed;
+	float attackrange;
+	float attakpoint;
 	Properties();
 	~Properties();
 	void printPropeties();

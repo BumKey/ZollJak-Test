@@ -1,33 +1,19 @@
 #pragma once
-#include "GameObject.h"
-#include "Properties.h"
+#include "SkinnedObject.h"
 
-class Player : public GameObject
+class Player : public SkinnedObject
 {
 public:
-
-	virtual Properties * Get_Properties() { return NULL; }
-	Player(BasicModel* model, XMFLOAT4X4 world, Model_Effect me, int obj_type ,Vector2D location) :GameObject(model, world, me, obj_type, location)
-	{
-	}
+	Player(SkinnedMesh* Mesh, const InstanceDesc& info);
 	~Player();
+
+public:
+	virtual int Get_Obj_type() { return 0; };
+	virtual bool SetClip(std::string clipName);
+	virtual void Animate(float dt);
+	virtual void Release(ResourceMgr& rMgr);
+	virtual Properties * Get_Properties() { return NULL; }
 	virtual int Get_States() { return 0; }
+	virtual int SetObj_State(int new_state) { return 0; } // 오브젝트 상태설정
 };
-
-class Warrior : public Player
-{
-	public :
-		Warriorproperties warrior_p;
-		virtual int Get_States() { return warrior_p.state; }
-		virtual Properties * Get_Properties() { return &warrior_p;}
-		virtual int SetObj_State(int new_state) { warrior_p.state = new_state; return new_state; }
-		Warrior(BasicModel* model, XMFLOAT4X4 world, Model_Effect me, int obj_type, Vector2D location) :Player(model, world, me, obj_type, location)
-		{
-			
-		};
-		~Warrior();
-
-};
-
-
 

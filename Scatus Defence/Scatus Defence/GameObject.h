@@ -1,72 +1,84 @@
 #pragma once
-
-#include "BasicModel.h"
-#include "d3dUtil.h"
-#include <Camera.h>
+#include "Camera.h"
 #include "RenderStates.h"
+#include "ResourceMgr.h"
 #include "Effects.h"
-#include "game/MovingEntity.h"
+#include "GameMesh.h"
 #include "Properties.h"
-#include "TargetingSystem.h"
 #include <list>
-class TargetingSystem;
-enum Object_type
+#include "2d/Vector2D.h"
+
+struct InstanceDesc
 {
-	type_p_warrior, // 캐릭터 전사
-	type_p_archer, // 캐릭터 아처
-	type_p_builder, // 캐릭터 건축가
-	type_goblin,// 적- 고블린
-	type_object,// 기타 오브젝트(지형등)
+	XMFLOAT3 Pos;
+	XMFLOAT3 Rot;
+	FLOAT Scale;
+
+	InstanceDesc() {
+		Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		Scale = 1.0f;
+	}
 };
 
-
-
-// 월드 행렬, 메쉬 포인터, 그리기 함수를 가진
-// 게임 객체 상태변화 관리
-
-// 클래스 유형 : 엔티티
-
-enum Model_Effect {
-	Base = 0, Alpha
-};
-//template <typename Properties>
-class GameObject : public MovingEntity
+class GameObject
 {
 public:
-	GameObject();
-	GameObject(BasicModel* model, XMFLOAT4X4 world, Model_Effect me, int obj_type);
-	GameObject(BasicModel * model, XMFLOAT4X4 world, Model_Effect me, int obj_type, Vector2D location);
-	~GameObject();
-	GameObject * current_target_obj;
-	std::list<GameObject*> Oppenents;
-	
-	float BoundingRadius;
+	GameObject(GameMesh* mesh);
+	virtual ~GameObject();
+
+public:
+	virtual void Walk(float dt) = 0;
+	virtual void Strafe(float dt) = 0;
+	virtual void MoveTo(Vector2D direction, float dt) = 0; //xz평면 안에서의 이동
+	virtual void RotateY(float angle) = 0;
+	virtual void Update(float dt) = 0;
+
+	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight) = 0;
+	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight) = 0;
+	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight) = 0;
+
+	virtual void Release(ResourceMgr& rMgr) = 0;
+
+	GameMesh*		GetMesh() const { return mMesh; }
+	XMFLOAT4X4		GetWorld() const { return mWorld; }
+	XMFLOAT3		GetPos() const { return mPosition; }
+	XMFLOAT3		GetLook() const { return mCurrLook; }
+	XMFLOAT3		GetRight() const { return mRight; }
+	XMFLOAT3		GetUp() const { return mUp; }
+	UINT			GetID() const { return mID; }
+	UINT			GetObjectGeneratedCount() const { return GeneratedCount; }
+	Properties		GetProperty() const { return mProperty; }
+	state_type		GetState() const{ return mProperty.state; }
+	Vector2D		GetPos2D() const { return Vector2D(mPosition.x, mPosition.z); }
+	GameObject*		GetTarget() const { return mTarget; }
+	Object_type		GetType() const { return mObjectType; }
+
+	void			SetState(state_type state) { mProperty.state = state; }
+	void			SetHP(int hp) { mProperty.hp_now = hp; }
+	void			SetTarget(GameObject* target) { if (target) mTarget = target; }
+
+	void  PrintLocation(); //객체 위치값출력 반환
 private:
+	UINT mID;
+	static UINT GeneratedCount;
+
+protected:
 	XMFLOAT4X4 mWorld;
-	BasicModel* mModel;
+	GameMesh* mMesh;
 
-	Model_Effect mME;
-	int m_Object_type;
-public:
-	void Draw(ID3D11DeviceContext* dc, const Camera& cam, XMFLOAT4X4 shadowTransform);
-	void Animate();
-	void Move(XMVECTOR direction, float dt);
-	void Move2D(Vector2D direction, float dt);
-	void DrawObjectToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj);
-	void DrawObjectToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam);
-	void  printlocation(); //객체 위치값출력 반환
+	FLOAT	 mScaling;
+	XMFLOAT3 mRotation;
+	XMFLOAT3 mPosition;
 
-	Model_Effect GetType();
-	BasicModel* GetModel();
-	int Get_Object_type() { return m_Object_type; }
-	XMFLOAT4X4 GetWorld();
-	virtual int SetObj_State(int new_state) { return 0; }
-	virtual Properties * Get_Properties() { return NULL; }
-	virtual int Get_States() { return 0; }
-	void SettingTarget(std::list<GameObject*> Oppenent);
-	void Attack(GameObject * Target);
+	XMFLOAT3 mRight;
+	XMFLOAT3 mUp;
+	XMFLOAT3 mCurrLook;
+	XMFLOAT3 mPrevLook;
+	XMFLOAT3 mDirection;
 
-
-
+	Properties mProperty;
+	Object_type mObjectType;
+	GameObject* mTarget;
 };
 

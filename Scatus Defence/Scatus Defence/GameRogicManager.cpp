@@ -3,9 +3,10 @@
 #include "time.h"
 #include "ResourceMgr.h"
 
-GameRogicManager::GameRogicManager(SceneMgr * SceneMgr_)
+GameRogicManager::GameRogicManager(ObjectMgr * ObjMgr_, ResourceMgr * resourceMgr_)
 {
-	m_SceneMgr = SceneMgr_; // 씬매니저의 오브젝트에 접근하기 위한 포인터
+	mResourceMgr = resourceMgr_;
+	mObjMgr = ObjMgr_; // 씬매니저의 오브젝트에 접근하기 위한 포인터
 	wave_level = 0;
 	Gamestatement= game_title;
 	gamename = "스카투스 디펜스";
@@ -14,10 +15,10 @@ GameRogicManager::GameRogicManager(SceneMgr * SceneMgr_)
 	player_num = 0;
 	//map; 추후에 초기화 진행
 	//mLastMousePos;
-	m_OnMouseDown=false;
+	OnMouseDown=false;
 	mPlayer = NULL;
 
-
+	mPlayer = mObjMgr->GetPlayer();
 
 };
 
@@ -26,41 +27,6 @@ GameRogicManager::~GameRogicManager()
 
 };
 
-void GameRogicManager::GameManaging()
-{	
-	//printf("스카투스 디펜스!!\n");
-	mRogicTimer.SetCurrentTime();// 현재시간 측정 및 총 플레이타임 측정함수
-	//printf("\n\n\n\n\n\n\n현재 플레이 타임 : %d초",mRogicTimer.GetPlayTime());
-	
-	switch (GameState)
-	{
-	case game_title:
-		if (m_OnMouseDown)
-		{
-			Gamestart();
-		}
-		else
-			GameTitle();
-		break;
-	case game_start:
-		
-	
-		break;
-	case game_waving:
-		Waving();
-		break;
-	case game_waiting_wave :
-
-		Waiting_Wave();
-		break;
-	case game_ending :
-		GameEnd();
-		break;
-	default:
-		break;
-	}
-	//system("cls");//콘솔창 지우기
-}
 void GameRogicManager::Gamestart()
 {
 	GameState = game_waiting_wave;
@@ -69,9 +35,8 @@ void GameRogicManager::Gamestart()
 	mRogicTimer.SetWaveTimer(); //웨이브스위치 작동
 	printloc();
 	//플레이어설정
-	SetPlayer();
-	Setting_Team();
-	Setting_teamlist();
+	mPlayer = mObjMgr->GetPlayer();
+
 	//m_pMap->print();
 	//게임 각종 오브젝트 추가
 
@@ -79,6 +44,7 @@ void GameRogicManager::Gamestart()
 }
 void GameRogicManager::GameEnd()
 {
+	mObjMgr->ReleaseAll(*mResourceMgr);
 	printf("\n게임이 종료되었습니다\n\n", wave_level);
 	
 }
@@ -88,9 +54,40 @@ void GameRogicManager::GameTitle()
 	
 }
 
-void GameRogicManager::Update()
+void GameRogicManager::Update(float dt)
 {
-	GameManaging();
+	//printf("스카투스 디펜스!!\n");
+	mRogicTimer.SetCurrentTime();// 현재시간 측정 및 총 플레이타임 측정함수
+								 //printf("\n\n\n\n\n\n\n현재 플레이 타임 : %d초",mRogicTimer.GetPlayTime());
+
+	switch (GameState)
+	{
+	case game_title:
+		if (OnMouseDown)
+		{
+			Gamestart();
+		}
+		else
+			GameTitle();
+		break;
+	case game_start:
+
+
+		break;
+	case game_waving:
+		Waving(dt);
+		break;
+	case game_waiting_wave:
+
+		Waiting_Wave();
+		break;
+	case game_ending:
+		GameEnd();
+		break;
+	default:
+		break;
+	}
+	//system("cls");//콘솔창 지우기
 }
 
 
@@ -109,22 +106,11 @@ void GameRogicManager::EndWave()
 	}
 	mRogicTimer.SetWaveTimer(); //WaveTimer초기화
 	//맵 내부의 모든 적들 삭제
-	
+	mObjMgr->ReleaseAllMonsters(*mResourceMgr);
 	/*
-	std::list<GameObject*>::iterator i;
-	for (i = m_SceneMgr->mObjects.begin(); i != m_SceneMgr->mObjects.end();i++)
-	{
-		
-		if ((*i)->Get_Object_type() == type_goblin) {
-			i=m_SceneMgr->mObjects.erase(*i);// 반복자를 반환하지 않으면, 다음 요소로 접근하는 반복자를 사용할 수 없어 오류발생
-			
-		}
-
-	}*/
-
 	for (std::list<GameObject*>::iterator i = m_SceneMgr->mObjects.begin(); i != m_SceneMgr->mObjects.end();)
 	{
-		if ((*i)->Get_Object_type() == type_goblin)
+		if ((*i)->Get_Object_type() == type_monster)
 		{
 			i = m_SceneMgr->mObjects.erase(i);
 
@@ -138,7 +124,7 @@ void GameRogicManager::EndWave()
 	}
 	for (std::list<GameObject*>::iterator i = m_Enemies_list.begin(); i != m_Enemies_list.end();)
 	{
-		if ((*i)->Get_Object_type() == type_goblin)
+		if ((*i)->Get_Object_type() == type_monster)
 		{
 			i = m_Enemies_list.erase(i);
 
@@ -150,7 +136,7 @@ void GameRogicManager::EndWave()
 		}
 
 	}
-	
+	*/
 	//waiting_wave로 상태변경
 }
 void GameRogicManager::StartWave()
@@ -161,39 +147,27 @@ void GameRogicManager::StartWave()
 	printf("\n\n\n%d 레벨 웨이브가 시작되었습니다\n", wave_level);
 	printf("\n 몬스터를 생성중입니다\n", wave_level);
 	m_pMap->print();
-	XMFLOAT4X4 rockWorld[2];
-	XMMATRIX modelScale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
-	XMMATRIX modelRot = XMMatrixRotationY(0.0f);
-	XMMATRIX modelOffset = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
-	modelScale = XMMatrixScaling(0.8f, 0.8f, 0.8f);
-	modelOffset = XMMatrixTranslation(-1.0f, 1.4f, -7.0f);
-	for (int i = 0; i < 2; i++)
-	{
-		XMStoreFloat4x4(&rockWorld[i], modelScale*modelRot*modelOffset);		
-		m_SceneMgr->AddObject(ResourceMgr::RockModel, rockWorld[i], Model_Effect::Base, type_goblin, m_pMap->enemy_loc);
-	
-		auto it = m_SceneMgr->mObjects.end();
-		it--;
-		add_Enemies(*it);
-		printf("고블린 %d의 위치 x: %f y:%f\n", i, (*it)->Pos().x, (*it)->Pos().y);
-	}
+
+	//for (int i = 0; i < 2;i++)
+	//{
+	//	 add_Monster();
+	//	auto it = m_ObjMgr->GetAllMonsters().end();
+	//	it--;
+	//
+	//	printf("고블린 %d의 위치 x: %f y:%f\n", i, (*it)->GetPos2D().x, (*it)->GetPos2D().y);
+	//}
 
 	// 새로운 적들 생성
-
-	//팀분류 시작
-	Setting_Team();
 	//wavingstart로 상태변경
 	
 
 }
 
-void GameRogicManager::Waving()
+void GameRogicManager::Waving(float dt)
 {
-	
-	
 	//next_wave 카운팅
 	bool timer= mRogicTimer.WaveTimer();
-	AIManager();
+	AIManager(dt);
 	if (timer)
 	{
 		
@@ -214,239 +188,110 @@ void GameRogicManager::Waiting_Wave()
 
 	}
 }
-void GameRogicManager::GetKeyMesage()
-{
-
-	if (GetAsyncKeyState('W') & 0x8000)
-	{
-		
-	}
-	if (GetAsyncKeyState('S') & 0x8000)
-	{
-	}
-	if (GetAsyncKeyState('A') & 0x8000)
-	{
-	}
-	if (GetAsyncKeyState('D') & 0x8000)
-	{
-	}
-
-}
-
-void GameRogicManager::OnMouseDown(WPARAM btnState, int x, int y)
-{
-
-	m_OnMouseDown = true;
-	if (GameState==game_waving || GameState == game_waiting_wave)
-	{
-		mPlayer->SetObj_State(type_attack);
-		//플레이어 상태 공격상태로 변환/ 맵 내부의 고블린과 충돌검사 진행
-	}
-}
-void GameRogicManager::OnMouseMove(WPARAM btnState, int x, int y)
-{
-
-}
-void GameRogicManager::OnMouseUp(WPARAM btnState, int x, int y)
-{
-
-}
 
 void GameRogicManager::printloc()
 {
-	for (auto i : m_SceneMgr->mObjects)
+	printf("\n");
+	mObjMgr->GetPlayer()->PrintLocation();
+	for (auto i : mObjMgr->GetMonsters())
 	{
-		if ( i->Get_Object_type() !=type_object) {
-			i->printlocation();
-		}
-	}
-
-
-}
-
-void GameRogicManager::SetPlayer()
-{
-
-
-		for (auto i : m_SceneMgr->mObjects)
-		{
-			if (i->Get_Object_type() == type_p_warrior) {
-				mPlayer = (Warrior*)i;
-			}
-		}
-
-}
-
-void GameRogicManager::Setting_Team()
-{
-	//경고 몬스터, 아군 죽을때 마다 초기화 해줘야함
-	//중복검사를 해야함
-	// type_을 한데 정리해서 Get_Object_type>10 적 <10 아군이런 식으로 바꾸자 나중에
-
-	for (auto i : m_SceneMgr->mObjects)
-	{
-		if (i->Get_Object_type() == type_p_warrior) {
-			i->Oppenents = m_Enemies_list;
-		}
-		else if (i->Get_Object_type() == type_goblin)
-		{
-			i->Oppenents = m_Our_list;
-			
-		}
-	
+		i->PrintLocation();
 	}
 }
-void GameRogicManager::Setting_teamlist()
-{
-	m_Our_list.clear();
-	m_Enemies_list.clear();
-	for (auto i : m_SceneMgr->mObjects)
-	{
-		if (i->Get_Object_type() == type_p_warrior) {
-			m_Our_list.push_back(i);
 
-		}
-		else if (i->Get_Object_type() == type_goblin)
-		{
-			m_Enemies_list.push_back(i);
-
-		}
-	}
-}
-void GameRogicManager::add_Our(GameObject* a)
+void GameRogicManager::add_Monster()
 {
-	m_Our_list.push_back(a);
-}
+	//InstanceDesc info;
+	//
+	//info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
+	//	0, mPlayer->GetPos().z + 50.0f - rand() % 100);
+	//info.Scale = MathHelper::RandF()*2.0f + 0.5f;
+	//info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
 
-void GameRogicManager::add_Enemies(GameObject* a)
-{
-	m_Enemies_list.push_back(a);
+	//GoblinType type;
+	//if (rand() % 2) type = GoblinType::Red;
+	//else	   type = GoblinType::Blue;
+	//mObjMgr->AddMonster(new Goblin(mResourceMgr->GetGoblinMesh(), info, type));
 }
 void GameRogicManager::MoveAI()
 {
 
-
 }
-void GameRogicManager::AIManager()
+void GameRogicManager::AIManager(float dt)
 {
 	int j = 0;
-	j = 0;
-	// 적들의 행동지정
-	for (auto i : m_Enemies_list/*m_Enemies_list*/)
+	// 적들의 행동지정	
+	//타겟변경은 나중에 0.5초마다 한번씩
+	for (auto iterM : mObjMgr->GetMonsters())
 	{
+		//나와 가장가까운 적을 타겟으로 변경
+		if (iterM->GetState() == type_idle || iterM->GetState() == type_walk)
+		{
+			//이동
+			iterM->SetTarget(mPlayer);
+			//printf("적 세팅");
+			//기지와 나사이의 거리가 적과 나 사이의 거리보다 가깝다면 타겟을 기지로 변경) 
+		
+			Vector2D currPos = iterM->GetPos2D();
+			Vector2D targetPos = iterM->GetTarget()->GetPos2D();
+			if (Vec2DDistance(currPos, m_pMap->temple_loc)/*나와 기지 사이의 거리*/
+				< Vec2DDistance(currPos, targetPos)/*나와 타겟 사이의 거리*/)
+			{
+				iterM->SetTarget(nullptr); // 나중에 신전 객체 등장하면 신전 객체로 바꿔줘야함
+			}
 
-		if (i->Get_Object_type() == type_goblin) {//타겟변경은 나중에 0.5초마다 한번씩
-												  //나와 가장가까운 적을 타겟으로 변경
-			if (i->Get_States() == type_idle || i->Get_States() == type_walk)
-			{//이동
-				i->SettingTarget(i->Oppenents);
-				printf("적 세팅");
-				//기지와 나사이의 거리가 적과 나 사이의 거리보다 가깝다면 타겟을 기지로 변경) 
-				if (i->current_target_obj != NULL)
+			//printf("고블린 %d의 위치 x: %f y:%f\n", j, currPos.x, currPos.y);
+			if (iterM->GetTarget() == NULL) //신전이 목표일때
+			{
+
+				if (Vec2DDistance(currPos, m_pMap->temple_loc) < 10)
 				{
-					if (Vec2DDistance(i->Pos(), m_pMap->temple_loc)/*나와 기지 사이의 거리*/
-						< Vec2DDistance(i->Pos(), i->current_target_obj->Pos())/*나와 타겟 사이의 거리*/)
-					{
-						i->current_target_obj = NULL; // 나중에 신전 객체 등장하면 신전 객체로 바꿔줘야함
 
-					}
-					i->SetHeading((i->current_target_obj->Pos()) - (i->Pos()));
-					i->Move2D(i->Heading(), 0.03);
-				}
-				printf("고블린 %d의 위치 x: %f y:%f\n", j, i->Pos().x, i->Pos().y);
-				if (i->current_target_obj == NULL) //신전이 목표일때
-				{
-
-					if (Vec2DDistance(i->Pos(), m_pMap->temple_loc) < 10)
-					{
-
-						//i->SetObj_State(type_battle); //공격으로 상태전환
-						printf("신전공격");
-					}
-					else
-					{
-						i->SetHeading((m_pMap->temple_loc) - (i->Pos()));
-						i->Move2D(i->Heading(), 0.03);
-					}
+					//i->SetObj_State(type_battle); //공격으로 상태전환
+					printf("신전공격");
 				}
 				else
 				{
-					if (Vec2DDistance(i->Pos(), i->current_target_obj->Pos()) < 10)
-					{
-						i->SetObj_State(type_battle);
-						printf("배틀실행");
-					}
+					/*i->SetHeading((m_pMap->temple_loc) - (i->GetPos2D()));
+					i->Move2D(i->Heading(), 0.03);*/
 				}
-
 			}
-			else if (i->Get_States() == type_battle)
+			else
 			{
-				mRogicTimer.SetAttackTimer(); //공격시간의 간격을 두기 위한 타이머 설정
-				i->SetObj_State(type_attack); //공격으로 상태전환
-
-			}
-			else if (i->Get_States() == type_attack)
-			{
-				if (mRogicTimer.AttackTimer(i->Get_Properties()->attackspeed))//공격시간이 되면 공격
+				if (Vec2DDistance(currPos, targetPos) <= 3.0f)
 				{
-					i->SetObj_State(type_battle);
-					i->Attack(i->current_target_obj);  //공격시간의 간격을 두기 위한 타이머 설정
-
+					iterM->Attack(dt);
+					printf("배틀실행");
 				}
+				else
+					iterM->MoveTo(targetPos, dt);
 			}
 
+		}
+		else if (iterM->GetState() == type_battle)
+		{
+			mRogicTimer.SetAttackTimer(); //공격시간의 간격을 두기 위한 타이머 설정
+			iterM->SetState(type_attack); //공격으로 상태전환
+
+		}
+		else if (iterM->GetState() == type_attack)
+		{
+			if (mRogicTimer.AttackTimer(iterM->GetProperty().attackspeed))//공격시간이 되면 공격
+			{
+				iterM->SetState(type_battle);
+				iterM->Attack(dt);  //공격시간의 간격을 두기 위한 타이머 설정
+			}
 		}
 		j++;
 	}
-
-
-	
-	for (std::list<GameObject*>::iterator i = m_Enemies_list.begin(); i != m_Enemies_list.end();)
-	{
-		if ((*i)->Get_States() == type_die)
-		{
-			i = m_Enemies_list.erase(i);
-			//적을 죽였으니 our_lsit의 Oppnents 초기화
-	
-		}
-		else
-		{
-			++i;
-		}
-
-	}
-
-	for (std::list<GameObject*>::iterator i = m_Our_list.begin(); i != m_Our_list.end();)
-	{
-		if ((*i)->Get_States() == type_die)
-		{
-			i = m_Our_list.erase(i);// 전사 3명 죽으면 죽어버리넹
-			//아군을 죽였으니 Enemies_lsit의 Oppnents 초기화
-
-
-		}
-		else
-		{
-
-			++i;
-		}
-
-	}
-
-	
-	for (std::list<GameObject*>::iterator i = m_SceneMgr->mObjects.begin(); i != m_SceneMgr->mObjects.end();)
-	{
-		if ((*i)->Get_States() == type_die)
-		{
-			i = m_SceneMgr->mObjects.erase(i);
-
-			Setting_Team();
-
-		}
-		else
-		{
-			++i;
-		}
-
-	}
 }
+
+
+
+	
+	
+
+
+		
+
+

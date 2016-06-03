@@ -19,6 +19,7 @@ Properties::Properties()
 	Upgrade_weapon = 0;
 	Upgrade_guard = 0;
 	army_list = 0;
+	attackrange = 0;
 }
 
 
@@ -46,6 +47,8 @@ Warriorproperties::Warriorproperties()
 	attakpoint = 50;
 	guardpoint = 30;
 	state = type_idle;
+	obj_type = type_p_warrior;
+	attackrange = 5;
 
 }
 Warriorproperties::~Warriorproperties()
@@ -64,6 +67,8 @@ GoblinProperties::GoblinProperties()
 	guardpoint = 30;
 	state = type_idle;
 	attackspeed = 5;
+	obj_type = goblin;
+	attackrange = 5;
 }
 GoblinProperties::~GoblinProperties()
 {

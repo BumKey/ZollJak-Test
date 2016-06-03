@@ -35,7 +35,7 @@ public:
 	virtual void UpdateScene(float dt)=0;
 	virtual void DrawScene()=0; 
 	virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	virtual HWND GetHwnd() { return  mhMainWnd; }
+
 	// Convenience overrides for handling mouse input.
 	virtual void OnMouseDown(WPARAM btnState, int x, int y){ }
 	virtual void OnMouseUp(WPARAM btnState, int x, int y)  { }

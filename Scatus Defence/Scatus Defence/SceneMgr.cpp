@@ -50,7 +50,7 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 	mSky = new Sky(device, L"Textures/grasscube1024.dds", 4000.0f);
 	mSmap = new ShadowMap(device, SMapSize, SMapSize);
 	mSsao = new Ssao(device, md3dImmediateContext, width, height, cam.GetFovY(), cam.GetFarZ());
-
+	
 	Terrain::InitInfo tii;
 	tii.HeightMapFilename = L"Textures/terrain3.raw";
 	tii.LayerMapFilename0 = L"Textures/grass2.dds";
@@ -64,7 +64,7 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 	tii.HeightmapHeight = 513;
 	tii.CellSpacing = 2.0f;
 	mTerrain.Init(device, md3dImmediateContext, tii);
-
+	
 	BuildScreenQuadGeometryBuffers(device);
 }
 

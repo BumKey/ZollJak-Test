@@ -36,6 +36,8 @@ bool GameFrameWork::Init()
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
 	mResourceMgr.Init(md3dDevice);
+	mSwapChain->GetBuffer(0, _uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
+	UI_Mgr->CreateD2DrenderTarget(D3DApp::GetHwnd());
 	mGameRogicMgr = new GameRogicManager(&mObjectMgr, &mResourceMgr); //용준
 
 	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
@@ -111,7 +113,7 @@ bool GameFrameWork::Init()
 		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
 			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
 		info.Scale = 8.0f + MathHelper::RandF();
-		info.Rot.x = XMConvertToRadians(90);
+		info.Rot.x = MathHelper::Pi;
 		info.Rot.y = 0.0f;
 
 		mObjectMgr.AddMonster(new Cyclop(mResourceMgr.GetSkinnedMesh(Object_type::cyclop), info));
@@ -124,6 +126,8 @@ bool GameFrameWork::Init()
 
 	mObjectMgr.Update();
 	mSceneMgr.ComputeSceneBoundingBox(mPlayer->GetPos());
+	UI_Mgr->Add_Text(L"게임 시작", (UI_Mgr->rc.left + UI_Mgr->rc.right) /
+		2 - 100, (UI_Mgr->rc.top + UI_Mgr->rc.bottom) / 2 - 150, 1);
 	return true;
 }
 
@@ -200,6 +204,7 @@ void GameFrameWork::UpdateScene(float dt)
 void GameFrameWork::DrawScene()
 {
 	mSceneMgr.DrawScene(mObjectMgr.GetAllObjects(), mCam);
+	UI_Mgr->Print_All_UI();
 	HR(mSwapChain->Present(0, 0));
 	m_bReady = true;
 }
@@ -209,6 +214,29 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 	mGameRogicMgr->OnMouseDown = true;
+
+
+
+		if (UI_Mgr->MouseOn2D(L"아이디 입력", x, y))
+		{
+			UI_Mgr->Set_input_ID_state(true);
+			UI_Mgr->Delete_Text(L"아이디 입력창");
+
+		}
+
+		if (UI_Mgr->MouseOn2D(L"로그인", x, y))
+		{
+
+			UI_Mgr->Delete_Text(L"로그인");
+
+
+		}
+		if (UI_Mgr->MouseOn2D(L"메시지박스", x, y))
+		{
+			UI_Mgr->Set_Image_Active(L"메시지박스", false);
+		}
+	
+
 	if ((btnState & MK_LBUTTON) != 0 && !m_bAttackAnim)
 	{
 		m_bAttackAnim = true;
@@ -220,6 +248,14 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 {
+	if (UI_Mgr->MouseOn2D(L"로그인", x, y))
+	{
+
+		UI_Mgr->Delete_All_Image();
+		UI_Mgr->Delete_Text_All();
+		UI_Mgr->Set_Image_Active(L"메시지박스", true);
+
+	}
 	ReleaseCapture();
 }
 

@@ -6,27 +6,6 @@
 #include <unordered_map>
 #include "Vertex.h"
 
-std::ostream& operator<<(std::ostream& os, const XMFLOAT2& f2);
-std::ostream& operator<<(std::ostream& os, const XMFLOAT3& f3);
-std::ostream& operator<<(std::ostream& os, const XMFLOAT4& f4);
-
-XMFLOAT4 operator+(XMFLOAT4 l, XMFLOAT4 r);
-
-XMFLOAT3 operator+(XMFLOAT3 l, XMFLOAT3 r);
-XMFLOAT3 operator-(XMFLOAT3 l, XMFLOAT3 r);
-XMFLOAT3 operator/(XMFLOAT3 l, XMFLOAT3 r);
-XMFLOAT3 operator/(XMFLOAT3 l, FLOAT r);
-bool operator==(XMFLOAT3 l, XMFLOAT3 r);
-
-XMFLOAT2 operator+(XMFLOAT2 l, XMFLOAT2 r);
-XMFLOAT2 operator-(XMFLOAT2 l, XMFLOAT2 r);
-bool operator==(XMFLOAT2 l, XMFLOAT2 r);
-bool operator!=(XMFLOAT2 l, XMFLOAT2 r);
-
-XMFLOAT4 Float4Normalize(const XMFLOAT4& in);
-XMFLOAT3 Float3Normalize(const XMFLOAT3& in);
-XMFLOAT2 Float2Normalize(const XMFLOAT2& in);
-
 struct BlendingIndexWeightPair
 {
 	unsigned int mBlendingIndex;
@@ -38,13 +17,24 @@ struct BlendingIndexWeightPair
 	{}
 };
 
+// Each Control Point in FBX is basically a vertex
+// in the physical world. For example, a cube has 8
+// vertices(Control Points) in FBX
+// Bones are associated with Control Points in FBX
+// The mapping is one Bone corresponding to 4
+// Control Points(Reverse of what is done in a game engine)
+// As a result, this struct stores a XMFLOAT3 and a 
+// vector of Bone indices
 struct CtrlPoint
 {
-	CtrlPoint() { ZeroMemory(this, sizeof(this)); }
+	CtrlPoint() { BlendingInfo.reserve(4); }
 
 	XMFLOAT3 Position;
 	std::vector<BlendingIndexWeightPair> BlendingInfo;
-	std::vector<XMFLOAT2> PolygonVertex;
+	std::vector<XMFLOAT3> Normal;
+	std::vector<XMFLOAT4> Tangent;
+	std::vector<XMFLOAT2> UV;
+
 };
 
 ///<summary>
@@ -70,30 +60,13 @@ struct Bone
 
 	Bone() : ParentIndex(-1), Node(nullptr)
 	{ BoneOffset.SetIdentity(); }
-
-	void operator=(const Bone& rhs)
-	{
-		ParentIndex = rhs.ParentIndex;
-		Name = rhs.Name;
-		BoneOffset = rhs.BoneOffset;
-		Node = rhs.Node;
-		Keyframes = rhs.Keyframes;
-	}
 };
 
 struct Triangle
 {
-	struct SurfaceData
-	{
-		XMFLOAT3 Normal;
-		// XMFLOAT3 Binormal;
-		XMFLOAT4 Tangent;
-		XMFLOAT2 UV;
-	};
-
+	std::vector<UINT> Indices; 
 	std::string MaterialName;
 	UINT SubsetID;
-	SurfaceData Data[3];
 
 	bool operator<(const Triangle& rhs)
 	{
@@ -128,3 +101,12 @@ struct Subset
 	UINT FaceStart;
 	UINT FaceCount;
 };
+
+std::ostream& operator<<(std::ostream& os, const XMFLOAT2& f2);
+std::ostream& operator<<(std::ostream& os, const XMFLOAT3& f3);
+std::ostream& operator<<(std::ostream& os, const XMFLOAT4& f4);
+XMFLOAT3 operator-(XMFLOAT3 l, XMFLOAT3 r);
+XMFLOAT2 operator-(XMFLOAT2 l, XMFLOAT2 r);
+
+XMFLOAT3 Float3Normalize(const XMFLOAT3& in);
+XMFLOAT2 Float2Normalize(const XMFLOAT2& in);

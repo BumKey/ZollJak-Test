@@ -16,31 +16,35 @@ public:
 	~FBXExporter();
 
 public:
-	bool LoadFile(const std::string& fileName);
-	void Export(const std::string& fileName, const std::string& clipName, std::ofstream& fout);
-
 	void SetClipNum(UINT num) { mClipNum = num; }
+
+	bool LoadFile(const std::string& fileName);
+	void Export(const std::string& fileName, const std::string& clipName,
+		std::ofstream& fout, bool overWrite);
 
 private:	// You should strict to ordoer of processes
 	void ProcessGeometry(FbxNode* node);	
 	void ProcessControlPoints(FbxMesh* mesh);
 	void ProcessMesh(FbxMesh* mesh);
 
-	void ReadUV(FbxMesh* mesh, const UINT triangleIndex, const UINT positionInTriangle, Triangle::SurfaceData& triangle);
-	void ReadNormal(FbxMesh* mesh, int ctrlPointIndex, int indexCounter, Triangle::SurfaceData& data);
-	void ReadTangent(FbxMesh* mesh, int ctrlPointIndex, int indexCounter, Triangle::SurfaceData& data);
-	
+	void ReadUV(FbxMesh* inMesh, int inCtrlPointIndex, int inTextureUVIndex, int inUVLayer, XMFLOAT2& outUV);
+	void ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, XMFLOAT3& outNormal);
+	void ReadBinormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, XMFLOAT3& outBinormal);
+	void ReadTangent(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, XMFLOAT4& outTangent);
+
 	void ProcessMaterials(FbxNode* node);
 	void ProcessMaterialAttribute(FbxSurfaceMaterial* inMaterial, UINT inMaterialIndex);
-	void ProcessMaterialTexture(FbxSurfaceMaterial * inMaterial, Material * outMaterial);
+	void ProcessMaterialTexture(FbxSurfaceMaterial * inMaterial, Material * ioMaterial);
 	void AssociateMaterialToMesh(FbxNode* node);
 
-	void ProcessBoneHierachy(FbxNode* rootNode);
-	void GetAllBones(FbxNode* none);
+	void ProcessBoneHierachy(FbxNode* node);
+	void ProcessBoneHierachy(FbxNode* none, int inDepth, int myIndex, int inParentIndex);
 	void ReadSkinnedData(FbxMesh* mesh);
-	void RemoveUnskinnedBones();
-	void ReadKeyframes();
-	int FindBoneIndexUsingName(const std::string& boneName);
+	void ReadBoneWeightsAndIndices(FbxMesh* mesh);
+	void ReadBoneOffset(FbxMesh* mesh);
+	void RemoveUnSkinnedBonesFromHierachy();
+	void ReadKeyframes(FbxNode* none, Bone& bone);
+	UINT FindBoneIndexUsingName(const std::string& inJointName);
 
 	void FinalProcedure();
 	void WriteMesh(std::ostream& inStream);
@@ -53,21 +57,19 @@ private:
 
 	LARGE_INTEGER mCPUFreq;
 
-	UINT mMeshCount;
 	UINT mPrevCtrlPointCount;
 	UINT mPrevTriangleCount;
 
+	bool mOverWrite;
 	bool mHasAnimation;
 
 	UINT mClipNum;
-	UINT mExportingCount;
 	std::string mClipName;
 
 	std::vector<Bone> mBones;
 
 	std::vector<Triangle> mTriangles;
 	std::vector<Vertex::Skinned> mVertices;
-	std::vector<UINT> mIndices;
 	std::vector<Subset> mSubsets;
 
 	std::unordered_map<UINT, Material*> mMaterials;

@@ -209,7 +209,7 @@
       <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
     </ClCompile>
     <ClCompile Include="UI_Manager.cpp">
-      <Filter>Managers</Filter>
+      <Filter>main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -328,9 +328,7 @@
     <ClInclude Include="Cyclop.h">
       <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
     </ClInclude>
-    <ClInclude Include="UI_Manager.h">
-      <Filter>Managers</Filter>
-    </ClInclude>
+    <ClInclude Include="UI_Manager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FX\Basic.fx">

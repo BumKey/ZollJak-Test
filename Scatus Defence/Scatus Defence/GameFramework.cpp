@@ -40,7 +40,7 @@ bool GameFrameWork::Init()
 	UI_Mgr->CreateD2DrenderTarget(D3DApp::GetHwnd());
 	mGameRogicMgr = new GameRogicManager(&mObjectMgr, &mResourceMgr); //용준
 
-	mSceneMgr.Init(md3dDevice, md3dImmediateContext,
+	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
 		mDepthStencilView, mRenderTargetView,
 		mCam, mClientWidth, mClientHeight);
 
@@ -62,10 +62,10 @@ bool GameFrameWork::Init()
 
 	for (UINT i = 0; i < 10; ++i)
 	{
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
-			-0.1f, mPlayer->GetPos().z + 50.0f - rand() % 100);
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x +50.0f - rand() % 100,
+			-0.1f, mPlayer->GetPos().z + 50.0f -rand() % 100);
 		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2;
+		info.Rot.y = MathHelper::RandF()*MathHelper::Pi*2;
 
 		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.TreeMesh, info, Label::AlphaBasic));
 	}
@@ -86,7 +86,7 @@ bool GameFrameWork::Init()
 			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
 		info.Scale = 0.1f + MathHelper::RandF() / 5.0f;
 		info.Rot.y = 0;
-
+		
 		Goblin::Type type;
 		if (i % 2) {
 			type = Goblin::Type::Blue;
@@ -136,7 +136,7 @@ void GameFrameWork::OnResize()
 	D3DApp::OnResize();
 
 	mCam.SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
-	mSceneMgr.OnResize(mClientWidth, mClientHeight, mCam,
+	mSceneMgr.OnResize(mClientWidth, mClientHeight, mCam, 
 		mDepthStencilView, mRenderTargetView);
 }
 
@@ -191,18 +191,14 @@ void GameFrameWork::UpdateScene(float dt)
 		else
 			mPlayer->SetClip("stand");
 	}
-
-	if (m_bAttackAnim && mPlayer->AnimEnd("attack01"))
+	
+	if(m_bAttackAnim && mPlayer->AnimEnd("attack01"))
 		m_bAttackAnim = false;
 
 	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
 	mGameRogicMgr->Update(dt);
 	mCam.Update(mPlayer, mSceneMgr);
-
-	mGameRogicMgr->
-	
-
 }
 
 void GameFrameWork::DrawScene()
@@ -221,25 +217,25 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 
 
 
-	if (UI_Mgr->MouseOn2D(L"아이디 입력", x, y))
-	{
-		UI_Mgr->Set_input_ID_state(true);
-		UI_Mgr->Delete_Text(L"아이디 입력창");
+		if (UI_Mgr->MouseOn2D(L"아이디 입력", x, y))
+		{
+			UI_Mgr->Set_input_ID_state(true);
+			UI_Mgr->Delete_Text(L"아이디 입력창");
 
-	}
+		}
 
-	if (UI_Mgr->MouseOn2D(L"로그인", x, y))
-	{
+		if (UI_Mgr->MouseOn2D(L"로그인", x, y))
+		{
 
-		UI_Mgr->Delete_Text(L"로그인");
+			UI_Mgr->Delete_Text(L"로그인");
 
 
-	}
-	if (UI_Mgr->MouseOn2D(L"메시지박스", x, y))
-	{
-		UI_Mgr->Set_Image_Active(L"메시지박스", false);
-	}
-
+		}
+		if (UI_Mgr->MouseOn2D(L"메시지박스", x, y))
+		{
+			UI_Mgr->Set_Image_Active(L"메시지박스", false);
+		}
+	
 
 	if ((btnState & MK_LBUTTON) != 0 && !m_bAttackAnim)
 	{
@@ -273,7 +269,7 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 
 		// Update안의 LookAt 세번째 변수 mUp으로 해주면
 		// 어지럽지만 나름 멋있는 효과가?!
-		mCam.Pitch(dy);
+		mCam.Pitch(dy);			
 		//mCam.RotateY(dx/3.0f);
 		mPlayer->RotateY(dx*2.0f);
 		mPlayer->SetState(type_attack);
@@ -302,6 +298,6 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 	//	if(m_bReady)
 	//		switcher = true;
 	//}
-
+	
 }
 

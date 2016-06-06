@@ -92,7 +92,7 @@ public:
 	void Set_Image_Active(wchar_t* _wszText_, bool boolean);
 	void Delete_All_Image();
 	bool MouseOn2D(wchar_t* _wszText_, int mouse_x, int mouse_y);
-	void Set_input_ID_state(bool input){
+	void Set_input_ID_state(bool input) {
 		input_ID = input;
 	}
 	bool Get_input_ID_state(bool input) {

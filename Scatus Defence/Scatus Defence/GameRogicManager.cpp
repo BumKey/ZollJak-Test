@@ -224,6 +224,7 @@ void GameRogicManager::AIManager(float dt)
 	//타겟변경은 나중에 0.5초마다 한번씩
 	for (auto iterM : mObjMgr->GetMonsters())
 	{
+		
 		//나와 가장가까운 적을 타겟으로 변경
 		if (iterM->GetState() == type_idle || iterM->GetState() == type_walk)
 		{

@@ -4,7 +4,7 @@
 
 enum Gamestate_type
 {
-	game_title,
+	game_title, 
 	game_loading,
 	game_waving,
 	game_waiting_wave,

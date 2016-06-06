@@ -208,6 +208,9 @@
     <ClCompile Include="Cyclop.cpp">
       <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
     </ClCompile>
+    <ClCompile Include="UI_Manager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicMeshData.h">
@@ -324,6 +327,9 @@
     </ClInclude>
     <ClInclude Include="Cyclop.h">
       <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Manager.h">
+      <Filter>Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

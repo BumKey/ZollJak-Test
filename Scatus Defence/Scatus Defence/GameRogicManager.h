@@ -9,6 +9,7 @@
 #include "p_Warrior.h"
 #include "ResourceMgr.h"
 #include "Goblin.h"
+#include "UI_Manager.h"
 using namespace std;
 
 

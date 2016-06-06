@@ -74,13 +74,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <IncludePath>C:\Users\Admin\Source\Repos\ZollJak-Test\Scatus Defence\Common_AI;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Admin\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Admin\Source\Repos\ZollJak-Test\Scatus Defence\Common;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -156,7 +156,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2DMap.cpp" />
     <ClCompile Include="BasicMesh.cpp" />
     <ClCompile Include="BasicObject.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -167,7 +166,6 @@
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameMesh.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="GameRogicManager.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="Goblin.cpp" />
@@ -179,11 +177,8 @@
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Properties.cpp" />
-    <ClCompile Include="p_Warrior.cpp" />
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="ResourceMgr.cpp" />
-    <ClCompile Include="RogicTimer.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="SkinnedMesh.cpp" />
@@ -200,7 +195,6 @@
     <ClCompile Include="xnacollision.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2DMap.h" />
     <ClInclude Include="BasicMesh.h" />
     <ClInclude Include="BasicObject.h" />
     <ClInclude Include="Camera.h" />
@@ -211,7 +205,6 @@
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameMesh.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameRogicManager.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Goblin.h" />
@@ -222,11 +215,8 @@
     <ClInclude Include="Monster.h" />
     <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Properties.h" />
-    <ClInclude Include="p_Warrior.h" />
     <ClInclude Include="RenderStates.h" />
     <ClInclude Include="ResourceMgr.h" />
-    <ClInclude Include="RogicTimer.h" />
     <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="SkinnedMesh.h" />

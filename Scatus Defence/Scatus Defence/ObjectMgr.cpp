@@ -39,7 +39,7 @@ bool ObjectMgr::AddStructure(BasicObject * basicObject)
 bool ObjectMgr::AddProjectile(BasicObject * basicObject)
 {
 	mProjectiles.push_back(basicObject);
-	++mTotalObjectNum;
+	//++mTotalObjectNum;
 	return true;
 }
 
@@ -48,7 +48,7 @@ bool ObjectMgr::AddMonster(SkinnedObject* skinnedObject)
 	if (mMonsters.size() <= mMaxMonsters) {
 		mMonsters.push_back(skinnedObject);
 		mAllObjects.push_back(skinnedObject);
-		++mTotalObjectNum;
+		//++mTotalObjectNum;
 		return true;
 	}
 	else {
@@ -65,7 +65,7 @@ bool ObjectMgr::AddOurTeam(SkinnedObject* skinnedObject)
 	if (mOurTeam.size() <= mMaxMonsters) {
 		mOurTeam.push_back(skinnedObject);
 		mAllObjects.push_back(skinnedObject);
-		++mTotalObjectNum;
+		//++mTotalObjectNum;
 		return true;
 	}
 	else {
@@ -111,7 +111,7 @@ void ObjectMgr::Update(float dt)
 		mOppenents.push_back(i);
 		i->Animate(dt);
 	}
-	
+
 	mPlayer->Animate(dt);
 	for (auto i : mAllObjects)
 		i->Update(dt);

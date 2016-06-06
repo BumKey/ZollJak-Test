@@ -2,8 +2,8 @@
 
 SceneMgr::SceneMgr() : mLightRotationAngle(0.0f), mScreenQuadVB(0), mScreenQuadIB(0), mSky(0), mSmap(0), mSsao(0)
 {
-	mDirLights[0].Ambient = XMFLOAT4(0.6f, 0.6f, 0.45f, 1.0f);
-	mDirLights[0].Diffuse = XMFLOAT4(0.6f, 0.6f, 0.45f, 1.0f);
+	mDirLights[0].Ambient = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	mDirLights[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	mDirLights[0].Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	mDirLights[0].Direction = XMFLOAT3(0.58f, -0.63735f, 0.57735f);
 
@@ -113,7 +113,8 @@ void SceneMgr::DrawScene(const std::vector<GameObject*>& allObjects, const Camer
 
 	mSky->Draw(md3dImmediateContext, cam);
 
-	//DrawScreenQuad();
+	if(GetAsyncKeyState('Z'))
+		DrawScreenQuad();
 
 	// restore default states, as the SkyFX changes them in the effect file.
 	md3dImmediateContext->RSSetState(0);
@@ -199,7 +200,7 @@ void SceneMgr::DrawScreenQuad()
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		Effects::DebugTexFX->SetWorldViewProj(world);
-		Effects::DebugTexFX->SetTexture(mSmap->DepthMapSRV());
+		Effects::DebugTexFX->SetTexture(mSsao->AmbientSRV());
 
 		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);

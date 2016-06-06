@@ -12,6 +12,7 @@ public:
 	virtual void Walk(float d);
 	virtual void Strafe(float d);
 	virtual void MoveTo(Vector2D direction, float dt); // For Monster
+	virtual void MoveTo(Vector2D targetPos, XMFLOAT3 dir, float dt);
 	virtual void RotateY(float angle);
 	virtual void Attack(float dt);
 	virtual void Update(float dt);
@@ -28,6 +29,12 @@ public:
 	void  SetMovingSpeed(FLOAT speed) { mProperty.movespeed = speed; }
 
 protected:
+	enum Anims {
+		attack1, attack2, hit, dead, walk,
+		run, stunned, stunned_hit, idle,
+		drop_down, sit_up, look_around
+	};
+
 	SkinnedMesh* mMesh;
 
 	FLOAT mTimePos;

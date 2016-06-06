@@ -198,6 +198,7 @@ void GameFrameWork::UpdateScene(float dt)
 	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
 	mGameRogicMgr->Update(dt);
+	mCollisionMgr.Collision(mObjectMgr, dt);
 	mCam.Update(mPlayer, mSceneMgr);
 }
 

@@ -10,16 +10,16 @@ Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type)
 
 	mObjectType = Object_type::goblin;
 
-	mAnimNames[Anim::attack1] = "attack01";
-	mAnimNames[Anim::attack2] = "attack02";
-	mAnimNames[Anim::damage] = "damage";
-	mAnimNames[Anim::dead] = "dead";
-	mAnimNames[Anim::drop_down] = "drop_down";
-	mAnimNames[Anim::run] = "run";
-	mAnimNames[Anim::sit_up] = "sit_up";
-	mAnimNames[Anim::stand] = "stand";
-	mAnimNames[Anim::walk] = "walk";
-	mAnimNames[Anim::look_around] = "stand2";
+	mAnimNames[Anims::attack1] = "attack01";
+	mAnimNames[Anims::attack2] = "attack02";
+	mAnimNames[Anims::hit] = "damage";
+	mAnimNames[Anims::dead] = "dead";
+	mAnimNames[Anims::drop_down] = "drop_down";
+	mAnimNames[Anims::run] = "run";
+	mAnimNames[Anims::sit_up] = "sit_up";
+	mAnimNames[Anims::idle] = "stand";
+	mAnimNames[Anims::walk] = "walk";
+	mAnimNames[Anims::look_around] = "stand2";
 
 	SetState(type_idle);
 }
@@ -28,7 +28,7 @@ Goblin::~Goblin()
 {
 }
 
-std::string Goblin::GetAnimName(Anim eAnim)
+std::string Goblin::GetAnimName(const Anims& eAnim)
 {
 	return mAnimNames[eAnim];
 }
@@ -101,62 +101,5 @@ void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLO
 	
 		activeSkinnedTech->GetPassByIndex(p)->Apply(0, dc);
 		mMesh->MeshData.Draw(dc, 0);	
-	}
-}
-
-
-void Goblin::SetClip()
-{
-	if (mProperty.state == state_type::type_idle)
-		mCurrClipName = mAnimNames[Anim::stand];
-
-	if (mProperty.state == state_type::type_attack &&
-		mCurrClipName != mAnimNames[Anim::attack1] &&
-		mCurrClipName != mAnimNames[Anim::attack2]) {
-		if(rand()%2)
-			mCurrClipName = mAnimNames[Anim::attack1];
-		else
-			mCurrClipName = mAnimNames[Anim::attack2];
-	}
-
-	//if (mProperty.state == state_type::type_battle)
-	//	mCurrClipName = mAnimNames[Anim::attack2];
-
-	if (mProperty.state == state_type::type_run)
-		mCurrClipName = mAnimNames[Anim::run];
-
-	if (mProperty.state == state_type::type_walk)
-		mCurrClipName = mAnimNames[Anim::walk];
-
-	if (mProperty.state == state_type::type_die)
-		mCurrClipName = mAnimNames[Anim::dead];
-
-	//// 공격 애니메이션 아직 안 끝났으면 바꾸지X
-	//if ((mCurrClipName == mAnimNames[Anim::attack1] ||
-	//	mCurrClipName == mAnimNames[Anim::attack2]) &&
-	//	mTimePos < mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
-	//	return false;
-	//else
-	//	mCurrClipName = clipName;
-}
-
-void Goblin::Animate(float dt)
-{
-	SetClip();
-
-	if (mProperty.state == state_type::type_attack)
-		mTimePos += dt*mProperty.attackspeed;
-	else 
-		mTimePos += dt*mProperty.movespeed*10.0f;
-
-	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
-
-	// Loop animation
-	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
-	{
-		mTimePos = 0.0f;
-		if (mCurrClipName == mAnimNames[Anim::attack1] ||
-			mCurrClipName == mAnimNames[Anim::attack2])		// attack01은 루프 안쓰는 애니메이션
-			mProperty.state = state_type::type_idle;
 	}
 }

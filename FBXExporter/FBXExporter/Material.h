@@ -6,7 +6,10 @@
 
 struct Material
 {
-	Material() { ZeroMemory(this, sizeof(Material)); }
+	Material() { 
+		ZeroMemory(this, sizeof(Material));
+		SpecularPower = 1.0f;
+	}
 
 	std::string mName;
 

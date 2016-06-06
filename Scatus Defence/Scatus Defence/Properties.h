@@ -17,7 +17,9 @@ enum state_type
 	type_build,
 	type_attack,
 	type_attacked,
-	type_idle
+	type_idle,
+	MovingCollision,
+	AttackCollision
 };
 
 enum Object_type

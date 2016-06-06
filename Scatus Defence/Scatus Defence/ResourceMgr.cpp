@@ -38,10 +38,11 @@ void ResourceMgr::Init(ID3D11Device * dc)
 SkinnedMesh * ResourceMgr::GetSkinnedMesh(Object_type oType)
 {
 	if (mReferences[oType] <= 0) {
+		++mReferences[oType];
 		switch (oType)
 		{
 		case Object_type::goblin:
-			mMeshes[oType] = new SkinnedMesh(mDevice, mTexMgr, "Models\\goblin.y2k", L"");
+			mMeshes[oType] = new SkinnedMesh(mDevice, mTexMgr, "Models\\goblin.y2k", L"Textures\\goblin\\");
 			GoblinDiffuseMapSRV[0] = mTexMgr.CreateTexture(L"Textures\\goblin\\goblin_diff_R.jpg");
 			GoblinDiffuseMapSRV[1] = mTexMgr.CreateTexture(L"Textures\\goblin\\goblin_diff_B.jpg");
 			break;
@@ -49,9 +50,7 @@ SkinnedMesh * ResourceMgr::GetSkinnedMesh(Object_type oType)
 			mMeshes[oType] = new SkinnedMesh(mDevice, mTexMgr, "Models\\cyclop.y2k", L"Textures\\cyclop\\");
 			break;
 
-			++mReferences[oType];
-		}
-		
+		}	
 	}
 	else
 		++mReferences[oType];

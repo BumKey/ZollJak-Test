@@ -25,9 +25,8 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, TextureMgr& texMgr, const std::st
 		NormalMapSRV.push_back(normalMapSRV);
 	}
 
-	VerticesPos.resize(Vertices.size());
-	for (int i = 0; i < Vertices.size(); ++i)
-		VerticesPos[i] = Vertices[i].Pos;
+	XNA::ComputeBoundingAxisAlignedBoxFromPoints(&mMeshAABB,
+		Vertices.size(), &Vertices[0].Pos, sizeof(Vertex::PosNormalTexTanSkinned));
 }
 
 SkinnedMesh::~SkinnedMesh()

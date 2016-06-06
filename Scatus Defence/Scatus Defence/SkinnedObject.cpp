@@ -69,6 +69,31 @@ void SkinnedObject::MoveTo(Vector2D targetPos, float dt)
 	mProperty.state = state_type::type_walk;
 }
 
+void SkinnedObject::MoveTo(Vector2D targetPos, XMFLOAT3 dir, float dt)
+{
+	XMFLOAT2 target(targetPos.x, targetPos.y);
+	XMFLOAT2 origin(mPosition.x, mPosition.z);
+	XMVECTOR vTarget = MathHelper::TargetVector(target, origin);
+	XMVECTOR vDir = XMVector3Normalize(XMLoadFloat3(&dir));
+
+	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+
+	// 방향으로 이동
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vDir, p));
+
+	// 방향으로 회전
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
+	float angle = atan2(det, dot);
+
+	RotateY(angle*dt*MathHelper::Pi);
+
+	mProperty.state = state_type::type_walk;
+}
+
 void SkinnedObject::RotateY(float angle)
 {
 	mRotation.y += angle;
@@ -144,11 +169,22 @@ void SkinnedObject::Update(float dt)
 		mRotation.y = 0.0f;
 
 	XMMATRIX S = XMMatrixScaling(mScaling, mScaling, mScaling);
-	//XMMATRIX R = XMMatrixRotationQuaternion(Q);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(mRotation.x, mRotation.y, mRotation.z);
+	XMVECTOR Q = XMQuaternionRotationMatrix(R);
 	XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
+
+	XMFLOAT3 center = mMesh->GetAABB().Center;
+	XMFLOAT3 extent = mMesh->GetAABB().Extents * mScaling;
+
+	XMVECTOR vCenter = XMLoadFloat3(&center);
+	
+	vCenter = XMVector3TransformCoord(vCenter, S*R*T);
+	XMStoreFloat3(&center, vCenter);
+	mOOBB.Center = center;
+	mOOBB.Extents = extent;
+	XMStoreFloat4(&mOOBB.Orientation, Q);
 }
 
 void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)

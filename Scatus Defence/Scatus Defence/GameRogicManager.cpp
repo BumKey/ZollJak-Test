@@ -263,7 +263,7 @@ void GameRogicManager::AIManager(float dt)
 					iterM->Attack(dt);
 					printf("배틀실행");
 				}
-				else
+				else if(iterM->GetState() != state_type::MovingCollision)
 					iterM->MoveTo(targetPos, dt);
 			}
 

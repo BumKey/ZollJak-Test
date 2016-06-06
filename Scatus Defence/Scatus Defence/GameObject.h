@@ -7,6 +7,7 @@
 #include "Properties.h"
 #include <list>
 #include "2d/Vector2D.h"
+#include "Utilities.h"
 
 struct InstanceDesc
 {
@@ -52,20 +53,28 @@ public:
 	state_type		GetState() const{ return mProperty.state; }
 	Vector2D		GetPos2D() const { return Vector2D(mPosition.x, mPosition.z); }
 	GameObject*		GetTarget() const { return mTarget; }
+	bool			HasTarget() { return mHasTarget; }
 	Object_type		GetType() const { return mObjectType; }
+	XNA::OrientedBox GetOOBB() const { return mOOBB; }
 
 	void			SetState(state_type state) { mProperty.state = state; }
 	void			SetHP(int hp) { mProperty.hp_now = hp; }
-	void			SetTarget(GameObject* target) { if (target) mTarget = target; }
+	void			SetTarget(GameObject* target) { 
+		if (target) mTarget = target; 
+		mHasTarget = true;
+	}
 
 	void  PrintLocation(); //객체 위치값출력 반환
 private:
 	UINT mID;
 	static UINT GeneratedCount;
 
+	bool mHasTarget;
 protected:
 	XMFLOAT4X4 mWorld;
 	GameMesh* mMesh;
+
+	XNA::OrientedBox mOOBB;
 
 	FLOAT	 mScaling;
 	XMFLOAT3 mRotation;

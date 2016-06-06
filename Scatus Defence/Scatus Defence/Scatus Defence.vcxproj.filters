@@ -208,6 +208,12 @@
     <ClCompile Include="Cyclop.cpp">
       <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
     </ClCompile>
+    <ClCompile Include="CollisionMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicMeshData.h">
@@ -324,6 +330,12 @@
     </ClInclude>
     <ClInclude Include="Cyclop.h">
       <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

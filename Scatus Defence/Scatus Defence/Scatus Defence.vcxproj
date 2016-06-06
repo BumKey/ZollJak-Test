@@ -160,6 +160,7 @@
     <ClCompile Include="BasicMesh.cpp" />
     <ClCompile Include="BasicObject.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="Effects.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TextureMgr.cpp" />
     <ClCompile Include="Cyclop.cpp" />
+    <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="Waves.cpp" />
     <ClCompile Include="xnacollision.cpp" />
@@ -202,6 +204,7 @@
     <ClInclude Include="BasicMesh.h" />
     <ClInclude Include="BasicObject.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CollisionMgr.h" />
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="Effects.h" />
@@ -234,6 +237,7 @@
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TextureMgr.h" />
     <ClInclude Include="Cyclop.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Waves.h" />
     <ClInclude Include="xnacollision.h" />

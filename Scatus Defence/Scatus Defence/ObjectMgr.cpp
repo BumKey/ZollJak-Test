@@ -95,7 +95,6 @@ void ObjectMgr::Update()
 
 void ObjectMgr::Update(float dt)
 {
-	//후 이걸 호출안하면 왜 제대로 못그려주는지는 나도 잘모르겠으. . . 
 	mAllObjects.clear();
 	mAllObjects.reserve(mTotalObjectNum); 
 

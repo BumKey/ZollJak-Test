@@ -111,7 +111,7 @@ bool GameFrameWork::Init()
 		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
 			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
 		info.Scale = 8.0f + MathHelper::RandF();
-		info.Rot.x = XMConvertToRadians(90);
+		info.Rot.x = MathHelper::Pi;
 		info.Rot.y = 0.0f;
 
 		mObjectMgr.AddMonster(new Cyclop(mResourceMgr.GetSkinnedMesh(Object_type::cyclop), info));
@@ -194,6 +194,7 @@ void GameFrameWork::UpdateScene(float dt)
 	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
 	mGameRogicMgr->Update(dt);
+	mCollisionMgr.Collision(mObjectMgr, dt);
 	mCam.Update(mPlayer, mSceneMgr);
 }
 

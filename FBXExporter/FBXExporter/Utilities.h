@@ -10,6 +10,8 @@ std::ostream& operator<<(std::ostream& os, const XMFLOAT2& f2);
 std::ostream& operator<<(std::ostream& os, const XMFLOAT3& f3);
 std::ostream& operator<<(std::ostream& os, const XMFLOAT4& f4);
 
+XMFLOAT4 operator+(XMFLOAT4 l, XMFLOAT4 r);
+
 XMFLOAT3 operator+(XMFLOAT3 l, XMFLOAT3 r);
 XMFLOAT3 operator-(XMFLOAT3 l, XMFLOAT3 r);
 XMFLOAT3 operator/(XMFLOAT3 l, XMFLOAT3 r);
@@ -19,7 +21,9 @@ bool operator==(XMFLOAT3 l, XMFLOAT3 r);
 XMFLOAT2 operator+(XMFLOAT2 l, XMFLOAT2 r);
 XMFLOAT2 operator-(XMFLOAT2 l, XMFLOAT2 r);
 bool operator==(XMFLOAT2 l, XMFLOAT2 r);
+bool operator!=(XMFLOAT2 l, XMFLOAT2 r);
 
+XMFLOAT4 Float4Normalize(const XMFLOAT4& in);
 XMFLOAT3 Float3Normalize(const XMFLOAT3& in);
 XMFLOAT2 Float2Normalize(const XMFLOAT2& in);
 
@@ -34,29 +38,13 @@ struct BlendingIndexWeightPair
 	{}
 };
 
-struct UVInfo
-{
-	XMFLOAT2 UV;
-	std::vector<UINT> TriangleIndex, PositionInTriangle;
-
-	bool operator==(const UVInfo& rhs)
-	{
-		if (abs(UV.x - rhs.UV.x) <= 0.001f &&
-			abs(UV.y - rhs.UV.y) <= 0.001f)
-			return true;
-		else
-			return false;
-	}
-};
-
 struct CtrlPoint
 {
 	CtrlPoint() { ZeroMemory(this, sizeof(this)); }
 
 	XMFLOAT3 Position;
-	std::vector<XMFLOAT3> Normals;
-	std::vector<UVInfo> UVInfos;
 	std::vector<BlendingIndexWeightPair> BlendingInfo;
+	std::vector<XMFLOAT2> PolygonVertex;
 };
 
 ///<summary>
@@ -82,12 +70,30 @@ struct Bone
 
 	Bone() : ParentIndex(-1), Node(nullptr)
 	{ BoneOffset.SetIdentity(); }
+
+	void operator=(const Bone& rhs)
+	{
+		ParentIndex = rhs.ParentIndex;
+		Name = rhs.Name;
+		BoneOffset = rhs.BoneOffset;
+		Node = rhs.Node;
+		Keyframes = rhs.Keyframes;
+	}
 };
 
 struct Triangle
 {
+	struct SurfaceData
+	{
+		XMFLOAT3 Normal;
+		// XMFLOAT3 Binormal;
+		XMFLOAT4 Tangent;
+		XMFLOAT2 UV;
+	};
+
 	std::string MaterialName;
 	UINT SubsetID;
+	SurfaceData Data[3];
 
 	bool operator<(const Triangle& rhs)
 	{

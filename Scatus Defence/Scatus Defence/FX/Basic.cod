@@ -130,7 +130,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -270,7 +270,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 9
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -328,7 +328,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r2.xyxx, t1.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -376,7 +376,7 @@ fxgroup
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r3.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.xyz, r2.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -482,7 +482,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -622,7 +622,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 12
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -680,7 +680,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r2.xyxx, t1.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -728,7 +728,7 @@ fxgroup
                 movc r6.xyz, r3.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r3.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r5.xyz, r5.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r6.xyz, r6.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r7.xyz, r7.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -779,7 +779,7 @@ fxgroup
                 movc r0.xyz, r2.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r2.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.xyz, r2.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r0.xyz, r0.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -885,7 +885,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -1025,7 +1025,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -1083,7 +1083,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r2.xyxx, t1.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -1131,7 +1131,7 @@ fxgroup
                 movc r6.xyz, r3.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r3.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r5.xyz, r5.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r6.xyz, r6.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r7.xyz, r7.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -1182,7 +1182,7 @@ fxgroup
                 movc r9.xyz, r2.wwww, r9.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r10.xyz, r2.wwww, r10.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r8.xyz, r8.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r9.xyz, r9.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r10.xyz, r10.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -1233,7 +1233,7 @@ fxgroup
                 movc r0.xyz, r2.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r2.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.xyz, r2.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r0.xyz, r0.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -1339,7 +1339,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -1450,7 +1450,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 1
                 
-                #line 118 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 118 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v3.xyxx, t0.xyzw, s0  // texColor<0:Inf,1:Inf,2:Inf,3:Inf>
                 
                 #line 133
@@ -1544,7 +1544,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -1687,7 +1687,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 10
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -1748,7 +1748,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -1796,7 +1796,7 @@ fxgroup
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -1902,7 +1902,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -2045,7 +2045,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -2106,7 +2106,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -2154,7 +2154,7 @@ fxgroup
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -2205,7 +2205,7 @@ fxgroup
                 movc r0.xyz, r3.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r0.xyz, r0.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -2311,7 +2311,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -2454,7 +2454,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 14
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -2515,7 +2515,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -2563,7 +2563,7 @@ fxgroup
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -2614,7 +2614,7 @@ fxgroup
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r3.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r9.xyz, r9.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r10.xyz, r10.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r11.xyz, r11.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -2665,7 +2665,7 @@ fxgroup
                 movc r0.xyz, r3.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r0.xyz, r0.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -2771,7 +2771,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -2882,7 +2882,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 2
                 
-                #line 118 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 118 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v3.xyxx, t0.xyzw, s0  // texColor<0:Inf,1:Inf,2:Inf,3:Inf>
                 
                 #line 125
@@ -2982,7 +2982,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -3125,7 +3125,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 10
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -3192,7 +3192,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -3240,7 +3240,7 @@ fxgroup
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -3346,7 +3346,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -3489,7 +3489,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -3556,7 +3556,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -3604,7 +3604,7 @@ fxgroup
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -3655,7 +3655,7 @@ fxgroup
                 movc r0.xyz, r3.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r0.xyz, r0.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -3761,7 +3761,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -3904,7 +3904,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 14
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -3971,7 +3971,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -4019,7 +4019,7 @@ fxgroup
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -4070,7 +4070,7 @@ fxgroup
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r3.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r9.xyz, r9.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r10.xyz, r10.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r11.xyz, r11.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -4121,7 +4121,7 @@ fxgroup
                 movc r0.xyz, r3.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r0.xyz, r0.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -4227,7 +4227,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -4367,7 +4367,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 9
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -4425,7 +4425,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r2.x, r2.xyxx, t1.xyzw, s0, l(0.000000)
                 mov r2.x, r2.x  // ambientAccess<0:Inf>
@@ -4473,7 +4473,7 @@ fxgroup
                 movc r1.xyz, r5.xxxx, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r5.xxxx, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.yzw, r2.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -4592,7 +4592,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -4732,7 +4732,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 12
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -4790,7 +4790,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r2.x, r2.xyxx, t1.xyzw, s0, l(0.000000)
                 mov r2.x, r2.x  // ambientAccess<0:Inf>
@@ -4838,7 +4838,7 @@ fxgroup
                 movc r6.xyz, r5.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r5.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r5.xyz, r5.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r6.xyz, r6.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r7.xyz, r7.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -4889,7 +4889,7 @@ fxgroup
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r3.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.yzw, r2.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -5008,7 +5008,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -5148,7 +5148,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -5206,7 +5206,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r2.x, r2.xyxx, t1.xyzw, s0, l(0.000000)
                 mov r2.x, r2.x  // ambientAccess<0:Inf>
@@ -5254,7 +5254,7 @@ fxgroup
                 movc r6.xyz, r5.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r5.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r5.xyz, r5.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r6.xyz, r6.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r7.xyz, r7.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -5305,7 +5305,7 @@ fxgroup
                 movc r9.xyz, r3.wwww, r9.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r8.xyz, r8.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r9.xyz, r9.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r10.xyz, r10.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -5356,7 +5356,7 @@ fxgroup
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r3.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.yzw, r2.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -5475,7 +5475,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -5609,7 +5609,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 2
                 
-                #line 105 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 105 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, -v1.xyzx
                 add r0.xyz, r0.xyzx, cb0[12].xyzx  // toEye<0:Inf,1:Inf,2:Inf>
                 
@@ -5724,7 +5724,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -5867,7 +5867,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 10
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -5928,7 +5928,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -5976,7 +5976,7 @@ fxgroup
                 movc r1.xyz, r6.xxxx, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r6.xxxx, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -6095,7 +6095,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -6238,7 +6238,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -6299,7 +6299,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -6347,7 +6347,7 @@ fxgroup
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -6398,7 +6398,7 @@ fxgroup
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -6517,7 +6517,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -6660,7 +6660,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 14
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -6721,7 +6721,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -6769,7 +6769,7 @@ fxgroup
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -6820,7 +6820,7 @@ fxgroup
                 movc r10.xyz, r4.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r4.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r9.xyz, r9.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r10.xyz, r10.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r11.xyz, r11.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -6871,7 +6871,7 @@ fxgroup
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -6990,7 +6990,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -7124,7 +7124,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 2
                 
-                #line 105 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 105 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, -v1.xyzx
                 add r0.xyz, r0.xyzx, cb0[12].xyzx  // toEye<0:Inf,1:Inf,2:Inf>
                 
@@ -7245,7 +7245,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -7388,7 +7388,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 10
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -7455,7 +7455,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -7503,7 +7503,7 @@ fxgroup
                 movc r1.xyz, r6.xxxx, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r6.xxxx, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -7622,7 +7622,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -7765,7 +7765,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -7832,7 +7832,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -7880,7 +7880,7 @@ fxgroup
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -7931,7 +7931,7 @@ fxgroup
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -8050,7 +8050,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -8193,7 +8193,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 14
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -8260,7 +8260,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -8308,7 +8308,7 @@ fxgroup
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -8359,7 +8359,7 @@ fxgroup
                 movc r10.xyz, r4.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r4.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r9.xyz, r9.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r10.xyz, r10.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r11.xyz, r11.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -8410,7 +8410,7 @@ fxgroup
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r1.xyz, r1.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r0.xyz, r0.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -8529,7 +8529,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -8671,7 +8671,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 9
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -8729,7 +8729,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r2.xyxx, t1.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -8777,7 +8777,7 @@ fxgroup
                 movc r3.xyz, r3.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.xyz, r2.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r3.xyz, r3.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r4.xyz, r4.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -8895,7 +8895,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -9037,7 +9037,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 12
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -9095,7 +9095,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r2.xyxx, t1.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -9143,7 +9143,7 @@ fxgroup
                 movc r6.xyz, r3.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r3.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r5.xyz, r5.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r6.xyz, r6.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r7.xyz, r7.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -9194,7 +9194,7 @@ fxgroup
                 movc r3.xyz, r2.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r2.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.xyz, r2.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r3.xyz, r3.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r4.xyz, r4.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -9312,7 +9312,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -9454,7 +9454,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -9512,7 +9512,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r2.xyxx, t1.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -9560,7 +9560,7 @@ fxgroup
                 movc r6.xyz, r3.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r3.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r5.xyz, r5.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r6.xyz, r6.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r7.xyz, r7.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -9611,7 +9611,7 @@ fxgroup
                 movc r9.xyz, r2.wwww, r9.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r10.xyz, r2.wwww, r10.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r8.xyz, r8.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r9.xyz, r9.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r10.xyz, r10.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -9662,7 +9662,7 @@ fxgroup
                 movc r3.xyz, r2.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r2.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.xyz, r2.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r3.xyz, r3.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r4.xyz, r4.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -9780,7 +9780,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -9891,7 +9891,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 1
                 
-                #line 118 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 118 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v3.xyxx, t0.xyzw, s0  // texColor<0:Inf,1:Inf,2:Inf,3:Inf>
                 
                 #line 133
@@ -9985,7 +9985,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -10130,7 +10130,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 10
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -10191,7 +10191,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -10239,7 +10239,7 @@ fxgroup
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -10357,7 +10357,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -10502,7 +10502,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -10563,7 +10563,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -10611,7 +10611,7 @@ fxgroup
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -10662,7 +10662,7 @@ fxgroup
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r3.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -10780,7 +10780,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -10925,7 +10925,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 14
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -10986,7 +10986,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -11034,7 +11034,7 @@ fxgroup
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -11085,7 +11085,7 @@ fxgroup
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r3.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r9.xyz, r9.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r10.xyz, r10.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r11.xyz, r11.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -11136,7 +11136,7 @@ fxgroup
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r3.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -11254,7 +11254,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -11365,7 +11365,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 2
                 
-                #line 118 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 118 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v3.xyxx, t0.xyzw, s0  // texColor<0:Inf,1:Inf,2:Inf,3:Inf>
                 
                 #line 125
@@ -11465,7 +11465,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -11610,7 +11610,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 10
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -11677,7 +11677,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -11725,7 +11725,7 @@ fxgroup
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -11843,7 +11843,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -11988,7 +11988,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -12055,7 +12055,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -12103,7 +12103,7 @@ fxgroup
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -12154,7 +12154,7 @@ fxgroup
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r3.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -12272,7 +12272,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -12417,7 +12417,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 14
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -12484,7 +12484,7 @@ fxgroup
                 #line 256
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t2.yzwx, s0, l(0.000000)
                 mov r1.w, r1.w  // ambientAccess<0:Inf>
@@ -12532,7 +12532,7 @@ fxgroup
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -12583,7 +12583,7 @@ fxgroup
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r3.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r9.xyz, r9.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r10.xyz, r10.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r11.xyz, r11.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -12634,7 +12634,7 @@ fxgroup
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r3.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.xyz, r3.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -12752,7 +12752,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -12894,7 +12894,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 9
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -12952,7 +12952,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r2.x, r2.xyxx, t1.xyzw, s0, l(0.000000)
                 mov r2.x, r2.x  // ambientAccess<0:Inf>
@@ -13000,7 +13000,7 @@ fxgroup
                 movc r3.xyz, r5.xxxx, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r5.xxxx, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.yzw, r2.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r3.xyz, r3.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r4.xyz, r4.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -13131,7 +13131,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -13273,7 +13273,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 12
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -13331,7 +13331,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r2.x, r2.xyxx, t1.xyzw, s0, l(0.000000)
                 mov r2.x, r2.x  // ambientAccess<0:Inf>
@@ -13379,7 +13379,7 @@ fxgroup
                 movc r6.xyz, r5.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r5.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r5.xyz, r5.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r6.xyz, r6.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r7.xyz, r7.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -13430,7 +13430,7 @@ fxgroup
                 movc r3.xyz, r3.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.yzw, r2.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r3.xyz, r3.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r4.xyz, r4.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -13561,7 +13561,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -13703,7 +13703,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -13761,7 +13761,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r2.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r2.x, r2.xyxx, t1.xyzw, s0, l(0.000000)
                 mov r2.x, r2.x  // ambientAccess<0:Inf>
@@ -13809,7 +13809,7 @@ fxgroup
                 movc r6.xyz, r5.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r5.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r5.xyz, r5.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r6.xyz, r6.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r7.xyz, r7.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -13860,7 +13860,7 @@ fxgroup
                 movc r9.xyz, r3.wwww, r9.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r8.xyz, r8.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r9.xyz, r9.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r10.xyz, r10.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -13911,7 +13911,7 @@ fxgroup
                 movc r3.xyz, r3.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r2.yzw, r2.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r3.xyz, r3.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r4.xyz, r4.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -14042,7 +14042,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -14176,7 +14176,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 2
                 
-                #line 105 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 105 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, -v1.xyzx
                 add r0.xyz, r0.xyzx, cb0[12].xyzx  // toEye<0:Inf,1:Inf,2:Inf>
                 
@@ -14291,7 +14291,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -14436,7 +14436,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 10
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -14497,7 +14497,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -14545,7 +14545,7 @@ fxgroup
                 movc r4.xyz, r6.xxxx, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r6.xxxx, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -14676,7 +14676,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -14821,7 +14821,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -14882,7 +14882,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -14930,7 +14930,7 @@ fxgroup
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -14981,7 +14981,7 @@ fxgroup
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -15112,7 +15112,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -15257,7 +15257,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 14
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -15318,7 +15318,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -15366,7 +15366,7 @@ fxgroup
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -15417,7 +15417,7 @@ fxgroup
                 movc r10.xyz, r4.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r4.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r9.xyz, r9.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r10.xyz, r10.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r11.xyz, r11.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -15468,7 +15468,7 @@ fxgroup
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -15599,7 +15599,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -15733,7 +15733,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 2
                 
-                #line 105 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 105 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, -v1.xyzx
                 add r0.xyz, r0.xyzx, cb0[12].xyzx  // toEye<0:Inf,1:Inf,2:Inf>
                 
@@ -15854,7 +15854,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -15999,7 +15999,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 10
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -16066,7 +16066,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -16114,7 +16114,7 @@ fxgroup
                 movc r4.xyz, r6.xxxx, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r6.xxxx, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -16245,7 +16245,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -16390,7 +16390,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 13
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -16457,7 +16457,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -16505,7 +16505,7 @@ fxgroup
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -16556,7 +16556,7 @@ fxgroup
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -16687,7 +16687,7 @@ fxgroup
                 dcl_output o5.xyzw
                 dcl_temps 7
                 
-                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 76 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r0.xyz, v0.xyzx
                 mov r0.w, l(1.000000)
                 dp4 r1.x, r0.xyzw, cb0[0].xyzw  // vout<4:NaN:Inf>
@@ -16832,7 +16832,7 @@ fxgroup
                 dcl_output o0.xyzw
                 dcl_temps 14
                 
-                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 102 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 dp3 r0.x, v2.xyzx, v2.xyzx
                 rsq r0.x, r0.x
                 mul r0.xyz, r0.xxxx, v2.xyzx  // pin<7:NaN:Inf,8:NaN:Inf,9:NaN:Inf>
@@ -16899,7 +16899,7 @@ fxgroup
                 #line 256
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
-                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 146 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 div r3.xy, v5.xyxx, v5.wwww  // pin<16:NaN:Inf,17:NaN:Inf>
                 sample_l_indexable(texture2d)(float,float,float,float) r3.x, r3.xyxx, t2.xyzw, s0, l(0.000000)
                 mov r3.x, r3.x  // ambientAccess<0:Inf>
@@ -16947,7 +16947,7 @@ fxgroup
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r6.xyz, r6.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r7.xyz, r7.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r8.xyz, r8.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -16998,7 +16998,7 @@ fxgroup
                 movc r10.xyz, r4.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r4.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r9.xyz, r9.xyzx  // A<0:Inf,1:Inf,2:Inf>
                 mov r10.xyz, r10.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r11.xyz, r11.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
@@ -17049,7 +17049,7 @@ fxgroup
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 25 Character Animation\SkinnedMesh\FX\Basic.fx"
+                #line 154 "C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet3\Chapter 23 Meshes\MeshView\FX\Basic.fx"
                 mov r3.yzw, r3.yyzw  // A<0:Inf,1:Inf,2:Inf>
                 mov r4.xyz, r4.xyzx  // D<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r5.xyz, r5.xyzx  // S<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>

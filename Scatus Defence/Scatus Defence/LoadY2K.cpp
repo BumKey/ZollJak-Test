@@ -36,6 +36,51 @@ bool Y2KLoader::LoadY2K(const std::string& filename,
 }
 
 bool Y2KLoader::LoadY2K(const std::string& filename,
+	std::vector<Vertex::PosNormalTexSkinned>& vertices,
+	std::vector<USHORT>& indices,
+	std::vector<BasicMeshData::Subset>& subsets,
+	std::vector<Y2kMaterial>& mats,
+	SkinnedData& skinInfo)
+{
+	std::ifstream fin(filename);
+
+	UINT numMaterials = 0;
+	UINT numVertices = 0;
+	UINT numTriangles = 0;
+	UINT numBones = 0;
+	UINT numAnimationClips = 0;
+
+	std::string ignore;
+
+	if (fin)
+	{
+		fin >> ignore; // file header text
+		fin >> ignore >> numMaterials;
+		fin >> ignore >> numVertices;
+		fin >> ignore >> numTriangles;
+		fin >> ignore >> numBones;
+		fin >> ignore >> numAnimationClips;
+
+		std::vector<XMFLOAT4X4> finalTransform;
+		std::vector<int> boneIndexToParentIndex;
+		std::map<std::string, AnimationClip> animations;
+
+		ReadMaterials(fin, numMaterials, mats);
+		ReadSubsetTable(fin, numMaterials, subsets);
+		ReadSkinnedVertices(fin, numVertices, vertices);
+		ReadTriangles(fin, numTriangles, indices);
+		ReadBoneFinalTransform(fin, numBones, finalTransform);
+		ReadBoneHierarchy(fin, numBones, boneIndexToParentIndex);
+		ReadAnimationClips(fin, numBones, numAnimationClips, animations);
+
+		skinInfo.Set(boneIndexToParentIndex, finalTransform, animations);
+
+		return true;
+	}
+	return false;
+}
+
+bool Y2KLoader::LoadY2K(const std::string& filename,
 	std::vector<Vertex::PosNormalTexTanSkinned>& vertices,
 	std::vector<USHORT>& indices,
 	std::vector<BasicMeshData::Subset>& subsets,
@@ -136,6 +181,34 @@ void Y2KLoader::ReadVertices(std::ifstream& fin, UINT numVertices, std::vector<V
 		fin >> ignore >> vertices[i].TangentU.x >> vertices[i].TangentU.y >> vertices[i].TangentU.z >> vertices[i].TangentU.w;
 		fin >> ignore >> vertices[i].Normal.x >> vertices[i].Normal.y >> vertices[i].Normal.z;
 		fin >> ignore >> vertices[i].Tex.x >> vertices[i].Tex.y;
+	}
+}
+
+void Y2KLoader::ReadSkinnedVertices(std::ifstream& fin, UINT numVertices, std::vector<Vertex::PosNormalTexSkinned>& vertices)
+{
+	std::string ignore;
+	vertices.resize(numVertices);
+
+	fin >> ignore; // vertices header text
+	int boneIndices[4];
+	float weights[4];
+	for (UINT i = 0; i < numVertices; ++i)
+	{
+		fin >> ignore >> vertices[i].Pos.x >> vertices[i].Pos.y >> vertices[i].Pos.z;
+		fin >> ignore >> ignore >> ignore >> ignore >> ignore;
+		fin >> ignore >> vertices[i].Normal.x >> vertices[i].Normal.y >> vertices[i].Normal.z;
+		fin >> ignore >> vertices[i].Tex.x >> vertices[i].Tex.y;
+		fin >> ignore >> weights[0] >> weights[1] >> weights[2] >> weights[3];
+		fin >> ignore >> boneIndices[0] >> boneIndices[1] >> boneIndices[2] >> boneIndices[3];
+
+		vertices[i].Weights.x = weights[0];
+		vertices[i].Weights.y = weights[1];
+		vertices[i].Weights.z = weights[2];
+
+		vertices[i].BoneIndices[0] = (BYTE)boneIndices[0];
+		vertices[i].BoneIndices[1] = (BYTE)boneIndices[1];
+		vertices[i].BoneIndices[2] = (BYTE)boneIndices[2];
+		vertices[i].BoneIndices[3] = (BYTE)boneIndices[3];
 	}
 }
 

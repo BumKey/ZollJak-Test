@@ -3,16 +3,16 @@
 BasicObject::BasicObject(BasicMesh * mesh, const InstanceDesc& info, Label label) : GameObject(mesh), mLabel(label)
 {
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
-	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
+	XMMATRIX R = XMMatrixRotationRollPitchYaw(info.Rot.x, info.Rot.y, info.Rot.z);
 	XMMATRIX T = XMMatrixTranslation(info.Pos.x, info.Pos.y, info.Pos.z);
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
 
 	mScaling = info.Scale;
-	mRotation = XMFLOAT3(0.0f, info.Yaw, 0.0f);
+	mRotation = XMFLOAT3(0.0f, info.Rot.y, 0.0f);
 	mPosition = info.Pos;
 
-	R = XMMatrixRotationY(info.Yaw);
+	R = XMMatrixRotationY(info.Rot.y);
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
@@ -31,15 +31,19 @@ void BasicObject::Strafe(float d)
 {
 }
 
+void BasicObject::MoveTo(Vector2D direction, float dt)
+{
+}
+
 void BasicObject::RotateY(float angle)
 {
 }
 
-void BasicObject::Update()
+void BasicObject::Update(float dt)
 {
 }
 
-void BasicObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight)
+void BasicObject::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -129,7 +133,7 @@ void BasicObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFL
 	}
 }
 
-void BasicObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, FLOAT tHeight)
+void BasicObject::DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight)
 {
 	Effects::BuildShadowMapFX->SetEyePosW(cam.GetPosition());
 	Effects::BuildShadowMapFX->SetViewProj(lightViewProj);
@@ -192,7 +196,7 @@ void BasicObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, 
 	}
 }
 
-void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam, FLOAT tHeight)
+void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -228,7 +232,7 @@ void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camer
 			Effects::SsaoNormalDepthFX->SetWorldView(worldView);
 			Effects::SsaoNormalDepthFX->SetWorldInvTransposeView(worldInvTransposeView);
 			Effects::SsaoNormalDepthFX->SetWorldViewProj(worldViewProj);
-			Effects::SsaoNormalDepthFX->SetTexTransform(XMMatrixScaling(1.0f, 1.0f, 1.0f));
+			Effects::SsaoNormalDepthFX->SetTexTransform(XMMatrixIdentity());
 
 			tech->GetPassByIndex(p)->Apply(0, dc);
 			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)

@@ -2,17 +2,12 @@
 
 SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh), mMesh(mesh)
 {
-	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
-	XMMATRIX R = XMMatrixRotationRollPitchYaw(0.0f, info.Yaw, 0.0f);
-	XMMATRIX T = XMMatrixTranslation(info.Pos.x, info.Pos.y, info.Pos.z);
-
-	XMStoreFloat4x4(&mWorld, S*R*T);
-
+	
 	mScaling = info.Scale;
-	mRotation = XMFLOAT3(0.0f, info.Yaw, 0.0f);
+	mRotation = info.Rot;
 	mPosition = info.Pos;
 
-	R = XMMatrixRotationY(info.Yaw);
+	XMMATRIX R = XMMatrixRotationY(info.Rot.y);
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
@@ -24,29 +19,86 @@ SkinnedObject::~SkinnedObject()
 {
 }
 
-void SkinnedObject::Strafe(float d)
-{
-	// mPosition += d*mRight
-	XMVECTOR s = XMVectorReplicate(d*mMovingSpeed);
-	XMVECTOR r = XMLoadFloat3(&mRight);
-	XMVECTOR p = XMLoadFloat3(&mPosition);
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
-}
-
 void SkinnedObject::Walk(float d)
 {
+	mDirection = mCurrLook;
+
 	// mPosition += d*mLook
-	XMVECTOR s = XMVectorReplicate(d*mMovingSpeed);
+	XMVECTOR s = XMVectorReplicate(d*mProperty.movespeed);
 	XMVECTOR l = XMLoadFloat3(&mCurrLook);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
+
+	mProperty.state = state_type::type_run;
+}
+
+void SkinnedObject::Strafe(float d)
+{
+	mDirection = mRight;
+
+	// mPosition += d*mRight
+	XMVECTOR s = XMVectorReplicate(d*mProperty.movespeed);
+	XMVECTOR r = XMLoadFloat3(&mRight);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
+
+	mProperty.state = state_type::type_run;
+}
+
+void SkinnedObject::MoveTo(Vector2D targetPos, float dt)
+{
+	XMFLOAT2 target(targetPos.x, targetPos.y);
+	XMFLOAT2 origin(mPosition.x, mPosition.z);
+	XMVECTOR vTarget = MathHelper::TargetVector(target, origin);
+
+	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+
+	// 방향으로 이동
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
+
+	// 방향으로 회전
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
+	float angle = atan2(det, dot);
+
+	RotateY(angle*dt*MathHelper::Pi);
+
+	mProperty.state = state_type::type_walk;
+}
+
+void SkinnedObject::MoveTo(Vector2D targetPos, XMFLOAT3 dir, float dt)
+{
+	XMFLOAT2 target(targetPos.x, targetPos.y);
+	XMFLOAT2 origin(mPosition.x, mPosition.z);
+	XMVECTOR vTarget = MathHelper::TargetVector(target, origin);
+	XMVECTOR vDir = XMVector3Normalize(XMLoadFloat3(&dir));
+
+	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+
+	// 방향으로 이동
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vDir, p));
+
+	// 방향으로 회전
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
+	float angle = atan2(det, dot);
+
+	RotateY(angle*dt*MathHelper::Pi);
+
+	mProperty.state = state_type::type_walk;
 }
 
 void SkinnedObject::RotateY(float angle)
 {
-	// Rotate the basis vectors about the world y-axis.
-	mPrevLook = mCurrLook;
 	mRotation.y += angle;
+	mPrevLook = mCurrLook;
+	// Rotate the basis vectors about the world y-axis.
 	XMMATRIX R = XMMatrixRotationY(angle);
 
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
@@ -54,37 +106,88 @@ void SkinnedObject::RotateY(float angle)
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 }
 
-void SkinnedObject::Update()
+void SkinnedObject::Attack(float dt)
+{
+	mProperty.state =  state_type::type_attack;
+
+	// 방향으로 회전
+	XMFLOAT2 target(mTarget->GetPos().x, mTarget->GetPos().z);
+	XMFLOAT2 origin(mPosition.x, mPosition.z);
+	XMVECTOR vTarget = MathHelper::TargetVector(target, origin);
+
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
+	float angle = atan2(det, dot);
+
+	RotateY(angle*dt*MathHelper::Pi);
+
+	if (mTarget->GetState() != type_die)
+	{
+		int mTarget_hp = mTarget->GetProperty().hp_now;
+		int armor = mTarget->GetProperty().guardpoint;
+		float damage = mProperty.attakpoint;
+
+		//mTarget->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+		//mTarget->SetHP(mTarget_hp - damage);
+
+		printf("공격을 성공했습니다. 상대의 체력 : %d \n", mTarget->GetProperty().hp_now);
+
+		if (mTarget->GetProperty().hp_now <= -500)
+		{
+			printf("사망자 이름 : %s\n", mTarget->GetProperty().name);
+		}
+		if (mTarget->GetProperty().hp_now <= 0)
+		{
+			mTarget->SetState(type_die);
+			printf("타겟 사망");
+			SetState(type_idle);
+		}
+	}
+}
+
+void SkinnedObject::Update(float dt)
 {
 	XMVECTOR vR = XMLoadFloat3(&mRight);
 	XMVECTOR vU = XMLoadFloat3(&mUp);
 	XMVECTOR vCL = XMLoadFloat3(&mCurrLook);
-	XMVECTOR vPL = XMLoadFloat3(&mPrevLook);
+	XMVECTOR vOL = XMLoadFloat3(&mPrevLook);
 	XMVECTOR vP = XMLoadFloat3(&mPosition);
 
 	vCL = XMVector3Normalize(vCL);
-	vPL = XMVector3Normalize(vPL);
+	vOL = XMVector3Normalize(vOL);
 	vU = XMVector3Normalize(XMVector3Cross(vCL, vR));
 	vR = XMVector3Cross(vU, vCL);
 
 	XMStoreFloat3(&mRight, vR);
 	XMStoreFloat3(&mUp, vU);
 	XMStoreFloat3(&mCurrLook, vCL);
-	XMStoreFloat3(&mPrevLook, vPL);
+	XMStoreFloat3(&mPrevLook, vOL);
 	
-	XMVECTOR Q0 = XMLoadFloat3(&mPrevLook);
-	XMVECTOR Q1 = XMLoadFloat3(&mCurrLook);
-	XMVECTOR Q = XMQuaternionSlerp(Q0, -Q1, 0.1f);
+	if (mRotation.y >= MathHelper::Pi*2.0f)
+		mRotation.y = 0.0f;
 
 	XMMATRIX S = XMMatrixScaling(mScaling, mScaling, mScaling);
-	//XMMATRIX R = XMMatrixRotationQuaternion(Q);
-	XMMATRIX R = XMMatrixRotationY(mRotation.y);
+	XMMATRIX R = XMMatrixRotationRollPitchYaw(mRotation.x, mRotation.y, mRotation.z);
+	XMVECTOR Q = XMQuaternionRotationMatrix(R);
 	XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
+
+	XMFLOAT3 center = mMesh->GetAABB().Center;
+	XMFLOAT3 extent = mMesh->GetAABB().Extents * mScaling;
+
+	XMVECTOR vCenter = XMLoadFloat3(&center);
+	
+	vCenter = XMVector3TransformCoord(vCenter, S*R*T);
+	XMStoreFloat3(&center, vCenter);
+	mOOBB.Center = center;
+	mOOBB.Extents = extent;
+	XMStoreFloat4(&mOOBB.Orientation, Q);
 }
 
-void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight)
+void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -146,7 +249,7 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XM
 	}
 }
 
-void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam, FLOAT tHeight)
+void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam, const FLOAT& tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -190,6 +293,11 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 	}
 }
 
+void SkinnedObject::Release(ResourceMgr & rMgr)
+{
+	rMgr.ReleaseMesh(mObjectType);
+}
+
 bool SkinnedObject::AnimEnd(std::string clipName)
 {
 	if (abs(mTimePos - mMesh->SkinnedData.GetClipEndTime(clipName)) <= 0.1f)
@@ -198,7 +306,7 @@ bool SkinnedObject::AnimEnd(std::string clipName)
 	return false;
 }
 
-void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, FLOAT tHeight)
+void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, const FLOAT& tHeight)
 {
 	Effects::BuildShadowMapFX->SetEyePosW(cam.GetPosition());
 	Effects::BuildShadowMapFX->SetViewProj(lightViewProj);

@@ -2,32 +2,22 @@
 #include "Monster.h"
 #include <unordered_map>
 
-enum GoblinType {
-	Red, Green, Blue
-};
-
-enum GoblinAnim {
-	attack1, attack2, damage, dead, walk,
-	drop_down, run, sit_up, stand, look_around
-};
 
 class Goblin : public Monster
 {
 public:
-	Goblin(SkinnedMesh* mesh, const InstanceDesc& info, GoblinType type);
+	enum Type {
+		Red, Green, Blue
+	};
+
+	Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type);
 	~Goblin();
-	
+
 public:
-	std::string GetAnimName(GoblinAnim eAnim);
+	std::string GetAnimName(const Anims& eAnim);
+	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight);
 
-	virtual void DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight);
-	virtual void Release(ResourceMgr& rMgr);
-
-	virtual bool SetClip(std::string clipName);
-	virtual void Animate(float dt);
-	
 private:
-	GoblinType mType;
-	std::unordered_map<GoblinAnim, std::string> mGoblinAnimNames;
+	Type mGoblinType;
 };
 

@@ -126,69 +126,57 @@ void ObjectMgr::ReleaseAll(ResourceMgr& resourceMgr)
 
 void ObjectMgr::ReleaseAllMonsers(ResourceMgr& resourceMgr)
 {
+	for (auto iterM : mMonsters)
+		iterM->Release(resourceMgr);
 
 	mMonsters.clear();
-	for (std::list<GameObject*>::iterator i = mAllObjects.begin(); i != mAllObjects.end();)
-	{
-		if ((*i)->Get_Object_type() == type_monster)
-		{
-			i = mAllObjects.erase(i);
-
-
-		}
-		else
-		{
-			++i;
-		}
-
-	}
 }
 
 void ObjectMgr::ReleaseAllDeads(ResourceMgr& resourceMgr)
 {
-	for (std::list<GameObject*>::iterator i = mAllObjects.begin(); i != mAllObjects.end();)
-	{
-		if ((*i)->Get_States() == type_die)
-		{
-			i = mAllObjects.erase(i);
+	//for (std::list<GameObject*>::iterator i = mAllObjects.begin(); i != mAllObjects.end();)
+	//{
+	//	if ((*i)->Get_States() == type_die)
+	//	{
+	//		i = mAllObjects.erase(i);
 
 
-		}
-		else
-		{
-			++i;
-		}
+	//	}
+	//	else
+	//	{
+	//		++i;
+	//	}
 
-	}
+	//}
 
-	for (std::list<GameObject*>::iterator i = mMonsters.begin(); i != mMonsters.end();)
-	{
-		if ((*i)->Get_States() == type_die)
-		{
-			i = mMonsters.erase(i);
-
-
-		}
-		else
-		{
-			++i;
-		}
-
-	}
-
-	for (std::list<GameObject*>::iterator i = mOurTeam.begin(); i != mOurTeam.end();)
-	{
-		if ((*i)->Get_States() == type_die)
-		{
-			i = mOurTeam.erase(i);
+	//for (std::list<GameObject*>::iterator i = mMonsters.begin(); i != mMonsters.end();)
+	//{
+	//	if ((*i)->Get_States() == type_die)
+	//	{
+	//		i = mMonsters.erase(i);
 
 
-		}
-		else
-		{
-			++i;
-		}
+	//	}
+	//	else
+	//	{
+	//		++i;
+	//	}
 
-	}
+	//}
+
+	//for (std::list<GameObject*>::iterator i = mOurTeam.begin(); i != mOurTeam.end();)
+	//{
+	//	if ((*i)->Get_States() == type_die)
+	//	{
+	//		i = mOurTeam.erase(i);
+
+
+	//	}
+	//	else
+	//	{
+	//		++i;
+	//	}
+
+	//}
 
 }

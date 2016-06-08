@@ -7,8 +7,16 @@ public:
 	Monster(SkinnedMesh* mesh, const InstanceDesc& info);
 	virtual ~Monster();
 
+	virtual void AttackToTarget(float dt);
+	virtual void MoveToTarget(float dt); // For Monster
+
+	bool			HasTarget() { return mHasTarget; }
+
+	void			SetTarget(GameObject* target);
+	void			SetNoTarget();
+
 private:
-	void SetClip();
-	virtual void Animate(float dt);
+	bool mHasTarget;
+
 };
 

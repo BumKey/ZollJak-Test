@@ -6,7 +6,6 @@
 #include "GameMesh.h"
 #include "Properties.h"
 #include <list>
-#include "2d/Vector2D.h"
 #include "Utilities.h"
 
 struct InstanceDesc
@@ -25,13 +24,12 @@ struct InstanceDesc
 class GameObject
 {
 public:
-	GameObject(GameMesh* mesh);
+	GameObject(GameMesh* mesh, const InstanceDesc& info);
 	virtual ~GameObject();
 
 public:
 	virtual void Walk(float dt) = 0;
 	virtual void Strafe(float dt) = 0;
-	virtual void MoveTo(Vector2D direction, float dt) = 0; //xz평면 안에서의 이동
 	virtual void RotateY(float angle) = 0;
 	virtual void Update(float dt) = 0;
 
@@ -41,35 +39,32 @@ public:
 
 	virtual void Release(ResourceMgr& rMgr) = 0;
 
-	GameMesh*		GetMesh() const { return mMesh; }
-	XMFLOAT4X4		GetWorld() const { return mWorld; }
-	XMFLOAT3		GetPos() const { return mPosition; }
-	XMFLOAT3		GetLook() const { return mCurrLook; }
-	XMFLOAT3		GetRight() const { return mRight; }
-	XMFLOAT3		GetUp() const { return mUp; }
-	UINT			GetID() const { return mID; }
-	UINT			GetObjectGeneratedCount() const { return GeneratedCount; }
-	Properties		GetProperty() const { return mProperty; }
-	state_type		GetState() const{ return mProperty.state; }
-	Vector2D		GetPos2D() const { return Vector2D(mPosition.x, mPosition.z); }
-	GameObject*		GetTarget() const { return mTarget; }
-	bool			HasTarget() { return mHasTarget; }
-	Object_type		GetType() const { return mObjectType; }
-	XNA::OrientedBox GetOOBB() const { return mOOBB; }
+	GameMesh*				GetMesh() const { return mMesh; }
+	XMFLOAT4X4				GetWorld() const { return mWorld; }
+	XMFLOAT3				GetPos() const { return mPosition; }
+	XMFLOAT3				GetLook() const { return mCurrLook; }
+	XMFLOAT3				GetRight() const { return mRight; }
+	XMFLOAT3				GetUp() const { return mUp; }
+	UINT					GetID() const { return mID; }
+	UINT					GetObjectGeneratedCount() const { return GeneratedCount; }
+	Properties				GetProperty() const { return mProperty; }
+	GameObject*				GetTarget() const { return mTarget; }
+	ObjectType::Types		GetObjectType() const { return mObjectType; }
+	ActionState::States		GetActionState() const { return mActionState; }
+	CollisionState::States  GetCollisionState() const { return mCollisionState; }
+	XNA::OrientedBox		GetOOBB() const { return mOOBB; }
 
-	void			SetState(state_type state) { mProperty.state = state; }
-	void			SetHP(int hp) { mProperty.hp_now = hp; }
-	void			SetTarget(GameObject* target) { 
-		if (target) mTarget = target; 
-		mHasTarget = true;
-	}
+	void					SetHP(int hp) { mProperty.hp_now = hp; }
 
 	void  PrintLocation(); //객체 위치값출력 반환
+
+	// Behaves
+	virtual void Die();
+
 private:
 	UINT mID;
 	static UINT GeneratedCount;
 
-	bool mHasTarget;
 protected:
 	XMFLOAT4X4 mWorld;
 	GameMesh* mMesh;
@@ -87,7 +82,9 @@ protected:
 	XMFLOAT3 mDirection;
 
 	Properties mProperty;
-	Object_type mObjectType;
+	ActionState::States mActionState;
+	CollisionState::States mCollisionState;
+	ObjectType::Types mObjectType;
 	GameObject* mTarget;
 };
 

@@ -8,12 +8,16 @@ public:
 	~Player();
 
 public:
-	virtual int Get_Obj_type() { return 0; };
-	virtual bool SetClip(std::string clipName);
-	virtual void Animate(float dt);
+	void Update(float dt);
+
+	virtual void Attack();
 	virtual void Release(ResourceMgr& rMgr);
-	virtual Properties * Get_Properties() { return NULL; }
-	virtual int Get_States() { return 0; }
-	virtual int SetObj_State(int new_state) { return 0; } // 오브젝트 상태설정
+
+private:
+	virtual void Move(float dt);
+
+private:
+	bool m_bAttackAnim;
+
 };
 

@@ -1,7 +1,7 @@
 #include "Monster.h"
 
 
-Monster::Monster(SkinnedMesh* mesh, const InstanceDesc& info) : SkinnedObject(mesh, info)
+Monster::Monster(SkinnedMesh* mesh, const InstanceDesc& info) : SkinnedObject(mesh, info), mHasTarget(false)
 {
 }
 
@@ -10,49 +10,79 @@ Monster::~Monster()
 {
 }
 
-void Monster::SetClip()
+// 이 메서드는 현재 타겟이 설정되어 있다고 가정한다.
+void Monster::MoveToTarget(float dt)
 {
-	if (mProperty.state == state_type::type_idle)
-		mCurrClipName = mAnimNames[Anims::idle];
+	assert(mTarget);
+	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
 
-	if (mProperty.state == state_type::type_attack &&
-		mCurrClipName != mAnimNames[Anims::attack1] &&
-		mCurrClipName != mAnimNames[Anims::attack2]) {
-		if (rand() % 2)
-			mCurrClipName = mAnimNames[Anims::attack1];
-		else
-			mCurrClipName = mAnimNames[Anims::attack2];
-	}
+	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
 
-	if (mProperty.state == state_type::type_run)
-		mCurrClipName = mAnimNames[Anims::run];
+	// 방향으로 이동
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
 
-	if (mProperty.state == state_type::type_walk ||
-		mProperty.state == state_type::MovingCollision)
-		mCurrClipName = mAnimNames[Anims::walk];
+	// 방향으로 회전
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
+	float angle = atan2(det, dot);
 
-	if (mProperty.state == state_type::type_die)
-		mCurrClipName = mAnimNames[Anims::dead];
+	RotateY(angle*dt*MathHelper::Pi);
 
+	mActionState = ActionState::Walk;
 }
 
-void Monster::Animate(float dt)
+void Monster::AttackToTarget(float dt)
 {
-	SetClip();
+	mActionState = ActionState::Attack;
 
-	if (mProperty.state == state_type::type_attack)
-		mTimePos += dt*mProperty.attackspeed;
-	else
-		mTimePos += dt*mProperty.movespeed*10.0f;
+	// 방향으로 회전
+	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
 
-	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
+	float angle = atan2(det, dot);
 
-	// Loop animation
-	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
+	RotateY(angle*dt*MathHelper::Pi);
+
+	if (mTarget->GetActionState() != ActionState::Die)
 	{
-		mTimePos = 0.0f;
-		if (mCurrClipName == mAnimNames[Anims::attack1] ||
-			mCurrClipName == mAnimNames[Anims::attack2])		// attack01은 루프 안쓰는 애니메이션
-			mProperty.state = state_type::type_idle;
+		int mTarget_hp = mTarget->GetProperty().hp_now;
+		int armor = mTarget->GetProperty().guardpoint;
+		float damage = mProperty.attakpoint;
+
+		//mTarget->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+		//mTarget->SetHP(mTarget_hp - damage);
+
+		printf("공격을 성공했습니다. 상대의 체력 : %d \n", mTarget->GetProperty().hp_now);
+
+		if (mTarget->GetProperty().hp_now <= -500)
+		{
+			printf("사망자 이름 : %s\n", mTarget->GetProperty().name);
+		}
+		if (mTarget->GetProperty().hp_now <= 0)
+		{
+			mTarget->Die();
+			printf("타겟 사망");
+			mActionState = ActionState::Idle;
+		}
 	}
+}
+
+void Monster::SetTarget(GameObject * target)
+{
+	if (target) {
+		mTarget = target;
+		mHasTarget = true;
+	}
+}
+
+void Monster::SetNoTarget()
+{
+	mTarget = nullptr;
+	mHasTarget = false;
 }

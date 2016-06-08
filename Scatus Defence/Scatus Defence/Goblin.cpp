@@ -3,12 +3,11 @@
 Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type)
 	: Monster(mesh, info), mGoblinType(type)
 {
-	mTimePos = 0.0f;
-	mProperty.movespeed = MathHelper::RandF(0.07f, 0.2f);
+	mProperty.movespeed = MathHelper::RandF(2.5f, 5.0f);
 	mProperty.attackspeed = MathHelper::RandF(0.6f, 1.1f);
 	mProperty.attakpoint = 0.5f;
 
-	mObjectType = Object_type::goblin;
+	mObjectType = ObjectType::Goblin;
 
 	mAnimNames[Anims::attack1] = "attack01";
 	mAnimNames[Anims::attack2] = "attack02";
@@ -20,17 +19,10 @@ Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type)
 	mAnimNames[Anims::idle] = "stand";
 	mAnimNames[Anims::walk] = "walk";
 	mAnimNames[Anims::look_around] = "stand2";
-
-	SetState(type_idle);
 }
 
 Goblin::~Goblin()
 {
-}
-
-std::string Goblin::GetAnimName(const Anims& eAnim)
-{
-	return mAnimNames[eAnim];
 }
 
 void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)

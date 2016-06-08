@@ -3,7 +3,7 @@
 // 임의의 수치임
 ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0)
 {
-	mMaxMonsters = mStage * 20;
+	mMaxMonsters = mStage * 200;
 	mMaxStructures = mStage * 5;
 }
 
@@ -23,7 +23,8 @@ bool ObjectMgr::AddObstacle(BasicObject * basicObject)
 bool ObjectMgr::AddStructure(BasicObject * basicObject)
 {
 	if (mStructures.size() <= mMaxStructures)
-	{	mStructures.push_back(basicObject);
+	{
+		mStructures.push_back(basicObject);
 		mAllObjects.push_back(basicObject);
 		++mTotalObjectNum;
 		return true;
@@ -39,25 +40,25 @@ bool ObjectMgr::AddStructure(BasicObject * basicObject)
 bool ObjectMgr::AddProjectile(BasicObject * basicObject)
 {
 	mProjectiles.push_back(basicObject);
-	++mTotalObjectNum;
+	//++mTotalObjectNum;
 	return true;
 }
 
-bool ObjectMgr::AddMonster(SkinnedObject* skinnedObject)
+bool ObjectMgr::AddMonster(Monster* monster)
 {
 	if (mMonsters.size() <= mMaxMonsters) {
-		mMonsters.push_back(skinnedObject);
-		mAllObjects.push_back(skinnedObject);
-		++mTotalObjectNum;
+		mMonsters.push_back(monster);
+		mAllObjects.push_back(monster);
+		//++mTotalObjectNum;
 		return true;
 	}
 	else {
 
-		SafeDelete(skinnedObject);
+		SafeDelete(monster);
 		return false;
 
 	}
-	
+
 }
 
 bool ObjectMgr::AddOurTeam(SkinnedObject* skinnedObject)
@@ -65,7 +66,7 @@ bool ObjectMgr::AddOurTeam(SkinnedObject* skinnedObject)
 	if (mOurTeam.size() <= mMaxMonsters) {
 		mOurTeam.push_back(skinnedObject);
 		mAllObjects.push_back(skinnedObject);
-		++mTotalObjectNum;
+		//++mTotalObjectNum;
 		return true;
 	}
 	else {
@@ -74,7 +75,7 @@ bool ObjectMgr::AddOurTeam(SkinnedObject* skinnedObject)
 		return false;
 
 	}
-	
+
 }
 
 void ObjectMgr::Update()
@@ -89,14 +90,14 @@ void ObjectMgr::Update()
 	for (auto i : mStructures)
 		mAllObjects.push_back(i);
 
-	for (auto i : mMonsters) 
+	for (auto i : mMonsters)
 		mAllObjects.push_back(i);
 }
 
 void ObjectMgr::Update(float dt)
 {
 	mAllObjects.clear();
-	mAllObjects.reserve(mTotalObjectNum); 
+	mAllObjects.reserve(mTotalObjectNum);
 
 	mAllObjects.push_back(mPlayer);
 	mOurTeam.push_back(mPlayer);
@@ -106,13 +107,13 @@ void ObjectMgr::Update(float dt)
 	for (auto i : mStructures)
 		mAllObjects.push_back(i);
 
+	mPlayer->Animate(dt);
 	for (auto i : mMonsters) {
 		mAllObjects.push_back(i);
 		mOppenents.push_back(i);
 		i->Animate(dt);
 	}
-	
-	mPlayer->Animate(dt);
+
 	for (auto i : mAllObjects)
 		i->Update(dt);
 }

@@ -25,7 +25,6 @@ public:
 
 private:
 	bool m_bReady;
-	bool m_bAttackAnim;
 
 	ResourceMgr mResourceMgr;
 	ObjectMgr	mObjectMgr;

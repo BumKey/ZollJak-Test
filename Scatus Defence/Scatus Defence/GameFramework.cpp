@@ -2,7 +2,7 @@
 #include "GameFramework.h"
 
 GameFrameWork::GameFrameWork(HINSTANCE hInstance)
-	: D3DApp(hInstance), m_bReady(false), m_bAttackAnim(false)
+	: D3DApp(hInstance), m_bReady(false)
 {
 	mMainWndCaption = L"Scatus Defence Demo";
 
@@ -49,7 +49,7 @@ bool GameFrameWork::Init()
 	info.Rot.y = 0.0f;
 	info.Scale = 0.2f;
 
-	mPlayer = new Player(mResourceMgr.GetSkinnedMesh(Object_type::goblin), info);
+	mPlayer = new Player(mResourceMgr.GetSkinnedMesh(ObjectType::Goblin), info);
 	mObjectMgr.SetPlayer(mPlayer);
 
 	info.Pos = XMFLOAT3(195.0f, 0.05f, -300.0f);
@@ -104,7 +104,7 @@ bool GameFrameWork::Init()
 			type = Goblin::Type::Blue;
 			info.Scale = 0.6f;
 		}
-		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetSkinnedMesh(Object_type::goblin), info, type));
+		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetSkinnedMesh(ObjectType::Goblin), info, type));
 	}
 
 	for (UINT i = 0; i < 2; ++i) {
@@ -114,7 +114,7 @@ bool GameFrameWork::Init()
 		info.Rot.x = MathHelper::Pi;
 		info.Rot.y = 0.0f;
 
-		mObjectMgr.AddMonster(new Cyclop(mResourceMgr.GetSkinnedMesh(Object_type::cyclop), info));
+		mObjectMgr.AddMonster(new Cyclop(mResourceMgr.GetSkinnedMesh(ObjectType::Cyclop), info));
 	}
 
 	XMFLOAT3 camPos = mPlayer->GetPos();
@@ -138,59 +138,6 @@ void GameFrameWork::OnResize()
 
 void GameFrameWork::UpdateScene(float dt)
 {
-	//
-	// Control the player.
-	//
-
-	if (m_bAttackAnim == false)
-	{
-		if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
-		{
-			mPlayer->SetClip("run");
-			mPlayer->Walk(-dt);
-			mPlayer->Strafe(-dt);
-		}
-		else if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
-		{
-			mPlayer->SetClip("run");
-			mPlayer->Walk(-dt);
-			mPlayer->Strafe(dt);
-		}
-		else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
-		{
-			mPlayer->SetClip("run");
-			mPlayer->Walk(dt);
-			mPlayer->Strafe(-dt);
-		}
-		else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
-		{
-			mPlayer->SetClip("run");
-			mPlayer->Walk(dt);
-			mPlayer->Strafe(dt);
-		}
-		else if (GetAsyncKeyState('W') & 0x8000) {
-			mPlayer->SetClip("run");
-			mPlayer->Walk(-dt);
-		}
-		else if (GetAsyncKeyState('S') & 0x8000) {
-			mPlayer->SetClip("run");
-			mPlayer->Walk(dt);
-		}
-		else if (GetAsyncKeyState('A') & 0x8000) {
-			mPlayer->SetClip("run");
-			mPlayer->Strafe(-dt);
-		}
-		else if (GetAsyncKeyState('D') & 0x8000) {
-			mPlayer->SetClip("run");
-			mPlayer->Strafe(dt);
-		}
-		else
-			mPlayer->SetClip("stand");
-	}
-	
-	if(m_bAttackAnim && mPlayer->AnimEnd("attack01"))
-		m_bAttackAnim = false;
-
 	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
 	mGameRogicMgr->Update(dt);
@@ -210,11 +157,8 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 	mGameRogicMgr->OnMouseDown = true;
-	if ((btnState & MK_LBUTTON) != 0 && !m_bAttackAnim)
-	{
-		m_bAttackAnim = true;
-		mPlayer->SetClip("attack01");
-	}
+	if(btnState & MK_LBUTTON)
+		mPlayer->Attack();
 
 	SetCapture(mhMainWnd);
 }
@@ -237,7 +181,6 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 		mCam.Pitch(dy);			
 		//mCam.RotateY(dx/3.0f);
 		mPlayer->RotateY(dx*2.0f);
-		mPlayer->SetState(type_attack);
 
 		mLastMousePos.x = x;
 		mLastMousePos.y = y;

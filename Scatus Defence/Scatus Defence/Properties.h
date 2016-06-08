@@ -1,36 +1,48 @@
 #pragma once
 
+namespace AttackType {
+	enum Types
+	{
+		type_shortdistance,
+		type_longdistance
+	};
+}
 
-enum attack_type
-{
-	type_shortdistance,
-	type_longdistance
-};
+namespace ActionState {
+	enum States
+	{
+		Idle,
+		Battle,
+		Walk,
+		Run,
+		Die,
+		Build,
+		Attack,
+		Damage
+	};
+}
 
-enum state_type
-{
-	type_null,
-	type_battle,
-	type_walk,
-	type_run,
-	type_die,
-	type_build,
-	type_attack,
-	type_attacked,
-	type_idle,
-	MovingCollision,
-	AttackCollision
-};
+namespace CollisionState {
+	enum States
+	{
+		None,
+		MovingCollision,
+		AttackCollision
+	};
+}
 
-enum Object_type
-{
-	type_p_warrior, // 캐릭터 전사
-	type_p_archer, // 캐릭터 아처
-	type_p_builder, // 캐릭터 건축가
-	goblin, // 적- 고블린
-	cyclop,
-	type_object,// 기타 오브젝트(지형등)
-};
+namespace ObjectType {
+	enum Types
+	{
+		type_p_warrior, // 캐릭터 전사
+		type_p_archer, // 캐릭터 아처
+		type_p_builder, // 캐릭터 건축가
+		Player,
+		Goblin, // 적- 고블린
+		Cyclop,
+		Obstacle,// 기타 오브젝트(지형등)
+	};
+}
 
 class Properties
 {
@@ -50,7 +62,6 @@ public:
 	int attack_type;
 	int Upgrade_weapon;
 	int Upgrade_guard;
-	state_type state;
 	int army_list;
 	int obj_type;
 	float attackspeed;
@@ -62,21 +73,4 @@ public:
 	void printPropeties();
 	void Levelup();
 	void Upgrade();
-};
-
-class Warriorproperties : public Properties
-{
-public:
-	Warriorproperties();
-	~Warriorproperties();
-
-};
-
-class GoblinProperties : public Properties
-{
-public:
-	GoblinProperties();
-
-	~GoblinProperties();
-
 };

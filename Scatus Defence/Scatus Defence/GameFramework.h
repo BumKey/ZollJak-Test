@@ -7,7 +7,7 @@
 #include "CollisionMgr.h"
 #include "Goblin.h"
 #include "Cyclop.h"
-
+#include "UI_Manager.h"
 class GameFrameWork : public D3DApp
 {
 public:

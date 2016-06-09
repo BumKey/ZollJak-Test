@@ -35,6 +35,10 @@ bool GameFrameWork::Init()
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
+	
+	mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
+	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());
+	Sound_Mgr->Creae_Sound(D3DApp::MainWnd());
 	mResourceMgr.Init(md3dDevice);
 	mGameRogicMgr = new GameRogicManager(&mObjectMgr, &mResourceMgr); //ฟ๋มุ
 
@@ -196,11 +200,26 @@ void GameFrameWork::UpdateScene(float dt)
 	mGameRogicMgr->Update(dt);
 	mCollisionMgr.Collision(mObjectMgr, dt);
 	mCam.Update(mPlayer, mSceneMgr);
+
+
+
 }
 
 void GameFrameWork::DrawScene()
 {
 	mSceneMgr.DrawScene(mObjectMgr.GetAllObjects(), mCam);
+	if (UI_Mgr->Get_input_ID_state())
+	{
+		for (auto i : UI_Mgr->m_Text_list)
+		{
+			if (i->UI_id == Text_title_ID)
+			{
+
+			}
+		}
+
+	}
+	UI_Mgr->Print_All_UI();
 	HR(mSwapChain->Present(0, 0));
 	m_bReady = true;
 }

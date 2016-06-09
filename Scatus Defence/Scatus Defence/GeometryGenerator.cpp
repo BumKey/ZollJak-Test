@@ -12,7 +12,7 @@ void GeometryGenerator::CreateBox(float width, float height, float depth, MeshDa
 	//
 
 	Vertex v[24];
-
+																											
 	float w2 = 0.5f*width;
 	float h2 = 0.5f*height;
 	float d2 = 0.5f*depth;

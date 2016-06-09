@@ -1,34 +1,39 @@
 #include "Goblin.h"
 
-Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, GoblinType type)
-	: Monster(mesh, info), mType(type)
+Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type)
+	: Monster(mesh, info), mGoblinType(type)
 {
 	mTimePos = 0.0f;
-	mMovingSpeed = 5.5f;
+	mProperty.movespeed = MathHelper::RandF(0.07f, 0.2f);
+	mProperty.attackspeed = MathHelper::RandF(0.6f, 1.1f);
+	mProperty.attakpoint = 0.5f;
 
-	mGoblinAnimNames[GoblinAnim::attack1] = "attack01";
-	mGoblinAnimNames[GoblinAnim::attack2] = "attack02";
-	mGoblinAnimNames[GoblinAnim::damage] = "damage";
-	mGoblinAnimNames[GoblinAnim::dead] = "dead";
-	mGoblinAnimNames[GoblinAnim::drop_down] = "drop_down";
-	mGoblinAnimNames[GoblinAnim::run] = "run";
-	mGoblinAnimNames[GoblinAnim::sit_up] = "sit_up";
-	mGoblinAnimNames[GoblinAnim::stand] = "stand";
-	mGoblinAnimNames[GoblinAnim::look_around] = "stand2";
+	mObjectType = Object_type::goblin;
 
-	mCurrClipName = mGoblinAnimNames[GoblinAnim::stand];
+	mAnimNames[Anims::attack1] = "attack01";
+	mAnimNames[Anims::attack2] = "attack02";
+	mAnimNames[Anims::hit] = "damage";
+	mAnimNames[Anims::dead] = "dead";
+	mAnimNames[Anims::drop_down] = "drop_down";
+	mAnimNames[Anims::run] = "run";
+	mAnimNames[Anims::sit_up] = "sit_up";
+	mAnimNames[Anims::idle] = "stand";
+	mAnimNames[Anims::walk] = "walk";
+	mAnimNames[Anims::look_around] = "stand2";
+
+	SetState(type_idle);
 }
 
 Goblin::~Goblin()
 {
 }
 
-std::string Goblin::GetAnimName(GoblinAnim eAnim)
+std::string Goblin::GetAnimName(const Anims& eAnim)
 {
-	return mGoblinAnimNames[eAnim];
+	return mAnimNames[eAnim];
 }
 
-void Goblin::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X4 shadowTransform, FLOAT tHeight)
+void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
 {
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
@@ -81,52 +86,20 @@ void Goblin::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, XMFLOAT4X
 		Effects::NormalMapFX->SetMaterial(mMesh->Mat[0]);
 		//Effects::NormalMapFX->SetNormalMap(mMesh->NormalMapSRV[subset]);
 
-		switch (mType)
+		switch (mGoblinType)
 		{
-		case GoblinType::Red:
+		case Type::Red:
 			Effects::NormalMapFX->SetDiffuseMap(ResourceMgr::GoblinDiffuseMapSRV[0]);
 			break;
-		case GoblinType::Green:
+		case Type::Green:
 			Effects::NormalMapFX->SetDiffuseMap(mMesh->DiffuseMapSRV[0]);
 			break;
-		case GoblinType::Blue:
+		case Type::Blue:
 			Effects::NormalMapFX->SetDiffuseMap(ResourceMgr::GoblinDiffuseMapSRV[1]);
 			break;
 		}
 	
 		activeSkinnedTech->GetPassByIndex(p)->Apply(0, dc);
 		mMesh->MeshData.Draw(dc, 0);	
-	}
-}
-
-void Goblin::Release(ResourceMgr & rMgr)
-{
-	rMgr.ReleaseGoblinMesh();
-}
-
-bool Goblin::SetClip(std::string clipName)
-{
-	// 공격 애니메이션 아직 안 끝났으면 바꾸지X
-	if ((mCurrClipName == mGoblinAnimNames[GoblinAnim::attack1] ||
-		mCurrClipName == mGoblinAnimNames[GoblinAnim::attack2]) &&
-		mTimePos < mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
-		return false;
-	else
-		mCurrClipName = clipName;
-}
-
-void Goblin::Animate(float dt)
-{
-	mTimePos += dt;
-
-	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
-
-	// Loop animation
-	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
-	{
-		mTimePos = 0.0f;
-		if (mCurrClipName == mGoblinAnimNames[GoblinAnim::attack1] ||
-			mCurrClipName == mGoblinAnimNames[GoblinAnim::attack2])		// attack01은 루프 안쓰는 애니메이션
-			mCurrClipName = mGoblinAnimNames[GoblinAnim::stand];
 	}
 }

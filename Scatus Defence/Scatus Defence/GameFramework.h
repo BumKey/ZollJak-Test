@@ -4,6 +4,10 @@
 #include "ObjectMgr.h"
 #include "ResourceMgr.h"
 #include "GameRogicManager.h"
+#include "CollisionMgr.h"
+#include "Goblin.h"
+#include "Cyclop.h"
+
 class GameFrameWork : public D3DApp
 {
 public:
@@ -26,6 +30,7 @@ private:
 	ResourceMgr mResourceMgr;
 	ObjectMgr	mObjectMgr;
 	SceneMgr	mSceneMgr;
+	CollisionMgr mCollisionMgr;
 	GameRogicManager *mGameRogicMgr;
 	Camera mCam;
 	Player* mPlayer;

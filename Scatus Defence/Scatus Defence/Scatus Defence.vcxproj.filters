@@ -80,8 +80,11 @@
     <Filter Include="GameObject\SkinnedObject\Player\p_Warrior">
       <UniqueIdentifier>{a76b644d-c056-49a9-a1fd-7845848bb4ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Managers\RogicManager">
-      <UniqueIdentifier>{06c6ac79-e9f4-4237-b372-3df3b19f2d3c}</UniqueIdentifier>
+    <Filter Include="GameObject\SkinnedObject\Monster\Cyclop">
+      <UniqueIdentifier>{8ba60f12-56a2-4f78-b764-3d35de1420e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Property">
+      <UniqueIdentifier>{8bf98476-0fe5-4e23-a4d5-a8907d763cf8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -181,26 +184,35 @@
     <ClCompile Include="Goblin.cpp">
       <Filter>GameObject\SkinnedObject\Monster\Goblin</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="Monster.cpp">
       <Filter>GameObject\SkinnedObject\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="2DMap.cpp">
-      <Filter>main</Filter>
+    <ClCompile Include="GameRogicManager.cpp">
+      <Filter>Managers</Filter>
     </ClCompile>
     <ClCompile Include="p_Warrior.cpp">
       <Filter>GameObject\SkinnedObject\Player\p_Warrior</Filter>
     </ClCompile>
-    <ClCompile Include="RogicTimer.cpp">
-      <Filter>Managers\RogicManager</Filter>
+    <ClCompile Include="Main.cpp">
+      <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="GameRogicManager.cpp">
-      <Filter>Managers\RogicManager</Filter>
+    <ClCompile Include="RogicTimer.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Cyclop.cpp">
+      <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
     </ClCompile>
     <ClCompile Include="Properties.cpp">
-      <Filter>GameObject</Filter>
+      <Filter>Property</Filter>
     </ClCompile>
-    <ClCompile Include="Monster.cpp">
-      <Filter>GameObject\SkinnedObject\Monster</Filter>
+    <ClCompile Include="2DMap.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities.cpp">
+      <Filter>Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -303,18 +315,29 @@
     <ClInclude Include="Monster.h">
       <Filter>GameObject\SkinnedObject\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="2DMap.h" />
+    <ClInclude Include="GameRogicManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
     <ClInclude Include="p_Warrior.h">
       <Filter>GameObject\SkinnedObject\Player\p_Warrior</Filter>
     </ClInclude>
-    <ClInclude Include="GameRogicManager.h">
-      <Filter>Managers\RogicManager</Filter>
-    </ClInclude>
     <ClInclude Include="RogicTimer.h">
-      <Filter>Managers\RogicManager</Filter>
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Cyclop.h">
+      <Filter>GameObject\SkinnedObject\Monster\Cyclop</Filter>
     </ClInclude>
     <ClInclude Include="Properties.h">
-      <Filter>GameObject</Filter>
+      <Filter>Property</Filter>
+    </ClInclude>
+    <ClInclude Include="2DMap.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,7 +13,7 @@
 #include "Ssao.h"
 #include <list>
 
-#define SMapSize		2048
+#define SMapSize		2046
 
 struct BoundingSphere
 {
@@ -37,7 +37,7 @@ public:
 		const Camera& cam, UINT width, UINT height);
 	void OnResize(UINT width, UINT height, const Camera& cam,
 		ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv);
-	void ComputeSceneBoundingBox(const std::vector<GameObject*>& allObjects);
+	void ComputeSceneBoundingBox(const XMFLOAT3& playerPos);
 	void Update(float dt);
 	void DrawScene(const std::vector<GameObject*>& allObjects, const Camera& cam);
 

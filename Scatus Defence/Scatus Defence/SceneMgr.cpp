@@ -3,9 +3,9 @@
 SceneMgr::SceneMgr() : mLightRotationAngle(0.0f), mScreenQuadVB(0), mScreenQuadIB(0), mSky(0), mSmap(0), mSsao(0)
 {
 	mDirLights[0].Ambient = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-	mDirLights[0].Diffuse = XMFLOAT4(0.8f, 0.7f, 0.7f, 1.0f);
-	mDirLights[0].Specular = XMFLOAT4(0.6f, 0.6f, 0.7f, 1.0f);
-	mDirLights[0].Direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
+	mDirLights[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	mDirLights[0].Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	mDirLights[0].Direction = XMFLOAT3(0.58f, -0.63735f, 0.57735f);
 
 	mDirLights[1].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	mDirLights[1].Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
@@ -89,6 +89,17 @@ void SceneMgr::DrawScene(const std::vector<GameObject*>& allObjects, const Camer
 
 	md3dImmediateContext->OMSetDepthStencilState(RenderStates::EqualsDSS, 0);
 
+	// Set per frame constants.
+	Effects::NormalMapFX->SetDirLights(mDirLights);
+	Effects::NormalMapFX->SetEyePosW(cam.GetPosition());
+	Effects::NormalMapFX->SetCubeMap(mSky->CubeMapSRV());
+	Effects::NormalMapFX->SetShadowMap(mSmap->DepthMapSRV());
+	Effects::NormalMapFX->SetSsaoMap(mSsao->AmbientSRV());
+	Effects::NormalMapFX->SetFogColor(Colors::LightSteelBlue);
+	Effects::NormalMapFX->SetFogStart(30.0f);
+	Effects::NormalMapFX->SetFogRange(300.0f);
+
+	// Draw Objects
 	for (auto i : allObjects) {
 		XMFLOAT3 pos = i->GetPos();
 		i->DrawToScene(md3dImmediateContext, cam, mShadowTransform, mTerrain.GetHeight(pos));
@@ -97,10 +108,13 @@ void SceneMgr::DrawScene(const std::vector<GameObject*>& allObjects, const Camer
 	md3dImmediateContext->RSSetState(0);
 	md3dImmediateContext->OMSetDepthStencilState(0, 0);
 
-	mTerrain.DrawToScene(md3dImmediateContext, cam, mDirLights);
+	mTerrain.DrawToScene(md3dImmediateContext, cam, mShadowTransform, mSmap->DepthMapSRV(), mDirLights);
 	md3dImmediateContext->RSSetState(0);
 
 	mSky->Draw(md3dImmediateContext, cam);
+
+	if(GetAsyncKeyState('Z'))
+		DrawScreenQuad();
 
 	// restore default states, as the SkyFX changes them in the effect file.
 	md3dImmediateContext->RSSetState(0);
@@ -110,12 +124,6 @@ void SceneMgr::DrawScene(const std::vector<GameObject*>& allObjects, const Camer
 	// to it next frame.  These textures can be at any slot, so clear all slots.
 	ID3D11ShaderResourceView* nullSRV[16] = { 0 };
 	md3dImmediateContext->PSSetShaderResources(0, 16, nullSRV);
-	// Set per frame constants.
-	Effects::NormalMapFX->SetDirLights(mDirLights);
-	Effects::NormalMapFX->SetEyePosW(cam.GetPosition());
-	Effects::NormalMapFX->SetCubeMap(mSky->CubeMapSRV());
-	Effects::NormalMapFX->SetShadowMap(mSmap->DepthMapSRV());
-	Effects::NormalMapFX->SetSsaoMap(mSsao->AmbientSRV());
 }
 
 void SceneMgr::Update(float dt)
@@ -282,40 +290,48 @@ void SceneMgr::BuildScreenQuadGeometryBuffers(ID3D11Device* device)
 	HR(device->CreateBuffer(&ibd, &iinitData, &mScreenQuadIB));
 }
 
-void SceneMgr::ComputeSceneBoundingBox(const std::vector<GameObject*>& allObjects)
+void SceneMgr::ComputeSceneBoundingBox(const XMFLOAT3& playerPos)
 {
-	XMFLOAT3 minPt(+MathHelper::Infinity, +MathHelper::Infinity, +MathHelper::Infinity);
-	XMFLOAT3 maxPt(-MathHelper::Infinity, -MathHelper::Infinity, -MathHelper::Infinity);
-	for (auto iter : allObjects)
-	{
-		for (UINT j = 0; j < iter->GetMesh()->VerticesPos.size(); ++j)
-		{
-			XMFLOAT3 P = iter->GetMesh()->VerticesPos[j];
+	//XMFLOAT3 minPt(+MathHelper::Infinity, +MathHelper::Infinity, +MathHelper::Infinity);
+	//XMFLOAT3 maxPt(-MathHelper::Infinity, -MathHelper::Infinity, -MathHelper::Infinity);
+	//for (auto iter : allObjects)
+	//{
+	//	for (UINT i = 0; i < iter->GetMesh()->VerticesPos.size(); ++i)
+	//	{
+	//		XMFLOAT3 P = iter->GetMesh()->VerticesPos[i];
 
-			minPt.x = MathHelper::Min(minPt.x, P.x);
-			minPt.y = MathHelper::Min(minPt.x, P.x);
-			minPt.z = MathHelper::Min(minPt.x, P.x);
+	//		minPt.x = MathHelper::Min(minPt.x, P.x);
+	//		minPt.y = MathHelper::Min(minPt.x, P.x);
+	//		minPt.z = MathHelper::Min(minPt.x, P.x);
 
-			maxPt.x = MathHelper::Max(maxPt.x, P.x);
-			maxPt.y = MathHelper::Max(maxPt.x, P.x);
-			maxPt.z = MathHelper::Max(maxPt.x, P.x);
-		}
-	}
+	//		maxPt.x = MathHelper::Max(maxPt.x, P.x);
+	//		maxPt.y = MathHelper::Max(maxPt.x, P.x);
+	//		maxPt.z = MathHelper::Max(maxPt.x, P.x);
+	//	}
+	//}
 
-	//
-	// Derive scene bounding sphere from bounding box.
-	//
-	mSceneBounds.Center = XMFLOAT3(
-		0.5f*(minPt.x + maxPt.x),
-		0.5f*(minPt.y + maxPt.y),
-		0.5f*(minPt.z + maxPt.z));
+	////
+	//// Derive scene bounding sphere from bounding box.
+	////
+	//mSceneBounds.Center = XMFLOAT3(
+	//	0.5f*(minPt.x + maxPt.x),
+	//	0.5f*(minPt.y + maxPt.y),
+	//	0.5f*(minPt.z + maxPt.z));
 
-	XMFLOAT3 extent(
-		0.5f*(maxPt.x - minPt.x),
-		0.5f*(maxPt.y - minPt.y),
-		0.5f*(maxPt.z - minPt.z));
+	//XMFLOAT3 extent(
+	//	0.5f*(maxPt.x - minPt.x),
+	//	0.5f*(maxPt.y - minPt.y),
+	//	0.5f*(maxPt.z - minPt.z));
 
-	mSceneBounds.Radius = sqrtf(extent.x*extent.x + extent.y*extent.y + extent.z*extent.z);
+	//mSceneBounds.Radius = sqrtf(extent.x*extent.x + extent.y*extent.y + extent.z*extent.z);
+
+	float halfW = mTerrain.GetWidth() / 2.0f;
+	float halfD = mTerrain.GetDepth() / 2.0f;
+	mSceneBounds.Radius = sqrtf((halfW*halfW) + (halfD*halfD))/5.0f;
+	mSceneBounds.Center.x = playerPos.x + 50.0f;
+	mSceneBounds.Center.y = 0.0f;
+	mSceneBounds.Center.z = playerPos.z - 50.0f;
+
 }
 
 void SceneMgr::OnResize(UINT width, UINT height, const Camera& cam,

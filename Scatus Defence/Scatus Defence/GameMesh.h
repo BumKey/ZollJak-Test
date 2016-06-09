@@ -1,5 +1,6 @@
 #pragma once
 #include "BasicMeshData.h"
+#include "xnacollision.h"
 #include "Vertex.h"
 
 
@@ -10,6 +11,9 @@ public:
 	~GameMesh();
 
 public:
+	XNA::AxisAlignedBox GetAABB() const { return mMeshAABB; }
+
+public:
 	UINT SubsetCount;
 
 	std::vector<Material> Mat;
@@ -17,10 +21,13 @@ public:
 	std::vector<ID3D11ShaderResourceView*> NormalMapSRV;
 
 	// Keep CPU copies of the mesh data to read from.  
-	std::vector<XMFLOAT3> VerticesPos;
 	std::vector<USHORT> Indices;
 	std::vector<BasicMeshData::Subset> Subsets;
 
 	BasicMeshData MeshData;
+
+protected:
+	XNA::AxisAlignedBox mMeshAABB;
+
 };
 

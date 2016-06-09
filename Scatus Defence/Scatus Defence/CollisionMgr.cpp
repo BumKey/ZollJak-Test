@@ -23,15 +23,15 @@ void CollisionMgr::MovingCollision(ObjectMgr & objectMgr, float dt)
 		{
 			for (const auto& iterM2 : objectMgr.GetMonsters())
 			{
-				if (MathHelper::DistanceVector(iterM1->GetPos(), iterM2->GetPos()) <= 3.0f &&
+				if (MathHelper::DistanceVector(iterM1->GetPos(), iterM2->GetPos()) <= 5.0f &&
 					iterM1->GetID() != iterM2->GetID() &&
 					iterM1->GetActionState() != ActionState::Attack)
 				{
 					std::cout << iterM1->GetID() << "과" << iterM2->GetID() << "충돌 검출 중.." << std::endl;
 					iterM1->MovingCollision(iterM2->GetPos(), dt);
 				}
-				//else
-					//iterM1->SetState(state_type::type_walk);
+				else
+					iterM1->SetNoneCollision();
 			}
 		}
 	}

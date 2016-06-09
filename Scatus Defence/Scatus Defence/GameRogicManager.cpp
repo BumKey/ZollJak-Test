@@ -226,7 +226,7 @@ void GameRogicManager::AIManager(float dt)
 			iterM->AttackToTarget(dt);
 			printf("배틀실행");
 		}
-		else if (iterM->GetCollisionState() == CollisionState::None)
+		else 
 			iterM->MoveToTarget(dt);
 	}
 }

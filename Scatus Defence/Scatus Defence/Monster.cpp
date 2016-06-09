@@ -14,24 +14,39 @@ Monster::~Monster()
 void Monster::MoveToTarget(float dt)
 {
 	assert(mTarget);
-	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
+	if (mCollisionState == CollisionState::None && mActionState != ActionState::Attack)
+	{
+		XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
+
+		XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
+		XMVECTOR p = XMLoadFloat3(&mPosition);
+
+		// 방향으로 이동
+		XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
+
+		// 방향으로 회전
+		XMFLOAT3 fTargetDir;
+		XMStoreFloat3(&fTargetDir, vTarget);
+		float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+		float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
+		float angle = atan2(det, dot);
+
+		RotateY(angle*dt*MathHelper::Pi);
+
+		mActionState = ActionState::Walk;
+	}
+}
+
+void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
+{
+	mCollisionState = CollisionState::MovingCollision;
+	XMVECTOR vTarget = MathHelper::TargetVector2D(crushedObjectPos, mPosition);
 
 	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 
-	// 방향으로 이동
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
-
-	// 방향으로 회전
-	XMFLOAT3 fTargetDir;
-	XMStoreFloat3(&fTargetDir, vTarget);
-	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
-	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
-	float angle = atan2(det, dot);
-
-	RotateY(angle*dt*MathHelper::Pi);
-
-	mActionState = ActionState::Walk;
+	// 부딪힌 오브젝트부터 멀어지는 방향
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, -vTarget, p));
 }
 
 void Monster::AttackToTarget(float dt)
@@ -85,4 +100,9 @@ void Monster::SetNoTarget()
 {
 	mTarget = nullptr;
 	mHasTarget = false;
+}
+
+void Monster::SetNoneCollision()
+{
+	mCollisionState = CollisionState::None;
 }

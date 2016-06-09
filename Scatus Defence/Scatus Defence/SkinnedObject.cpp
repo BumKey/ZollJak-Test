@@ -112,21 +112,6 @@ void SkinnedObject::Animate(float dt)
 	}
 }
 
-void SkinnedObject::MovingCollision(XMFLOAT3 intersectedObject, float dt)
-{
-	mCollisionState = CollisionState::MovingCollision;
-	XMVECTOR vTarget = MathHelper::TargetVector2D(intersectedObject, mPosition);
-
-	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
-	XMVECTOR p = XMLoadFloat3(&mPosition);
-
-	// 부딪힌 오브젝트부터 멀어지는 방향
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, -vTarget, p));
-
-	// 차별을 두기 위해 일단 런으로
-	mActionState = ActionState::Run;
-}
-
 void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
 {
 	XMMATRIX view = cam.View();

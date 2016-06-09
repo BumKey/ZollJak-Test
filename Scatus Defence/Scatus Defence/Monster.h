@@ -8,12 +8,14 @@ public:
 	virtual ~Monster();
 
 	virtual void AttackToTarget(float dt);
-	virtual void MoveToTarget(float dt); // For Monster
-
+	virtual void MoveToTarget(float dt); 
+	virtual void MovingCollision(const XMFLOAT3& crushedObjectPos , float dt);
+	
 	bool			HasTarget() { return mHasTarget; }
 
 	void			SetTarget(GameObject* target);
 	void			SetNoTarget();
+	void			SetNoneCollision();
 
 private:
 	bool mHasTarget;

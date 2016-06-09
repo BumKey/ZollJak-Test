@@ -3,7 +3,7 @@
 Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type)
 	: Monster(mesh, info), mGoblinType(type)
 {
-	mProperty.movespeed = MathHelper::RandF(2.5f, 5.0f);
+	mProperty.movespeed = MathHelper::RandF(4.5f, 6.0f);
 	mProperty.attackspeed = MathHelper::RandF(0.6f, 1.1f);
 	mProperty.attakpoint = 0.5f;
 

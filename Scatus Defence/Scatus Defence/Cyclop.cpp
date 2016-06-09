@@ -2,7 +2,7 @@
 
 Cyclop::Cyclop(SkinnedMesh* mesh, const InstanceDesc& info) : Monster(mesh, info)
 {
-	mProperty.movespeed = MathHelper::RandF(1.7f, 2.7f);
+	mProperty.movespeed = MathHelper::RandF(2.7f, 3.7f);
 	mProperty.attackspeed = MathHelper::RandF(0.4f, 0.7f);
 	mProperty.attakpoint = 10.0f;
 

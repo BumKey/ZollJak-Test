@@ -1,7 +1,6 @@
 #include "Monster.h"
 
-
-Monster::Monster(SkinnedMesh* mesh, const InstanceDesc& info) : SkinnedObject(mesh, info), mHasTarget(false)
+Monster::Monster(SkinnedMesh* mesh, const InstanceDesc& info) : SkinnedObject(mesh, info)
 {
 }
 
@@ -14,7 +13,8 @@ Monster::~Monster()
 void Monster::MoveToTarget(float dt)
 {
 	assert(mTarget);
-	if (mCollisionState == CollisionState::None && mActionState != ActionState::Attack)
+	if (mCollisionState == CollisionState::None && mActionState != ActionState::Attack 
+		&& mActionState != ActionState::Damage && mActionState != ActionState::Die)
 	{
 		XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
 
@@ -33,25 +33,27 @@ void Monster::MoveToTarget(float dt)
 
 		RotateY(angle*dt*MathHelper::Pi);
 
-		mActionState = ActionState::Walk;
+		ChangeActionState(ActionState::Walk);
 	}
 }
 
 void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
 {
 	mCollisionState = CollisionState::MovingCollision;
-	XMVECTOR vTarget = MathHelper::TargetVector2D(crushedObjectPos, mPosition);
+	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
+	XMVECTOR vCrushedObject = MathHelper::TargetVector2D(crushedObjectPos, mPosition);
+	XMVECTOR vDir = XMVector3Normalize(vTarget - vCrushedObject);
 
-	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
+	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed/2.0f);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 
 	// 부딪힌 오브젝트부터 멀어지는 방향
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, -vTarget, p));
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vDir, p));
 }
 
 void Monster::AttackToTarget(float dt)
 {
-	mActionState = ActionState::Attack;
+	ChangeActionState(ActionState::Attack);
 
 	// 방향으로 회전
 	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
@@ -64,45 +66,7 @@ void Monster::AttackToTarget(float dt)
 
 	RotateY(angle*dt*MathHelper::Pi);
 
-	if (mTarget->GetActionState() != ActionState::Die)
-	{
-		int mTarget_hp = mTarget->GetProperty().hp_now;
-		int armor = mTarget->GetProperty().guardpoint;
-		float damage = mProperty.attakpoint;
-
-		//mTarget->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
-		//mTarget->SetHP(mTarget_hp - damage);
-
-		printf("공격을 성공했습니다. 상대의 체력 : %d \n", mTarget->GetProperty().hp_now);
-
-		if (mTarget->GetProperty().hp_now <= -500)
-		{
-			printf("사망자 이름 : %s\n", mTarget->GetProperty().name);
-		}
-		if (mTarget->GetProperty().hp_now <= 0)
-		{
-			mTarget->Die();
-			printf("타겟 사망");
-			mActionState = ActionState::Idle;
-		}
-	}
-}
-
-void Monster::SetTarget(GameObject * target)
-{
-	if (target) {
-		mTarget = target;
-		mHasTarget = true;
-	}
-}
-
-void Monster::SetNoTarget()
-{
-	mTarget = nullptr;
-	mHasTarget = false;
-}
-
-void Monster::SetNoneCollision()
-{
-	mCollisionState = CollisionState::None;
+	if((mCurrClipName == mAnimNames[Anims::attack1] ||
+		mCurrClipName == mAnimNames[Anims::attack2]) && mTimePos == 0.0f)
+		Attack(mTarget);
 }

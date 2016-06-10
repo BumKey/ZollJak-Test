@@ -33,11 +33,14 @@ public:
 	virtual void RotateY(float angle) = 0;
 	virtual void Update(float dt) = 0;
 
+	void Attack(GameObject* target);
+
 	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight) = 0;
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight) = 0;
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight) = 0;
 
-	virtual void Release(ResourceMgr& rMgr) = 0;
+	virtual void Release(ResourceMgr* rMgr) = 0;
+	virtual void ChangeActionState(ActionState::States aState);
 
 	GameMesh*				GetMesh() const { return mMesh; }
 	XMFLOAT4X4				GetWorld() const { return mWorld; }
@@ -55,6 +58,15 @@ public:
 	XNA::OrientedBox		GetOOBB() const { return mOOBB; }
 
 	void					SetHP(int hp) { mProperty.hp_now = hp; }
+	void					SetAttackState() { mActionState = ActionState::Attack; }
+
+	bool					IsAttack() { return mActionState == ActionState::Attack ? true : false; }
+	bool					IsDead() { return mActionState == ActionState::Die ? true : false; }
+	bool					HasTarget() { return mHasTarget; }
+
+	void					SetTarget(GameObject* target);
+	void					SetNoTarget() { mTarget = nullptr; mHasTarget = false; }
+	void					SetNoneCollision() { mCollisionState = CollisionState::None; }
 
 	void  PrintLocation(); //객체 위치값출력 반환
 
@@ -64,6 +76,7 @@ public:
 private:
 	UINT mID;
 	static UINT GeneratedCount;
+	bool mHasTarget;
 
 protected:
 	XMFLOAT4X4 mWorld;

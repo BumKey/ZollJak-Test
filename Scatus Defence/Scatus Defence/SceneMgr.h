@@ -25,6 +25,7 @@ struct BoundingSphere
 /// <summary>
 /// 클래스 유형 : 컨트롤러
 /// 장면의 그리기와 관련된 기능을 관장하는 클래스
+/// </summary>
 class SceneMgr
 {
 public:

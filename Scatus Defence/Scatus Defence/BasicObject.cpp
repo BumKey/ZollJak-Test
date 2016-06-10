@@ -252,7 +252,7 @@ void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera
 	dc->RSSetState(0);
 }
 
-void BasicObject::Release(ResourceMgr& rMgr)
+void BasicObject::Release(ResourceMgr* rMgr)
 {
 	mMesh = nullptr;
 }

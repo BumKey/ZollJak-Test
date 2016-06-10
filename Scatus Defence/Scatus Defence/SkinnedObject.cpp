@@ -20,7 +20,7 @@ void SkinnedObject::Walk(float d)
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
 
-	mActionState = ActionState::Run;
+	ChangeActionState(ActionState::Run);
 }
 
 void SkinnedObject::Strafe(float d)
@@ -33,7 +33,7 @@ void SkinnedObject::Strafe(float d)
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
 
-	mActionState = ActionState::Run;
+	ChangeActionState(ActionState::Run);
 }
 
 void SkinnedObject::RotateY(float angle)
@@ -103,12 +103,14 @@ void SkinnedObject::Animate(float dt)
 	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
 
 	// Loop animation
-	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
+	if (CurrAnimEnd())
 	{
-		mTimePos = 0.0f;
+		if(mActionState != ActionState::Die)
+			mTimePos = 0.0f;
+
 		if (mCurrClipName == mAnimNames[Anims::attack1] ||
 			mCurrClipName == mAnimNames[Anims::attack2])		// attack01은 루프 안쓰는 애니메이션
-			mActionState = ActionState::Idle;
+			ChangeActionState(ActionState::Idle);
 	}
 }
 
@@ -218,9 +220,9 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 	}
 }
 
-void SkinnedObject::Release(ResourceMgr & rMgr)
+void SkinnedObject::Release(ResourceMgr* rMgr)
 {
-	rMgr.ReleaseMesh(mObjectType);
+	rMgr->ReleaseMesh(mObjectType);
 }
 
 void SkinnedObject::SetClip()
@@ -249,7 +251,7 @@ void SkinnedObject::SetClip()
 
 bool SkinnedObject::CurrAnimEnd() 
 {
-	if (abs(mTimePos - mMesh->SkinnedData.GetClipEndTime(mCurrClipName)) <= 0.1f)
+	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
 		return true;
 
 	return false;

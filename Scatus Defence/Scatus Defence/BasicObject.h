@@ -25,7 +25,7 @@ public:
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight);
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight);
 
-	virtual void Release(ResourceMgr& rMgr);
+	virtual void Release(ResourceMgr* rMgr);
 
 	Label GetLabel() { return mLabel; }
 

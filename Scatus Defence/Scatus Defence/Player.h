@@ -1,5 +1,6 @@
 #pragma once
 #include "SkinnedObject.h"
+#include "Monster.h"
 
 class Player : public SkinnedObject
 {
@@ -9,15 +10,10 @@ public:
 
 public:
 	void Update(float dt);
-
-	virtual void Attack();
 	virtual void Release(ResourceMgr& rMgr);
 
 private:
 	virtual void Move(float dt);
-
-private:
-	bool m_bAttackAnim;
 
 };
 

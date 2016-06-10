@@ -12,7 +12,7 @@
 class GameRogicManager
 {
 public:
-	GameRogicManager(ObjectMgr * ObjMgr_, ResourceMgr * m_resourceMgr);
+	GameRogicManager(ObjectMgr * ObjMgr_);
 	~GameRogicManager();
 
 public:
@@ -39,7 +39,6 @@ private:
 	int m_enemysnum;
 	std::string gamename = "스카투스 디펜스";
 	int player_num;
-	ResourceMgr * mResourceMgr;
 	POINT mLastMousePos;
 	Player* mPlayer;
 	std::list<GameObject*> m_Our_list;

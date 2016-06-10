@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(SkinnedMesh* Mesh, const InstanceDesc& info) : SkinnedObject(Mesh, info), m_bAttackAnim(false)
+Player::Player(SkinnedMesh* Mesh, const InstanceDesc& info) : SkinnedObject(Mesh, info)
 {
 	mProperty.movespeed = 7.0f;
 	mProperty.hp_now = 100;
@@ -31,22 +31,15 @@ void Player::Update(float dt)
 {
 	Move(dt);
 
-	if (m_bAttackAnim && CurrAnimEnd())
-		m_bAttackAnim = false;
+	if (mActionState == ActionState::Attack && CurrAnimEnd())
+		mActionState = ActionState::Idle;
 
 	SkinnedObject::Update(dt);
 }
 
-void Player::Attack()
-{
-	// 앞 방향 공격
-	mActionState = ActionState::Attack;
-	m_bAttackAnim = true;
-}
-
 void Player::Move(float dt)
 {
-	if (m_bAttackAnim == false)
+	if (mActionState != ActionState::Attack)
 	{
 		if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
 		{

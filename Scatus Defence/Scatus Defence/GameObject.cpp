@@ -41,3 +41,38 @@ void GameObject::Die()
 	mActionState = ActionState::Die;
 	// 죽을 때 필요한 처리들은 오버라이드롤 구현..
 }
+
+void GameObject::Attack(GameObject * target)
+{
+	if (target->GetActionState() != ActionState::Die)
+	{
+		int mTarget_hp = target->GetProperty().hp_now;
+		int armor = target->GetProperty().guardpoint;
+		float damage = mProperty.attakpoint;
+
+		target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+		target->SetHP(mTarget_hp - damage);
+
+		printf("공격을 성공했습니다. 상대의 체력 : %d \n", target->GetProperty().hp_now);
+
+		if (target->GetProperty().hp_now <= 0)
+		{
+			target->Die();
+			printf("타겟 사망");
+		}
+	}
+}
+
+void GameObject::ChangeActionState(ActionState::States aState)
+{
+	if (mActionState != ActionState::Die)
+		mActionState = aState;
+}
+
+void GameObject::SetTarget(GameObject * target)
+{
+	if (target) {
+		mTarget = target;
+		mHasTarget = true;
+	}
+}

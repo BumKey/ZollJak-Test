@@ -11,6 +11,11 @@ ObjectMgr::~ObjectMgr()
 {
 }
 
+void ObjectMgr::Init(ResourceMgr* resourceMgr)
+{
+	mResourceMgr = resourceMgr;
+}
+
 bool ObjectMgr::AddObstacle(BasicObject * basicObject)
 {
 	mObstacles.push_back(basicObject);
@@ -40,7 +45,7 @@ bool ObjectMgr::AddStructure(BasicObject * basicObject)
 bool ObjectMgr::AddProjectile(BasicObject * basicObject)
 {
 	mProjectiles.push_back(basicObject);
-	//++mTotalObjectNum;
+	++mTotalObjectNum;
 	return true;
 }
 
@@ -49,7 +54,7 @@ bool ObjectMgr::AddMonster(Monster* monster)
 	if (mMonsters.size() <= mMaxMonsters) {
 		mMonsters.push_back(monster);
 		mAllObjects.push_back(monster);
-		//++mTotalObjectNum;
+		++mTotalObjectNum;
 		return true;
 	}
 	else {
@@ -66,11 +71,11 @@ bool ObjectMgr::AddOurTeam(SkinnedObject* skinnedObject)
 	if (mOurTeam.size() <= mMaxMonsters) {
 		mOurTeam.push_back(skinnedObject);
 		mAllObjects.push_back(skinnedObject);
-		//++mTotalObjectNum;
+		++mTotalObjectNum;
 		return true;
 	}
 	else {
-
+		
 		SafeDelete(skinnedObject);
 		return false;
 
@@ -80,6 +85,7 @@ bool ObjectMgr::AddOurTeam(SkinnedObject* skinnedObject)
 
 void ObjectMgr::Update()
 {
+
 	mAllObjects.clear();
 	mAllObjects.reserve(mTotalObjectNum);
 
@@ -90,8 +96,9 @@ void ObjectMgr::Update()
 	for (auto i : mStructures)
 		mAllObjects.push_back(i);
 
-	for (auto i : mMonsters)
+	for (auto i : mMonsters) {
 		mAllObjects.push_back(i);
+	}
 }
 
 void ObjectMgr::Update(float dt)
@@ -108,17 +115,28 @@ void ObjectMgr::Update(float dt)
 		mAllObjects.push_back(i);
 
 	mPlayer->Animate(dt);
-	for (auto i : mMonsters) {
-		mAllObjects.push_back(i);
-		mOppenents.push_back(i);
-		i->Animate(dt);
+	for (auto i = mMonsters.begin(); i != mMonsters.end();)
+	{
+		Monster*& monster = *i;
+		if (monster->IsDead() && monster->CurrAnimEnd())
+		{
+			monster->Release(mResourceMgr);
+			i = mMonsters.erase(i);
+			monster = *i;
+		}
+		else
+			++i;
+
+		mAllObjects.push_back(monster);
+		mOppenents.push_back(monster);
+		monster->Animate(dt);
 	}
 
 	for (auto i : mAllObjects)
 		i->Update(dt);
 }
 
-void ObjectMgr::ReleaseAll(ResourceMgr& resourceMgr)
+void ObjectMgr::ReleaseAll()
 {
 	mAllObjects.clear();
 	mObstacles.clear();
@@ -127,10 +145,10 @@ void ObjectMgr::ReleaseAll(ResourceMgr& resourceMgr)
 	mOurTeam.clear();
 }
 
-void ObjectMgr::ReleaseAllMonsters(ResourceMgr& resourceMgr)
+void ObjectMgr::ReleaseAllMonsters()
 {
 	for (auto i : mMonsters)
-		i->Release(resourceMgr);
+		i->Release(mResourceMgr);
 
 	mMonsters.clear();
 }

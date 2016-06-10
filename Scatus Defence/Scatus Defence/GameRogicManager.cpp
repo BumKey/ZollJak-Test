@@ -3,9 +3,8 @@
 #include "time.h"
 #include "ResourceMgr.h"
 
-GameRogicManager::GameRogicManager(ObjectMgr * ObjMgr_, ResourceMgr * resourceMgr_)
+GameRogicManager::GameRogicManager(ObjectMgr * ObjMgr_)
 {
-	mResourceMgr = resourceMgr_;
 	mObjMgr = ObjMgr_; // 씬매니저의 오브젝트에 접근하기 위한 포인터
 	wave_level = 0;
 	Gamestatement = game_title;
@@ -44,7 +43,7 @@ void GameRogicManager::Gamestart()
 }
 void GameRogicManager::GameEnd()
 {
-	mObjMgr->ReleaseAll(*mResourceMgr);
+	mObjMgr->ReleaseAll();
 	printf("\n게임이 종료되었습니다\n\n", wave_level);
 
 }
@@ -105,7 +104,7 @@ void GameRogicManager::EndWave()
 	}
 	//mRogicTimer.SetWaveTimer(); //WaveTimer초기화
 								//맵 내부의 모든 적들 삭제
-	mObjMgr->ReleaseAllMonsters(*mResourceMgr);
+	mObjMgr->ReleaseAllMonsters();
 	/*
 	for (std::list<GameObject*>::iterator i = m_SceneMgr->mObjects.begin(); i != m_SceneMgr->mObjects.end();)
 	{
@@ -222,10 +221,7 @@ void GameRogicManager::AIManager(float dt)
 		XMFLOAT3 targetPos = iterM->GetTarget()->GetPos();
 
 		if (MathHelper::DistanceVector(currPos, targetPos) <= 3.0f)
-		{
 			iterM->AttackToTarget(dt);
-			printf("배틀실행");
-		}
 		else 
 			iterM->MoveToTarget(dt);
 	}

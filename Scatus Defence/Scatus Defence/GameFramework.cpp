@@ -18,7 +18,7 @@ GameFrameWork::~GameFrameWork()
 	InputLayouts::DestroyAll();
 	RenderStates::DestroyAll();
 
-	mObjectMgr.ReleaseAll(mResourceMgr);	// 지금은 큰 의미는 없음.
+	mObjectMgr.ReleaseAll();	// 지금은 큰 의미는 없음.
 	mPlayer->Release(mResourceMgr);
 }
 
@@ -36,7 +36,9 @@ bool GameFrameWork::Init()
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
 	mResourceMgr.Init(md3dDevice);
-	mGameRogicMgr = new GameRogicManager(&mObjectMgr, &mResourceMgr); //용준
+	mObjectMgr.Init(&mResourceMgr);
+	mGameRogicMgr = new GameRogicManager(&mObjectMgr); //용준
+	mCollisionMgr.Init(&mObjectMgr);
 
 	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
 		mDepthStencilView, mRenderTargetView,
@@ -141,7 +143,7 @@ void GameFrameWork::UpdateScene(float dt)
 	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
 	mGameRogicMgr->Update(dt);
-	mCollisionMgr.Collision(mObjectMgr, dt);
+	mCollisionMgr.Update(dt);
 	mCam.Update(mPlayer, mSceneMgr);
 }
 
@@ -157,9 +159,11 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 	mGameRogicMgr->OnMouseDown = true;
-	if(btnState & MK_LBUTTON)
-		mPlayer->Attack();
-
+	if (btnState & MK_LBUTTON) {
+		mPlayer->SetAttackState();
+		mCollisionMgr.AttackCollision();
+	}
+	
 	SetCapture(mhMainWnd);
 }
 

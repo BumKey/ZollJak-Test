@@ -22,8 +22,7 @@ public:
 public:
 	void Init(ResourceMgr* resourceMgr);
 
-	bool AddObstacle(BasicObject* basicObject);//bool 형으로 해서 나중에 객체 생성한계초과여부 확인
-	bool AddStructure(BasicObject* basicObject);
+
 	bool AddProjectile(BasicObject* basicObject);
 	bool AddMonster(Monster* monster); // 충돌검사 길찾기를 위한 몬스터리스트, 다형성 구현을 위해skinnedObject*에서  GameObject*로
 	bool AddOurTeam(SkinnedObject* skinnedObject); // 충돌검사, 길찾기를 위한 아군 리스트
@@ -35,13 +34,17 @@ public:
 	std::vector<GameObject*>&			GetOppenents() { return mOurTeam; }
 
 	Player* GetPlayer() { return mPlayer; }
-	void SetPlayer(Player* player) { mPlayer = player; }
 
 	void Update();
 	void Update(float dt);
 
 	void ReleaseAll();
 	void ReleaseAllMonsters();
+
+private:
+	void CreateMap();
+	bool AddObstacle(BasicObject* basicObject);//bool 형으로 해서 나중에 객체 생성한계초과여부 확인
+	bool AddStructure(BasicObject* basicObject);
 
 private:
 	UINT mStage;

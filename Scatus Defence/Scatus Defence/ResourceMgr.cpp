@@ -64,7 +64,8 @@ void ResourceMgr::ReleaseMesh(ObjectType::Types oType)
 	if (mReferences[oType] <= 0)
 	{
 		SafeDelete(mMeshes[oType]);
-		if (oType == ObjectType::Goblin) {
+		mMeshes.erase(oType);
+			if (oType == ObjectType::Goblin) {
 			for (auto i : GoblinDiffuseMapSRV)
 				mTexMgr.Delete(i);
 		}

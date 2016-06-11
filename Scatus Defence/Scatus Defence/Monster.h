@@ -11,5 +11,7 @@ public:
 	virtual void MoveToTarget(float dt); 
 	virtual void MovingCollision(const XMFLOAT3& crushedObjectPos , float dt);
 
+private:
+	float AngleToTarget(XMVECTOR vTarget);
 };
 

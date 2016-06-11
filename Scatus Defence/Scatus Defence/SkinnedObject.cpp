@@ -1,8 +1,8 @@
 #include "SkinnedObject.h"
 
-SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh, info), mMesh(mesh)
+SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh, info), mMesh(mesh),
+mTimePos(0.0f), mAngle(0.0f)
 {
-	mTimePos = 0.0f;
 	mFinalTransforms.resize(mMesh->SkinnedData.BoneCount());
 }
 
@@ -38,10 +38,11 @@ void SkinnedObject::Strafe(float d)
 
 void SkinnedObject::RotateY(float angle)
 {
-	mRotation.y += angle;
+	mAngle = angle;
+	mRotation.y += mAngle;
 	mPrevLook = mCurrLook;
 	// Rotate the basis vectors about the world y-axis.
-	XMMATRIX R = XMMatrixRotationY(angle);
+	XMMATRIX R = XMMatrixRotationY(mAngle);
 
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
@@ -98,7 +99,7 @@ void SkinnedObject::Animate(float dt)
 	if (mActionState == ActionState::Attack)
 		mTimePos += dt*mProperty.attackspeed;
 	else
-		mTimePos += dt*mProperty.movespeed/5.0f;
+		mTimePos += dt*mProperty.movespeed/4.0f;
 
 	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
 

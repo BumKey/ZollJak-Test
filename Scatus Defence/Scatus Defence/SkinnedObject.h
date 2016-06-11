@@ -40,6 +40,7 @@ protected:
 	SkinnedMesh* mMesh;
 
 	FLOAT mTimePos;
+	FLOAT mAngle;
 
 	std::string mCurrClipName;
 	std::unordered_map<Anims, std::string> mAnimNames;

@@ -2,7 +2,7 @@
 #include "GameFramework.h"
 
 GameFrameWork::GameFrameWork(HINSTANCE hInstance)
-	: D3DApp(hInstance), m_bReady(false)
+	: D3DApp(hInstance)
 {
 	mMainWndCaption = L"Scatus Defence Demo";
 
@@ -17,9 +17,6 @@ GameFrameWork::~GameFrameWork()
 	Effects::DestroyAll();
 	InputLayouts::DestroyAll();
 	RenderStates::DestroyAll();
-
-	mObjectMgr.ReleaseAll();	// 지금은 큰 의미는 없음.
-	mPlayer->Release(mResourceMgr);
 }
 
 bool GameFrameWork::Init()
@@ -35,96 +32,19 @@ bool GameFrameWork::Init()
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
-	mResourceMgr.Init(md3dDevice);
-	mObjectMgr.Init(&mResourceMgr);
-	mGameRogicMgr = new GameRogicManager(&mObjectMgr); //용준
-	mCollisionMgr.Init(&mObjectMgr);
 
+	mGameRogicMgr.Init(md3dDevice);
 	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
 		mDepthStencilView, mRenderTargetView,
 		mCam, mClientWidth, mClientHeight);
 
-	InstanceDesc info;
-
-	// 250이 거의 끝자리
-	info.Pos = XMFLOAT3(170.0f, 0.05f, -280.0f);
-	info.Rot.y = 0.0f;
-	info.Scale = 0.2f;
-
-	mPlayer = new Player(mResourceMgr.GetSkinnedMesh(ObjectType::Goblin), info);
-	mObjectMgr.SetPlayer(mPlayer);
-
-	info.Pos = XMFLOAT3(195.0f, 0.05f, -300.0f);
-	info.Rot.y = 0.0f;
-	info.Scale = 0.3f;
-
-	mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.Temple, info, Label::Basic));
-
-	for (UINT i = 0; i < 10; ++i)
-	{
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x +50.0f - rand() % 100,
-			-0.1f, mPlayer->GetPos().z + 50.0f -rand() % 100);
-		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-		info.Rot.y = MathHelper::RandF()*MathHelper::Pi*2;
-
-		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.TreeMesh, info, Label::AlphaBasic));
-	}
-
-	for (UINT i = 0; i < 20; ++i)
-	{
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
-			-0.1f, mPlayer->GetPos().z + 50.0f - rand() % 100);
-		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2.0f;
-
-		mObjectMgr.AddObstacle(new BasicObject(mResourceMgr.RockMesh, info, Label::Basic));
-	}
-
-	for (UINT i = 0; i < 10; ++i)
-	{
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
-			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
-		info.Scale = 0.1f + MathHelper::RandF() / 5.0f;
-		info.Rot.y = 0;
-		
-		Goblin::Type type;
-		if (i % 2) {
-			type = Goblin::Type::Blue;
-			info.Scale = 0.4f;
-		}
-		else if (i % 3)
-		{
-			type = Goblin::Type::Red;
-			info.Scale = 0.3f;
-		}
-		else if (i % 5)
-		{
-			type = Goblin::Type::Red;
-			info.Scale = 0.7f;
-		}
-		else {
-			type = Goblin::Type::Blue;
-			info.Scale = 0.6f;
-		}
-		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetSkinnedMesh(ObjectType::Goblin), info, type));
-	}
-
-	for (UINT i = 0; i < 2; ++i) {
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
-			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
-		info.Scale = 8.0f + MathHelper::RandF();
-		info.Rot.x = MathHelper::Pi;
-		info.Rot.y = 0.0f;
-
-		mObjectMgr.AddMonster(new Cyclop(mResourceMgr.GetSkinnedMesh(ObjectType::Cyclop), info));
-	}
+	mPlayer = mGameRogicMgr.GetPlayer();
 
 	XMFLOAT3 camPos = mPlayer->GetPos();
 	camPos.y += 10.0f;
 	camPos.z -= 20.0f;
 	mCam.LookAt(camPos, mPlayer->GetPos(), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
-	mObjectMgr.Update();
 	mSceneMgr.ComputeSceneBoundingBox(mPlayer->GetPos());
 	return true;
 }
@@ -140,28 +60,24 @@ void GameFrameWork::OnResize()
 
 void GameFrameWork::UpdateScene(float dt)
 {
-	mObjectMgr.Update(dt);
 	mSceneMgr.Update(dt);
-	mGameRogicMgr->Update(dt);
-	mCollisionMgr.Update(dt);
+	mGameRogicMgr.Update(dt);
 	mCam.Update(mPlayer, mSceneMgr);
 }
 
 void GameFrameWork::DrawScene()
 {
-	mSceneMgr.DrawScene(mObjectMgr.GetAllObjects(), mCam);
+	mSceneMgr.DrawScene(mGameRogicMgr.GetAllObjects(), mCam);
 	HR(mSwapChain->Present(0, 0));
-	m_bReady = true;
 }
 
 void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
-	mGameRogicMgr->OnMouseDown = true;
+	mGameRogicMgr.OnMouseDown = true;
 	if (btnState & MK_LBUTTON) {
 		mPlayer->SetAttackState();
-		mCollisionMgr.AttackCollision();
 	}
 	
 	SetCapture(mhMainWnd);
@@ -169,6 +85,7 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 {
+	mGameRogicMgr.OnMouseDown = false;
 	ReleaseCapture();
 }
 

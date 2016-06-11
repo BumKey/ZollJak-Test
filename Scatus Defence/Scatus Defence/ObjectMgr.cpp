@@ -14,6 +14,15 @@ ObjectMgr::~ObjectMgr()
 void ObjectMgr::Init(ResourceMgr* resourceMgr)
 {
 	mResourceMgr = resourceMgr;
+
+	InstanceDesc info;
+	// 250이 거의 끝자리
+	info.Pos = XMFLOAT3(170.0f, 0.05f, -280.0f);
+	info.Rot.y = 0.0f;
+	info.Scale = 0.2f;
+
+	mPlayer = new Player(mResourceMgr->GetSkinnedMesh(ObjectType::Goblin), info);
+	CreateMap();
 }
 
 bool ObjectMgr::AddObstacle(BasicObject * basicObject)
@@ -122,14 +131,15 @@ void ObjectMgr::Update(float dt)
 		{
 			monster->Release(mResourceMgr);
 			i = mMonsters.erase(i);
-			monster = *i;
 		}
 		else
-			++i;
+		{
+			mAllObjects.push_back(monster);
+			mOppenents.push_back(monster);
+			monster->Animate(dt);
 
-		mAllObjects.push_back(monster);
-		mOppenents.push_back(monster);
-		monster->Animate(dt);
+			++i;
+		}
 	}
 
 	for (auto i : mAllObjects)
@@ -151,6 +161,37 @@ void ObjectMgr::ReleaseAllMonsters()
 		i->Release(mResourceMgr);
 
 	mMonsters.clear();
+}
+
+void ObjectMgr::CreateMap()
+{
+	InstanceDesc info;
+
+	info.Pos = XMFLOAT3(195.0f, 0.05f, -300.0f);
+	info.Rot.y = 0.0f;
+	info.Scale = 0.3f;
+
+	AddObstacle(new BasicObject(mResourceMgr->Temple, info, Label::Basic));
+
+	for (UINT i = 0; i < 10; ++i)
+	{
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
+			-0.1f, mPlayer->GetPos().z + 50.0f - rand() % 100);
+		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
+		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2;
+
+		AddObstacle(new BasicObject(mResourceMgr->TreeMesh, info, Label::AlphaBasic));
+	}
+
+	for (UINT i = 0; i < 20; ++i)
+	{
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
+			-0.1f, mPlayer->GetPos().z + 50.0f - rand() % 100);
+		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
+		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2.0f;
+
+		AddObstacle(new BasicObject(mResourceMgr->RockMesh, info, Label::Basic));
+	}
 }
 
 

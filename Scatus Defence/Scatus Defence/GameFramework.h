@@ -24,16 +24,11 @@ public:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 private:
-	bool m_bReady;
+	GameRogicManager	mGameRogicMgr;
+	SceneMgr			mSceneMgr;
+	Camera				mCam;
+	Player*				mPlayer;
 
-	ResourceMgr mResourceMgr;
-	ObjectMgr	mObjectMgr;
-	SceneMgr	mSceneMgr;
-	CollisionMgr mCollisionMgr;
-	GameRogicManager *mGameRogicMgr;
-	Camera mCam;
-	Player* mPlayer;
-
-	POINT mLastMousePos;
+	POINT				mLastMousePos;
 
 };

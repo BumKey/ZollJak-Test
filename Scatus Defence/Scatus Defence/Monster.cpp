@@ -25,13 +25,9 @@ void Monster::MoveToTarget(float dt)
 		XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
 
 		// 방향으로 회전
-		XMFLOAT3 fTargetDir;
-		XMStoreFloat3(&fTargetDir, vTarget);
-		float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
-		float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
-		float angle = atan2(det, dot);
+		mAngle = AngleToTarget(vTarget)*dt*MathHelper::Pi;
 
-		RotateY(angle*dt*MathHelper::Pi);
+		RotateY(mAngle);
 
 		ChangeActionState(ActionState::Walk);
 	}
@@ -51,20 +47,30 @@ void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vDir, p));
 }
 
-void Monster::AttackToTarget(float dt)
+float Monster::AngleToTarget(XMVECTOR vTarget)
 {
-	ChangeActionState(ActionState::Attack);
-
 	// 방향으로 회전
-	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
-
 	XMFLOAT3 fTargetDir;
 	XMStoreFloat3(&fTargetDir, vTarget);
 	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
 	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
 	float angle = atan2(det, dot);
 
-	RotateY(angle*dt*MathHelper::Pi);
+	if (mActionState != ActionState::Die || mActionState != ActionState::Damage)
+		return angle;
+	else
+		return mAngle;
+}
+
+void Monster::AttackToTarget(float dt)
+{
+	ChangeActionState(ActionState::Attack);
+
+	// 방향으로 회전
+	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
+	mAngle = AngleToTarget(vTarget)*dt*MathHelper::Pi;
+
+	RotateY(mAngle);
 
 	if((mCurrClipName == mAnimNames[Anims::attack1] ||
 		mCurrClipName == mAnimNames[Anims::attack2]) && mTimePos == 0.0f)

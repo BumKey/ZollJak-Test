@@ -14,6 +14,5 @@ public:
 
 private:
 	virtual void Move(float dt);
-
 };
 

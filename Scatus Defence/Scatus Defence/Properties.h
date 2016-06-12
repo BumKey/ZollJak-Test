@@ -22,6 +22,15 @@ namespace ActionState {
 	};
 }
 
+namespace AI_State {
+	enum States
+	{
+		None,
+		MovingToTarget,
+		AttackToTarget
+	};
+}
+
 namespace CollisionState {
 	enum States
 	{

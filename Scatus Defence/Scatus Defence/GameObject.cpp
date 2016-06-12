@@ -1,7 +1,7 @@
 #include "GameObject.h"
 UINT GameObject::GeneratedCount = 0;
 
-GameObject::GameObject(GameMesh* mesh, const InstanceDesc& info) : mMesh(mesh),
+GameObject::GameObject(GameMesh* mesh, const InstanceDesc& info) : mMesh(mesh), m_bForOneHit(false),
 mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f),
 mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
 {
@@ -44,7 +44,7 @@ void GameObject::Die()
 
 void GameObject::Attack(GameObject * target)
 {
-	if (target->GetActionState() != ActionState::Die)
+	if (target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
 	{
 		int mTarget_hp = target->GetProperty().hp_now;
 		int armor = target->GetProperty().guardpoint;
@@ -60,6 +60,8 @@ void GameObject::Attack(GameObject * target)
 			target->Die();
 			printf("Å¸°Ù »ç¸Á");
 		}
+
+		m_bForOneHit = false;
 	}
 }
 

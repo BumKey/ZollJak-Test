@@ -58,10 +58,11 @@ public:
 	XNA::OrientedBox		GetOOBB() const { return mOOBB; }
 
 	void					SetHP(int hp) { mProperty.hp_now = hp; }
-	void					SetAttackState() { mActionState = ActionState::Attack; }
+	void					SetAttackState() { mActionState = ActionState::Attack; m_bForOneHit = true; }
 
 	bool					IsAttack() { return mActionState == ActionState::Attack ? true : false; }
 	bool					IsDead() { return mActionState == ActionState::Die ? true : false; }
+	bool					OneHit() { return m_bForOneHit; }
 	bool					HasTarget() { return mHasTarget; }
 
 	void					SetTarget(GameObject* target);
@@ -76,6 +77,8 @@ public:
 private:
 	UINT mID;
 	static UINT GeneratedCount;
+
+	bool m_bForOneHit;
 	bool mHasTarget;
 
 protected:

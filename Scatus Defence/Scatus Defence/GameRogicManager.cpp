@@ -33,9 +33,9 @@ void GameRogicManager::Gamestart()
 	mRogicTimer.SetWaveTimer(); //웨이브스위치 작동
 
 	// 새로운 적들 생성
-	add_Monster(1);
+	Add_Monster(1);
 
-	printloc();
+	Printloc();
 
 	//m_pMap->print();
 	//게임 각종 오브젝트 추가
@@ -103,10 +103,6 @@ void GameRogicManager::Update(float dt)
 	mObjectMgr.Update(dt);
 	mCollisionMgr.Update(dt);
 
-	// 현재 플레이어 공격만 충돌체크 감지
-	// 몬스터 공격감지는 로직메니져에서 함.
-	if (OnMouseDown)
-		mCollisionMgr.AttackCollision();
 }
 
 
@@ -190,7 +186,7 @@ void GameRogicManager::Waiting_Wave()
 	//bool timer = mRogicTimer.WaveTimer();
 }
 
-void GameRogicManager::printloc()
+void GameRogicManager::Printloc()
 {
 	printf("\n");
 	mPlayer->PrintLocation();
@@ -200,7 +196,7 @@ void GameRogicManager::printloc()
 	}
 }
 
-void GameRogicManager::add_Monster(UINT waveLevel)
+void GameRogicManager::Add_Monster(UINT waveLevel)
 {
 	assert(waveLevel > 0);
 
@@ -260,12 +256,11 @@ void GameRogicManager::AIManager(float dt)
 		// 현재 타겟은 오로지 플레이어로 설정.
 		// 추후 타겟을 신전이나 다른 플레이어로 바꾸는 기능 추가할 것.
 		iterM->SetTarget(mPlayer);
-		XMFLOAT3 currPos = iterM->GetPos();
-		XMFLOAT3 targetPos = iterM->GetTarget()->GetPos();
-
-		if (MathHelper::DistanceVector(currPos, targetPos) <= 3.0f)
-			iterM->AttackToTarget(dt);
+		
+		// 거리가 가까우면 공격
+		if (mCollisionMgr.DetectWithPlayer(iterM)) 
+			iterM->SetAI_State(AI_State::AttackToTarget);
 		else 
-			iterM->MoveToTarget(dt);
+			iterM->SetAI_State(AI_State::MovingToTarget);
 	}
 }

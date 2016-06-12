@@ -22,8 +22,9 @@ void CollisionMgr::Update(float dt)
 
 	MovingCollision(dt);
 
-	// 이곳에 AttackCollision을 넣으면 공격판정이 매프레임마다 실행되버린다.
-	// AttackCollision();
+	// 현재 플레이어 공격만 충돌체크 감지
+	// 몬스터 공격감지는 로직메니져에서 함. -> 개선필요?
+	PlayerAttackCollision();
 }
 
 void CollisionMgr::MovingCollision(float dt)
@@ -40,9 +41,9 @@ void CollisionMgr::MovingCollision(float dt)
 	}
 }
 
-void CollisionMgr::AttackCollision()
+void CollisionMgr::PlayerAttackCollision()
 {
-	if (mPlayer->IsAttack())
+	if (mPlayer->IsAttack() && mPlayer->OneHit())
 	{
 		std::vector<UINT> detectedMonsters;
 		HighDetectWithMonsters(mPlayer, detectedMonsters);
@@ -50,8 +51,19 @@ void CollisionMgr::AttackCollision()
 		{
 			UINT index = detectedMonsters[i];
 			mPlayer->Attack(mMonsters[index]);
+			mMonsters[index]->ChangeActionState(ActionState::Damage);
 		}
 	}
+}
+
+bool CollisionMgr::DetectWithPlayer(GameObject * sourceObj)
+{
+	XMFLOAT3 sourcePos = sourceObj->GetPos();
+	XMFLOAT3 playerPos = mPlayer->GetPos();
+	if (MathHelper::DistanceVector(sourcePos, playerPos) <= sourceObj->GetProperty().attackrange)
+		return true;
+	else
+		return false;
 }
 
 bool CollisionMgr::LowDetectWithMonsters(GameObject* sourceObj)

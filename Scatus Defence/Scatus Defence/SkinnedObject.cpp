@@ -99,7 +99,7 @@ void SkinnedObject::Animate(float dt)
 	if (mActionState == ActionState::Attack)
 		mTimePos += dt*mProperty.attackspeed;
 	else
-		mTimePos += dt*mProperty.movespeed/4.0f;
+		mTimePos += dt*mProperty.movespeed/5.0f;
 
 	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
 
@@ -110,7 +110,8 @@ void SkinnedObject::Animate(float dt)
 			mTimePos = 0.0f;
 
 		if (mCurrClipName == mAnimNames[Anims::attack1] ||
-			mCurrClipName == mAnimNames[Anims::attack2])		// attack01은 루프 안쓰는 애니메이션
+			mCurrClipName == mAnimNames[Anims::attack2] ||
+			mCurrClipName == mAnimNames[Anims::hit]) // attack01은 루프 안쓰는 애니메이션
 			ChangeActionState(ActionState::Idle);
 	}
 }
@@ -248,6 +249,9 @@ void SkinnedObject::SetClip()
 
 	if (mActionState == ActionState::Die)
 		mCurrClipName = mAnimNames[Anims::dead];
+
+	if (mActionState == ActionState::Damage)
+		mCurrClipName = mAnimNames[Anims::hit];
 }
 
 bool SkinnedObject::CurrAnimEnd() 

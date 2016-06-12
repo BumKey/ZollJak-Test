@@ -2,6 +2,8 @@
 
 Monster::Monster(SkinnedMesh* mesh, const InstanceDesc& info) : SkinnedObject(mesh, info)
 {
+	mAI_States = AI_State::None;
+
 }
 
 
@@ -33,6 +35,16 @@ void Monster::MoveToTarget(float dt)
 	}
 }
 
+void Monster::Update(float dt)
+{
+	SkinnedObject::Update(dt);
+
+	if (mAI_States == AI_State::AttackToTarget)
+		AttackToTarget(dt);
+	else if (mAI_States == AI_State::MovingToTarget)
+		MoveToTarget(dt);
+}
+
 void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
 {
 	mCollisionState = CollisionState::MovingCollision;
@@ -45,6 +57,17 @@ void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
 
 	// 부딪힌 오브젝트부터 멀어지는 방향
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vDir, p));
+}
+
+void Monster::SetAI_State(AI_State::States state)
+{
+	if (mAI_States != AI_State::AttackToTarget && state == AI_State::AttackToTarget)
+	{
+		mAI_States = state;
+		SetAttackState();
+	}
+	else
+		mAI_States = state;
 }
 
 float Monster::AngleToTarget(XMVECTOR vTarget)
@@ -64,15 +87,16 @@ float Monster::AngleToTarget(XMVECTOR vTarget)
 
 void Monster::AttackToTarget(float dt)
 {
-	ChangeActionState(ActionState::Attack);
-
 	// 방향으로 회전
 	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
 	mAngle = AngleToTarget(vTarget)*dt*MathHelper::Pi;
 
 	RotateY(mAngle);
 
-	if((mCurrClipName == mAnimNames[Anims::attack1] ||
-		mCurrClipName == mAnimNames[Anims::attack2]) && mTimePos == 0.0f)
+	if (OneHit())
+	{
 		Attack(mTarget);
+		mTarget->ChangeActionState(ActionState::Damage);
+	}
+	
 }

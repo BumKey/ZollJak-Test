@@ -36,8 +36,8 @@ private:
 	void Waiting_Wave();
 	void MoveAI();
 	void AIManager(float dt);
-	void add_Monster(UINT waveLevel);
-	void printloc();
+	void Add_Monster(UINT waveLevel);
+	void Printloc();
 
 private:
 	ResourceMgr mResourceMgr;

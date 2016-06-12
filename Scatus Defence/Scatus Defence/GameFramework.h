@@ -1,6 +1,7 @@
 #include "d3dApp.h"
 #include "TextureMgr.h"
 #include "SceneMgr.h"
+#include "PacketMgr.h"
 #include "ObjectMgr.h"
 #include "ResourceMgr.h"
 #include "GameRogicManager.h"
@@ -26,6 +27,7 @@ public:
 private:
 	GameRogicManager	mGameRogicMgr;
 	SceneMgr			mSceneMgr;
+	PacketMgr			mPacketMgr;
 	Camera				mCam;
 	Player*				mPlayer;
 

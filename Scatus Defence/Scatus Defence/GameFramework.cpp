@@ -37,6 +37,9 @@ bool GameFrameWork::Init()
 	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
 		mDepthStencilView, mRenderTargetView,
 		mCam, mClientWidth, mClientHeight);
+	
+	// Giljune's Code
+	//mPacketMgr.Init();
 
 	mPlayer = mGameRogicMgr.GetPlayer();
 
@@ -46,6 +49,7 @@ bool GameFrameWork::Init()
 	mCam.LookAt(camPos, mPlayer->GetPos(), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	mSceneMgr.ComputeSceneBoundingBox(mPlayer->GetPos());
+	
 	return true;
 }
 
@@ -60,9 +64,16 @@ void GameFrameWork::OnResize()
 
 void GameFrameWork::UpdateScene(float dt)
 {
+	// 1. 서버에서 갱신된 데이터(몬스터들)를 받는다.
+	// 2. 클라이언트가 그 정보로 장면을 그린다.
+	// 3. 클라이언트에서 키보드, 마우스 등 이벤트가 발생한다.
+	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
+	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
+
 	mSceneMgr.Update(dt);
 	mGameRogicMgr.Update(dt);
 	mCam.Update(mPlayer, mSceneMgr);
+
 }
 
 void GameFrameWork::DrawScene()

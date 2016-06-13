@@ -35,18 +35,18 @@ void ResourceMgr::Init(ID3D11Device * dc)
 
 }
 
-SkinnedMesh * ResourceMgr::GetSkinnedMesh(Object_type oType)
+SkinnedMesh * ResourceMgr::GetSkinnedMesh(ObjectType::Types oType)
 {
 	if (mReferences[oType] <= 0) {
 		++mReferences[oType];
 		switch (oType)
 		{
-		case Object_type::goblin:
+		case ObjectType::Goblin:
 			mMeshes[oType] = new SkinnedMesh(mDevice, mTexMgr, "Models\\goblin.y2k", L"Textures\\goblin\\");
 			GoblinDiffuseMapSRV[0] = mTexMgr.CreateTexture(L"Textures\\goblin\\goblin_diff_R.jpg");
 			GoblinDiffuseMapSRV[1] = mTexMgr.CreateTexture(L"Textures\\goblin\\goblin_diff_B.jpg");
 			break;
-		case Object_type::cyclop:
+		case ObjectType::Cyclop:
 			mMeshes[oType] = new SkinnedMesh(mDevice, mTexMgr, "Models\\cyclop.y2k", L"Textures\\cyclop\\");
 			break;
 
@@ -58,13 +58,14 @@ SkinnedMesh * ResourceMgr::GetSkinnedMesh(Object_type oType)
 	return mMeshes[oType];
 }
 
-void ResourceMgr::ReleaseMesh(Object_type oType)
+void ResourceMgr::ReleaseMesh(ObjectType::Types oType)
 {
 	--mReferences[oType]; 
 	if (mReferences[oType] <= 0)
 	{
 		SafeDelete(mMeshes[oType]);
-		if (oType == Object_type::goblin) {
+		mMeshes.erase(oType);
+			if (oType == ObjectType::Goblin) {
 			for (auto i : GoblinDiffuseMapSRV)
 				mTexMgr.Delete(i);
 		}

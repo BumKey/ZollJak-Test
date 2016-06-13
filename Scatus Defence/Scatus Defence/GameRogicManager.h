@@ -6,22 +6,25 @@
 #include "GameTimer.h"
 #include <algorithm>
 #include "ObjectMgr.h"
-#include "p_Warrior.h"
+#include "CollisionMgr.h"
 #include "ResourceMgr.h"
 #include "Goblin.h"
-using namespace std;
-
-
+#include "Cyclop.h"
 
 class GameRogicManager
 {
 public:
-	GameRogicManager(ObjectMgr * ObjMgr_, ResourceMgr * m_resourceMgr);
+	GameRogicManager();
 	~GameRogicManager();
 
 public:
+	void Init(ID3D11Device* device);
+
 	void Update(float dt);
 	bool OnMouseDown;
+
+	Player* GetPlayer() { return mPlayer; }
+	const std::vector<GameObject*>&		GetAllObjects() { return mObjectMgr.GetAllObjects(); }
 
 private:
 	void Gamestart();
@@ -31,26 +34,31 @@ private:
 	void EndWave();
 	void Waving(float dt);
 	void Waiting_Wave();
-	void printloc();
 	void MoveAI();
 	void AIManager(float dt);
-	void add_Monster();
+	void Add_Monster(UINT waveLevel);
+	void Printloc();
 
 private:
-	RogicTimer mRogicTimer;
-	ObjectMgr * mObjMgr; // 오브젝트매니저에 접근하기 위한 포인터
-	int wave_level;
-	int Gamestatement;
-	int m_enemysnum;
-	string gamename = "스카투스 디펜스";
-	int player_num;
-	Map * m_pMap;
-	ResourceMgr * mResourceMgr;
-	POINT mLastMousePos;
+	ResourceMgr mResourceMgr;
+	ObjectMgr	mObjectMgr;
+	CollisionMgr mCollisionMgr;
+
+	UINT mWaveLevel;
+	UINT m_enemysnum;
+	UINT player_num;
 	Player* mPlayer;
+	std::string gamename;
+	POINT mLastMousePos;
+	Gamestate_type mGameState;
+
+	Map* m_pMap;
+	GameTimer mTimer;
+	RogicTimer mRogicTimer;
+
 	std::list<GameObject*> m_Our_list;
 	std::list<GameObject*> m_Enemies_list;
-	GameTimer mTimer;
+	std::unordered_map<UINT, std::unordered_map<ObjectType::Types, UINT>> mPerWaveMonsterNum;
 	//string nextwave_time;
 	//string remain_time;
 	//string total_playtime;

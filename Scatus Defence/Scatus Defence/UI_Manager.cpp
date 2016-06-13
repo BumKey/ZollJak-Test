@@ -511,6 +511,7 @@ bool UI_Manager::MouseOn2D(wchar_t* _wszText_,int mouse_x, int mouse_y)
 							break;
 						
 					}
+					
 			
 				}
 				else
@@ -587,7 +588,7 @@ void UI_Manager::Set_Scene_UI(type_Scene Scenetype)
 				i_image->Active = true;
 			
 			}
-
+			
 		}
 		for (auto i_Text : m_Text_list)
 		{

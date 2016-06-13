@@ -1,8 +1,9 @@
 #include "Monster.h"
 
-
 Monster::Monster(SkinnedMesh* mesh, const InstanceDesc& info) : SkinnedObject(mesh, info)
 {
+	mAI_States = AI_State::None;
+
 }
 
 
@@ -10,49 +11,92 @@ Monster::~Monster()
 {
 }
 
-void Monster::SetClip()
+// 이 메서드는 현재 타겟이 설정되어 있다고 가정한다.
+void Monster::MoveToTarget(float dt)
 {
-	if (mProperty.state == state_type::type_idle)
-		mCurrClipName = mAnimNames[Anims::idle];
+	assert(mTarget);
+	if (mCollisionState == CollisionState::None && mActionState != ActionState::Attack 
+		&& mActionState != ActionState::Damage && mActionState != ActionState::Die)
+	{
+		XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
 
-	if (mProperty.state == state_type::type_attack &&
-		mCurrClipName != mAnimNames[Anims::attack1] &&
-		mCurrClipName != mAnimNames[Anims::attack2]) {
-		if (rand() % 2)
-			mCurrClipName = mAnimNames[Anims::attack1];
-		else
-			mCurrClipName = mAnimNames[Anims::attack2];
+		XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
+		XMVECTOR p = XMLoadFloat3(&mPosition);
+
+		// 방향으로 이동
+		XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
+
+		// 방향으로 회전
+		mAngle = AngleToTarget(vTarget)*dt*MathHelper::Pi;
+
+		RotateY(mAngle);
+
+		ChangeActionState(ActionState::Walk);
 	}
-
-	if (mProperty.state == state_type::type_run)
-		mCurrClipName = mAnimNames[Anims::run];
-
-	if (mProperty.state == state_type::type_walk ||
-		mProperty.state == state_type::MovingCollision)
-		mCurrClipName = mAnimNames[Anims::walk];
-
-	if (mProperty.state == state_type::type_die)
-		mCurrClipName = mAnimNames[Anims::dead];
-
 }
 
-void Monster::Animate(float dt)
+void Monster::Update(float dt)
 {
-	SetClip();
+	SkinnedObject::Update(dt);
 
-	if (mProperty.state == state_type::type_attack)
-		mTimePos += dt*mProperty.attackspeed;
-	else
-		mTimePos += dt*mProperty.movespeed*10.0f;
+	if (mAI_States == AI_State::AttackToTarget)
+		AttackToTarget(dt);
+	else if (mAI_States == AI_State::MovingToTarget)
+		MoveToTarget(dt);
+}
 
-	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
+void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
+{
+	mCollisionState = CollisionState::MovingCollision;
+	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
+	XMVECTOR vCrushedObject = MathHelper::TargetVector2D(crushedObjectPos, mPosition);
+	XMVECTOR vDir = XMVector3Normalize(vTarget - vCrushedObject);
 
-	// Loop animation
-	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
+	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed/2.0f);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+
+	// 부딪힌 오브젝트부터 멀어지는 방향
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vDir, p));
+}
+
+void Monster::SetAI_State(AI_State::States state)
+{
+	if (mAI_States != AI_State::AttackToTarget && state == AI_State::AttackToTarget)
 	{
-		mTimePos = 0.0f;
-		if (mCurrClipName == mAnimNames[Anims::attack1] ||
-			mCurrClipName == mAnimNames[Anims::attack2])		// attack01은 루프 안쓰는 애니메이션
-			mProperty.state = state_type::type_idle;
+		mAI_States = state;
+		SetAttackState();
 	}
+	else
+		mAI_States = state;
+}
+
+float Monster::AngleToTarget(XMVECTOR vTarget)
+{
+	// 방향으로 회전
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
+	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
+	float angle = atan2(det, dot);
+
+	if (mActionState != ActionState::Die || mActionState != ActionState::Damage)
+		return angle;
+	else
+		return mAngle;
+}
+
+void Monster::AttackToTarget(float dt)
+{
+	// 방향으로 회전
+	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
+	mAngle = AngleToTarget(vTarget)*dt*MathHelper::Pi;
+
+	RotateY(mAngle);
+
+	if (OneHit())
+	{
+		Attack(mTarget);
+		mTarget->ChangeActionState(ActionState::Damage);
+	}
+	
 }

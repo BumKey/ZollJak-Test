@@ -10,9 +10,21 @@ public:
 	~CollisionMgr();
 
 public:
-	void Collision(ObjectMgr& objectMgr, float dt);
+	void Init(ObjectMgr* objectMgr);
+	void Update(float dt);
+
+	bool DetectWithPlayer(GameObject* sourceObj);
 
 private:
-	void MovingCollision(ObjectMgr & objectMgr, float dt);
+	void MovingCollision(float dt);
+	void PlayerAttackCollision();
+
+	bool LowDetectWithMonsters(GameObject* sourceObj);
+	void HighDetectWithMonsters(GameObject* sourceObj, std::vector<UINT>& outIndices);
+
+private:
+	ObjectMgr* mObjectMgr;
+	std::vector<Monster*> mMonsters;
+	Player* mPlayer;
 };
 

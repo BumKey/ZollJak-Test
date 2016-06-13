@@ -1,17 +1,8 @@
 #include "SkinnedObject.h"
 
-SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh), mMesh(mesh)
+SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh, info), mMesh(mesh),
+mTimePos(0.0f), mAngle(0.0f)
 {
-	
-	mScaling = info.Scale;
-	mRotation = info.Rot;
-	mPosition = info.Pos;
-
-	XMMATRIX R = XMMatrixRotationY(info.Rot.y);
-	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
-	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
-	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
-
 	mFinalTransforms.resize(mMesh->SkinnedData.BoneCount());
 }
 
@@ -29,7 +20,7 @@ void SkinnedObject::Walk(float d)
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
 
-	mProperty.state = state_type::type_run;
+	ChangeActionState(ActionState::Run);
 }
 
 void SkinnedObject::Strafe(float d)
@@ -42,110 +33,22 @@ void SkinnedObject::Strafe(float d)
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
 
-	mProperty.state = state_type::type_run;
-}
-
-void SkinnedObject::MoveTo(Vector2D targetPos, float dt)
-{
-	XMFLOAT2 target(targetPos.x, targetPos.y);
-	XMFLOAT2 origin(mPosition.x, mPosition.z);
-	XMVECTOR vTarget = MathHelper::TargetVector(target, origin);
-
-	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
-	XMVECTOR p = XMLoadFloat3(&mPosition);
-
-	// 방향으로 이동
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
-
-	// 방향으로 회전
-	XMFLOAT3 fTargetDir;
-	XMStoreFloat3(&fTargetDir, vTarget);
-	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
-	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
-	float angle = atan2(det, dot);
-
-	RotateY(angle*dt*MathHelper::Pi);
-
-	mProperty.state = state_type::type_walk;
-}
-
-void SkinnedObject::MoveTo(Vector2D targetPos, XMFLOAT3 dir, float dt)
-{
-	XMFLOAT2 target(targetPos.x, targetPos.y);
-	XMFLOAT2 origin(mPosition.x, mPosition.z);
-	XMVECTOR vTarget = MathHelper::TargetVector(target, origin);
-	XMVECTOR vDir = XMVector3Normalize(XMLoadFloat3(&dir));
-
-	XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
-	XMVECTOR p = XMLoadFloat3(&mPosition);
-
-	// 방향으로 이동
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vDir, p));
-
-	// 방향으로 회전
-	XMFLOAT3 fTargetDir;
-	XMStoreFloat3(&fTargetDir, vTarget);
-	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
-	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
-	float angle = atan2(det, dot);
-
-	RotateY(angle*dt*MathHelper::Pi);
-
-	mProperty.state = state_type::type_walk;
+	ChangeActionState(ActionState::Run);
 }
 
 void SkinnedObject::RotateY(float angle)
 {
-	mRotation.y += angle;
+	mAngle = angle;
+	mRotation.y += mAngle;
 	mPrevLook = mCurrLook;
 	// Rotate the basis vectors about the world y-axis.
-	XMMATRIX R = XMMatrixRotationY(angle);
+	XMMATRIX R = XMMatrixRotationY(mAngle);
 
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 }
 
-void SkinnedObject::Attack(float dt)
-{
-	mProperty.state =  state_type::type_attack;
-
-	// 방향으로 회전
-	XMFLOAT2 target(mTarget->GetPos().x, mTarget->GetPos().z);
-	XMFLOAT2 origin(mPosition.x, mPosition.z);
-	XMVECTOR vTarget = MathHelper::TargetVector(target, origin);
-
-	XMFLOAT3 fTargetDir;
-	XMStoreFloat3(&fTargetDir, vTarget);
-	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
-	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
-	float angle = atan2(det, dot);
-
-	RotateY(angle*dt*MathHelper::Pi);
-
-	if (mTarget->GetState() != type_die)
-	{
-		int mTarget_hp = mTarget->GetProperty().hp_now;
-		int armor = mTarget->GetProperty().guardpoint;
-		float damage = mProperty.attakpoint;
-
-		//mTarget->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
-		//mTarget->SetHP(mTarget_hp - damage);
-
-		printf("공격을 성공했습니다. 상대의 체력 : %d \n", mTarget->GetProperty().hp_now);
-
-		if (mTarget->GetProperty().hp_now <= -500)
-		{
-			printf("사망자 이름 : %s\n", mTarget->GetProperty().name);
-		}
-		if (mTarget->GetProperty().hp_now <= 0)
-		{
-			mTarget->SetState(type_die);
-			printf("타겟 사망");
-			SetState(type_idle);
-		}
-	}
-}
 
 void SkinnedObject::Update(float dt)
 {
@@ -164,7 +67,7 @@ void SkinnedObject::Update(float dt)
 	XMStoreFloat3(&mUp, vU);
 	XMStoreFloat3(&mCurrLook, vCL);
 	XMStoreFloat3(&mPrevLook, vOL);
-	
+
 	if (mRotation.y >= MathHelper::Pi*2.0f)
 		mRotation.y = 0.0f;
 
@@ -179,12 +82,38 @@ void SkinnedObject::Update(float dt)
 	XMFLOAT3 extent = mMesh->GetAABB().Extents * mScaling;
 
 	XMVECTOR vCenter = XMLoadFloat3(&center);
-	
+
 	vCenter = XMVector3TransformCoord(vCenter, S*R*T);
 	XMStoreFloat3(&center, vCenter);
 	mOOBB.Center = center;
 	mOOBB.Extents = extent;
 	XMStoreFloat4(&mOOBB.Orientation, Q);
+}
+
+void SkinnedObject::Animate(float dt)
+{
+	assert(mAnimNames.size() > 0);
+
+	SetClip();
+
+	if (mActionState == ActionState::Attack)
+		mTimePos += dt*mProperty.attackspeed;
+	else
+		mTimePos += dt*mProperty.movespeed/5.0f;
+
+	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
+
+	// Loop animation
+	if (CurrAnimEnd())
+	{
+		if(mActionState != ActionState::Die)
+			mTimePos = 0.0f;
+
+		if (mCurrClipName == mAnimNames[Anims::attack1] ||
+			mCurrClipName == mAnimNames[Anims::attack2] ||
+			mCurrClipName == mAnimNames[Anims::hit]) // attack01은 루프 안쓰는 애니메이션
+			ChangeActionState(ActionState::Idle);
+	}
 }
 
 void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
@@ -293,18 +222,51 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 	}
 }
 
-void SkinnedObject::Release(ResourceMgr & rMgr)
+void SkinnedObject::Release(ResourceMgr* rMgr)
 {
-	rMgr.ReleaseMesh(mObjectType);
+	rMgr->ReleaseMesh(mObjectType);
 }
 
-bool SkinnedObject::AnimEnd(std::string clipName)
+void SkinnedObject::SetClip()
 {
-	if (abs(mTimePos - mMesh->SkinnedData.GetClipEndTime(clipName)) <= 0.1f)
+	if (mActionState == ActionState::Idle)
+		mCurrClipName = mAnimNames[Anims::idle];
+
+	if (mActionState == ActionState::Attack &&
+		mCurrClipName != mAnimNames[Anims::attack1] &&
+		mCurrClipName != mAnimNames[Anims::attack2]) {
+		if (rand() % 2)
+			mCurrClipName = mAnimNames[Anims::attack1];
+		else
+			mCurrClipName = mAnimNames[Anims::attack2];
+	}
+
+	if (mActionState == ActionState::Run)
+		mCurrClipName = mAnimNames[Anims::run];
+
+	if (mActionState == ActionState::Walk)
+		mCurrClipName = mAnimNames[Anims::walk];
+
+	if (mActionState == ActionState::Die)
+		mCurrClipName = mAnimNames[Anims::dead];
+
+	if (mActionState == ActionState::Damage)
+		mCurrClipName = mAnimNames[Anims::hit];
+}
+
+bool SkinnedObject::CurrAnimEnd() 
+{
+	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
 		return true;
 
 	return false;
 }
+
+std::string SkinnedObject::GetAnimName(Anims & eAnim)
+{
+	return mAnimNames[eAnim]; 
+}
+
 
 void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, const FLOAT& tHeight)
 {

@@ -214,16 +214,7 @@
     <ClCompile Include="Utilities.cpp">
       <Filter>Base</Filter>
     </ClCompile>
-    <ClCompile Include="UI_Manager.cpp">
-      <Filter>Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_Scene.cpp">
-      <Filter>Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="winwav.cpp">
-      <Filter>Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound_Manager.cpp">
+    <ClCompile Include="PacketMgr.cpp">
       <Filter>main</Filter>
     </ClCompile>
   </ItemGroup>
@@ -351,18 +342,8 @@
     <ClInclude Include="Utilities.h">
       <Filter>Base</Filter>
     </ClInclude>
-    <ClInclude Include="UI_Manager.h">
-      <Filter>Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_Scene.h">
-      <Filter>Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="winwav.h">
-      <Filter>Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Sound_Manager.h">
-      <Filter>main</Filter>
-    </ClInclude>
+    <ClInclude Include="PacketMgr.h" />
+    <ClInclude Include="protocol.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FX\Basic.fx">

@@ -14,8 +14,6 @@ enum Gamestate_type
 	game_exit,
 	game_option,
 	game_start
-	
-
 };
 extern int GameState;
 class RogicTimer

@@ -28,15 +28,15 @@ public:
 
 	static ID3D11ShaderResourceView* GoblinDiffuseMapSRV[2];
 
-	SkinnedMesh* GetSkinnedMesh(Object_type oType);
-	void ReleaseMesh(Object_type oType);
+	SkinnedMesh* GetSkinnedMesh(ObjectType::Types oType);
+	void ReleaseMesh(ObjectType::Types oType);
 
 private:
 	ID3D11Device* mDevice;
 	TextureMgr mTexMgr;
 
 	// 참조 횟수가 의미있는 메쉬들
-	std::unordered_map<Object_type, SkinnedMesh*> mMeshes;
-	std::unordered_map<Object_type, UINT> mReferences;
+	std::unordered_map<ObjectType::Types, SkinnedMesh*> mMeshes;
+	std::unordered_map<ObjectType::Types, UINT> mReferences;
 };
 

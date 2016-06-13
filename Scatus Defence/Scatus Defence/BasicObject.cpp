@@ -1,21 +1,9 @@
 #include "BasicObject.h"
 
-BasicObject::BasicObject(BasicMesh * mesh, const InstanceDesc& info, Label label) : GameObject(mesh), mLabel(label)
+BasicObject::BasicObject(BasicMesh * mesh, const InstanceDesc& info, Label label) : GameObject(mesh, info), mLabel(label)
 {
-	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
-	XMMATRIX R = XMMatrixRotationRollPitchYaw(info.Rot.x, info.Rot.y, info.Rot.z);
-	XMMATRIX T = XMMatrixTranslation(info.Pos.x, info.Pos.y, info.Pos.z);
-
-	XMStoreFloat4x4(&mWorld, S*R*T);
-
-	mScaling = info.Scale;
-	mRotation = XMFLOAT3(0.0f, info.Rot.y, 0.0f);
-	mPosition = info.Pos;
-
-	R = XMMatrixRotationY(info.Rot.y);
-	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
-	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
-	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
+	// 추후 여러 BasicObject 생기면 변경.
+	mObjectType = ObjectType::Obstacle;
 }
 
 // 후에 스마트포인터 사용해서 메모리 효율적 관리하도록
@@ -31,7 +19,7 @@ void BasicObject::Strafe(float d)
 {
 }
 
-void BasicObject::MoveTo(Vector2D direction, float dt)
+void BasicObject::MoveToTarget(float dt)
 {
 }
 
@@ -264,7 +252,7 @@ void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera
 	dc->RSSetState(0);
 }
 
-void BasicObject::Release(ResourceMgr& rMgr)
+void BasicObject::Release(ResourceMgr* rMgr)
 {
 	mMesh = nullptr;
 }

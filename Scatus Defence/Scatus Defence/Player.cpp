@@ -2,10 +2,26 @@
 
 Player::Player(SkinnedMesh* Mesh, const InstanceDesc& info) : SkinnedObject(Mesh, info)
 {
-	mTimePos = 0.0f;
-	mProperty.movespeed = 5.5f;
-	mCurrClipName = "stand";
+	mProperty.name = "Player";
+
+	mProperty.movespeed = 7.0f;
 	mProperty.hp_now = 100;
+	mProperty.attackspeed = 2.0f;
+	mProperty.attakpoint = 10.0f;
+
+	mObjectType = ObjectType::Player;
+
+	// 임시로 고블린 애니메이션
+	mAnimNames[Anims::attack1] = "attack01";
+	mAnimNames[Anims::attack2] = "attack02";
+	mAnimNames[Anims::hit] = "damage";
+	mAnimNames[Anims::dead] = "dead";
+	mAnimNames[Anims::drop_down] = "drop_down";
+	mAnimNames[Anims::run] = "run";
+	mAnimNames[Anims::sit_up] = "sit_up";
+	mAnimNames[Anims::idle] = "stand";
+	mAnimNames[Anims::walk] = "walk";
+	mAnimNames[Anims::look_around] = "stand2";
 }
 
 
@@ -13,29 +29,54 @@ Player::~Player()
 {
 }
 
-bool Player::SetClip(std::string clipName)
+void Player::Update(float dt)
 {
-	if (clipName == "attack01")
-		mTimePos = 0.0f;
+	Move(dt);
 
-	if (mCurrClipName == "attack01" && mTimePos < mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
-		return false;
-	else
-		mCurrClipName = clipName;
+	if (mActionState == ActionState::Attack && CurrAnimEnd())
+		mActionState = ActionState::Idle;
+
+	SkinnedObject::Update(dt);
 }
 
-void Player::Animate(float dt)
+void Player::Move(float dt)
 {
-	mTimePos += dt;
-
-	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
-
-	// Loop animation
-	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
+	if (mActionState != ActionState::Attack)
 	{
-		mTimePos = 0.0f;
-		if (mCurrClipName == "attack01")		// attack01은 루프 안쓰는 애니메이션
-			mCurrClipName = "stand";
+		if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
+		{
+			Walk(-dt);
+			Strafe(-dt);
+			mActionState = ActionState::Run;
+		}
+		else if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
+		{
+			Walk(-dt);
+			Strafe(dt);
+			mActionState = ActionState::Run;
+		}
+		else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
+		{
+			Walk(dt);
+			Strafe(-dt);
+			mActionState = ActionState::Run;
+		}
+		else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('D') & 0x8000))
+		{
+			Walk(dt);
+			Strafe(dt);
+			mActionState = ActionState::Run;
+		}
+		else if (GetAsyncKeyState('W') & 0x8000) 
+		{ 
+			Walk(-dt); 
+			mActionState = ActionState::Run; 
+		}
+		else if (GetAsyncKeyState('S') & 0x8000) { Walk(dt); mActionState = ActionState::Run; }
+		else if (GetAsyncKeyState('A') & 0x8000) { Strafe(-dt); mActionState = ActionState::Run; }
+		else if (GetAsyncKeyState('D') & 0x8000) { Strafe(dt); mActionState = ActionState::Run; }
+		else
+			mActionState = ActionState::Idle;
 	}
 }
 

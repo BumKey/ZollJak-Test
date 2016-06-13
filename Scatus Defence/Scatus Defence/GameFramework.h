@@ -1,6 +1,7 @@
 #include "d3dApp.h"
 #include "TextureMgr.h"
 #include "SceneMgr.h"
+#include "PacketMgr.h"
 #include "ObjectMgr.h"
 #include "ResourceMgr.h"
 #include "GameRogicManager.h"
@@ -24,17 +25,12 @@ public:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 private:
-	bool m_bReady;
-	bool m_bAttackAnim;
+	GameRogicManager	mGameRogicMgr;
+	SceneMgr			mSceneMgr;
+	PacketMgr			mPacketMgr;
+	Camera				mCam;
+	Player*				mPlayer;
 
-	ResourceMgr mResourceMgr;
-	ObjectMgr	mObjectMgr;
-	SceneMgr	mSceneMgr;
-	CollisionMgr mCollisionMgr;
-	GameRogicManager *mGameRogicMgr;
-	Camera mCam;
-	Player* mPlayer;
-
-	POINT mLastMousePos;
+	POINT				mLastMousePos;
 
 };

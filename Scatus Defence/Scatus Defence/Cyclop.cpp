@@ -2,12 +2,15 @@
 
 Cyclop::Cyclop(SkinnedMesh* mesh, const InstanceDesc& info) : Monster(mesh, info)
 {
-	mTimePos = 0.0f;
-	mProperty.movespeed = MathHelper::RandF(0.07f, 0.1f);
+	mProperty.name = "Cyclop";
+
+	mProperty.hp_now = 500;
+	mProperty.movespeed = MathHelper::RandF(3.7f, 4.7f);
 	mProperty.attackspeed = MathHelper::RandF(0.4f, 0.7f);
+	mProperty.attackrange = 5.0f;
 	mProperty.attakpoint = 10.0f;
 
-	mObjectType = Object_type::cyclop;
+	mObjectType = ObjectType::Cyclop;
 
 	mAnimNames[Anims::attack1] = "attack01";
 	mAnimNames[Anims::attack2] = "attack02";
@@ -18,8 +21,6 @@ Cyclop::Cyclop(SkinnedMesh* mesh, const InstanceDesc& info) : Monster(mesh, info
 	mAnimNames[Anims::stunned_hit] = "stunned_hit";
 	mAnimNames[Anims::idle] = "idle";
 	mAnimNames[Anims::walk] = "walk";
-
-	SetState(type_idle);
 }
 
 

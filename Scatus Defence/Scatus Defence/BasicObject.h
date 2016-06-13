@@ -17,7 +17,7 @@ public:
 public:
 	virtual void Walk(float d);
 	virtual void Strafe(float d);
-	virtual void MoveTo(Vector2D direction, float dt);
+	virtual void MoveToTarget(float dt);
 	virtual void RotateY(float angle);
 	virtual void Update(float dt);
 
@@ -25,9 +25,9 @@ public:
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight);
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight);
 
-	virtual void Release(ResourceMgr& rMgr);
+	virtual void Release(ResourceMgr* rMgr);
 
-	Label GetType() { return mLabel; }
+	Label GetLabel() { return mLabel; }
 
 private:
 	Label mLabel;

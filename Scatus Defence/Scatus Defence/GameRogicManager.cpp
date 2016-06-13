@@ -3,23 +3,19 @@
 #include "time.h"
 #include "ResourceMgr.h"
 
-GameRogicManager::GameRogicManager(ObjectMgr * ObjMgr_, ResourceMgr * resourceMgr_)
+GameRogicManager::GameRogicManager() : mWaveLevel(1), mGameState(Gamestate_type::game_title),
+gamename("스카투스 디펜스"), player_num(0), OnMouseDown(false), mPlayer(nullptr)
 {
-	mResourceMgr = resourceMgr_;
-	mObjMgr = ObjMgr_; // 씬매니저의 오브젝트에 접근하기 위한 포인터
-	wave_level = 0;
-	Gamestatement= game_title;
-	gamename = "스카투스 디펜스";
 	m_pMap = new Map();
 	m_pMap->Load("Skatus_Map.txt");
-	player_num = 0;
 	//map; 추후에 초기화 진행
 	//mLastMousePos;
-	OnMouseDown=false;
-	mPlayer = NULL;
 
-	mPlayer = mObjMgr->GetPlayer();
+	// 1레벨 웨이브 몬스터 갯수
+	mPerWaveMonsterNum[1][ObjectType::Goblin] = 20;
+	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 2;
 
+	// 추후 알아서 추가..
 };
 
 GameRogicManager::~GameRogicManager()
@@ -27,31 +23,46 @@ GameRogicManager::~GameRogicManager()
 
 };
 
+
 void GameRogicManager::Gamestart()
 {
-	GameState = game_waiting_wave;
+	//GameState = game_waiting_wave;
+	GameState = game_waving;
 	printf("게임이 시작되었습니다.");
 	mRogicTimer.SetBeforeTime(); //플레이타임 측정시작
 	mRogicTimer.SetWaveTimer(); //웨이브스위치 작동
-	printloc();
-	//플레이어설정
-	mPlayer = mObjMgr->GetPlayer();
+
+	// 새로운 적들 생성
+	Add_Monster(1);
+
+	Printloc();
 
 	//m_pMap->print();
 	//게임 각종 오브젝트 추가
 
-	
 }
 void GameRogicManager::GameEnd()
 {
-	mObjMgr->ReleaseAll(*mResourceMgr);
-	printf("\n게임이 종료되었습니다\n\n", wave_level);
-	
+	mObjectMgr.ReleaseAll();
+	printf("\n게임이 종료되었습니다\n\n", mWaveLevel);
+
 }
 void GameRogicManager::GameTitle()
 {
 	printf("\n게임 시작을 위해 아무 키나 누르시오\n");
-	
+
+}
+
+void GameRogicManager::Init(ID3D11Device * device)
+{
+	mResourceMgr.Init(device);
+	mObjectMgr.Init(&mResourceMgr);
+	mCollisionMgr.Init(&mObjectMgr);
+
+	mObjectMgr.Update();
+
+	//플레이어설정
+	mPlayer = mObjectMgr.GetPlayer();
 }
 
 void GameRogicManager::Update(float dt)
@@ -88,52 +99,55 @@ void GameRogicManager::Update(float dt)
 		break;
 	}
 	//system("cls");//콘솔창 지우기
+
+	mObjectMgr.Update(dt);
+	mCollisionMgr.Update(dt);
+
 }
 
 
 
 void GameRogicManager::EndWave()
 {
-
-	if (wave_level==100)
+	if (mWaveLevel == 100)
 	{
 		GameState = game_ending;
 	}
 	else
 	{
-	
+
 		GameState = game_waiting_wave;
 	}
-	mRogicTimer.SetWaveTimer(); //WaveTimer초기화
-	//맵 내부의 모든 적들 삭제
-	mObjMgr->ReleaseAllMonsters(*mResourceMgr);
+	//mRogicTimer.SetWaveTimer(); //WaveTimer초기화
+								//맵 내부의 모든 적들 삭제
+	mObjectMgr.ReleaseAllMonsters();
 	/*
 	for (std::list<GameObject*>::iterator i = m_SceneMgr->mObjects.begin(); i != m_SceneMgr->mObjects.end();)
 	{
-		if ((*i)->Get_Object_type() == type_monster)
-		{
-			i = m_SceneMgr->mObjects.erase(i);
+	if ((*i)->Get_Object_type() == type_monster)
+	{
+	i = m_SceneMgr->mObjects.erase(i);
 
 
-		}
-		else
-		{
-			++i;
-		}
+	}
+	else
+	{
+	++i;
+	}
 
 	}
 	for (std::list<GameObject*>::iterator i = m_Enemies_list.begin(); i != m_Enemies_list.end();)
 	{
-		if ((*i)->Get_Object_type() == type_monster)
-		{
-			i = m_Enemies_list.erase(i);
+	if ((*i)->Get_Object_type() == type_monster)
+	{
+	i = m_Enemies_list.erase(i);
 
 
-		}
-		else
-		{
-			++i;
-		}
+	}
+	else
+	{
+	++i;
+	}
 
 	}
 	*/
@@ -143,23 +157,13 @@ void GameRogicManager::StartWave()
 {
 	mRogicTimer.SetWaveTimer(); //WaveTimer초기화
 	GameState = game_waving;
-	wave_level++;
-	printf("\n\n\n%d 레벨 웨이브가 시작되었습니다\n", wave_level);
-	printf("\n 몬스터를 생성중입니다\n", wave_level);
-	m_pMap->print();
+	mWaveLevel++;
+	printf("\n\n\n%d 레벨 웨이브가 시작되었습니다\n", mWaveLevel);
+	printf("\n 몬스터를 생성중입니다\n", mWaveLevel);
+	//m_pMap->print();
 
-	//for (int i = 0; i < 2;i++)
-	//{
-	//	 add_Monster();
-	//	auto it = m_ObjMgr->GetAllMonsters().end();
-	//	it--;
-	//
-	//	printf("고블린 %d의 위치 x: %f y:%f\n", i, (*it)->GetPos2D().x, (*it)->GetPos2D().y);
-	//}
-
-	// 새로운 적들 생성
 	//wavingstart로 상태변경
-	
+
 
 }
 
@@ -170,48 +174,74 @@ void GameRogicManager::Waving(float dt)
 	AIManager(dt);
 	if (timer)
 	{
-		
-		EndWave();
-		
-	}
 
+		EndWave();
+
+	}
 }
 
 void GameRogicManager::Waiting_Wave()
 {
 	//1초마다 nextwave_time 1씩 감소
-	bool timer = mRogicTimer.WaveTimer();
-	if (timer);
-	{
-		
-		StartWave();
-
-	}
+	//bool timer = mRogicTimer.WaveTimer();
 }
 
-void GameRogicManager::printloc()
+void GameRogicManager::Printloc()
 {
 	printf("\n");
-	mObjMgr->GetPlayer()->PrintLocation();
-	for (auto i : mObjMgr->GetMonsters())
+	mPlayer->PrintLocation();
+	for (auto i : mObjectMgr.GetMonsters())
 	{
 		i->PrintLocation();
 	}
 }
 
-void GameRogicManager::add_Monster()
+void GameRogicManager::Add_Monster(UINT waveLevel)
 {
-	//InstanceDesc info;
-	//
-	//info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
-	//	0, mPlayer->GetPos().z + 50.0f - rand() % 100);
-	//info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-	//info.Yaw = MathHelper::RandF()*MathHelper::Pi * 2;
+	assert(waveLevel > 0);
 
-	//GoblinType type;
-	//if (rand() % 2) type = GoblinType::Red;
-	//else	   type = GoblinType::Blue;
-	//mObjMgr->AddMonster(new Goblin(mResourceMgr->GetGoblinMesh(), info, type));
+	InstanceDesc info;
+
+	UINT goblinNum = mPerWaveMonsterNum[waveLevel][ObjectType::Goblin];
+	for (UINT i = 0; i < goblinNum; ++i)
+	{
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
+			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
+		info.Scale = 0.1f + MathHelper::RandF() / 5.0f;
+		info.Rot.y = 0;
+
+		Goblin::Type type;
+		if (i % 2) {
+			type = Goblin::Type::Blue;
+			info.Scale = 0.4f;
+		}
+		else if (i % 3)
+		{
+			type = Goblin::Type::Red;
+			info.Scale = 0.3f;
+		}
+		else if (i % 5)
+		{
+			type = Goblin::Type::Red;
+			info.Scale = 0.7f;
+		}
+		else {
+			type = Goblin::Type::Blue;
+			info.Scale = 0.6f;
+		}
+		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetSkinnedMesh(ObjectType::Goblin), info, type));
+	}
+
+	UINT cyclopNum = mPerWaveMonsterNum[waveLevel][ObjectType::Cyclop];
+	for (UINT i = 0; i < cyclopNum; ++i) {
+		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
+			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
+		info.Scale = 7.0f + MathHelper::RandF();
+		info.Rot.x = MathHelper::Pi;
+		info.Rot.y = 0.0f;
+
+		mObjectMgr.AddMonster(new Cyclop(mResourceMgr.GetSkinnedMesh(ObjectType::Cyclop), info));
+	}
 }
 void GameRogicManager::MoveAI()
 {
@@ -219,79 +249,18 @@ void GameRogicManager::MoveAI()
 }
 void GameRogicManager::AIManager(float dt)
 {
-	int j = 0;
 	// 적들의 행동지정	
 	//타겟변경은 나중에 0.5초마다 한번씩
-	for (auto iterM : mObjMgr->GetMonsters())
+	for (auto iterM : mObjectMgr.GetMonsters())
 	{
-		//나와 가장가까운 적을 타겟으로 변경
-		if (iterM->GetState() == type_idle || iterM->GetState() == type_walk)
-		{
-			//이동
-			iterM->SetTarget(mPlayer);
-			//printf("적 세팅");
-			//기지와 나사이의 거리가 적과 나 사이의 거리보다 가깝다면 타겟을 기지로 변경) 
+		// 현재 타겟은 오로지 플레이어로 설정.
+		// 추후 타겟을 신전이나 다른 플레이어로 바꾸는 기능 추가할 것.
+		iterM->SetTarget(mPlayer);
 		
-			Vector2D currPos = iterM->GetPos2D();
-			Vector2D targetPos = iterM->GetTarget()->GetPos2D();
-			if (Vec2DDistance(currPos, m_pMap->temple_loc)/*나와 기지 사이의 거리*/
-				< Vec2DDistance(currPos, targetPos)/*나와 타겟 사이의 거리*/)
-			{
-				iterM->SetTarget(nullptr); // 나중에 신전 객체 등장하면 신전 객체로 바꿔줘야함
-			}
-
-			//printf("고블린 %d의 위치 x: %f y:%f\n", j, currPos.x, currPos.y);
-			if (iterM->GetTarget() == NULL) //신전이 목표일때
-			{
-
-				if (Vec2DDistance(currPos, m_pMap->temple_loc) < 10)
-				{
-
-					//i->SetObj_State(type_battle); //공격으로 상태전환
-					printf("신전공격");
-				}
-				else
-				{
-					/*i->SetHeading((m_pMap->temple_loc) - (i->GetPos2D()));
-					i->Move2D(i->Heading(), 0.03);*/
-				}
-			}
-			else
-			{
-				if (Vec2DDistance(currPos, targetPos) <= 3.0f)
-				{
-					iterM->Attack(dt);
-					printf("배틀실행");
-				}
-				else if(iterM->GetState() != state_type::MovingCollision)
-					iterM->MoveTo(targetPos, dt);
-			}
-
-		}
-		else if (iterM->GetState() == type_battle)
-		{
-			mRogicTimer.SetAttackTimer(); //공격시간의 간격을 두기 위한 타이머 설정
-			iterM->SetState(type_attack); //공격으로 상태전환
-
-		}
-		else if (iterM->GetState() == type_attack)
-		{
-			if (mRogicTimer.AttackTimer(iterM->GetProperty().attackspeed))//공격시간이 되면 공격
-			{
-				iterM->SetState(type_battle);
-				iterM->Attack(dt);  //공격시간의 간격을 두기 위한 타이머 설정
-			}
-		}
-		j++;
+		// 거리가 가까우면 공격
+		if (mCollisionMgr.DetectWithPlayer(iterM)) 
+			iterM->SetAI_State(AI_State::AttackToTarget);
+		else 
+			iterM->SetAI_State(AI_State::MovingToTarget);
 	}
 }
-
-
-
-	
-	
-
-
-		
-
-

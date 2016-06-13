@@ -10,32 +10,89 @@ CollisionMgr::~CollisionMgr()
 {
 }
 
-void CollisionMgr::Collision(ObjectMgr & objectMgr, float dt)
+void CollisionMgr::Init(ObjectMgr * objectMgr)
 {
-	MovingCollision(objectMgr, dt);
+	mObjectMgr = objectMgr;
 }
 
-void CollisionMgr::MovingCollision(ObjectMgr & objectMgr, float dt)
+void CollisionMgr::Update(float dt)
 {
-	for (auto& iterM1 : objectMgr.GetMonsters())
+	mMonsters = mObjectMgr->GetMonsters();
+	mPlayer = mObjectMgr->GetPlayer();
+
+	MovingCollision(dt);
+
+	// 현재 플레이어 공격만 충돌체크 감지
+	// 몬스터 공격감지는 로직메니져에서 함. -> 개선필요?
+	PlayerAttackCollision();
+}
+
+void CollisionMgr::MovingCollision(float dt)
+{
+	for (auto& iterM : mMonsters)
 	{
-		if (iterM1->HasTarget())
+		if (iterM->HasTarget() && iterM->IsAttack() == false)
 		{
-			for (const auto& iterM2 : objectMgr.GetMonsters())
-			{
-				if (Vec2DDistance(iterM1->GetPos2D(), iterM2->GetPos2D()) <= 3.0f && 
-					iterM1->GetID() != iterM2->GetID() && 
-					iterM1->GetState() != state_type::type_attack)
-				{
-					std::cout << iterM1->GetID() << "과" << iterM2->GetID() << "충돌 검출 중.." << std::endl;
-					iterM1->SetState(state_type::MovingCollision);
-					XMFLOAT3 currDir = iterM1->GetTarget()->GetPos() - iterM1->GetPos();
-					XMFLOAT3 targetDir = iterM2->GetPos() - iterM1->GetPos();
-					iterM1->MoveTo(iterM2->GetPos2D()*-1.0f, dt);
-				}
-				//else
-					//iterM1->SetState(state_type::type_walk);
-			}
+			if(LowDetectWithMonsters(iterM))
+				iterM->MovingCollision(iterM->GetPos(), dt);
+			else
+				iterM->SetNoneCollision();
+		}
+	}
+}
+
+void CollisionMgr::PlayerAttackCollision()
+{
+	if (mPlayer->IsAttack() && mPlayer->OneHit())
+	{
+		std::vector<UINT> detectedMonsters;
+		HighDetectWithMonsters(mPlayer, detectedMonsters);
+		for (UINT i = 0; i < detectedMonsters.size(); ++i)
+		{
+			UINT index = detectedMonsters[i];
+			mPlayer->Attack(mMonsters[index]);
+			mMonsters[index]->ChangeActionState(ActionState::Damage);
+		}
+	}
+}
+
+bool CollisionMgr::DetectWithPlayer(GameObject * sourceObj)
+{
+	XMFLOAT3 sourcePos = sourceObj->GetPos();
+	XMFLOAT3 playerPos = mPlayer->GetPos();
+	if (MathHelper::DistanceVector(sourcePos, playerPos) <= sourceObj->GetProperty().attackrange)
+		return true;
+	else
+		return false;
+}
+
+bool CollisionMgr::LowDetectWithMonsters(GameObject* sourceObj)
+{
+	// 처음 검출된 충돌만 인식하고 나머지는 건너뜀
+	// 약식 충돌 -> 군중 애니메이션
+	for (UINT i = 0; i < mMonsters.size(); ++i)
+	{
+		if (sourceObj->GetID() != mMonsters[i]->GetID() &&
+			MathHelper::DistanceVector(sourceObj->GetPos(), mMonsters[i]->GetPos()) <= 5.0f)
+		{
+			std::cout << sourceObj->GetID() << "과" << mMonsters[i]->GetID() << "충돌 검출 중.." << std::endl;
+			return true;
+		}
+		else
+			return false;
+	}
+
+}
+
+void CollisionMgr::HighDetectWithMonsters(GameObject* sourceObj,  std::vector<UINT>& outIndices)
+{
+	for (UINT i = 0; i < mMonsters.size(); ++i)
+	{
+		if (sourceObj->GetID() != mMonsters[i]->GetID() &&
+			MathHelper::DistanceVector(sourceObj->GetPos(), mMonsters[i]->GetPos()) <= 5.0f)
+		{
+			std::cout << sourceObj->GetID() << "과" << mMonsters[i]->GetID() << "충돌 검출 중.." << std::endl;
+			outIndices.push_back(i);
 		}
 	}
 }

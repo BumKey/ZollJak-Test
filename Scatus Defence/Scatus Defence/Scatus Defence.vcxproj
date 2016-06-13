@@ -72,9 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <IncludePath>C:\Users\Admin\Source\Repos\ZollJak-Test\Scatus Defence\Common_AI;C:\Users\Admin\Documents\카카오톡 받은 파일\Scatus Defence-05-10-기범\Common;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft SDKs\Cpp REST SDK for Visual Studio 2013\SDK\lib\x86\Debug;C:\Users\Admin\Documents\카카오톡 받은 파일\Scatus Defence-05-10-기범\Common;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Admin\Source\Repos\ZollJak-Test\Scatus Defence\Common_AI;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -83,9 +81,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <ExcludePath>C:\Users\Administrator\Desktop\Programming\Direct3D\d3d11CodeSet1\Common;$(ExcludePath)</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -97,12 +92,11 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PrecompiledHeaderFile>Core.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winmm.lib;dsound.lib;DWrite.lib;d2d1.lib;d3d11.lib;d3dx11d.lib;D3DCompiler.lib;Effects11d.lib;dxerr.lib;dxgi.lib;dxguid.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dx11d.lib;D3DCompiler.lib;Effects11d.lib;dxerr.lib;dxgi.lib;dxguid.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -121,12 +115,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>FBXSDK_NEW_API;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeaderFile>Core.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -177,6 +170,7 @@
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
+    <ClCompile Include="PacketMgr.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Properties.cpp" />
     <ClCompile Include="p_Warrior.cpp" />
@@ -189,16 +183,12 @@
     <ClCompile Include="SkinnedData.cpp" />
     <ClCompile Include="SkinnedObject.cpp" />
     <ClCompile Include="Sky.cpp" />
-    <ClCompile Include="Sound_Manager.cpp" />
     <ClCompile Include="Ssao.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TextureMgr.cpp" />
-    <ClCompile Include="UI_Manager.cpp" />
-    <ClCompile Include="UI_Scene.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="Waves.cpp" />
-    <ClCompile Include="winwav.cpp" />
     <ClCompile Include="xnacollision.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -224,8 +214,10 @@
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="ObjectMgr.h" />
+    <ClInclude Include="PacketMgr.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Properties.h" />
+    <ClInclude Include="protocol.h" />
     <ClInclude Include="p_Warrior.h" />
     <ClInclude Include="RenderStates.h" />
     <ClInclude Include="ResourceMgr.h" />
@@ -236,16 +228,12 @@
     <ClInclude Include="SkinnedData.h" />
     <ClInclude Include="SkinnedObject.h" />
     <ClInclude Include="Sky.h" />
-    <ClInclude Include="Sound_Manager.h" />
     <ClInclude Include="Ssao.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TextureMgr.h" />
-    <ClInclude Include="UI_Manager.h" />
-    <ClInclude Include="UI_Scene.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Waves.h" />
-    <ClInclude Include="winwav.h" />
     <ClInclude Include="xnacollision.h" />
   </ItemGroup>
   <ItemGroup>

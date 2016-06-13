@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <tchar.h>
 #include <mmsystem.h>
-#include <Mmsystem.h>
 
 class WinWave
 {

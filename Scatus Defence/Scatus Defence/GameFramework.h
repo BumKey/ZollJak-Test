@@ -8,7 +8,7 @@
 #include "CollisionMgr.h"
 #include "Goblin.h"
 #include "Cyclop.h"
-#include "UI_Manager.h"
+#include "GameStateMgr.h"
 class GameFrameWork : public D3DApp
 {
 public:
@@ -25,7 +25,6 @@ public:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 private:
-	GameRogicManager	mGameRogicMgr;
 	SceneMgr			mSceneMgr;
 	PacketMgr			mPacketMgr;
 	Camera				mCam;

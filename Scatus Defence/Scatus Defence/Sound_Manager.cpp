@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 #include "Sound_Manager.h"
 
 

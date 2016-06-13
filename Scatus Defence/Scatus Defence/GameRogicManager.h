@@ -10,7 +10,7 @@
 #include "ResourceMgr.h"
 #include "Goblin.h"
 #include "Cyclop.h"
-
+#define G_Rogic_Mgr  GameRogicManager::Instance()
 class GameRogicManager
 {
 public:
@@ -25,24 +25,25 @@ public:
 
 	Player* GetPlayer() { return mPlayer; }
 	const std::vector<GameObject*>&		GetAllObjects() { return mObjectMgr.GetAllObjects(); }
-
-private:
 	void Gamestart();
 	void GameEnd();
 	void GameTitle();
-	void StartWave();
-	void EndWave();
+
 	void Waving(float dt);
-	void Waiting_Wave();
+
 	void MoveAI();
 	void AIManager(float dt);
 	void Add_Monster(UINT waveLevel);
 	void Printloc();
-
-private:
 	ResourceMgr mResourceMgr;
 	ObjectMgr	mObjectMgr;
 	CollisionMgr mCollisionMgr;
+	static GameRogicManager* Instance();
+private:
+
+
+private:
+
 
 	UINT mWaveLevel;
 	UINT m_enemysnum;
@@ -53,14 +54,12 @@ private:
 	Gamestate_type mGameState;
 
 	Map* m_pMap;
-	GameTimer mTimer;
-	RogicTimer mRogicTimer;
+
+
 
 	std::list<GameObject*> m_Our_list;
 	std::list<GameObject*> m_Enemies_list;
 	std::unordered_map<UINT, std::unordered_map<ObjectType::Types, UINT>> mPerWaveMonsterNum;
-	//string nextwave_time;
-	//string remain_time;
-	//string total_playtime;
+
 };
 

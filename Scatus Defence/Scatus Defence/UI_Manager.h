@@ -6,8 +6,9 @@
 #include<iostream>
 #include "UI_Scene.h"
 #include "Sound_Manager.h"
+#include "RogicTimer.h"
 #define UI_Mgr  UI_Manager::Instance()
-
+using namespace std;
 enum UI_ID {
 	UI_title_button_login,
 	UI_title_button_register,
@@ -33,6 +34,10 @@ enum UI_ID {
 	Text_title_register,
 	Text_title_ID,
 	Text_title_PW,
+	Text_title_PW_star,
+	Text_TitleSet_BGM,
+	Text_TitleSet_Effect,
+	Text_ingame_start_wave,
 	Text_ingame_hp,
 	Text_ingame_Round,
 	Text_ingame_time,
@@ -62,17 +67,20 @@ struct Text_info {
 	wchar_t* _wszText_;
 	UI_ID UI_id;
 	type_Scene m_type_scene;
+	IDWriteTextFormat* m_pTextFormat_;
 	bool Active;
 	FLOAT x;
 	FLOAT y;
 	FLOAT alpha;
-	Text_info (wchar_t* wszText_, type_Scene type_scene, UI_ID ui_id, FLOAT x_, FLOAT y_, FLOAT alpha_) {
+	Text_info (wchar_t* wszText_, type_Scene type_scene, UI_ID ui_id, FLOAT x_, FLOAT y_, FLOAT alpha_, IDWriteTextFormat* _pTextFormat_) {
 		_wszText_ = wszText_;
 		m_type_scene = type_scene;
 		x = x_;
 		y = y_;
 		alpha = alpha_;
 		Active = false;
+		UI_id = ui_id;
+		m_pTextFormat_ = _pTextFormat_;
 	}
 };
 struct Image_info {
@@ -113,6 +121,7 @@ private:UI_Manager();
 		//2D이미지 로더
 		IWICImagingFactory*             pWICFactory;
 		bool input_ID;
+		bool input_PW;
 		//텍스트 및 도형그리기
 		ID2D1Factory* pD2DFactory_;
 		IDWriteFactory *pDWriteFactory;
@@ -120,6 +129,7 @@ private:UI_Manager();
 		IDWriteTextLayout * m_pdwTextLayout1;
 		IDWriteTextLayout * m_pdwTextLayout2;
 		IDWriteTextFormat* pTextFormat_;
+		IDWriteTextFormat* pTextFormat_WaveStart;
 		IDWriteFontCollection* pFontCollection;
 		FLOAT m_dpiX_;
 		FLOAT m_dpiY_;
@@ -129,12 +139,13 @@ private:UI_Manager();
 		UI_Scene Title;
 		UI_Scene Title_Setting;
 		UI_Scene Waving;
+		WPARAM m_wParam;
 		void TextInit();
 		
 		std::list<Image_info*> m_Image_list;
 		bool UI_ClickOn;
 		UINT m_nMessageID;
-		int m_gamestat;
+		type_Scene m_gamescene;
 
 public:
 	RECT rc;
@@ -144,7 +155,7 @@ public:
 	void Print_All_UI();
 	void Print_All_Text();
 	void Print_All_Image();
-	void Add_Text(wchar_t* _wszText_, type_Scene type_scene, UI_ID ui_id, FLOAT x, FLOAT y, FLOAT alpha);
+	void Add_Text(wchar_t* _wszText_, type_Scene type_scene, UI_ID ui_id, FLOAT x, FLOAT y, FLOAT alpha, IDWriteTextFormat* TextForMat);
 	void Delete_Text(wchar_t* _wszText_);
 	void Delete_Text_All();
 	void Load_All_Image();
@@ -160,6 +171,17 @@ public:
 	bool Get_input_ID_state() {
 		return input_ID;
 	}
+	void Set_input_PW_state(bool input) {
+		input_PW = input;
+		if (input == true)
+		{
+		//	GetTextptr(Text_title_PW)->Active = false;
+
+		}
+	}
+	bool Get_input_PW_state() {
+		return input_PW;
+	}
 	void Set_Scene_UI(type_Scene Scenetype);
 	void InTitle_UI(int x, int y);
 	void InGame_UI(int x, int y);
@@ -168,9 +190,17 @@ public:
 	IDXGISurface* m_backbuffer;
 	void Set_nMessageID(UINT nMessageID) { m_nMessageID = nMessageID; }
 	UINT Get_nMessageID() { return m_nMessageID; }
-	void Set_Gamestate(int gamestat) { m_gamestat = gamestat; }
-	int Get_Gamestate() { return m_gamestat; }
+	void Set_wParam(WPARAM wParam) { m_wParam = wParam; }
+	WPARAM Get_wParam() { return m_wParam; }
+	void Set_Gamescene(type_Scene gamestat) { m_gamescene = gamestat; }
+	int Get_Gamescene() { return m_gamescene; }
 
+	Image_info* GetImagePtr(UI_ID ui_id);
+	void Change_HP_TEXT(int player_hp);
+	void Change_Round_TEXT(int Round);
+	void Change_Time_TEXT(Gamestate_type type);
+	void InputID_PW();
+	Text_info* GetTextptr(UI_ID ui_id);
 	static UI_Manager* Instance();
 };
 

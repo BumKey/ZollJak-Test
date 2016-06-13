@@ -6,7 +6,7 @@ enum type_Scene {
 	Scene_Title,
 	Scene_Title_Setting,
 	Scene_Ingame,
-	Scene_nothing
+	Scene_NULL
 };
 class UI_Scene
 {

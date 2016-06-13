@@ -22,9 +22,9 @@ GameFrameWork::~GameFrameWork()
 bool GameFrameWork::Init()
 {
 	//콘솔창 띄우기
-	AllocConsole();
+	/*AllocConsole();
 	AttachConsole(GetCurrentProcessId());
-	freopen("CON", "w", stdout);
+	freopen("CON", "w", stdout); */
 	if (!D3DApp::Init())
 		return false;
 
@@ -33,15 +33,18 @@ bool GameFrameWork::Init()
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
 
-	mGameRogicMgr.Init(md3dDevice);
+	G_Rogic_Mgr->Init(md3dDevice);
 	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
 		mDepthStencilView, mRenderTargetView,
 		mCam, mClientWidth, mClientHeight);
+	mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
+	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());
 	
+	Sound_Mgr->Creae_Sound(D3DApp::MainWnd());
 	// Giljune's Code
 	//mPacketMgr.Init();
 
-	mPlayer = mGameRogicMgr.GetPlayer();
+	mPlayer = G_Rogic_Mgr->GetPlayer();
 
 	XMFLOAT3 camPos = mPlayer->GetPos();
 	camPos.y += 10.0f;
@@ -69,16 +72,17 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트에서 키보드, 마우스 등 이벤트가 발생한다.
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
-
+	G_State_Mgr->Update(dt);
 	mSceneMgr.Update(dt);
-	mGameRogicMgr.Update(dt);
+
 	mCam.Update(mPlayer, mSceneMgr);
 
 }
 
 void GameFrameWork::DrawScene()
 {
-	mSceneMgr.DrawScene(mGameRogicMgr.GetAllObjects(), mCam);
+	mSceneMgr.DrawScene(G_Rogic_Mgr->GetAllObjects(), mCam);
+	UI_Mgr->Print_All_UI();
 	HR(mSwapChain->Present(0, 0));
 }
 
@@ -86,7 +90,7 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
-	mGameRogicMgr.OnMouseDown = true;
+	G_Rogic_Mgr->OnMouseDown = true;
 	if (btnState & MK_LBUTTON) {
 		mPlayer->SetAttackState();
 	}
@@ -96,7 +100,7 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 {
-	mGameRogicMgr.OnMouseDown = false;
+	G_Rogic_Mgr->OnMouseDown = false;
 	ReleaseCapture();
 }
 

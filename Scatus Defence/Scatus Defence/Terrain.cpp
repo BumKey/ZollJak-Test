@@ -23,10 +23,10 @@ Terrain::Terrain() :
 {
 	XMStoreFloat4x4(&mWorld, XMMatrixIdentity());
 
-	mMat.Ambient  = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mMat.Diffuse  = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mMat.Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 64.0f);
-	mMat.Reflect  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	mMat.Ambient  = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	mMat.Diffuse  = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	mMat.Specular = XMFLOAT4(0.01f, 0.01f, 0.01f, 64.0f);
+	mMat.Reflect  = XMFLOAT3(0.0f, 0.0f, 0.0f);
 }
 
 Terrain::~Terrain()

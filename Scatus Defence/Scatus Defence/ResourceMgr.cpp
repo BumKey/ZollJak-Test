@@ -24,14 +24,14 @@ void ResourceMgr::Init(ID3D11Device * dc)
 	mTexMgr.Init(mDevice);
 
 	Temple = new BasicMesh(mDevice, mTexMgr, "Models\\house1.y2k", L"Textures\\house1\\");
-	TreeMesh = new BasicMesh(mDevice, mTexMgr, "Models\\tree.m3d", L"Textures\\");
+	TreeMesh = new BasicMesh(mDevice, mTexMgr, "Models\\tree.y2k", L"Textures\\");
 	//BaseMesh = new BasicMesh(dc, texMgr, "Meshs\\base.m3d", L"Textures\\");
 	//StairsMesh = new BasicMesh(dc, texMgr, "Meshs\\stairs.m3d", L"Textures\\");
 	//Pillar1Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar1.m3d", L"Textures\\");
 	//Pillar2Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar2.m3d", L"Textures\\");
 	//Pillar3Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar5.m3d", L"Textures\\");
 	//Pillar4Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar6.m3d", L"Textures\\");
-	RockMesh = new BasicMesh(mDevice, mTexMgr, "Models\\rock.m3d", L"Textures\\");
+	RockMesh = new BasicMesh(mDevice, mTexMgr, "Models\\rock.y2k", L"Textures\\");
 
 }
 

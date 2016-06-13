@@ -6,7 +6,7 @@ Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type)
 	mProperty.name = "Goblin";
 
 	mProperty.hp_now = 100;
-	mProperty.movespeed = MathHelper::RandF(4.5f, 6.0f);
+	mProperty.movespeed = MathHelper::RandF(4.5f, 5.5f);
 	mProperty.attackspeed = MathHelper::RandF(0.6f, 1.1f);
 	mProperty.attackrange = 3.0f;
 	mProperty.attakpoint = 0.5f;

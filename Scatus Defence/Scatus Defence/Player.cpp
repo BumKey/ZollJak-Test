@@ -4,10 +4,10 @@ Player::Player(SkinnedMesh* Mesh, const InstanceDesc& info) : SkinnedObject(Mesh
 {
 	mProperty.name = "Player";
 
-	mProperty.movespeed = 7.0f;
+	mProperty.movespeed = 6.0f;
 	mProperty.hp_now = 100;
 	mProperty.attackspeed = 2.0f;
-	mProperty.attakpoint = 10.0f;
+	mProperty.attakpoint = 50.0f;
 
 	mObjectType = ObjectType::Player;
 

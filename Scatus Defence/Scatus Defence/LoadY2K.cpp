@@ -6,74 +6,24 @@ bool Y2KLoader::LoadY2K(const std::string& filename,
 	std::vector<BasicMeshData::Subset>& subsets,
 	std::vector<Y2kMaterial>& mats)
 {
-	std::ifstream fin(filename);
+	std::ifstream fin(filename, std::ios::binary);
 
 	UINT numMaterials = 0;
 	UINT numVertices = 0;
-	UINT numTriangles = 0;
-	UINT numBones = 0;
-	UINT numAnimationClips = 0;
+	UINT numIndices = 0;
 
 	std::string ignore;
 
 	if (fin)
 	{
-		fin >> ignore; // file header text
-		fin >> ignore >> numMaterials;
-		fin >> ignore >> numVertices;
-		fin >> ignore >> numTriangles;
-		fin >> ignore >> numBones;
-		fin >> ignore >> numAnimationClips;
+		ReadBinary(fin, numMaterials);
+		ReadBinary(fin, numVertices);
+		ReadBinary(fin, numIndices);
 
 		ReadMaterials(fin, numMaterials, mats);
 		ReadSubsetTable(fin, numMaterials, subsets);
 		ReadVertices(fin, numVertices, vertices);
-		ReadTriangles(fin, numTriangles, indices);
-
-		return true;
-	}
-	return false;
-}
-
-bool Y2KLoader::LoadY2K(const std::string& filename,
-	std::vector<Vertex::PosNormalTexSkinned>& vertices,
-	std::vector<USHORT>& indices,
-	std::vector<BasicMeshData::Subset>& subsets,
-	std::vector<Y2kMaterial>& mats,
-	SkinnedData& skinInfo)
-{
-	std::ifstream fin(filename);
-
-	UINT numMaterials = 0;
-	UINT numVertices = 0;
-	UINT numTriangles = 0;
-	UINT numBones = 0;
-	UINT numAnimationClips = 0;
-
-	std::string ignore;
-
-	if (fin)
-	{
-		fin >> ignore; // file header text
-		fin >> ignore >> numMaterials;
-		fin >> ignore >> numVertices;
-		fin >> ignore >> numTriangles;
-		fin >> ignore >> numBones;
-		fin >> ignore >> numAnimationClips;
-
-		std::vector<XMFLOAT4X4> finalTransform;
-		std::vector<int> boneIndexToParentIndex;
-		std::map<std::string, AnimationClip> animations;
-
-		ReadMaterials(fin, numMaterials, mats);
-		ReadSubsetTable(fin, numMaterials, subsets);
-		ReadSkinnedVertices(fin, numVertices, vertices);
-		ReadTriangles(fin, numTriangles, indices);
-		ReadBoneFinalTransform(fin, numBones, finalTransform);
-		ReadBoneHierarchy(fin, numBones, boneIndexToParentIndex);
-		ReadAnimationClips(fin, numBones, numAnimationClips, animations);
-
-		skinInfo.Set(boneIndexToParentIndex, finalTransform, animations);
+		ReadIndicies(fin, numIndices, indices);
 
 		return true;
 	}
@@ -87,11 +37,11 @@ bool Y2KLoader::LoadY2K(const std::string& filename,
 	std::vector<Y2kMaterial>& mats,
 	SkinnedData& skinInfo)
 {
-	std::ifstream fin(filename);
+	std::ifstream fin(filename, std::ios::binary);
 
 	UINT numMaterials = 0;
 	UINT numVertices = 0;
-	UINT numTriangles = 0;
+	UINT numIndices = 0;
 	UINT numBones = 0;
 	UINT numAnimationClips = 0;
 
@@ -99,12 +49,11 @@ bool Y2KLoader::LoadY2K(const std::string& filename,
 
 	if (fin)
 	{
-		fin >> ignore; // file header text
-		fin >> ignore >> numMaterials;
-		fin >> ignore >> numVertices;
-		fin >> ignore >> numTriangles;
-		fin >> ignore >> numBones;
-		fin >> ignore >> numAnimationClips;
+		ReadBinary(fin, numMaterials);
+		ReadBinary(fin, numVertices);
+		ReadBinary(fin, numIndices);
+		ReadBinary(fin, numBones);
+		ReadBinary(fin, numAnimationClips);
 
 		std::vector<XMFLOAT4X4> finalTransform;
 		std::vector<int> boneIndexToParentIndex;
@@ -113,7 +62,7 @@ bool Y2KLoader::LoadY2K(const std::string& filename,
 		ReadMaterials(fin, numMaterials, mats);
 		ReadSubsetTable(fin, numMaterials, subsets);
 		ReadSkinnedVertices(fin, numVertices, vertices);
-		ReadTriangles(fin, numTriangles, indices);
+		ReadIndicies(fin, numIndices, indices);
 		ReadBoneFinalTransform(fin, numBones, finalTransform);
 		ReadBoneHierarchy(fin, numBones, boneIndexToParentIndex);
 		ReadAnimationClips(fin, numBones, numAnimationClips, animations);
@@ -127,24 +76,28 @@ bool Y2KLoader::LoadY2K(const std::string& filename,
 
 void Y2KLoader::ReadMaterials(std::ifstream& fin, UINT numMaterials, std::vector<Y2kMaterial>& mats)
 {
-	std::string ignore;
 	mats.resize(numMaterials);
 
 	std::string diffuseMapName;
 	std::string normalMapName;
 
-	fin >> ignore; // materials header text
+	UINT strLen = 0;
 	for (UINT i = 0; i < numMaterials; ++i)
 	{
-		fin >> ignore >> mats[i].Mat.Ambient.x >> mats[i].Mat.Ambient.y >> mats[i].Mat.Ambient.z;
-		fin >> ignore >> mats[i].Mat.Diffuse.x >> mats[i].Mat.Diffuse.y >> mats[i].Mat.Diffuse.z;
-		fin >> ignore >> mats[i].Mat.Specular.x >> mats[i].Mat.Specular.y >> mats[i].Mat.Specular.z;
-		fin >> ignore >> mats[i].Mat.Specular.w;
-		fin >> ignore >> mats[i].Mat.Reflect.x >> mats[i].Mat.Reflect.y >> mats[i].Mat.Reflect.z;
-		fin >> ignore >> mats[i].AlphaClip;
-		fin >> ignore >> mats[i].EffectTypeName;
-		fin >> ignore >> diffuseMapName;
-		fin >> ignore >> normalMapName;
+		ReadBinary(fin, mats[i].Mat.Ambient);
+		ReadBinary(fin, mats[i].Mat.Diffuse);
+		ReadBinary(fin, mats[i].Mat.Specular);
+		ReadBinary(fin, mats[i].Mat.Reflect);
+		ReadBinary(fin, mats[i].AlphaClip);
+
+		ReadBinary(fin, strLen);
+		ReadBinary(fin, mats[i].EffectTypeName, strLen);
+
+		ReadBinary(fin, strLen);
+		ReadBinary(fin, diffuseMapName, strLen);
+
+		ReadBinary(fin, strLen);
+		ReadBinary(fin, normalMapName, strLen);
 
 		mats[i].DiffuseMapName.resize(diffuseMapName.size(), ' ');
 		mats[i].NormalMapName.resize(normalMapName.size(), ' ');
@@ -155,179 +108,103 @@ void Y2KLoader::ReadMaterials(std::ifstream& fin, UINT numMaterials, std::vector
 
 void Y2KLoader::ReadSubsetTable(std::ifstream& fin, UINT numSubsets, std::vector<BasicMeshData::Subset>& subsets)
 {
-	std::string ignore;
 	subsets.resize(numSubsets);
 
-	fin >> ignore; // subset header text
 	for (UINT i = 0; i < numSubsets; ++i)
 	{
-		fin >> ignore >> subsets[i].Id;
-		fin >> ignore >> subsets[i].VertexStart;
-		fin >> ignore >> subsets[i].VertexCount;
-		fin >> ignore >> subsets[i].FaceStart;
-		fin >> ignore >> subsets[i].FaceCount;
+		ReadBinary(fin, subsets[i].Id);
+		ReadBinary(fin, subsets[i].FaceStart);
+		ReadBinary(fin, subsets[i].FaceCount);
 	}
 }
 
 void Y2KLoader::ReadVertices(std::ifstream& fin, UINT numVertices, std::vector<Vertex::PosNormalTexTan>& vertices)
 {
-	std::string ignore;
 	vertices.resize(numVertices);
 
-	fin >> ignore; // vertices header text
 	for (UINT i = 0; i < numVertices; ++i)
 	{
-		fin >> ignore >> vertices[i].Pos.x >> vertices[i].Pos.y >> vertices[i].Pos.z;
-		fin >> ignore >> vertices[i].TangentU.x >> vertices[i].TangentU.y >> vertices[i].TangentU.z >> vertices[i].TangentU.w;
-		fin >> ignore >> vertices[i].Normal.x >> vertices[i].Normal.y >> vertices[i].Normal.z;
-		fin >> ignore >> vertices[i].Tex.x >> vertices[i].Tex.y;
-	}
-}
-
-void Y2KLoader::ReadSkinnedVertices(std::ifstream& fin, UINT numVertices, std::vector<Vertex::PosNormalTexSkinned>& vertices)
-{
-	std::string ignore;
-	vertices.resize(numVertices);
-
-	fin >> ignore; // vertices header text
-	int boneIndices[4];
-	float weights[4];
-	for (UINT i = 0; i < numVertices; ++i)
-	{
-		fin >> ignore >> vertices[i].Pos.x >> vertices[i].Pos.y >> vertices[i].Pos.z;
-		fin >> ignore >> ignore >> ignore >> ignore >> ignore;
-		fin >> ignore >> vertices[i].Normal.x >> vertices[i].Normal.y >> vertices[i].Normal.z;
-		fin >> ignore >> vertices[i].Tex.x >> vertices[i].Tex.y;
-		fin >> ignore >> weights[0] >> weights[1] >> weights[2] >> weights[3];
-		fin >> ignore >> boneIndices[0] >> boneIndices[1] >> boneIndices[2] >> boneIndices[3];
-
-		vertices[i].Weights.x = weights[0];
-		vertices[i].Weights.y = weights[1];
-		vertices[i].Weights.z = weights[2];
-
-		vertices[i].BoneIndices[0] = (BYTE)boneIndices[0];
-		vertices[i].BoneIndices[1] = (BYTE)boneIndices[1];
-		vertices[i].BoneIndices[2] = (BYTE)boneIndices[2];
-		vertices[i].BoneIndices[3] = (BYTE)boneIndices[3];
+		ReadBinary(fin, vertices[i].Pos);
+		ReadBinary(fin, vertices[i].TangentU);
+		ReadBinary(fin, vertices[i].Normal);
+		ReadBinary(fin, vertices[i].Tex);
 	}
 }
 
 void Y2KLoader::ReadSkinnedVertices(std::ifstream& fin, UINT numVertices, std::vector<Vertex::PosNormalTexTanSkinned>& vertices)
 {
-	std::string ignore;
 	vertices.resize(numVertices);
 
-	fin >> ignore; // vertices header text
-	int boneIndices[4];
-	float weights[4];
 	for (UINT i = 0; i < numVertices; ++i)
 	{
-		fin >> ignore >> vertices[i].Pos.x >> vertices[i].Pos.y >> vertices[i].Pos.z;
-		fin >> ignore >> vertices[i].TangentU.x >> vertices[i].TangentU.y >> vertices[i].TangentU.z >> vertices[i].TangentU.w;
-		fin >> ignore >> vertices[i].Normal.x >> vertices[i].Normal.y >> vertices[i].Normal.z;
-		fin >> ignore >> vertices[i].Tex.x >> vertices[i].Tex.y;
-		fin >> ignore >> weights[0] >> weights[1] >> weights[2] >> weights[3];
-		fin >> ignore >> boneIndices[0] >> boneIndices[1] >> boneIndices[2] >> boneIndices[3];
-
-		vertices[i].Weights.x = weights[0];
-		vertices[i].Weights.y = weights[1];
-		vertices[i].Weights.z = weights[2];
-
-		vertices[i].BoneIndices[0] = (BYTE)boneIndices[0];
-		vertices[i].BoneIndices[1] = (BYTE)boneIndices[1];
-		vertices[i].BoneIndices[2] = (BYTE)boneIndices[2];
-		vertices[i].BoneIndices[3] = (BYTE)boneIndices[3];
+		ReadBinary(fin, vertices[i].Pos);
+		ReadBinary(fin, vertices[i].TangentU);
+		ReadBinary(fin, vertices[i].Normal);
+		ReadBinary(fin, vertices[i].Tex);
+		ReadBinary(fin, vertices[i].Weights);
+		ReadBinary(fin, vertices[i].BoneIndices[0]);
+		ReadBinary(fin, vertices[i].BoneIndices[1]);
+		ReadBinary(fin, vertices[i].BoneIndices[2]);
+		ReadBinary(fin, vertices[i].BoneIndices[3]);
 	}
 }
 
-void Y2KLoader::ReadTriangles(std::ifstream& fin, UINT numTriangles, std::vector<USHORT>& indices)
+void Y2KLoader::ReadIndicies(std::ifstream& fin, UINT numIndices, std::vector<USHORT>& indices)
 {
-	std::string ignore;
-	indices.resize(numTriangles * 3);
+	indices.resize(numIndices);
 
-	fin >> ignore; // triangles header text
-	for (UINT i = 0; i < numTriangles; ++i)
-	{
-		fin >> indices[i * 3 + 0] >> indices[i * 3 + 1] >> indices[i * 3 + 2];
-	}
+	for (UINT i = 0; i < numIndices; ++i)
+		ReadBinary(fin, indices[i]);
 }
 
 void Y2KLoader::ReadBoneFinalTransform(std::ifstream& fin, UINT numBones, std::vector<XMFLOAT4X4>& finalTransform)
 {
-	std::string ignore;
 	finalTransform.resize(numBones);
 
-	fin >> ignore; // finalTransform header text
 	for (UINT i = 0; i < numBones; ++i)
-	{
-		fin >> ignore >>
-			finalTransform[i](0, 0) >> finalTransform[i](0, 1) >> finalTransform[i](0, 2) >> finalTransform[i](0, 3) >>
-			finalTransform[i](1, 0) >> finalTransform[i](1, 1) >> finalTransform[i](1, 2) >> finalTransform[i](1, 3) >>
-			finalTransform[i](2, 0) >> finalTransform[i](2, 1) >> finalTransform[i](2, 2) >> finalTransform[i](2, 3) >>
-			finalTransform[i](3, 0) >> finalTransform[i](3, 1) >> finalTransform[i](3, 2) >> finalTransform[i](3, 3);
-	}
+		ReadBinary(fin, finalTransform[i]);
 }
 
 void Y2KLoader::ReadBoneHierarchy(std::ifstream& fin, UINT numBones, std::vector<int>& boneIndexToParentIndex)
 {
-	std::string ignore;
 	boneIndexToParentIndex.resize(numBones);
 
-	fin >> ignore; // BoneHierarchy header text
 	for (UINT i = 0; i < numBones; ++i)
-	{
-		fin >> ignore >> boneIndexToParentIndex[i];
-	}
+		ReadBinary(fin, boneIndexToParentIndex[i]);
 }
 
 void Y2KLoader::ReadAnimationClips(std::ifstream& fin, UINT numBones, UINT numAnimationClips,
 	std::map<std::string, AnimationClip>& animations)
 {
-	std::string ignore;
-	fin >> ignore; // AnimationClips header text
 	for (UINT clipIndex = 0; clipIndex < numAnimationClips; ++clipIndex)
 	{
+		UINT strLen;
 		std::string clipName;
-		fin >> ignore >> clipName;
-		fin >> ignore; // {
+
+		ReadBinary(fin, strLen);
+		ReadBinary(fin, clipName, strLen);
 
 		AnimationClip clip;
 		clip.BoneAnimations.resize(numBones);
 
 		for (UINT boneIndex = 0; boneIndex < numBones; ++boneIndex)
-		{
 			ReadBoneKeyframes(fin, numBones, clip.BoneAnimations[boneIndex]);
-		}
-		fin >> ignore; // }
-
+		
 		animations[clipName] = clip;
 	}
 }
 
 void Y2KLoader::ReadBoneKeyframes(std::ifstream& fin, UINT numBones, BoneAnimation& boneAnimation)
 {
-	std::string ignore;
-	UINT numKeyframes = 0;
-	fin >> ignore >> ignore >> numKeyframes;
-	fin >> ignore; // {
+	UINT numKeyframes;
+	ReadBinary(fin, numKeyframes);
 
 	boneAnimation.Keyframes.resize(numKeyframes);
 	for (UINT i = 0; i < numKeyframes; ++i)
 	{
-		float t = 0.0f;
-		XMFLOAT3 p(0.0f, 0.0f, 0.0f);
-		XMFLOAT3 s(1.0f, 1.0f, 1.0f);
-		XMFLOAT4 q(0.0f, 0.0f, 0.0f, 1.0f);
-		fin >> ignore >> t;
-		fin >> ignore >> p.x >> p.y >> p.z;
-		fin >> ignore >> s.x >> s.y >> s.z;
-		fin >> ignore >> q.x >> q.y >> q.z >> q.w;
-
-		boneAnimation.Keyframes[i].TimePos = t;
-		boneAnimation.Keyframes[i].Translation = p;
-		boneAnimation.Keyframes[i].Scale = s;
-		boneAnimation.Keyframes[i].RotationQuat = q;
+		ReadBinary(fin, boneAnimation.Keyframes[i].TimePos);
+		ReadBinary(fin, boneAnimation.Keyframes[i].Translation);
+		ReadBinary(fin, boneAnimation.Keyframes[i].RotationQuat);
+		boneAnimation.Keyframes[i].Scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	}
-
-	fin >> ignore; // }
 }

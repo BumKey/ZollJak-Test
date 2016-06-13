@@ -67,10 +67,16 @@ struct Material
 {
 	Material() { ZeroMemory(this, sizeof(this)); }
 
-	XMFLOAT4 Ambient;
-	XMFLOAT4 Diffuse;
+	XMFLOAT3 Ambient;
+	float Pad1;
+
+	XMFLOAT3 Diffuse;
+	float Pad2;
+
 	XMFLOAT4 Specular; // w = SpecPower
-	XMFLOAT4 Reflect;
+
+	XMFLOAT3 Reflect;
+	float Pad3;
 };
 
 #endif // LIGHTHELPER_H

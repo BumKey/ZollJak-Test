@@ -200,6 +200,11 @@ void D3DApp::OnResize()
  
 LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	int x = GET_X_LPARAM(lParam);
+	int y = GET_Y_LPARAM(lParam);
+	UI_Mgr->Set_nMessageID(msg);
+	UI_Mgr->Set_wParam(wParam);
+	UI_Mgr->UI_Scene_Mgr(x, y);
 	switch( msg )
 	{
 	// WM_ACTIVATE is sent when the window is activated or deactivated.  
@@ -371,7 +376,7 @@ bool D3DApp::InitDirect3D()
 {
 	// Create the device and device context.
 
-	UINT createDeviceFlags = 0;
+	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #if defined(DEBUG) || defined(_DEBUG)  
     createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif

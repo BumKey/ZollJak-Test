@@ -12,8 +12,15 @@ gamename("스카투스 디펜스"), player_num(0), OnMouseDown(false), mPlayer(nullptr)
 	//mLastMousePos;
 
 	// 1레벨 웨이브 몬스터 갯수
-	mPerWaveMonsterNum[1][ObjectType::Goblin] = 20;
+	mPerWaveMonsterNum[1][ObjectType::Goblin] = 15;
 	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 2;
+
+	mPerWaveMonsterNum[2][ObjectType::Goblin] = 20;
+	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 5;
+
+	mPerWaveMonsterNum[3][ObjectType::Goblin] = 40;
+	mPerWaveMonsterNum[3][ObjectType::Cyclop] = 10;
+
 
 	// 추후 알아서 추가..
 };
@@ -27,15 +34,13 @@ GameRogicManager::~GameRogicManager()
 void GameRogicManager::Gamestart()
 {
 	//GameState = game_waiting_wave;
-	GameState = game_waving;
-	printf("게임이 시작되었습니다.");
-	mRogicTimer.SetBeforeTime(); //플레이타임 측정시작
-	mRogicTimer.SetWaveTimer(); //웨이브스위치 작동
+//	GameState = game_waving;
+	
 
 	// 새로운 적들 생성
 	Add_Monster(1);
 
-	Printloc();
+	//Printloc();
 
 	//m_pMap->print();
 	//게임 각종 오브젝트 추가
@@ -67,37 +72,8 @@ void GameRogicManager::Init(ID3D11Device * device)
 
 void GameRogicManager::Update(float dt)
 {
-	//printf("스카투스 디펜스!!\n");
-	mRogicTimer.SetCurrentTime();// 현재시간 측정 및 총 플레이타임 측정함수
-								 //printf("\n\n\n\n\n\n\n현재 플레이 타임 : %d초",mRogicTimer.GetPlayTime());
 
-	switch (GameState)
-	{
-	case game_title:
-		if (OnMouseDown)
-		{
-			Gamestart();
-		}
-		else
-			GameTitle();
-		break;
-	case game_start:
-
-
-		break;
-	case game_waving:
-		Waving(dt);
-		break;
-	case game_waiting_wave:
-
-		Waiting_Wave();
-		break;
-	case game_ending:
-		GameEnd();
-		break;
-	default:
-		break;
-	}
+	
 	//system("cls");//콘솔창 지우기
 
 	mObjectMgr.Update(dt);
@@ -107,84 +83,15 @@ void GameRogicManager::Update(float dt)
 
 
 
-void GameRogicManager::EndWave()
-{
-	if (mWaveLevel == 100)
-	{
-		GameState = game_ending;
-	}
-	else
-	{
 
-		GameState = game_waiting_wave;
-	}
-	//mRogicTimer.SetWaveTimer(); //WaveTimer초기화
-								//맵 내부의 모든 적들 삭제
-	mObjectMgr.ReleaseAllMonsters();
-	/*
-	for (std::list<GameObject*>::iterator i = m_SceneMgr->mObjects.begin(); i != m_SceneMgr->mObjects.end();)
-	{
-	if ((*i)->Get_Object_type() == type_monster)
-	{
-	i = m_SceneMgr->mObjects.erase(i);
-
-
-	}
-	else
-	{
-	++i;
-	}
-
-	}
-	for (std::list<GameObject*>::iterator i = m_Enemies_list.begin(); i != m_Enemies_list.end();)
-	{
-	if ((*i)->Get_Object_type() == type_monster)
-	{
-	i = m_Enemies_list.erase(i);
-
-
-	}
-	else
-	{
-	++i;
-	}
-
-	}
-	*/
-	//waiting_wave로 상태변경
-}
-void GameRogicManager::StartWave()
-{
-	mRogicTimer.SetWaveTimer(); //WaveTimer초기화
-	GameState = game_waving;
-	mWaveLevel++;
-	printf("\n\n\n%d 레벨 웨이브가 시작되었습니다\n", mWaveLevel);
-	printf("\n 몬스터를 생성중입니다\n", mWaveLevel);
-	//m_pMap->print();
-
-	//wavingstart로 상태변경
-
-
-}
 
 void GameRogicManager::Waving(float dt)
 {
-	//next_wave 카운팅
-	bool timer= mRogicTimer.WaveTimer();
 	AIManager(dt);
-	if (timer)
-	{
 
-		EndWave();
-
-	}
 }
 
-void GameRogicManager::Waiting_Wave()
-{
-	//1초마다 nextwave_time 1씩 감소
-	//bool timer = mRogicTimer.WaveTimer();
-}
+
 
 void GameRogicManager::Printloc()
 {
@@ -263,4 +170,11 @@ void GameRogicManager::AIManager(float dt)
 		else 
 			iterM->SetAI_State(AI_State::MovingToTarget);
 	}
+}
+
+GameRogicManager* GameRogicManager::Instance()
+{
+	static GameRogicManager instance;
+
+	return &instance;
 }

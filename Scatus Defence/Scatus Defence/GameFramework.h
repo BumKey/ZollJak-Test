@@ -1,13 +1,14 @@
 #include "d3dApp.h"
 #include "TextureMgr.h"
 #include "SceneMgr.h"
+#include "PacketMgr.h"
 #include "ObjectMgr.h"
 #include "ResourceMgr.h"
 #include "GameRogicManager.h"
 #include "CollisionMgr.h"
 #include "Goblin.h"
 #include "Cyclop.h"
-
+#include "GameStateMgr.h"
 class GameFrameWork : public D3DApp
 {
 public:
@@ -24,8 +25,8 @@ public:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 private:
-	GameRogicManager	mGameRogicMgr;
 	SceneMgr			mSceneMgr;
+	PacketMgr			mPacketMgr;
 	Camera				mCam;
 	Player*				mPlayer;
 

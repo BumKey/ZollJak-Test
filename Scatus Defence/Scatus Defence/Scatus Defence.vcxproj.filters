@@ -86,6 +86,12 @@
     <Filter Include="Property">
       <UniqueIdentifier>{8bf98476-0fe5-4e23-a4d5-a8907d763cf8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameStateMgr">
+      <UniqueIdentifier>{e1f5283c-f2e3-45d0-9166-5e438e579f44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI_Sound">
+      <UniqueIdentifier>{0ca3293b-1139-44a3-9570-5786f55f3ba8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicMeshData.cpp">
@@ -214,6 +220,45 @@
     <ClCompile Include="Utilities.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="PacketMgr.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Begin.cpp">
+      <Filter>GameStateMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_GameOver.cpp">
+      <Filter>GameStateMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_GlobalState.cpp">
+      <Filter>GameStateMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Title.cpp">
+      <Filter>GameStateMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateMgr.cpp">
+      <Filter>GameStateMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Waving.cpp">
+      <Filter>GameStateMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Wave_Waiting .cpp">
+      <Filter>GameStateMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Title_Option.cpp">
+      <Filter>GameStateMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Manager.cpp">
+      <Filter>UI_Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Scene.cpp">
+      <Filter>UI_Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="winwav.cpp">
+      <Filter>UI_Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound_Manager.cpp">
+      <Filter>UI_Sound</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicMeshData.h">
@@ -338,6 +383,23 @@
     </ClInclude>
     <ClInclude Include="Utilities.h">
       <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketMgr.h" />
+    <ClInclude Include="protocol.h" />
+    <ClInclude Include="GameStateMgr.h">
+      <Filter>GameStateMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Manager.h">
+      <Filter>UI_Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Scene.h">
+      <Filter>UI_Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="winwav.h">
+      <Filter>UI_Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound_Manager.h">
+      <Filter>UI_Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

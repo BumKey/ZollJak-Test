@@ -19,6 +19,7 @@
 #define SC_REMOVE_PLAYER	3
 
 // client -> server
+#define CS_TEST				0
 #define CS_UP				1
 #define CS_DOWN				2
 #define CS_LEFT				3
@@ -27,6 +28,7 @@
 #define CS_UP_RIGHT			6
 #define CS_DOWN_LEFT		7
 #define CS_DOWN_RIGHT		8
+#define CS_SUCCESS			9
 
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
@@ -81,7 +83,15 @@ struct sc_packet_remove_player
 struct cs_packet
 {
 	BYTE size;
+	BYTE type;
 	ForClientInfo cInfo;
+};
+
+struct cs_packet_success
+{
+	BYTE size;
+	BYTE type;
+	bool success;
 };
 
 #pragma pack(pop)

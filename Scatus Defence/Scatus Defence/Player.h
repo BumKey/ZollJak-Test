@@ -2,6 +2,8 @@
 #include "SkinnedObject.h"
 #include "Singletone.h"
 #include "Monster.h"
+#include "protocol.h"
+#include"PacketMgr.h"
 
 class Player : public SkinnedObject, public Singletone<Player>
 {

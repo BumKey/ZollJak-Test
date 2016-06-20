@@ -3,6 +3,8 @@
 #include "Singletone.h"
 #include <vector>
 
+#define Packet_Mgr PacketMgr::GetInstance()
+
 struct WSABuf {
 	ULONG len;
 	CHAR* buf;
@@ -17,8 +19,8 @@ public:
 
 public:
 	void Init();
-	void SendPacket(cs_packet& packet);
-	void ReadPacket(SOCKET sock, std::vector<ForClientInfo>& outInfos);
+	void SendPacket(cs_packet_success &packet);
+	void ReadPacket();
 	void ProcessPacket(char* ptr);
 
 private:

@@ -40,7 +40,7 @@ void PacketMgr::Init()
 	std::cout << "Server Connect Success" << std::endl;
 }
 
-void PacketMgr::SendPacket(cs_packet& packet)
+void PacketMgr::SendPacket(cs_packet_success &packet)
 {
 	unsigned char *packet_buf;
 	char buf[MAX_BUFF_SIZE] = { 0, };
@@ -62,14 +62,14 @@ void PacketMgr::SendPacket(cs_packet& packet)
 	}
 }
 
-void PacketMgr::ReadPacket(SOCKET sock, std::vector<ForClientInfo>& outInfos)
+void PacketMgr::ReadPacket()
 {
 	DWORD iobytes, ioflag = 0;
 	
 	WSABUF temp;
 	temp.buf = mRecv_wsabuf.buf;
 	temp.len = mRecv_wsabuf.len;
-	if(WSARecv(sock, &temp, 1, &iobytes, &ioflag, NULL, NULL)==SOCKET_ERROR)
+	if(WSARecv(mSocket, &temp, 1, &iobytes, &ioflag, NULL, NULL)==SOCKET_ERROR)
 	{ 
 		if (WSAGetLastError() != WSA_IO_PENDING)
 			err_display(L"WSARecv() Error");
@@ -103,13 +103,16 @@ void PacketMgr::ProcessPacket(char* ptr)
 	switch (ptr[1])
 	{
 	case SC_PUT_PLAYER:
-		std::cout << "packet type : %d \n" << ptr[1] << std::endl;
+		std::cout << "packet type : " << (int)ptr[1] << std::endl;
 		break;
 	case SC_POS:
-		std::cout << "packet type : %d \n" << ptr[1] << std::endl;
+		std::cout << "packet type : \n" << ptr[1] << std::endl;
 		break;
 	case SC_REMOVE_PLAYER:
-		std::cout << "packet type : %d \n" << ptr[1] << std::endl;
+		std::cout << "packet type : \n" << ptr[1] << std::endl;
+		break;
+	case CS_TEST:
+		std::cout << "packet success" << std::endl;
 		break;
 	default:
 		std::cout << "Unknown packet type : %d \n" << ptr[1] << std::endl;

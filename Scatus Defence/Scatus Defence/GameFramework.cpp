@@ -22,9 +22,10 @@ GameFrameWork::~GameFrameWork()
 bool GameFrameWork::Init()
 {
 	//콘솔창 띄우기
-	/*AllocConsole();
+	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
-	freopen("CON", "w", stdout); */
+	freopen("CON", "w", stdout); 
+
 	if (!D3DApp::Init())
 		return false;
 
@@ -55,7 +56,7 @@ bool GameFrameWork::Init()
 	Sound_Mgr->Create_Sound(D3DApp::MainWnd());
 
 	// Giljune's Code
-	//mPacketMgr.Init();
+	Packet_Mgr->Init();
 
 
 	const XMFLOAT3& playerPos = Player::GetInstance()->GetPos();
@@ -89,6 +90,14 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트에서 키보드, 마우스 등 이벤트가 발생한다.
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
+	
+	cs_packet_success packet;
+	packet.size = sizeof(packet);
+	packet.type = CS_SUCCESS;
+	packet.success = true;
+
+	Packet_Mgr->ReadPacket();
+	Packet_Mgr->SendPacket(packet);
 
 	State_Mgr->Update(dt);
 	Object_Mgr->Update(dt);
@@ -99,6 +108,7 @@ void GameFrameWork::UpdateScene(float dt)
 
 	Player::GetInstance()->Update(dt);
 	Camera::GetInstance()->Update();
+
 }
 
 void GameFrameWork::DrawScene()

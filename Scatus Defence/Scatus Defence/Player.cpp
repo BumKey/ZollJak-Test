@@ -41,6 +41,12 @@ void Player::Update(float dt)
 
 void Player::Move(float dt)
 {
+	cs_packet_success packet;
+
+	packet.size = sizeof(packet);
+	packet.type = CS_SUCCESS;
+	packet.success = true;
+
 	if (mActionState != ActionState::Attack)
 	{
 		if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
@@ -54,6 +60,8 @@ void Player::Move(float dt)
 			Walk(-dt);
 			Strafe(dt);
 			mActionState = ActionState::Run;
+			Packet_Mgr->SendPacket(packet);
+
 		}
 		else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('A') & 0x8000))
 		{

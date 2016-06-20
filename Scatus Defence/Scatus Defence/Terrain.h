@@ -8,6 +8,13 @@
 #define TERRAIN_H
 
 #include "d3dUtil.h"
+#include "Camera.h"
+#include "LightHelper.h"
+#include "Effects.h"
+#include "Vertex.h"
+#include "RenderStates.h"
+#include <fstream>
+#include <sstream>
 
 class Camera;
 struct DirectionalLight;

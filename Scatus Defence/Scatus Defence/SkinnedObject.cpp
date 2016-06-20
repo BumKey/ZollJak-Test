@@ -113,6 +113,9 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, co
 
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	if (GetAsyncKeyState('1') & 0x8000)
+		dc->RSSetState(RenderStates::WireframeRS);
+
 	XMMATRIX world;
 	XMMATRIX worldInvTranspose;
 	XMMATRIX worldViewProj;
@@ -179,6 +182,9 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 	XMMATRIX worldViewProj;
 
 	dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
+
+	if (GetAsyncKeyState('1') & 0x8000)
+		dc->RSSetState(RenderStates::WireframeRS);
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	animatedTech->GetDesc(&techDesc);
@@ -264,6 +270,9 @@ void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam
 	ID3DX11EffectTechnique* animatedSmapTech = Effects::BuildShadowMapFX->BuildShadowMapSkinnedTech;
 
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	if (GetAsyncKeyState('1') & 0x8000)
+		dc->RSSetState(RenderStates::WireframeRS);
 
 	XMMATRIX world;
 	XMMATRIX worldInvTranspose;

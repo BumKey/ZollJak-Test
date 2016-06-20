@@ -3,12 +3,7 @@
 //***************************************************************************************
 
 #include "Terrain.h"
-#include "Camera.h"
-#include "LightHelper.h"
-#include "Effects.h"
-#include "Vertex.h"
-#include <fstream>
-#include <sstream>
+
 
 Terrain::Terrain() : 
 	mQuadPatchVB(0), 
@@ -141,6 +136,9 @@ void Terrain::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFL
     dc->IASetVertexBuffers(0, 1, &mQuadPatchVB, &stride, &offset);
 	dc->IASetIndexBuffer(mQuadPatchIB, DXGI_FORMAT_R16_UINT, 0);
 
+	if (GetAsyncKeyState('1') & 0x8000)
+		dc->RSSetState(RenderStates::WireframeRS);
+
 	XMMATRIX viewProj = cam.ViewProj();
 	XMMATRIX world  = XMLoadFloat4x4(&mWorld);
 	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
@@ -156,10 +154,10 @@ void Terrain::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFL
 	Effects::TerrainFX->SetFogColor(Colors::Silver);
 	Effects::TerrainFX->SetFogStart(30.0f);
 	Effects::TerrainFX->SetFogRange(500.0f);
-	Effects::TerrainFX->SetMinDist(20.0f);
-	Effects::TerrainFX->SetMaxDist(500.0f);
+	Effects::TerrainFX->SetMinDist(50.0f);
+	Effects::TerrainFX->SetMaxDist(1000.0f);
 	Effects::TerrainFX->SetMinTess(0.0f);
-	Effects::TerrainFX->SetMaxTess(6.0f);
+	Effects::TerrainFX->SetMaxTess(4.0f);
 	Effects::TerrainFX->SetTexelCellSpaceU(1.0f / mInfo.HeightmapWidth);
 	Effects::TerrainFX->SetTexelCellSpaceV(1.0f / mInfo.HeightmapHeight);
 	Effects::TerrainFX->SetWorldCellSpace(mInfo.CellSpacing);

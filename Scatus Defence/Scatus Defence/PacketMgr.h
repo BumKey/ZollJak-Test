@@ -1,5 +1,6 @@
 #pragma once
 #include "protocol.h"
+#include "Singletone.h"
 #include <vector>
 
 struct WSABuf {
@@ -8,7 +9,7 @@ struct WSABuf {
 };
 
 
-class PacketMgr
+class PacketMgr : public Singletone<PacketMgr>
 {
 public:
 	PacketMgr();

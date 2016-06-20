@@ -27,7 +27,7 @@ void Game_Wave_Waiting::Execute()
 
 	UI_Mgr->Change_Time_TEXT(game_waiting_wave);
 
-	UI_Mgr->Change_HP_TEXT(G_Rogic_Mgr->GetPlayer()->GetProperty().hp_now);
+	UI_Mgr->Change_HP_TEXT(Player::GetInstance()->GetProperty().hp_now);
 	if (Time_Mgr->Get_remain_Wait_time() < 2)
 	{
 		UI_Mgr->GetTextptr(Text_ingame_start_wave)->Active = true;
@@ -35,7 +35,7 @@ void Game_Wave_Waiting::Execute()
 	if (Time_Mgr->WaveTimer())
 	{
 		
-		G_State_Mgr->ChangeState(Game_Waving::Instance()); // 웨이브 상태로 회귀
+		State_Mgr->ChangeState(Game_Waving::Instance()); // 웨이브 상태로 회귀
 
 	};
 

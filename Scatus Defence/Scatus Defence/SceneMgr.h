@@ -1,10 +1,12 @@
 #pragma once
+#include "Singletone.h"
 #include "GeometryGenerator.h"
 #include "Effects.h"
 #include "BasicObject.h"
 #include "SkinnedObject.h"
 #include "RenderStates.h"
 #include "ResourceMgr.h"
+#include "ObjectMgr.h"
 #include "Camera.h"
 #include "MathHelper.h"
 #include "Terrain.h"
@@ -14,6 +16,7 @@
 #include <list>
 
 #define SMapSize		2046
+#define Scene_Mgr SceneMgr::GetInstance()
 
 struct BoundingSphere
 {
@@ -26,29 +29,31 @@ struct BoundingSphere
 /// 클래스 유형 : 컨트롤러
 /// 장면의 그리기와 관련된 기능을 관장하는 클래스
 /// </summary>
-class SceneMgr
+class SceneMgr : public Singletone<SceneMgr>
 {
-public:
+private:
 	SceneMgr();
 	~SceneMgr();
 
+	friend class Singletone<SceneMgr>;
 public:
 	void Init(ID3D11Device* device, ID3D11DeviceContext * dc, 
 		ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv, 
-		const Camera& cam, UINT width, UINT height);
-	void OnResize(UINT width, UINT height, const Camera& cam,
+		UINT width, UINT height);
+	void OnResize(UINT width, UINT height,
 		ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv);
-	void ComputeSceneBoundingBox(const XMFLOAT3& playerPos);
+	void ComputeSceneBoundingBox();
+
 	void Update(float dt);
-	void DrawScene(const std::vector<GameObject*>& allObjects, const Camera& cam);
+	void DrawScene();
 
 	DirectionalLight*		GetDirLight() { return mDirLights; }
 	FLOAT					GetTerrainHeight(XMFLOAT3 pos) const { return mTerrain.GetHeight(pos); }
 
 private:
 	void BuildShadowTransform();
-	void CreateShadowMap(const std::vector<GameObject*>& allObjects, const Camera& cam);
-	void CreateSsaoMap(const std::vector<GameObject*>& allObjects, const Camera& cam);
+	void CreateShadowMap();
+	void CreateSsaoMap();
 	void BuildScreenQuadGeometryBuffers(ID3D11Device* device);
 	void DrawScreenQuad();
 

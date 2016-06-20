@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 #include "Sound_Manager.h"
 
 
@@ -57,7 +57,7 @@ Sound_Manager::Sound_Manager()
 Sound_Manager::~Sound_Manager()
 {
 }
-void Sound_Manager::Creae_Sound(HWND hwnd)
+void Sound_Manager::Create_Sound(HWND hwnd)
 {
 
 	Sound_BG temp_bg;
@@ -74,7 +74,7 @@ void Sound_Manager::Creae_Sound(HWND hwnd)
 
 		if (wwBg != NULL)
 		{
-			if (wwBg->LoadWaveFile(TEXT("background.wav")) == S_OK)
+			if (wwBg->LoadWaveFile(TEXT("Resource\\background.wav")) == S_OK)
 			{
 				AllocDSound(temp_bg.Sound_buffer, wwBg, temp_bg.dsBuffDesc);
 
@@ -90,7 +90,7 @@ void Sound_Manager::Creae_Sound(HWND hwnd)
 
 		if (wwBg != NULL)
 		{
-			if (wwBg->LoadWaveFile(TEXT("¿ÕÁÂÀÇ°ÔÀÓ.wav")) == S_OK)
+			if (wwBg->LoadWaveFile(TEXT("Resource\\¿ÕÁÂÀÇ°ÔÀÓ.wav")) == S_OK)
 			{
 				AllocDSound(temp_bg.Sound_buffer, wwBg, temp_bg.dsBuffDesc);
 
@@ -105,7 +105,7 @@ void Sound_Manager::Creae_Sound(HWND hwnd)
 		wwSelect = new WinWave();
 		if (wwSelect != NULL)
 		{
-			if (wwSelect->LoadWaveFile(TEXT("select.wav")) == S_OK)
+			if (wwSelect->LoadWaveFile(TEXT("Resource\\select.wav")) == S_OK)
 			{
 				AllocDSound(temp_effect.Sound_buffer, wwSelect, temp_effect.dsBuffDesc);
 
@@ -120,7 +120,7 @@ void Sound_Manager::Creae_Sound(HWND hwnd)
 		wwSelect = new WinWave();
 		if (wwSelect != NULL)
 		{
-			if (wwSelect->LoadWaveFile(TEXT("select.wav")) == S_OK)
+			if (wwSelect->LoadWaveFile(TEXT("Resource\\select.wav")) == S_OK)
 			{
 				AllocDSound(temp_3D_effect.Sound_buffer, wwSelect, temp_effect.dsBuffDesc);
 

@@ -11,17 +11,8 @@ ObjectMgr::~ObjectMgr()
 {
 }
 
-void ObjectMgr::Init(ResourceMgr* resourceMgr)
+void ObjectMgr::Init()
 {
-	mResourceMgr = resourceMgr;
-
-	InstanceDesc info;
-	// 250이 거의 끝자리
-	info.Pos = XMFLOAT3(170.0f, 0.05f, -280.0f);
-	info.Rot.y = 0.0f;
-	info.Scale = 0.2f;
-
-	mPlayer = new Player(mResourceMgr->GetSkinnedMesh(ObjectType::Goblin), info);
 	CreateMap();
 }
 
@@ -67,10 +58,8 @@ bool ObjectMgr::AddMonster(Monster* monster)
 		return true;
 	}
 	else {
-
-		SafeDelete(monster);
+		monster->Release();
 		return false;
-
 	}
 
 }
@@ -98,7 +87,7 @@ void ObjectMgr::Update()
 	mAllObjects.clear();
 	mAllObjects.reserve(mTotalObjectNum);
 
-	mAllObjects.push_back(mPlayer);
+	mAllObjects.push_back(Player::GetInstance());
 	for (auto i : mObstacles)
 		mAllObjects.push_back(i);
 
@@ -115,21 +104,21 @@ void ObjectMgr::Update(float dt)
 	mAllObjects.clear();
 	mAllObjects.reserve(mTotalObjectNum);
 
-	mAllObjects.push_back(mPlayer);
-	mOurTeam.push_back(mPlayer);
+	mAllObjects.push_back(Player::GetInstance());
+	mOurTeam.push_back(Player::GetInstance());
 	for (auto i : mObstacles)
 		mAllObjects.push_back(i);
 
 	for (auto i : mStructures)
 		mAllObjects.push_back(i);
 
-	mPlayer->Animate(dt);
+	Player::GetInstance()->Animate(dt);
 	for (auto i = mMonsters.begin(); i != mMonsters.end();)
 	{
 		Monster*& monster = *i;
 		if (monster->IsDead() && monster->CurrAnimEnd())
 		{
-			monster->Release(mResourceMgr);
+			monster->Release();
 			i = mMonsters.erase(i);
 		}
 		else
@@ -158,7 +147,7 @@ void ObjectMgr::ReleaseAll()
 void ObjectMgr::ReleaseAllMonsters()
 {
 	for (auto i : mMonsters)
-		i->Release(mResourceMgr);
+		i->Release();
 
 	mMonsters.clear();
 }
@@ -171,26 +160,27 @@ void ObjectMgr::CreateMap()
 	info.Rot.y = 0.0f;
 	info.Scale = 0.3f;
 
-	AddObstacle(new BasicObject(mResourceMgr->Temple, info, Label::Basic));
+	AddObstacle(new BasicObject(Resource_Mgr->GetBasicMesh(ObjectType::Temple), info, Label::Basic));
 
+	auto player = Player::GetInstance();
 	for (UINT i = 0; i < 10; ++i)
 	{
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
-			-0.1f, mPlayer->GetPos().z + 50.0f - rand() % 100);
+		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f - rand() % 100,
+			-0.1f, player->GetPos().z + 50.0f - rand() % 100);
 		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
 		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2;
 
-		AddObstacle(new BasicObject(mResourceMgr->TreeMesh, info, Label::AlphaBasic));
+		AddObstacle(new BasicObject(Resource_Mgr->GetBasicMesh(ObjectType::Tree), info, Label::AlphaBasic));
 	}
 
 	for (UINT i = 0; i < 20; ++i)
 	{
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f - rand() % 100,
-			-0.1f, mPlayer->GetPos().z + 50.0f - rand() % 100);
+		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f - rand() % 100,
+			-0.1f, player->GetPos().z + 50.0f - rand() % 100);
 		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
 		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2.0f;
 
-		AddObstacle(new BasicObject(mResourceMgr->RockMesh, info, Label::Basic));
+		AddObstacle(new BasicObject(Resource_Mgr->GetBasicMesh(ObjectType::Rock), info, Label::Basic));
 	}
 }
 

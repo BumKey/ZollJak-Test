@@ -26,7 +26,7 @@ void Game_Begin::Enter()
 void Game_Begin::Execute()
 {
 
-	G_State_Mgr->ChangeState(Game_Wave_Waiting::Instance()); // 게임엔드로 수정해야함
+	State_Mgr->ChangeState(Game_Wave_Waiting::Instance()); // 게임엔드로 수정해야함
 }
 
 void Game_Begin::Exit()

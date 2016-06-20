@@ -250,8 +250,9 @@ void Camera::UpdateViewMatrix()
 	mView(3,3) = 1.0f;
 }
 
-void Camera::Update(const Player* player, const SceneMgr& sceneMgr)
+void Camera::Update()
 {
+	const auto player = Player::GetInstance();
 	XMVECTOR vLook = XMLoadFloat3(&player->GetLook());
 	XMVECTOR vUp = XMLoadFloat3(&player->GetUp());
 
@@ -268,10 +269,10 @@ void Camera::Update(const Player* player, const SceneMgr& sceneMgr)
 	camPos.y = playerPos.y + fCamT.y*12.0f;
 	camPos.z = playerPos.z + fCamT.z*12.0f;
 
-	camPos.y += sceneMgr.GetTerrainHeight(camPos);
+	camPos.y += Scene_Mgr->GetTerrainHeight(camPos);
 
 	lookPos.x = playerPos.x;
-	lookPos.y = playerPos.y + sceneMgr.GetTerrainHeight(playerPos) - mRot*10.0f;
+	lookPos.y = playerPos.y + Scene_Mgr->GetTerrainHeight(playerPos) - mRot*10.0f;
 	lookPos.z = playerPos.z;
 
 	LookAt(camPos, lookPos, XMFLOAT3(0.0f, 1.0f, 0.0f));

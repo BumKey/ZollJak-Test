@@ -1,5 +1,4 @@
 #include "CollisionMgr.h"
-#include <iostream>
 
 CollisionMgr::CollisionMgr()
 {
@@ -10,16 +9,8 @@ CollisionMgr::~CollisionMgr()
 {
 }
 
-void CollisionMgr::Init(ObjectMgr * objectMgr)
-{
-	mObjectMgr = objectMgr;
-}
-
 void CollisionMgr::Update(float dt)
 {
-	mMonsters = mObjectMgr->GetMonsters();
-	mPlayer = mObjectMgr->GetPlayer();
-
 	MovingCollision(dt);
 
 	// 현재 플레이어 공격만 충돌체크 감지
@@ -29,7 +20,7 @@ void CollisionMgr::Update(float dt)
 
 void CollisionMgr::MovingCollision(float dt)
 {
-	for (auto& iterM : mMonsters)
+	for (auto& iterM : Object_Mgr->GetMonsters())
 	{
 		if (iterM->HasTarget() && iterM->IsAttack() == false)
 		{
@@ -43,23 +34,27 @@ void CollisionMgr::MovingCollision(float dt)
 
 void CollisionMgr::PlayerAttackCollision()
 {
-	if (mPlayer->IsAttack() && mPlayer->OneHit())
+	auto player = Player::GetInstance();
+	auto monsters = Object_Mgr->GetMonsters();
+	if (player->IsAttack() && player->OneHit())
 	{
 		std::vector<UINT> detectedMonsters;
-		HighDetectWithMonsters(mPlayer, detectedMonsters);
+		HighDetectWithMonsters(player, detectedMonsters);
 		for (UINT i = 0; i < detectedMonsters.size(); ++i)
 		{
 			UINT index = detectedMonsters[i];
-			mPlayer->Attack(mMonsters[index]);
-			mMonsters[index]->ChangeActionState(ActionState::Damage);
+			player->Attack(monsters[index]);
+			monsters[index]->ChangeActionState(ActionState::Damage);
 		}
 	}
 }
 
 bool CollisionMgr::DetectWithPlayer(GameObject * sourceObj)
 {
+	auto player = Player::GetInstance();
+
 	XMFLOAT3 sourcePos = sourceObj->GetPos();
-	XMFLOAT3 playerPos = mPlayer->GetPos();
+	XMFLOAT3 playerPos = player->GetPos();
 	if (MathHelper::DistanceVector(sourcePos, playerPos) <= sourceObj->GetProperty().attackrange)
 		return true;
 	else
@@ -70,12 +65,13 @@ bool CollisionMgr::LowDetectWithMonsters(GameObject* sourceObj)
 {
 	// 처음 검출된 충돌만 인식하고 나머지는 건너뜀
 	// 약식 충돌 -> 군중 애니메이션
-	for (UINT i = 0; i < mMonsters.size(); ++i)
+	auto monsters = Object_Mgr->GetMonsters();
+	for (UINT i = 0; i < monsters.size(); ++i)
 	{
-		if (sourceObj->GetID() != mMonsters[i]->GetID() &&
-			MathHelper::DistanceVector(sourceObj->GetPos(), mMonsters[i]->GetPos()) <= 5.0f)
+		if (sourceObj->GetID() != monsters[i]->GetID() &&
+			MathHelper::DistanceVector(sourceObj->GetPos(), monsters[i]->GetPos()) <= 5.0f)
 		{
-			std::cout << sourceObj->GetID() << "과" << mMonsters[i]->GetID() << "충돌 검출 중.." << std::endl;
+			std::cout << sourceObj->GetID() << "과" << monsters[i]->GetID() << "충돌 검출 중.." << std::endl;
 			return true;
 		}
 		else
@@ -86,12 +82,13 @@ bool CollisionMgr::LowDetectWithMonsters(GameObject* sourceObj)
 
 void CollisionMgr::HighDetectWithMonsters(GameObject* sourceObj,  std::vector<UINT>& outIndices)
 {
-	for (UINT i = 0; i < mMonsters.size(); ++i)
+	auto monsters = Object_Mgr->GetMonsters();
+	for (UINT i = 0; i < monsters.size(); ++i)
 	{
-		if (sourceObj->GetID() != mMonsters[i]->GetID() &&
-			MathHelper::DistanceVector(sourceObj->GetPos(), mMonsters[i]->GetPos()) <= 5.0f)
+		if (sourceObj->GetID() != monsters[i]->GetID() &&
+			MathHelper::DistanceVector(sourceObj->GetPos(), monsters[i]->GetPos()) <= 5.0f)
 		{
-			std::cout << sourceObj->GetID() << "과" << mMonsters[i]->GetID() << "충돌 검출 중.." << std::endl;
+			std::cout << sourceObj->GetID() << "과" << monsters[i]->GetID() << "충돌 검출 중.." << std::endl;
 			outIndices.push_back(i);
 		}
 	}

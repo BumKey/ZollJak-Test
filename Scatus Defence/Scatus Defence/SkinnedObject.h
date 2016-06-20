@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "ResourceMgr.h"
 #include "SkinnedMesh.h"
 
 enum Anims {
@@ -11,13 +12,13 @@ enum Anims {
 class SkinnedObject : public GameObject
 {
 public:
+	SkinnedObject();
 	SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info);
 	virtual~SkinnedObject();
 
 public:
-	virtual void Walk(float d);
-	virtual void Strafe(float d);
-	virtual void RotateY(float angle);
+	void Init(SkinnedMesh* Mesh, const InstanceDesc& info);
+
 	virtual void Update(float dt);
 	virtual void Animate(float dt);
 
@@ -25,8 +26,6 @@ public:
 	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight);
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight);
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight);
-
-	virtual void Release(ResourceMgr* rMgr);
 
 	bool  CurrAnimEnd();
 
@@ -39,8 +38,7 @@ private:
 protected:
 	SkinnedMesh* mMesh;
 
-	FLOAT mTimePos;
-	FLOAT mAngle;
+	FLOAT mTimePos;;
 
 	std::string mCurrClipName;
 	std::unordered_map<Anims, std::string> mAnimNames;

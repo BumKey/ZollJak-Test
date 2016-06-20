@@ -25,21 +25,11 @@
     <Filter Include="Effect\Special Effects\Sky">
       <UniqueIdentifier>{d9f0c182-0fc4-4707-aa9b-b3a3efa72c2e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Managers">
-      <UniqueIdentifier>{b20d9836-07af-48f8-afb1-4ebb49d75747}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Vertex">
       <UniqueIdentifier>{47244300-373f-4207-9219-bed1054b55da}</UniqueIdentifier>
     </Filter>
     <Filter Include="Camera">
       <UniqueIdentifier>{1af35122-88ce-446a-b9bd-f53b5b5fa312}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameFramework">
-      <UniqueIdentifier>{67d6c433-3e27-45b8-8cb4-dea153f7abe1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="main">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="State Machine">
       <UniqueIdentifier>{c45fdacc-52a4-4e49-89c4-367a985b3a07}</UniqueIdentifier>
@@ -77,20 +67,27 @@
     <Filter Include="GameObject\SkinnedObject\Monster\Goblin">
       <UniqueIdentifier>{5a1d0966-2bda-46eb-946d-af2315d57083}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\SkinnedObject\Player\p_Warrior">
-      <UniqueIdentifier>{a76b644d-c056-49a9-a1fd-7845848bb4ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\SkinnedObject\Monster\Cyclop">
       <UniqueIdentifier>{8ba60f12-56a2-4f78-b764-3d35de1420e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Property">
       <UniqueIdentifier>{8bf98476-0fe5-4e23-a4d5-a8907d763cf8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameStateMgr">
+    <Filter Include="NetWork">
+      <UniqueIdentifier>{a846629c-6b1d-4034-a6fc-69ae3a6c2442}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{0ca3293b-1139-44a3-9570-5786f55f3ba8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{b20d9836-07af-48f8-afb1-4ebb49d75747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State Machine\GameStates">
       <UniqueIdentifier>{e1f5283c-f2e3-45d0-9166-5e438e579f44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI_Sound">
-      <UniqueIdentifier>{0ca3293b-1139-44a3-9570-5786f55f3ba8}</UniqueIdentifier>
+    <Filter Include="Main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -120,9 +117,6 @@
     </ClCompile>
     <ClCompile Include="Vertex.cpp">
       <Filter>Vertex</Filter>
-    </ClCompile>
-    <ClCompile Include="GameFramework.cpp">
-      <Filter>GameFramework</Filter>
     </ClCompile>
     <ClCompile Include="RenderStates.cpp">
       <Filter>State Machine</Filter>
@@ -196,11 +190,8 @@
     <ClCompile Include="GameRogicManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
-    <ClCompile Include="p_Warrior.cpp">
-      <Filter>GameObject\SkinnedObject\Player\p_Warrior</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>main</Filter>
+      <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="RogicTimer.cpp">
       <Filter>Base</Filter>
@@ -220,44 +211,47 @@
     <ClCompile Include="Utilities.cpp">
       <Filter>Base</Filter>
     </ClCompile>
-    <ClCompile Include="PacketMgr.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
     <ClCompile Include="Game_Begin.cpp">
-      <Filter>GameStateMgr</Filter>
+      <Filter>State Machine\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="Game_GameOver.cpp">
-      <Filter>GameStateMgr</Filter>
+      <Filter>State Machine\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="Game_GlobalState.cpp">
-      <Filter>GameStateMgr</Filter>
+      <Filter>State Machine\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="Game_Title.cpp">
-      <Filter>GameStateMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="GameStateMgr.cpp">
-      <Filter>GameStateMgr</Filter>
+      <Filter>State Machine\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="Game_Waving.cpp">
-      <Filter>GameStateMgr</Filter>
+      <Filter>State Machine\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="Game_Wave_Waiting .cpp">
-      <Filter>GameStateMgr</Filter>
+      <Filter>State Machine\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="Game_Title_Option.cpp">
-      <Filter>GameStateMgr</Filter>
+      <Filter>State Machine\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="UI_Manager.cpp">
-      <Filter>UI_Sound</Filter>
+      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="UI_Scene.cpp">
-      <Filter>UI_Sound</Filter>
+      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="winwav.cpp">
-      <Filter>UI_Sound</Filter>
+      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="Sound_Manager.cpp">
-      <Filter>UI_Sound</Filter>
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketMgr.cpp">
+      <Filter>NetWork</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFramework.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -287,9 +281,6 @@
     </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>Vertex</Filter>
-    </ClInclude>
-    <ClInclude Include="GameFramework.h">
-      <Filter>GameFramework</Filter>
     </ClInclude>
     <ClInclude Include="RenderStates.h">
       <Filter>State Machine</Filter>
@@ -363,9 +354,6 @@
     <ClInclude Include="GameRogicManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
-    <ClInclude Include="p_Warrior.h">
-      <Filter>GameObject\SkinnedObject\Player\p_Warrior</Filter>
-    </ClInclude>
     <ClInclude Include="RogicTimer.h">
       <Filter>Base</Filter>
     </ClInclude>
@@ -384,22 +372,32 @@
     <ClInclude Include="Utilities.h">
       <Filter>Base</Filter>
     </ClInclude>
-    <ClInclude Include="PacketMgr.h" />
-    <ClInclude Include="protocol.h" />
-    <ClInclude Include="GameStateMgr.h">
-      <Filter>GameStateMgr</Filter>
-    </ClInclude>
     <ClInclude Include="UI_Manager.h">
-      <Filter>UI_Sound</Filter>
+      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="UI_Scene.h">
-      <Filter>UI_Sound</Filter>
+      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="winwav.h">
-      <Filter>UI_Sound</Filter>
+      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="Sound_Manager.h">
-      <Filter>UI_Sound</Filter>
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketMgr.h">
+      <Filter>NetWork</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>NetWork</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Singletone.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="GameFramework.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

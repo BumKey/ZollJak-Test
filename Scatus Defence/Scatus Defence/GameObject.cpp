@@ -1,6 +1,15 @@
 #include "GameObject.h"
 UINT GameObject::GeneratedCount = 0;
 
+GameObject::GameObject() : m_bForOneHit(false),
+mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f),
+mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
+{
+	mID = GeneratedCount++;
+	mActionState = ActionState::Idle;
+	mCollisionState = CollisionState::None;
+}
+
 GameObject::GameObject(GameMesh* mesh, const InstanceDesc& info) : mMesh(mesh), m_bForOneHit(false),
 mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f),
 mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
@@ -28,6 +37,44 @@ mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), m
 
 GameObject::~GameObject()
 {
+}
+
+void GameObject::Walk(float d)
+{
+	mDirection = mCurrLook;
+
+	// mPosition += d*mLook
+	XMVECTOR s = XMVectorReplicate(d*mProperty.movespeed);
+	XMVECTOR l = XMLoadFloat3(&mCurrLook);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
+
+	ChangeActionState(ActionState::Run);
+}
+
+void GameObject::Strafe(float d)
+{
+	mDirection = mRight;
+
+	// mPosition += d*mRight
+	XMVECTOR s = XMVectorReplicate(d*mProperty.movespeed);
+	XMVECTOR r = XMLoadFloat3(&mRight);
+	XMVECTOR p = XMLoadFloat3(&mPosition);
+	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
+
+	ChangeActionState(ActionState::Run);
+}
+
+void GameObject::RotateY(float angle)
+{
+	mRotation.y += angle;
+	mPrevLook = mCurrLook;
+	// Rotate the basis vectors about the world y-axis.
+	XMMATRIX R = XMMatrixRotationY(angle);
+
+	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
+	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
+	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 }
 
 void  GameObject::PrintLocation()
@@ -77,4 +124,10 @@ void GameObject::SetTarget(GameObject * target)
 		mTarget = target;
 		mHasTarget = true;
 	}
+}
+
+void GameObject::Release()
+{
+	assert(mObjectType != ObjectType::None);
+	Resource_Mgr->ReleaseMesh(mObjectType);
 }

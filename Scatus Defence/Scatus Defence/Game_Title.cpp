@@ -25,7 +25,7 @@ void Game_Title::Execute()
 {
 
 		if(UI_Mgr->Get_Gamescene() == Scene_Ingame)
-		G_State_Mgr->ChangeState(Game_Begin::Instance());
+		State_Mgr->ChangeState(Game_Begin::Instance());
 	
 
 

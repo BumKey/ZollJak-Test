@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(SkinnedMesh* Mesh, const InstanceDesc& info) : SkinnedObject(Mesh, info)
+Player::Player() : SkinnedObject()
 {
 	mProperty.name = "Player";
 

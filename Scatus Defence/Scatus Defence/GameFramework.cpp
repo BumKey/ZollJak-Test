@@ -9,7 +9,7 @@ GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
 
-	mCam.SetLens(0.20f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 }
 
 GameFrameWork::~GameFrameWork()
@@ -33,25 +33,39 @@ bool GameFrameWork::Init()
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
 
-	G_Rogic_Mgr->Init(md3dDevice);
-	mSceneMgr.Init(md3dDevice, md3dImmediateContext, 
-		mDepthStencilView, mRenderTargetView,
-		mCam, mClientWidth, mClientHeight);
-	mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
-	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());
-	
-	Sound_Mgr->Creae_Sound(D3DApp::MainWnd());
+	Scene_Mgr->Init(md3dDevice, md3dImmediateContext,
+		mDepthStencilView, mRenderTargetView, mClientWidth, mClientHeight);
+
+	Texture_Mgr->Init(md3dDevice);
+	Resource_Mgr->Init(md3dDevice);
+
+	InstanceDesc info;
+	// 250이 거의 끝자리
+	info.Pos = XMFLOAT3(170.0f, 0.05f, -280.0f);
+	info.Rot.y = 0.0f;
+	info.Scale = 0.2f;
+	Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(ObjectType::Goblin), info);
+
+	Object_Mgr->Init();
+
+	UI_Mgr->CreateFactorys();
+	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd(), mSwapChain);
+	UI_Mgr->Load_All_UI();
+
+	Sound_Mgr->Create_Sound(D3DApp::MainWnd());
+
 	// Giljune's Code
 	//mPacketMgr.Init();
 
-	mPlayer = G_Rogic_Mgr->GetPlayer();
 
-	XMFLOAT3 camPos = mPlayer->GetPos();
+	const XMFLOAT3& playerPos = Player::GetInstance()->GetPos();
+	XMFLOAT3 camPos = playerPos;
 	camPos.y += 10.0f;
 	camPos.z -= 20.0f;
-	mCam.LookAt(camPos, mPlayer->GetPos(), XMFLOAT3(0.0f, 1.0f, 0.0f));
+	Camera::GetInstance()->LookAt(camPos, playerPos, XMFLOAT3(0.0f, 1.0f, 0.0f));
 
-	mSceneMgr.ComputeSceneBoundingBox(mPlayer->GetPos());
+	Object_Mgr->Update();
+	Scene_Mgr->ComputeSceneBoundingBox();
 	
 	return true;
 }
@@ -60,9 +74,12 @@ void GameFrameWork::OnResize()
 {
 	D3DApp::OnResize();
 
-	mCam.SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
-	mSceneMgr.OnResize(mClientWidth, mClientHeight, mCam, 
-		mDepthStencilView, mRenderTargetView);
+	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	Scene_Mgr->OnResize(mClientWidth, mClientHeight, mDepthStencilView, mRenderTargetView);
+
+	UI_Mgr->CreateFactorys();
+	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd(), mSwapChain);
+	//UI_Mgr->Load_All_UI();
 }
 
 void GameFrameWork::UpdateScene(float dt)
@@ -72,17 +89,23 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트에서 키보드, 마우스 등 이벤트가 발생한다.
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
-	G_State_Mgr->Update(dt);
-	mSceneMgr.Update(dt);
 
-	mCam.Update(mPlayer, mSceneMgr);
+	State_Mgr->Update(dt);
+	Object_Mgr->Update(dt);
+	Collision_Mgr->Update(dt);
+	Rogic_Mgr->Update(dt);
 
+	Scene_Mgr->Update(dt);
+
+	Player::GetInstance()->Update(dt);
+	Camera::GetInstance()->Update();
 }
 
 void GameFrameWork::DrawScene()
 {
-	mSceneMgr.DrawScene(G_Rogic_Mgr->GetAllObjects(), mCam);
+	Scene_Mgr->DrawScene();
 	UI_Mgr->Print_All_UI();
+
 	HR(mSwapChain->Present(0, 0));
 }
 
@@ -90,9 +113,9 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
-	G_Rogic_Mgr->OnMouseDown = true;
+	Rogic_Mgr->OnMouseDown = true;
 	if (btnState & MK_LBUTTON) {
-		mPlayer->SetAttackState();
+		Player::GetInstance()->SetAttackState();
 	}
 	
 	SetCapture(mhMainWnd);
@@ -100,7 +123,7 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 {
-	G_Rogic_Mgr->OnMouseDown = false;
+	Rogic_Mgr->OnMouseDown = false;
 	ReleaseCapture();
 }
 
@@ -114,9 +137,9 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 
 		// Update안의 LookAt 세번째 변수 mUp으로 해주면
 		// 어지럽지만 나름 멋있는 효과가?!
-		mCam.Pitch(dy);			
+		Camera::GetInstance()->Pitch(dy);			
 		//mCam.RotateY(dx/3.0f);
-		mPlayer->RotateY(dx*2.0f);
+		Player::GetInstance()->RotateY(dx*2.0f);
 
 		mLastMousePos.x = x;
 		mLastMousePos.y = y;

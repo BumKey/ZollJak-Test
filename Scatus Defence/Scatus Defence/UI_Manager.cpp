@@ -74,12 +74,8 @@ bool UI_Manager::LoadPNG2DDBitmap(const TCHAR* pngfn, ID2D1Bitmap* &out)
 
 	return false;
 }
-
-
-void UI_Manager::CreateD2DrenderTarget(HWND hwnd) {
-
-
-
+void UI_Manager::CreateFactorys()
+{
 	hr = D2D1CreateFactory(
 		D2D1_FACTORY_TYPE_SINGLE_THREADED,
 		&pD2DFactory_
@@ -128,18 +124,20 @@ void UI_Manager::CreateD2DrenderTarget(HWND hwnd) {
 	/*
 	if (SUCCEEDED(hr))
 	{
-		hr = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	hr = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	}*/
+}
 
-		pD2DFactory_->GetDesktopDpi(&m_dpiX_, &m_dpiY_);
+void UI_Manager::CreateD2DrenderTarget(HWND hwnd, IDXGISwapChain* swapChain) {
 
+	pD2DFactory_->GetDesktopDpi(&m_dpiX_, &m_dpiY_);
 
-
-	pD2DFactory_->CreateDxgiSurfaceRenderTarget(m_backbuffer,
+	IDXGISurface* backbuffer;
+	HR(swapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(&backbuffer)));
+	pD2DFactory_->CreateDxgiSurfaceRenderTarget(backbuffer,
 	D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
 	D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), m_dpiX_, m_dpiY_), &m_d2dRenderTarget);
-	if (m_backbuffer)m_backbuffer->Release();
-
+	ReleaseCOM(backbuffer);
 
 	hr = m_d2dRenderTarget->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::Black),
@@ -159,22 +157,33 @@ void UI_Manager::CreateD2DrenderTarget(HWND hwnd) {
 		IID_PPV_ARGS(&pWICFactory));
 
 	GetClientRect(hwnd, &rc);
-	Load_All_Image();
-	TextInit();
-
-
-
-	
-
 }
 
+void UI_Manager::Load_All_UI()
+{
 
+	Load_All_Image();
+	TextInit();
+}
 
 UI_Manager* UI_Manager::Instance()
 {
 	static UI_Manager instance;
 
 	return &instance;
+}
+
+void UI_Manager::OnSize(HWND hwnd)
+{
+	for (auto i : m_Image_list)
+	{
+		i->Image->GetSize().width;
+		i->Image->GetSize().height;
+		i->Image->GetPixelSize().height;
+		i->Image->GetPixelSize().width;
+	}
+
+	//모든 이미지 크기 재조정
 }
 
 void UI_Manager::Print_All_UI()
@@ -245,13 +254,13 @@ void UI_Manager::Load_All_Image()
 {
 
 	Image_info *temp = new Image_info(L"타이틀화면", Scene_Title, UI_title_BG,rc.left , rc.top,rc.right-rc.left,rc.bottom-rc.top, 1, UI_Frame_null);
-	hr= LoadPNG2DDBitmap(TEXT("title.jpg"),temp->Image);
+	hr= LoadPNG2DDBitmap(TEXT("Resource\\title.jpg"),temp->Image);
 	if (SUCCEEDED(hr))
 	{
 			m_Image_list.push_back(temp);
 	}
 	Image_info *temp2 = new Image_info(L"메시지박스", Scene_NULL, UI_ingame_chat_box,100, 100, 400,400,0.9, UI_Frame_null);
-	hr = LoadPNG2DDBitmap(TEXT("쿰척쿰척파오후.jpg"), temp2->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\효과음.png"), temp2->Image);
 	if (SUCCEEDED(hr))
 	{
 	m_Image_list.push_back(temp2);
@@ -268,7 +277,7 @@ void UI_Manager::Load_All_Image()
 	*/
 	Image_info *temp3 = new Image_info(L"Title_Menu_Box", Scene_Title, UI_title_menubox,(rc.left + rc.right) / 2 - 150, (rc.top + rc.bottom) / 2 - 50,
 		300, +200, 0.4, UI_Frame_null);
-	hr = LoadPNG2DDBitmap(TEXT("sony.jpg"), temp3->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\sony.jpg"), temp3->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp3);
@@ -276,7 +285,7 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp4 = new Image_info(L"아이디 입력", Scene_Title, UI_title_button_ID, (rc.left + rc.right) / 2 - 130, (rc.top + rc.bottom) / 2 - 25,
 		260, 40, 0.5, UI_Frame_Black);
-	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp4->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\ui_box_basic.png"), temp4->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp4);
@@ -284,7 +293,7 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp5 = new Image_info(L"패스워드 입력", Scene_Title, UI_title_button_PW, (rc.left + rc.right) / 2 - 130, (rc.top + rc.bottom) / 2 +25,
 		260, 40, 0.5, UI_Frame_Black);
-	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp5->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\ui_box_basic.png"), temp5->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp5);
@@ -293,7 +302,7 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp6 = new Image_info(L"로그인", Scene_Title, UI_title_button_login, (rc.left + rc.right) / 2 - 130, (rc.top + rc.bottom) / 2 +75,
 		125, 40, 0.5, UI_Frame_Black);
-	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp6->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\ui_box_basic.png"), temp6->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp6);
@@ -301,7 +310,7 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp7 = new Image_info(L"회원가입", Scene_Title, UI_title_button_register,(rc.left + rc.right) / 2+5, (rc.top + rc.bottom) / 2 +75,
 		125, 40, 0.5, UI_Frame_Black);
-	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp7->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\ui_box_basic.png"), temp7->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp7);
@@ -309,21 +318,21 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp8 = new Image_info(L"타이틀_옵션아이콘", Scene_Title, UI_title_button_option,rc.right - 50, rc.top +  10,
 		40, 40, 0.8, UI_Frame_null);
-	hr = LoadPNG2DDBitmap(TEXT("option.png"), temp8->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\option.png"), temp8->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp8);
 	}
 	Image_info *temp9 = new Image_info(L"크로스헤더", Scene_Ingame,UI_ingame_cross, (rc.left + rc.right)/2-15, (rc.top + rc.bottom)/2-15,
 		30, 30, 0.7, UI_Frame_null);
-	hr = LoadPNG2DDBitmap(TEXT("크로스헤더.png"), temp9->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\크로스헤더.png"), temp9->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp9);
 	}
 	Image_info *temp10 = new Image_info(L"체력", Scene_Ingame, UI_ingame_hp, rc.left +30, (rc.bottom-60),
 		100, 30, 0.8, UI_Frame_Black);
-	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp10->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\ui_box_basic.png"), temp10->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp10);
@@ -331,7 +340,7 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp11 = new Image_info(L"라운드", Scene_Ingame, UI_ingame_Round, rc.left + 30, (rc.top + 10),
 		100, 30, 0.8, UI_Frame_Black);
-	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp11->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\ui_box_basic.png"), temp11->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp11);
@@ -339,7 +348,7 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp12 = new Image_info(L"시간", Scene_Ingame, UI_ingame_time, rc.right - 145, (rc.top + 10),
 		130, 30, 0.8, UI_Frame_Black);
-	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp12->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\ui_box_basic.png"), temp12->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp12);
@@ -347,7 +356,7 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp13 = new Image_info(L"배경음on", Scene_Title_Setting, UI_title_BGMOn, (rc.left + rc.right) / 2 +30, (rc.top + rc.bottom) / 2 - 15,
 		50, 50, 0.8, UI_Frame_null);
-	hr = LoadPNG2DDBitmap(TEXT("MusicOn.png"), temp13->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\MusicOn.png"), temp13->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp13);
@@ -355,7 +364,7 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp14 = new Image_info(L"배경음off", Scene_Title_Setting,UI_title_BGMOff, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 - 15,
 		50, 50, 0.8, UI_Frame_null);
-	hr = LoadPNG2DDBitmap(TEXT("MusicOff.png"), temp14->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\MusicOff.png"), temp14->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp14);
@@ -363,14 +372,14 @@ void UI_Manager::Load_All_Image()
 
 	Image_info *temp15 = new Image_info(L"효과음on", Scene_Title_Setting, UI_title_SoundOn, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 +50,
 		50, 50, 0.8, UI_Frame_null);
-	hr = LoadPNG2DDBitmap(TEXT("효과음.png"), temp15->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\효과음.png"), temp15->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp15);
 	}
 	Image_info *temp16 = new Image_info(L"효과음off", Scene_Title_Setting, UI_title_SoundOff, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 +50,
 		50, 50, 0.8, UI_Frame_null);
-	hr = LoadPNG2DDBitmap(TEXT("효과음제거.png"), temp16->Image);
+	hr = LoadPNG2DDBitmap(TEXT("Resource\\효과음제거.png"), temp16->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp16);

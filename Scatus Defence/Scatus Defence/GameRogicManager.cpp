@@ -4,7 +4,7 @@
 #include "ResourceMgr.h"
 
 GameRogicManager::GameRogicManager() : mWaveLevel(1), mGameState(Gamestate_type::game_title),
-gamename("스카투스 디펜스"), player_num(0), OnMouseDown(false), mPlayer(nullptr)
+gamename("스카투스 디펜스"), player_num(0), OnMouseDown(false)
 {
 	m_pMap = new Map();
 	m_pMap->Load("Skatus_Map.txt");
@@ -48,7 +48,7 @@ void GameRogicManager::Gamestart()
 }
 void GameRogicManager::GameEnd()
 {
-	mObjectMgr.ReleaseAll();
+	Object_Mgr->ReleaseAll();
 	printf("\n게임이 종료되었습니다\n\n", mWaveLevel);
 
 }
@@ -58,46 +58,33 @@ void GameRogicManager::GameTitle()
 
 }
 
-void GameRogicManager::Init(ID3D11Device * device)
-{
-	mResourceMgr.Init(device);
-	mObjectMgr.Init(&mResourceMgr);
-	mCollisionMgr.Init(&mObjectMgr);
-
-	mObjectMgr.Update();
-
-	//플레이어설정
-	mPlayer = mObjectMgr.GetPlayer();
-}
+//void GameRogicManager::Init(ID3D11Device * device)
+//{
+//	mResourceMgr.Init(device);
+//	Object_Mgr->Init(&mResourceMgr);
+//	mCollisionMgr.Init(&mObjectMgr);
+//
+//	Object_Mgr->Update();
+//
+//	//플레이어설정
+//	player = Object_Mgr->GetPlayer();
+//}
 
 void GameRogicManager::Update(float dt)
 {
 
-	
-	//system("cls");//콘솔창 지우기
-
-	mObjectMgr.Update(dt);
-	mCollisionMgr.Update(dt);
-
 }
-
-
-
-
 
 void GameRogicManager::Waving(float dt)
 {
 	AIManager(dt);
-
 }
-
-
 
 void GameRogicManager::Printloc()
 {
 	printf("\n");
-	mPlayer->PrintLocation();
-	for (auto i : mObjectMgr.GetMonsters())
+	Player::GetInstance()->PrintLocation();
+	for (auto i : Object_Mgr->GetMonsters())
 	{
 		i->PrintLocation();
 	}
@@ -106,14 +93,15 @@ void GameRogicManager::Printloc()
 void GameRogicManager::Add_Monster(UINT waveLevel)
 {
 	assert(waveLevel > 0);
+	auto player = Player::GetInstance();
 
 	InstanceDesc info;
 
 	UINT goblinNum = mPerWaveMonsterNum[waveLevel][ObjectType::Goblin];
 	for (UINT i = 0; i < goblinNum; ++i)
 	{
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
-			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
+		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f + rand() % 150,
+			-0.1f, player->GetPos().z + 50.0f + rand() % 150);
 		info.Scale = 0.1f + MathHelper::RandF() / 5.0f;
 		info.Rot.y = 0;
 
@@ -136,18 +124,18 @@ void GameRogicManager::Add_Monster(UINT waveLevel)
 			type = Goblin::Type::Blue;
 			info.Scale = 0.6f;
 		}
-		mObjectMgr.AddMonster(new Goblin(mResourceMgr.GetSkinnedMesh(ObjectType::Goblin), info, type));
+		Object_Mgr->AddMonster(new Goblin(Resource_Mgr->GetSkinnedMesh(ObjectType::Goblin), info, type));
 	}
 
 	UINT cyclopNum = mPerWaveMonsterNum[waveLevel][ObjectType::Cyclop];
 	for (UINT i = 0; i < cyclopNum; ++i) {
-		info.Pos = XMFLOAT3(mPlayer->GetPos().x + 50.0f + rand() % 150,
-			-0.1f, mPlayer->GetPos().z + 50.0f + rand() % 150);
+		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f + rand() % 150,
+			-0.1f, player->GetPos().z + 50.0f + rand() % 150);
 		info.Scale = 7.0f + MathHelper::RandF();
 		info.Rot.x = MathHelper::Pi;
 		info.Rot.y = 0.0f;
 
-		mObjectMgr.AddMonster(new Cyclop(mResourceMgr.GetSkinnedMesh(ObjectType::Cyclop), info));
+		Object_Mgr->AddMonster(new Cyclop(Resource_Mgr->GetSkinnedMesh(ObjectType::Cyclop), info));
 	}
 }
 void GameRogicManager::MoveAI()
@@ -158,23 +146,17 @@ void GameRogicManager::AIManager(float dt)
 {
 	// 적들의 행동지정	
 	//타겟변경은 나중에 0.5초마다 한번씩
-	for (auto iterM : mObjectMgr.GetMonsters())
+	auto player = Player::GetInstance();
+	for (auto iterM : Object_Mgr->GetMonsters())
 	{
 		// 현재 타겟은 오로지 플레이어로 설정.
 		// 추후 타겟을 신전이나 다른 플레이어로 바꾸는 기능 추가할 것.
-		iterM->SetTarget(mPlayer);
+		iterM->SetTarget(player);
 		
 		// 거리가 가까우면 공격
-		if (mCollisionMgr.DetectWithPlayer(iterM)) 
+		if (Collision_Mgr->DetectWithPlayer(iterM)) 
 			iterM->SetAI_State(AI_State::AttackToTarget);
 		else 
 			iterM->SetAI_State(AI_State::MovingToTarget);
 	}
-}
-
-GameRogicManager* GameRogicManager::Instance()
-{
-	static GameRogicManager instance;
-
-	return &instance;
 }

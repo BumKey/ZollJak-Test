@@ -3,40 +3,46 @@
 #include "SkinnedMesh.h"
 #include "TextureMgr.h"
 #include "Properties.h"
+#include "Singletone.h"
 #include <unordered_map>
+
+#define Resource_Mgr ResourceMgr::GetInstance()
 
 // 하나만 존재하고 여러 곳에서 참조해야하는 리소스들을
 // 생성하고 참조할 수 있도록 한다.
-class ResourceMgr
+class ResourceMgr : public Singletone<ResourceMgr>
 {
-public:
+private:
 	ResourceMgr();
 	~ResourceMgr();
 
+	friend class Singletone<ResourceMgr>;
+public:
 	void Init(ID3D11Device* dc);
-
-	// Obstacles
-	BasicMesh* TreeMesh;
-	BasicMesh* BaseMesh;
-	BasicMesh* StairsMesh;
-	BasicMesh* Pillar1Mesh;
-	BasicMesh* Pillar2Mesh;
-	BasicMesh* Pillar3Mesh;
-	BasicMesh* Pillar4Mesh;
-	BasicMesh* RockMesh;
-	BasicMesh* Temple;
 
 	static ID3D11ShaderResourceView* GoblinDiffuseMapSRV[2];
 
-	SkinnedMesh* GetSkinnedMesh(ObjectType::Types oType);
+	SkinnedMesh*			GetSkinnedMesh(ObjectType::Types oType);
+	BasicMesh*				GetBasicMesh(ObjectType::Types oType);
+
 	void ReleaseMesh(ObjectType::Types oType);
 
 private:
 	ID3D11Device* mDevice;
-	TextureMgr mTexMgr;
+
+	// Obstacles
+	BasicMesh* mTreeMesh;
+	BasicMesh* mBaseMesh;
+	BasicMesh* mStairsMesh;
+	BasicMesh* mPillar1Mesh;
+	BasicMesh* mPillar2Mesh;
+	BasicMesh* mPillar3Mesh;
+	BasicMesh* mPillar4Mesh;
+	BasicMesh* mRockMesh;
+	BasicMesh* mTempleMesh;
 
 	// 참조 횟수가 의미있는 메쉬들
-	std::unordered_map<ObjectType::Types, SkinnedMesh*> mMeshes;
+	std::unordered_map<ObjectType::Types, GameMesh*> mMeshes;
 	std::unordered_map<ObjectType::Types, UINT> mReferences;
 };
 

@@ -34,7 +34,7 @@ SceneMgr::~SceneMgr()
 
 void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 	ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv,
-	const Camera& cam, UINT width, UINT height)
+	UINT width, UINT height)
 {
 	md3dImmediateContext = dc;
 	mDepthStencilView = dsv;
@@ -49,7 +49,9 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 
 	mSky = new Sky(device, L"Textures/grasscube1024.dds", 4000.0f);
 	mSmap = new ShadowMap(device, SMapSize, SMapSize);
-	mSsao = new Ssao(device, md3dImmediateContext, width, height, cam.GetFovY(), cam.GetFarZ());
+
+	Camera* cam = Camera::GetInstance();
+	mSsao = new Ssao(device, md3dImmediateContext, width, height, cam->GetFovY(), cam->GetFarZ());
 
 	Terrain::InitInfo tii;
 	tii.HeightMapFilename = L"Textures/terrain3.raw";
@@ -68,10 +70,13 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 	BuildScreenQuadGeometryBuffers(device);
 }
 
-void SceneMgr::DrawScene(const std::vector<GameObject*>& allObjects, const Camera& cam)
+void SceneMgr::DrawScene()
 {
-	CreateShadowMap(allObjects, cam);
-	CreateSsaoMap(allObjects, cam);
+	const Camera& cam = *Camera::GetInstance();
+	const auto allObjects = Object_Mgr->GetAllObjects();
+
+	CreateShadowMap();
+	CreateSsaoMap();
 
 	//
 	// Restore the back and depth buffer and viewport to the OM stage.
@@ -135,8 +140,11 @@ void SceneMgr::Update(float dt)
 	BuildShadowTransform();
 }
 
-void SceneMgr::CreateSsaoMap(const std::vector<GameObject*>& allObjects, const Camera& cam)
+void SceneMgr::CreateSsaoMap()
 {
+	const Camera& cam = *Camera::GetInstance();
+	const auto allObjects = Object_Mgr->GetAllObjects();
+
 	//
 	// Render the view space normals and depths.  This render target has the
 	// same dimensions as the back buffer, so we can use the screen viewport.
@@ -160,8 +168,11 @@ void SceneMgr::CreateSsaoMap(const std::vector<GameObject*>& allObjects, const C
 	mSsao->BlurAmbientMap(2);
 }
 
-void SceneMgr::CreateShadowMap(const std::vector<GameObject*>& allObjects, const Camera& cam)
+void SceneMgr::CreateShadowMap()
 {
+	const Camera& cam = *Camera::GetInstance();
+	const auto allObjects = Object_Mgr->GetAllObjects();
+
 	mSmap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
 
 	XMMATRIX view = XMLoadFloat4x4(&mLightView);
@@ -290,7 +301,7 @@ void SceneMgr::BuildScreenQuadGeometryBuffers(ID3D11Device* device)
 	HR(device->CreateBuffer(&ibd, &iinitData, &mScreenQuadIB));
 }
 
-void SceneMgr::ComputeSceneBoundingBox(const XMFLOAT3& playerPos)
+void SceneMgr::ComputeSceneBoundingBox()
 {
 	//XMFLOAT3 minPt(+MathHelper::Infinity, +MathHelper::Infinity, +MathHelper::Infinity);
 	//XMFLOAT3 maxPt(-MathHelper::Infinity, -MathHelper::Infinity, -MathHelper::Infinity);
@@ -324,6 +335,7 @@ void SceneMgr::ComputeSceneBoundingBox(const XMFLOAT3& playerPos)
 	//	0.5f*(maxPt.z - minPt.z));
 
 	//mSceneBounds.Radius = sqrtf(extent.x*extent.x + extent.y*extent.y + extent.z*extent.z);
+	const XMFLOAT3& playerPos = Player::GetInstance()->GetPos();
 
 	float halfW = mTerrain.GetWidth() / 2.0f;
 	float halfD = mTerrain.GetDepth() / 2.0f;
@@ -334,7 +346,7 @@ void SceneMgr::ComputeSceneBoundingBox(const XMFLOAT3& playerPos)
 
 }
 
-void SceneMgr::OnResize(UINT width, UINT height, const Camera& cam,
+void SceneMgr::OnResize(UINT width, UINT height,
 	ID3D11DepthStencilView* dsv, ID3D11RenderTargetView* rtv)
 {
 	mDepthStencilView = dsv;
@@ -347,6 +359,7 @@ void SceneMgr::OnResize(UINT width, UINT height, const Camera& cam,
 	mScreenViewport.MinDepth = 0.0f;
 	mScreenViewport.MaxDepth = 1.0f;
 
+	const Camera& cam = *Camera::GetInstance();
 	if(mSsao)
 		mSsao->OnSize(width, height, cam.GetFovY(), cam.GetFarZ());
 }

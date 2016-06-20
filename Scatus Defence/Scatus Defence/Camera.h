@@ -10,16 +10,19 @@
 
 #pragma once
 #include "d3dUtil.h"
+#include "Singletone.h"
 
 class Player;
 class SceneMgr;
 
-class Camera
+class Camera : public Singletone<Camera>
 {
-public:
+private:
 	Camera();
 	~Camera();
 
+	friend class Singletone<Camera>;
+public:
 	// Get/Set world camera position.
 	XMVECTOR GetPositionXM()const;
 	XMFLOAT3 GetPosition()const;
@@ -68,7 +71,7 @@ public:
 	void RotateY(float angle);
 
 	// After modifying camera position/orientation, call to rebuild the view matrix.
-	void Update(const Player* player, const SceneMgr& sceneMgr);
+	void Update();
 
 private:
 	void UpdateViewMatrix();

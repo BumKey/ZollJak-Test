@@ -1,18 +1,21 @@
 #pragma once
+#include "Singletone.h"
 #include "ObjectMgr.h"
 #include "Utilities.h"
 #include "2DMap.h"
+#include <iostream>
 
-class CollisionMgr
+#define Collision_Mgr CollisionMgr::GetInstance()
+
+class CollisionMgr : public Singletone<CollisionMgr>
 {
-public:
+private:
 	CollisionMgr();
 	~CollisionMgr();
 
+	friend class Singletone<CollisionMgr>;
 public:
-	void Init(ObjectMgr* objectMgr);
 	void Update(float dt);
-
 	bool DetectWithPlayer(GameObject* sourceObj);
 
 private:
@@ -21,10 +24,5 @@ private:
 
 	bool LowDetectWithMonsters(GameObject* sourceObj);
 	void HighDetectWithMonsters(GameObject* sourceObj, std::vector<UINT>& outIndices);
-
-private:
-	ObjectMgr* mObjectMgr;
-	std::vector<Monster*> mMonsters;
-	Player* mPlayer;
 };
 

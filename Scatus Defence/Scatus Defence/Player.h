@@ -1,13 +1,15 @@
 #pragma once
 #include "SkinnedObject.h"
+#include "Singletone.h"
 #include "Monster.h"
 
-class Player : public SkinnedObject
+class Player : public SkinnedObject, public Singletone<Player>
 {
-public:
-	Player(SkinnedMesh* Mesh, const InstanceDesc& info);
+private:
+	Player();
 	~Player();
 
+	friend class Singletone<Player>;
 public:
 	void Update(float dt);
 	virtual void Release(ResourceMgr& rMgr);

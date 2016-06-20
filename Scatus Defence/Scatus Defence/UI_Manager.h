@@ -7,6 +7,8 @@
 #include "UI_Scene.h"
 #include "Sound_Manager.h"
 #include "RogicTimer.h"
+#include "d3dUtil.h"
+
 #define UI_Mgr  UI_Manager::Instance()
 using namespace std;
 enum UI_ID {
@@ -148,9 +150,12 @@ private:UI_Manager();
 		type_Scene m_gamescene;
 
 public:
+
 	RECT rc;
 	std::list<Text_info*> m_Text_list;
-	void CreateD2DrenderTarget(HWND hwnd);
+	void CreateD2DrenderTarget(HWND hwnd, IDXGISwapChain* swapChain);
+	void CreateFactorys();
+	void Load_All_UI();
 	bool LoadPNG2DDBitmap(const TCHAR* pngfn, ID2D1Bitmap* &out);
 	void Print_All_UI();
 	void Print_All_Text();
@@ -187,7 +192,7 @@ public:
 	void InGame_UI(int x, int y);
 	void InTitle_Option(int x, int y);
 	void UI_Scene_Mgr(int x, int y);
-	IDXGISurface* m_backbuffer;
+
 	void Set_nMessageID(UINT nMessageID) { m_nMessageID = nMessageID; }
 	UINT Get_nMessageID() { return m_nMessageID; }
 	void Set_wParam(WPARAM wParam) { m_wParam = wParam; }
@@ -202,5 +207,7 @@ public:
 	void InputID_PW();
 	Text_info* GetTextptr(UI_ID ui_id);
 	static UI_Manager* Instance();
+
+	void OnSize(HWND hwnd);
 };
 

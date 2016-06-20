@@ -43,13 +43,24 @@ namespace CollisionState {
 namespace ObjectType {
 	enum Types
 	{
+		None = 0,
 		type_p_warrior, // 캐릭터 전사
 		type_p_archer, // 캐릭터 아처
 		type_p_builder, // 캐릭터 건축가
 		Player,
 		Goblin, // 적- 고블린
 		Cyclop,
-		Obstacle,// 기타 오브젝트(지형등)
+		
+		Obstacle,
+		Tree,
+		Base,
+		Stairs,
+		Pillar1,
+		Pillar2,
+		Pillar3,
+		Pillar4,
+		Rock,
+		Temple
 	};
 }
 

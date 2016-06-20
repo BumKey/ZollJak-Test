@@ -5,10 +5,9 @@
 #include "ObjectMgr.h"
 #include "ResourceMgr.h"
 #include "GameRogicManager.h"
-#include "CollisionMgr.h"
-#include "Goblin.h"
-#include "Cyclop.h"
 #include "GameStateMgr.h"
+#include "Singletone.h"
+
 class GameFrameWork : public D3DApp
 {
 public:
@@ -25,11 +24,5 @@ public:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 private:
-	SceneMgr			mSceneMgr;
-	PacketMgr			mPacketMgr;
-	Camera				mCam;
-	Player*				mPlayer;
-
 	POINT				mLastMousePos;
-
 };

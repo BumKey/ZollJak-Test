@@ -24,13 +24,14 @@ struct InstanceDesc
 class GameObject
 {
 public:
+	GameObject();
 	GameObject(GameMesh* mesh, const InstanceDesc& info);
 	virtual ~GameObject();
 
 public:
-	virtual void Walk(float dt) = 0;
-	virtual void Strafe(float dt) = 0;
-	virtual void RotateY(float angle) = 0;
+	virtual void Walk(float dt);
+	virtual void Strafe(float dt);
+	virtual void RotateY(float angle);
 	virtual void Update(float dt) = 0;
 
 	void Attack(GameObject* target);
@@ -39,7 +40,7 @@ public:
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight) = 0;
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight) = 0;
 
-	virtual void Release(ResourceMgr* rMgr) = 0;
+	virtual void Release();
 	virtual void ChangeActionState(ActionState::States aState);
 
 	GameMesh*				GetMesh() const { return mMesh; }

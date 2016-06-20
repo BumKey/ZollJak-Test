@@ -1,7 +1,7 @@
 #include "BasicMesh.h"
 #include "LoadY2K.h"
 
-BasicMesh::BasicMesh(ID3D11Device* device, TextureMgr& texMgr, const std::string& modelFilename, const std::wstring& texturePath)
+BasicMesh::BasicMesh(ID3D11Device* device, const std::string& modelFilename, const std::wstring& texturePath)
 {
 	std::vector<Y2kMaterial> mats;
 	Y2KLoader y2kLoader;
@@ -17,10 +17,10 @@ BasicMesh::BasicMesh(ID3D11Device* device, TextureMgr& texMgr, const std::string
 	{
 		Mat.push_back(mats[i].Mat);
 
-		ID3D11ShaderResourceView* diffuseMapSRV = texMgr.CreateTexture(texturePath + mats[i].DiffuseMapName);
+		ID3D11ShaderResourceView* diffuseMapSRV = Texture_Mgr->CreateTexture(texturePath + mats[i].DiffuseMapName);
 		DiffuseMapSRV.push_back(diffuseMapSRV);
 
-		ID3D11ShaderResourceView* normalMapSRV = texMgr.CreateTexture(texturePath + mats[i].NormalMapName);
+		ID3D11ShaderResourceView* normalMapSRV = Texture_Mgr->CreateTexture(texturePath + mats[i].NormalMapName);
 		NormalMapSRV.push_back(normalMapSRV);
 	}
 

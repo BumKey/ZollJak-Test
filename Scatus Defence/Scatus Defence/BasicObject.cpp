@@ -1,5 +1,10 @@
 #include "BasicObject.h"
 
+BasicObject::BasicObject() : GameObject()
+{
+	mObjectType = ObjectType::Obstacle;
+}
+
 BasicObject::BasicObject(BasicMesh * mesh, const InstanceDesc& info, Label label) : GameObject(mesh, info), mLabel(label)
 {
 	// 추후 여러 BasicObject 생기면 변경.
@@ -8,22 +13,6 @@ BasicObject::BasicObject(BasicMesh * mesh, const InstanceDesc& info, Label label
 
 // 후에 스마트포인터 사용해서 메모리 효율적 관리하도록
 BasicObject::~BasicObject()
-{
-}
-
-void BasicObject::Walk(float d)
-{
-}
-
-void BasicObject::Strafe(float d)
-{
-}
-
-void BasicObject::MoveToTarget(float dt)
-{
-}
-
-void BasicObject::RotateY(float angle)
 {
 }
 
@@ -252,7 +241,3 @@ void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera
 	dc->RSSetState(0);
 }
 
-void BasicObject::Release(ResourceMgr* rMgr)
-{
-	mMesh = nullptr;
-}

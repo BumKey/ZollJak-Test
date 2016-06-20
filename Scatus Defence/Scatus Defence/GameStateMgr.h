@@ -1,9 +1,10 @@
 #pragma once
-//#include "RogicTimer.h"
-#define G_State_Mgr  GameStateMgr::Instance()
+
+
 #include "RogicTimer.h"
 #include "UI_Manager.h"
 #include "GameRogicManager.h"
+#include "Singletone.h"
 //template <class entity_type>
 class GameState {
 	protected : 		
@@ -18,26 +19,30 @@ class GameState {
 
 };
 
-class GameStateMgr
+#define State_Mgr  GameStateMgr::GetInstance()
+
+class GameStateMgr : public Singletone<GameStateMgr>
 {
-	
+private:
+	GameStateMgr();
+	~GameStateMgr();
+
+	friend class Singletone<GameStateMgr>;
+
+public:
+	void Update(float dt);
+	void ChangeState(GameState* pNewState);
+
+	void SetState(Gamestate_type state) { gamestate_cur = state; }
+	Gamestate_type GetState() { return gamestate_cur; }
+	int Get_Wavelevel() { return m_wave_level; }
+	void Set_Wavelevel(int num) { m_wave_level = num; }
+
 private:// Gamestate_type gamestate;
 		 GameState* m_pCurrentState;
 		 GameState* m_pGlobalState;
 		 Gamestate_type gamestate_cur;
 		 int m_wave_level;
-public:
-	void Update(float dt);
-	void ChangeState( GameState* pNewState);
-	GameStateMgr();
-	~GameStateMgr();
-	void SetState(Gamestate_type state) {
-		gamestate_cur = state;
-	};
-	Gamestate_type GetState() { return gamestate_cur; }
-	int Get_Wavelevel() { return m_wave_level; }
-	void Set_Wavelevel(int num) { m_wave_level = num; }
-	static GameStateMgr* Instance();
 
 };
 

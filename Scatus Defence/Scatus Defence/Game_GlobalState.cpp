@@ -24,7 +24,7 @@ void Game_GlobalState::Enter()
 void Game_GlobalState::Execute()
 {
 	Time_Mgr->SetCurrentTime(); //현재시각 갱신
-	Time_Mgr->gamestate = G_State_Mgr->GetState(); //현재 게임상태를 시간관리객체에 전송
+	Time_Mgr->gamestate = State_Mgr->GetState(); //현재 게임상태를 시간관리객체에 전송
 
 	
 }

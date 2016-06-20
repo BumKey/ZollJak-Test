@@ -9,7 +9,7 @@
 class SkinnedMesh : public GameMesh
 {
 public:
-	SkinnedMesh(ID3D11Device* device, TextureMgr& texMgr, const std::string& modelFilename, const std::wstring& texturePath);
+	SkinnedMesh(ID3D11Device* device, const std::string& modelFilename, const std::wstring& texturePath);
 	~SkinnedMesh();
 
 	// Keep CPU copies of the mesh data to read from.  

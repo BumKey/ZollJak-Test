@@ -16,17 +16,8 @@ GameStateMgr::~GameStateMgr()
 {
 }
 
-GameStateMgr* GameStateMgr::Instance()
-{
-	static GameStateMgr instance;
-
-	return &instance;
-}
-
 void GameStateMgr::Update(float dt)
-{
-	G_Rogic_Mgr->Update(dt);
-								 //printf("\n\n\n\n\n\n\n현재 플레이 타임 : %d초",mRogicTimer.GetPlayTime());
+{						 //printf("\n\n\n\n\n\n\n현재 플레이 타임 : %d초",mRogicTimer.GetPlayTime());
 	m_pCurrentState->Execute();
 	m_pGlobalState->Execute();
 }

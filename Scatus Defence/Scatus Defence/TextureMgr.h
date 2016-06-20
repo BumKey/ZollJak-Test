@@ -2,18 +2,23 @@
 #define TEXTUREMGR_H
 
 #include "d3dUtil.h"
+#include "Singletone.h"
 #include <map>
+
+#define Texture_Mgr TextureMgr::GetInstance()
 
 ///<summary>
 /// Simple texture manager to avoid loading duplicate textures from file.  That can
 /// happen, for example, if multiple meshes reference the same texture filename. 
 ///</summary>
-class TextureMgr
+class TextureMgr : public Singletone<TextureMgr>
 {
-public:
+private:
 	TextureMgr();
 	~TextureMgr();
 
+	friend class Singletone<TextureMgr>;
+public:
 	void Init(ID3D11Device* device);
 	void Delete(ID3D11ShaderResourceView* srv);
 

@@ -103,7 +103,7 @@ private:
 public:
 	Sound_Manager();
 	~Sound_Manager();
-	void Creae_Sound(HWND hwnd);
+	void Create_Sound(HWND hwnd);
 	void Play(Sound_type type);
 	void Turn_Sound_Effect(bool turn);
 	void Turn_Sound_BG(bool turn);

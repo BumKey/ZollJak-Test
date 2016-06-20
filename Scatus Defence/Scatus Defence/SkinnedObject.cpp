@@ -1,7 +1,11 @@
 #include "SkinnedObject.h"
 
+SkinnedObject::SkinnedObject() : GameObject(), mTimePos(0.0f)
+{
+}
+
 SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh, info), mMesh(mesh),
-mTimePos(0.0f), mAngle(0.0f)
+mTimePos(0.0f)
 {
 	mFinalTransforms.resize(mMesh->SkinnedData.BoneCount());
 }
@@ -10,45 +14,27 @@ SkinnedObject::~SkinnedObject()
 {
 }
 
-void SkinnedObject::Walk(float d)
+void SkinnedObject::Init(SkinnedMesh * mesh, const InstanceDesc & info)
 {
-	mDirection = mCurrLook;
+	mMesh = mesh;
 
-	// mPosition += d*mLook
-	XMVECTOR s = XMVectorReplicate(d*mProperty.movespeed);
-	XMVECTOR l = XMLoadFloat3(&mCurrLook);
-	XMVECTOR p = XMLoadFloat3(&mPosition);
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
+	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
+	XMMATRIX R = XMMatrixRotationRollPitchYaw(info.Rot.x, info.Rot.y, info.Rot.z);
+	XMMATRIX T = XMMatrixTranslation(info.Pos.x, info.Pos.y, info.Pos.z);
 
-	ChangeActionState(ActionState::Run);
-}
+	XMStoreFloat4x4(&mWorld, S*R*T);
 
-void SkinnedObject::Strafe(float d)
-{
-	mDirection = mRight;
+	mScaling = info.Scale;
+	mRotation = info.Rot;
+	mPosition = info.Pos;
 
-	// mPosition += d*mRight
-	XMVECTOR s = XMVectorReplicate(d*mProperty.movespeed);
-	XMVECTOR r = XMLoadFloat3(&mRight);
-	XMVECTOR p = XMLoadFloat3(&mPosition);
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
-
-	ChangeActionState(ActionState::Run);
-}
-
-void SkinnedObject::RotateY(float angle)
-{
-	mAngle = angle;
-	mRotation.y += mAngle;
-	mPrevLook = mCurrLook;
-	// Rotate the basis vectors about the world y-axis.
-	XMMATRIX R = XMMatrixRotationY(mAngle);
-
+	R = XMMatrixRotationY(info.Rot.y);
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
-}
 
+	mFinalTransforms.resize(mMesh->SkinnedData.BoneCount());
+}
 
 void SkinnedObject::Update(float dt)
 {
@@ -220,11 +206,6 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 			mMesh->MeshData.Draw(dc, subset);
 		}
 	}
-}
-
-void SkinnedObject::Release(ResourceMgr* rMgr)
-{
-	rMgr->ReleaseMesh(mObjectType);
 }
 
 void SkinnedObject::SetClip()

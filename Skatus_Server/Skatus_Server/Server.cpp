@@ -126,7 +126,7 @@ void Server::Accept_Thread()
 		clients[new_id].avatar.pos.x = 0.0f;
 		clients[new_id].avatar.pos.y = 0.0f;
 		clients[new_id].avatar.pos.z = 0.0f;
-		clients[new_id].avatar.rot = 0.0f;
+		clients[new_id].avatar.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		clients[new_id].avatar.scale = 0.0f;
 		clients[new_id].packet_size = 0;
 		clients[new_id].previous_size = 0;
@@ -149,6 +149,15 @@ void Server::Accept_Thread()
 
 		// 접속한 본인에게 초기 정보를 전송한다.
 		Send_Packet(new_id, reinterpret_cast<unsigned char *>(&enter_packet));
+
+		auto objects = mObjectMgr.GetObjects();
+		
+		sc_packetForClient_Init packet;
+		packet.size = sizeof(packet);
+		packet.type = SC_INIT;
+		packet.data = objects;
+
+		Send_Packet(new_id, reinterpret_cast<unsigned char *>(&packet));
 
 		// 이미 접속한 플레이어들에게 새로운 플레이어가 들어왔다는 패킷을 전송
 		for (int i = 0; i < MAX_USER; ++i) {
@@ -313,11 +322,11 @@ void Server::Process_Packet(DWORD id, unsigned char buf[]) {
 		break;
 	}
 	
-	cs_packet packet;
+	packetForClient packet;
 	packet.cInfo.pos.x = 0.0;
 	packet.cInfo.pos.y = 0.0;
 	packet.cInfo.pos.z = 0.0;
-	packet.cInfo.rot = 0.0;
+	packet.cInfo.rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	packet.cInfo.scale = 0.0;
 	packet.size = sizeof(packet);
 	packet.type = CS_TEST;

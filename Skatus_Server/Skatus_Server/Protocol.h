@@ -1,22 +1,11 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include <iostream>
-#include <d3dx11.h>
-#include <xnamath.h>
-#include <unordered_map>
-
-#pragma comment (lib, "ws2_32.lib")
-#pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dx11.lib")
-#pragma comment (lib, "d3dx10.lib")
+#include "stdafx.h"
 
 // server -> client
 #define SC_POS				1
 #define SC_PUT_PLAYER		2
 #define SC_REMOVE_PLAYER	3
-#define SC_INIT				4
 
 // client -> server
 #define CS_TEST				0
@@ -45,92 +34,12 @@
 
 #pragma pack(push, 1)
 
-namespace AttackType {
-	enum Types
-	{
-		type_shortdistance,
-		type_longdistance
-	};
-}
-
-namespace ActionState {
-	enum States
-	{
-		Idle,
-		Battle,
-		Walk,
-		Run,
-		Die,
-		Build,
-		Attack,
-		Damage
-	};
-}
-
-namespace AI_State {
-	enum States
-	{
-		None,
-		MovingToTarget,
-		AttackToTarget
-	};
-}
-
-namespace CollisionState {
-	enum States
-	{
-		None,
-		MovingCollision,
-		AttackCollision
-	};
-}
-
-namespace ObjectType {
-	enum Types
-	{
-		None = 0,
-
-		Player,
-		Warrior, // 캐릭터 전사
-		Archer, // 캐릭터 아처
-		Builder, // 캐릭터 건축가
-
-		Monster,
-		Goblin, // 적- 고블린
-		Cyclop,
-
-		Obstacle,
-		Tree,
-		Base,
-		Stairs,
-		Pillar1,
-		Pillar2,
-		Pillar3,
-		Pillar4,
-		Rock,
-		Temple
-	};
-}
-
-struct InstanceDesc
-{
-	XMFLOAT3 Pos;
-	XMFLOAT3 Rot;
-	FLOAT Scale;
-
-	InstanceDesc() {
-		Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		Scale = 1.0f;
-	}
-};
 
 // server -> client
 struct ForClientInfo
 {
-	ObjectType::Types oType;
 	XMFLOAT3 pos;
-	XMFLOAT3 rot;
+	FLOAT rot;
 	FLOAT scale;
 };
 
@@ -159,15 +68,8 @@ struct sc_packet_remove_player
 	DWORD client_id;
 };
 
-struct sc_packetForClient_Init
-{
-	BYTE size;
-	BYTE type;
-	std::unordered_map<ObjectType::Types, InstanceDesc> data;
-};
-
-// packet for rendering in client.
-struct packetForClient
+// client -> server
+struct cs_packet
 {
 	BYTE size;
 	BYTE type;

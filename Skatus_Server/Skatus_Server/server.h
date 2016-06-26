@@ -1,8 +1,6 @@
 #pragma once
 
 #include "stdafx.h"
-#include "ObjectMgr.h"
-#include "CollisionMgr.h"
 
 struct Overlap_ex
 {
@@ -14,7 +12,7 @@ struct Overlap_ex
 
 struct Player {
 	XMFLOAT3 pos;
-	XMFLOAT3 rot;
+	FLOAT rot;
 	FLOAT scale;
 };
 
@@ -31,17 +29,6 @@ struct Client {
 // server class
 class Server
 {
-public:
-	Server();
-	~Server();
-
-	void Initialize();
-	void Accept_Thread();
-	void Worker_Thread();
-	void Send_Packet(DWORD id, unsigned char *packet);
-	void Process_Packet(DWORD id, unsigned char buf[]);
-
-private:
 	WSADATA wsadata;
 	static HANDLE g_hIocp;
 	static BOOL g_isshutdown;
@@ -51,5 +38,13 @@ private:
 	std::vector <std::thread*> worker_threads;
 	std::thread* accept_threads;
 
-	ObjectMgr mObjectMgr;
+public:
+	Server();
+	~Server();
+
+	static void Initialize();
+	static void Accept_Thread();
+	static void Worker_Thread();
+	static void Send_Packet(DWORD id, unsigned char *packet);
+	static void Process_Packet(DWORD id, unsigned char buf[]);
 };

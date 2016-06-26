@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "RenderStates.h"
 #include "ResourceMgr.h"
+#include "Terrain.h"
 #include "Effects.h"
 #include "GameMesh.h"
 #include "Properties.h"
@@ -36,9 +37,9 @@ public:
 
 	void Attack(GameObject* target);
 
-	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight) = 0;
-	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight) = 0;
-	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight) = 0;
+	virtual void DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform) = 0;
+	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj) = 0;
+	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc) = 0;
 
 	virtual void Release();
 	virtual void ChangeActionState(ActionState::States aState);
@@ -56,7 +57,8 @@ public:
 	ObjectType::Types		GetObjectType() const { return mObjectType; }
 	ActionState::States		GetActionState() const { return mActionState; }
 	CollisionState::States  GetCollisionState() const { return mCollisionState; }
-	XNA::OrientedBox		GetOOBB() const { return mOOBB; }
+	XNA::AxisAlignedBox		GetAABB() const { return mAABB; }
+	XNA::Sphere				GetBS() const { return mBS; }
 
 	void					SetHP(int hp) { mProperty.hp_now = hp; }
 	void					SetAttackState() { mActionState = ActionState::Attack; m_bForOneHit = true; }
@@ -75,18 +77,17 @@ public:
 	// Behaves
 	virtual void Die();
 
-private:
-	UINT mID;
-	static UINT GeneratedCount;
-
-	bool m_bForOneHit;
-	bool mHasTarget;
+protected:
+	void InitBoundingObject();
+	void UpdateBoundingObject();
 
 protected:
-	XMFLOAT4X4 mWorld;
-	GameMesh* mMesh;
+	XMFLOAT4X4	mWorld;
+	GameMesh*	mMesh;
 
-	XNA::OrientedBox mOOBB;
+	FLOAT		mExtentY;
+	XNA::Sphere mBS;
+	XNA::AxisAlignedBox mAABB;
 
 	FLOAT	 mScaling;
 	XMFLOAT3 mRotation;
@@ -103,5 +104,12 @@ protected:
 	CollisionState::States mCollisionState;
 	ObjectType::Types mObjectType;
 	GameObject* mTarget;
+
+private:
+	UINT mID;
+	static UINT GeneratedCount;
+
+	bool m_bForOneHit;
+	bool mHasTarget;
 };
 

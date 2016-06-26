@@ -1,9 +1,13 @@
 #include "Monster.h"
 
+Monster::Monster() : SkinnedObject()
+{
+	mAI_States = AI_State::None;
+}
+
 Monster::Monster(SkinnedMesh* mesh, const InstanceDesc& info) : SkinnedObject(mesh, info)
 {
 	mAI_States = AI_State::None;
-
 }
 
 

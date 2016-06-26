@@ -1,13 +1,15 @@
 #include "SkinnedObject.h"
+#include "SceneMgr.h"
 
 SkinnedObject::SkinnedObject() : GameObject(), mTimePos(0.0f)
 {
 }
 
-SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh, info), mMesh(mesh),
+SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh, info),
 mTimePos(0.0f)
 {
-	mFinalTransforms.resize(mMesh->SkinnedData.BoneCount());
+	mMesh = mesh;
+	mFinalTransforms.resize(mesh->SkinnedData.BoneCount());
 }
 
 SkinnedObject::~SkinnedObject()
@@ -33,7 +35,9 @@ void SkinnedObject::Init(SkinnedMesh * mesh, const InstanceDesc & info)
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 
-	mFinalTransforms.resize(mMesh->SkinnedData.BoneCount());
+	InitBoundingObject();
+
+	mFinalTransforms.resize(mesh->SkinnedData.BoneCount());
 }
 
 void SkinnedObject::Update(float dt)
@@ -64,16 +68,7 @@ void SkinnedObject::Update(float dt)
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
 
-	XMFLOAT3 center = mMesh->GetAABB().Center;
-	XMFLOAT3 extent = mMesh->GetAABB().Extents * mScaling;
-
-	XMVECTOR vCenter = XMLoadFloat3(&center);
-
-	vCenter = XMVector3TransformCoord(vCenter, S*R*T);
-	XMStoreFloat3(&center, vCenter);
-	mOOBB.Center = center;
-	mOOBB.Extents = extent;
-	XMStoreFloat4(&mOOBB.Orientation, Q);
+	UpdateBoundingObject();
 }
 
 void SkinnedObject::Animate(float dt)
@@ -87,7 +82,7 @@ void SkinnedObject::Animate(float dt)
 	else
 		mTimePos += dt*mProperty.movespeed/5.0f;
 
-	mMesh->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
+	static_cast<SkinnedMesh*>(mMesh)->SkinnedData.GetFinalTransforms(mCurrClipName, mTimePos, mFinalTransforms);
 
 	// Loop animation
 	if (CurrAnimEnd())
@@ -102,8 +97,10 @@ void SkinnedObject::Animate(float dt)
 	}
 }
 
-void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
+void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const XMFLOAT4X4& shadowTransform)
 {
+	const Camera& cam = *Camera::GetInstance();
+
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
 	XMMATRIX viewProj = cam.ViewProj();
@@ -134,6 +131,8 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, co
 
 	ID3DX11EffectTechnique* activeSkinnedTech = Effects::NormalMapFX->Light3TexSkinnedTech;
 	dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
+
+	float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
 
 	// Draw the animated characters.
 	D3DX11_TECHNIQUE_DESC techDesc;
@@ -167,8 +166,10 @@ void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const Camera & cam, co
 	}
 }
 
-void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Camera & cam, const FLOAT& tHeight)
+void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc)
 {
+	const Camera& cam = *Camera::GetInstance();
+
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
 	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
@@ -185,6 +186,8 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc, const Cam
 
 	if (GetAsyncKeyState('1') & 0x8000)
 		dc->RSSetState(RenderStates::WireframeRS);
+
+	float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	animatedTech->GetDesc(&techDesc);
@@ -243,7 +246,7 @@ void SkinnedObject::SetClip()
 
 bool SkinnedObject::CurrAnimEnd() 
 {
-	if (mTimePos > mMesh->SkinnedData.GetClipEndTime(mCurrClipName))
+	if (mTimePos > static_cast<SkinnedMesh*>(mMesh)->SkinnedData.GetClipEndTime(mCurrClipName))
 		return true;
 
 	return false;
@@ -255,8 +258,10 @@ std::string SkinnedObject::GetAnimName(Anims & eAnim)
 }
 
 
-void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam, const XMMATRIX & lightViewProj, const FLOAT& tHeight)
+void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const XMMATRIX & lightViewProj)
 {
+	const Camera& cam = *Camera::GetInstance();
+
 	Effects::BuildShadowMapFX->SetEyePosW(cam.GetPosition());
 	Effects::BuildShadowMapFX->SetViewProj(lightViewProj);
 
@@ -279,6 +284,8 @@ void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const Camera & cam
 	XMMATRIX worldViewProj;
 
 	dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
+
+	float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	animatedSmapTech->GetDesc(&techDesc);

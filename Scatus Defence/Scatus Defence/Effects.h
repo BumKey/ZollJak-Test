@@ -26,6 +26,21 @@ protected:
 };
 #pragma endregion
 
+#pragma region WireFrame
+class WireFrame : public Effect
+{
+public:
+	WireFrame(ID3D11Device* device, const std::wstring& filename);
+	~WireFrame();
+
+	void SetWorldViewProj(CXMMATRIX M) { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+
+	ID3DX11EffectTechnique* WireFrameTech;
+
+	ID3DX11EffectMatrixVariable* WorldViewProj;
+};
+#pragma endregion
+
 #pragma region BasicEffect
 class BasicEffect : public Effect
 {
@@ -591,6 +606,7 @@ public:
 	static void InitAll(ID3D11Device* device);
 	static void DestroyAll();
 
+	static WireFrame* WireFX;
 	static BasicEffect* BasicFX;
 	static NormalMapEffect* NormalMapFX;
 	static BuildShadowMapEffect* BuildShadowMapFX;

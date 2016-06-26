@@ -28,6 +28,5 @@ public:
 
 protected:
 	XNA::AxisAlignedBox mMeshAABB;
-
 };
 

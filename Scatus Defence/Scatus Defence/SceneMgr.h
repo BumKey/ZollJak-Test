@@ -2,8 +2,6 @@
 #include "Singletone.h"
 #include "GeometryGenerator.h"
 #include "Effects.h"
-#include "BasicObject.h"
-#include "SkinnedObject.h"
 #include "RenderStates.h"
 #include "ResourceMgr.h"
 #include "ObjectMgr.h"
@@ -48,14 +46,15 @@ public:
 	void DrawScene();
 
 	DirectionalLight*		GetDirLight() { return mDirLights; }
-	FLOAT					GetTerrainHeight(XMFLOAT3 pos) const { return mTerrain.GetHeight(pos); }
 
 private:
 	void BuildShadowTransform();
 	void CreateShadowMap();
 	void CreateSsaoMap();
 	void BuildScreenQuadGeometryBuffers(ID3D11Device* device);
+	void BuildDebugSphere(ID3D11Device* device);
 	void DrawScreenQuad();
+	void DrawBS();
 
 private:
 	ID3D11DeviceContext* md3dImmediateContext;
@@ -77,10 +76,13 @@ private:
 	ID3D11Buffer* mSkySphereVB;
 	ID3D11Buffer* mSkySphereIB;
 
+	UINT mDSIndicesNum;
+	ID3D11Buffer* mDebugSphereVB;
+	ID3D11Buffer* mDebugSphereIB;
+
 	ShadowMap* mSmap;
 	Ssao* mSsao;
 	Sky* mSky;
-	Terrain mTerrain;
 
 	BoundingSphere mSceneBounds;
 };

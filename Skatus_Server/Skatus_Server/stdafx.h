@@ -7,7 +7,7 @@
 #include <chrono>
 #include <vector>
 #include <thread>
-#include <d3d11.h>
+#include <d3dx11.h>
 #include <xnamath.h>
 
 #pragma comment (lib, "ws2_32.lib")

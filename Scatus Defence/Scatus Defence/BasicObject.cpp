@@ -9,6 +9,8 @@ BasicObject::BasicObject(BasicMesh * mesh, const InstanceDesc& info, Label label
 {
 	// 추후 여러 BasicObject 생기면 변경.
 	mObjectType = ObjectType::Obstacle;
+
+	UpdateBoundingObject();
 }
 
 // 후에 스마트포인터 사용해서 메모리 효율적 관리하도록
@@ -20,8 +22,10 @@ void BasicObject::Update(float dt)
 {
 }
 
-void BasicObject::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
+void BasicObject::DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform)
 {
+	const Camera& cam = *Camera::GetInstance();
+
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
 	XMMATRIX viewProj = cam.ViewProj();
@@ -48,6 +52,8 @@ void BasicObject::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const 
 
 	if (GetAsyncKeyState('1') & 0x8000)
 		dc->RSSetState(RenderStates::WireframeRS);
+
+	float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
 
 	world = XMLoadFloat4x4(&mWorld);
 	world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
@@ -84,7 +90,11 @@ void BasicObject::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const 
 
 	case Label::AlphaBasic:
 		// The alpha tested triangles are leaves, so render them double sided.
-		dc->RSSetState(RenderStates::NoCullRS);
+		ID3D11RasterizerState* currState;
+		dc->RSGetState(&currState);
+		if (currState != RenderStates::WireframeRS);
+			dc->RSSetState(RenderStates::NoCullRS);
+
 		alphaClippedTech->GetDesc(&techDesc);
 		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{
@@ -110,8 +120,10 @@ void BasicObject::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const 
 	}
 }
 
-void BasicObject::DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight)
+void BasicObject::DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj)
 {
+	const Camera& cam = *Camera::GetInstance();
+
 	Effects::BuildShadowMapFX->SetEyePosW(cam.GetPosition());
 	Effects::BuildShadowMapFX->SetViewProj(lightViewProj);
 
@@ -130,6 +142,8 @@ void BasicObject::DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, co
 		dc->RSSetState(RenderStates::WireframeRS);
 
 	D3DX11_TECHNIQUE_DESC techDesc;
+
+	float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
 
 	world = XMLoadFloat4x4(&mWorld);
 	world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
@@ -173,8 +187,10 @@ void BasicObject::DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, co
 	}
 }
 
-void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight)
+void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc)
 {
+	const Camera& cam = *Camera::GetInstance();
+
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
 	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
@@ -193,6 +209,8 @@ void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera
 
 	if (GetAsyncKeyState('1') & 0x8000)
 		dc->RSSetState(RenderStates::WireframeRS);
+
+	float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
 
 	world = XMLoadFloat4x4(&mWorld);
 	world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));

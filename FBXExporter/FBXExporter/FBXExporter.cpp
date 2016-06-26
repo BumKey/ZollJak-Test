@@ -2,7 +2,7 @@
 
 #pragma region Constructor
 FBXExporter::FBXExporter() : mFbxMgr(nullptr), mScene(nullptr), 
-mHasAnimation(true), mClipNum(0), mExportingCount(0),
+mHasAnimation(true), mClipNum(0), mExportingCount(0), mAllInOneTakeMode(false),
 mPrevCtrlPointCount(0), mPrevTriangleCount(0), mMeshCount(0)
 {
 	QueryPerformanceFrequency(&mCPUFreq);
@@ -53,15 +53,15 @@ bool FBXExporter::LoadFile(const std::string& fileName)
 
 	importer->Destroy();
 
-	// Convert scene's AxisSystem to DirectX
-	FbxAxisSystem sceneAxisSysytem = mScene->GetGlobalSettings().GetAxisSystem();
-	if (sceneAxisSysytem != FbxAxisSystem::DirectX)
-		FbxAxisSystem::DirectX.ConvertScene(mScene);
+	//// Convert scene's AxisSystem to DirectX
+	//FbxAxisSystem sceneAxisSysytem = mScene->GetGlobalSettings().GetAxisSystem();
+	//if (sceneAxisSysytem != FbxAxisSystem::DirectX)
+	//	FbxAxisSystem::DirectX.ConvertScene(mScene);
 
-	// Set system's Unit to Centimeter
-	FbxSystemUnit sceneSystemUnit = mScene->GetGlobalSettings().GetSystemUnit();
-	if (sceneSystemUnit.GetScaleFactor() != 1.0f)
-		FbxSystemUnit::cm.ConvertScene(mScene);
+	//// Set system's Unit to Centimeter
+	//FbxSystemUnit sceneSystemUnit = mScene->GetGlobalSettings().GetSystemUnit();
+	//if (sceneSystemUnit.GetScaleFactor() != 1.0f)
+	//	FbxSystemUnit::cm.ConvertScene(mScene);
 
 	// Converts mesh, NURBS and patch into triangle mesh
 	FbxGeometryConverter gc(mFbxMgr);
@@ -125,6 +125,13 @@ void FBXExporter::Export(const std::string& fileName, const std::string& clipNam
 	std::cout << "\n\nExport Done!\n";
 	mBones.clear();
 }
+
+void FBXExporter::AllInOneTakeMode(const FrameInfo& frameInfo)
+{
+	mAllInOneTakeMode = true;
+	mFrameInfo = frameInfo;
+}
+
 #pragma endregion 
 
 #pragma region Geometry
@@ -517,8 +524,8 @@ void FBXExporter::ReadKeyframes()
 	FbxTime start = takeInfo->mLocalTimeSpan.GetStart();
 	FbxTime end = takeInfo->mLocalTimeSpan.GetStop();
 
-	int startFrameCount = start.GetFrameCount(FbxTime::eFrames24);
-	int endFrameCount = end.GetFrameCount(FbxTime::eFrames24);
+	int startFrameCount = start.GetFrameCount();
+	int endFrameCount = end.GetFrameCount();
 	float animationLength = (end.GetMilliSeconds() - start.GetMilliSeconds());
 
 	for (auto& iterB : mBones)
@@ -528,7 +535,7 @@ void FBXExporter::ReadKeyframes()
 			float timePos = ((float)t / endFrameCount - startFrameCount) * animationLength;
 
 			FbxTime currTime;
-			currTime.SetFrame(t, FbxTime::eFrames24);
+			currTime.SetFrame(t);
 			FbxAMatrix localTransform;
 			localTransform	= iterB.Node->EvaluateLocalTransform(currTime);
 			FbxVector4		S = localTransform.GetS();
@@ -1035,7 +1042,6 @@ void FBXExporter::WriteMesh(std::ostream& fout)
 	using namespace std;
 	if (mHasAnimation)
 	{
-		// Notice: 원 테이크만 지원
 		fout << "***************Y2K-File-Header***************" << endl;
 		fout << "#Materials: " << mMaterials.size() << endl;
 		fout << "#Vertices: " << mVertices.size() << endl;
@@ -1146,27 +1152,50 @@ void FBXExporter::WriteAnimation(std::ostream& fout)
 		fout << "***************AnimationClips****************" << endl;
 	}
 	// mAnimationName.erase(mAnimationName.find(" "), 1)
-
-	fout << "AnimationClip " << mClipName << endl;
-
-	fout << "{" << endl;
-	for (UINT bonIndex = 0; bonIndex < mBones.size(); ++bonIndex)
-	{
-		fout << "\tBone" << bonIndex << " #KeyFrames: " << mBones[bonIndex].Keyframes.size() << endl;
-		fout << "\t{" << endl;
-		for (auto iterK : mBones[bonIndex].Keyframes)
+	if (mAllInOneTakeMode) {
+		for (auto iterF : mFrameInfo)
 		{
-			fout << "\t\t";
-			fout << "Time: " << iterK.TimePos / 1000.0f << " ";
-			fout << "Pos: " << iterK.Translation << " ";
-			fout << "Scale: " << iterK.Scale << " ";
-			fout << "Quat: " << iterK.RotationQuat << endl;
+			fout << "AnimationClip " << iterF.first << endl;
+			fout << "{" << endl;
+			for (UINT boneIndex = 0; boneIndex < mBones.size(); ++boneIndex)
+			{
+				fout << "\tBone" << boneIndex << " #KeyFrames: " << iterF.second.second - iterF.second.first + 1 << endl;
+				fout << "\t{" << endl;
+				for (UINT k = iterF.second.first; k <= iterF.second.second; ++k)
+				{
+					Keyframe keyframe = mBones[boneIndex].Keyframes[k];
+					fout << "\t\t";
+					fout << "Time: " << (keyframe.TimePos - mBones[boneIndex].Keyframes[iterF.second.first].TimePos) / 1000.0f << " ";
+					fout << "Pos: " << keyframe.Translation << " ";
+					fout << "Scale: " << keyframe.Scale << " ";
+					fout << "Quat: " << keyframe.RotationQuat << endl;
+				}
+				fout << "\t}" << endl << endl;
+			}
+			fout << "}" << endl;
 		}
+	}
+	else {
+		fout << "AnimationClip " << mClipName << endl;
+		fout << "{" << endl;
+		for (UINT boneIndex = 0; boneIndex < mBones.size(); ++boneIndex)
+		{
+			fout << "\tBone" << boneIndex << " #KeyFrames: " << mBones[boneIndex].Keyframes.size() << endl;
+			fout << "\t{" << endl;
+			for (auto iterK : mBones[boneIndex].Keyframes)
+			{
+				fout << "\t\t";
+				fout << "Time: " << iterK.TimePos / 1000.0f << " ";
+				fout << "Pos: " << iterK.Translation << " ";
+				fout << "Scale: " << iterK.Scale << " ";
+				fout << "Quat: " << iterK.RotationQuat << endl;
+			}
 
-		fout << "\t}" << endl << endl;
+			fout << "\t}" << endl << endl;
+		}
+		fout << "}" << endl;
 	}
 	
-	fout << "}" << endl;
 }
 
 #pragma endregion : File Exporting

@@ -1,7 +1,5 @@
 #include "GameMesh.h"
 
-
-
 GameMesh::GameMesh()
 {
 }

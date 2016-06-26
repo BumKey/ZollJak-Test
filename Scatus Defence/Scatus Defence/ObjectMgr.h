@@ -31,6 +31,7 @@ public:
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
 	std::vector<Monster*>&				GetMonsters() { return mMonsters; }
+	std::vector<BasicObject*>&			GetObstacles() { return mObstacles; }
 	std::vector<GameObject*>&			GetOurTeam() { return mOurTeam; }
 	std::vector<GameObject*>&			GetOppenents() { return mOurTeam; }
 

@@ -301,8 +301,11 @@ void Server::Process_Packet(DWORD id, unsigned char buf[]) {
 	switch (buf[1])
 	{
 	case CS_TEST:
-		std::cout << "success" << std::endl;
+	{
+		ForClientInfo info = *(reinterpret_cast<ForClientInfo*>(&buf[2]));
+		std::cout << "success : " << info.pos.x << " " << info.pos.y << " " << info.pos.z << std::endl;
 		break;
+	}
 	case CS_SUCCESS:
 		std::cout << "success, data value : " << buf[2] << std::endl;
 		break;

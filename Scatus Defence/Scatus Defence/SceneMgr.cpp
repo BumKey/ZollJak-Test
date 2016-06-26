@@ -53,21 +53,8 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 	Camera* cam = Camera::GetInstance();
 	mSsao = new Ssao(device, md3dImmediateContext, width, height, cam->GetFovY(), cam->GetFarZ());
 
-	Terrain::InitInfo tii;
-	tii.HeightMapFilename = L"Textures/terrain3.raw";
-	tii.LayerMapFilename0 = L"Textures/grass2.dds";
-	tii.LayerMapFilename1 = L"Textures/darkdirt.dds";
-	tii.LayerMapFilename2 = L"Textures/red_dirt.dds";
-	tii.LayerMapFilename3 = L"Textures/lightdirt.dds";
-	tii.LayerMapFilename4 = L"Textures/dirt.dds";
-	tii.BlendMapFilename = L"Textures/blend.dds";
-	tii.HeightScale = 70.0f;
-	tii.HeightmapWidth = 513;
-	tii.HeightmapHeight = 513;
-	tii.CellSpacing = 2.0f;
-	mTerrain.Init(device, md3dImmediateContext, tii);
-
 	BuildScreenQuadGeometryBuffers(device);
+	BuildDebugSphere(device);
 }
 
 void SceneMgr::DrawScene()
@@ -107,18 +94,21 @@ void SceneMgr::DrawScene()
 	// Draw Objects
 	for (auto i : allObjects) {
 		XMFLOAT3 pos = i->GetPos();
-		i->DrawToScene(md3dImmediateContext, cam, mShadowTransform, mTerrain.GetHeight(pos));
+		i->DrawToScene(md3dImmediateContext, mShadowTransform);
 	}
 
 	md3dImmediateContext->RSSetState(0);
 	md3dImmediateContext->OMSetDepthStencilState(0, 0);
 
-	mTerrain.DrawToScene(md3dImmediateContext, cam, mShadowTransform, mSmap->DepthMapSRV(), mDirLights);
+	Terrain::GetInstance()->DrawToScene(md3dImmediateContext, mShadowTransform, mSmap->DepthMapSRV(), mDirLights);
 	md3dImmediateContext->RSSetState(0);
 
 	mSky->Draw(md3dImmediateContext, cam);
 
-	if(GetAsyncKeyState('Z'))
+	if (GetAsyncKeyState('X') & 0x8000)
+		DrawBS();
+
+	if(GetAsyncKeyState('Z') & 0x8000)
 		DrawScreenQuad();
 
 	// restore default states, as the SkyFX changes them in the effect file.
@@ -157,7 +147,7 @@ void SceneMgr::CreateSsaoMap()
 
 	for (auto i : allObjects) {
 		XMFLOAT3 pos = i->GetPos();
-		i->DrawToSsaoNormalDepthMap(md3dImmediateContext, cam, mTerrain.GetHeight(pos));
+		i->DrawToSsaoNormalDepthMap(md3dImmediateContext);
 	}
 
 	//
@@ -181,7 +171,7 @@ void SceneMgr::CreateShadowMap()
 
 	for (auto i : allObjects) {
 		XMFLOAT3 pos = i->GetPos();
-		i->DrawToShadowMap(md3dImmediateContext, cam, viewProj, mTerrain.GetHeight(pos));
+		i->DrawToShadowMap(md3dImmediateContext, viewProj);
 	}
 
 	md3dImmediateContext->RSSetState(0);
@@ -216,6 +206,41 @@ void SceneMgr::DrawScreenQuad()
 		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);
 	}
+}
+
+void SceneMgr::DrawBS()
+{
+	UINT stride = sizeof(XMFLOAT3);
+	UINT offset = 0;
+
+	md3dImmediateContext->IASetInputLayout(InputLayouts::Pos);
+	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	md3dImmediateContext->IASetVertexBuffers(0, 1, &mDebugSphereVB, &stride, &offset);
+	md3dImmediateContext->IASetIndexBuffer(mDebugSphereIB, DXGI_FORMAT_R32_UINT, 0);
+
+	for (auto iterO : Object_Mgr->GetAllObjects())
+	{
+		FLOAT s = iterO->GetBS().Radius;
+		XMFLOAT3 p = iterO->GetBS().Center;
+		p.y += Terrain::GetInstance()->GetHeight(p);
+
+		XMMATRIX S = XMMatrixScaling(s, s, s);
+		XMMATRIX T = XMMatrixTranslation(p.x, p.y, p.z);
+		XMMATRIX world = S*T;
+
+		ID3DX11EffectTechnique* tech = Effects::WireFX->WireFrameTech;
+		D3DX11_TECHNIQUE_DESC techDesc;
+
+		Effects::WireFX->SetWorldViewProj(world * Camera::GetInstance()->ViewProj());
+
+		tech->GetDesc(&techDesc);
+		for (UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+			md3dImmediateContext->DrawIndexed(mDSIndicesNum, 0, 0);
+		}
+	}
+	md3dImmediateContext->RSSetState(0);
 }
 
 void SceneMgr::BuildShadowTransform()
@@ -301,6 +326,45 @@ void SceneMgr::BuildScreenQuadGeometryBuffers(ID3D11Device* device)
 	HR(device->CreateBuffer(&ibd, &iinitData, &mScreenQuadIB));
 }
 
+void SceneMgr::BuildDebugSphere(ID3D11Device * device)
+{
+	GeometryGenerator::MeshData bs;
+
+	GeometryGenerator geoGen;
+	geoGen.CreateSphere(1.0f, 12, 4, bs);
+	mDSIndicesNum = bs.Indices.size();
+
+	std::vector<XMFLOAT3> vertices(bs.Vertices.size());
+
+	for (UINT i = 0; i < bs.Vertices.size(); ++i)
+		vertices[i] = bs.Vertices[i].Position;
+	
+
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.ByteWidth = sizeof(XMFLOAT3) * bs.Vertices.size();
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = 0;
+	vbd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA vinitData;
+	vinitData.pSysMem = &vertices[0];
+	HR(device->CreateBuffer(&vbd, &vinitData, &mDebugSphereVB));
+
+	//
+	// Pack the indices of all the meshes into one index buffer.
+	//
+
+	D3D11_BUFFER_DESC ibd;
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.ByteWidth = sizeof(UINT) * bs.Indices.size();
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = 0;
+	ibd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA iinitData;
+	iinitData.pSysMem = &bs.Indices[0];
+	HR(device->CreateBuffer(&ibd, &iinitData, &mDebugSphereIB));
+}
+
 void SceneMgr::ComputeSceneBoundingBox()
 {
 	//XMFLOAT3 minPt(+MathHelper::Infinity, +MathHelper::Infinity, +MathHelper::Infinity);
@@ -337,8 +401,8 @@ void SceneMgr::ComputeSceneBoundingBox()
 	//mSceneBounds.Radius = sqrtf(extent.x*extent.x + extent.y*extent.y + extent.z*extent.z);
 	const XMFLOAT3& playerPos = Player::GetInstance()->GetPos();
 
-	float halfW = mTerrain.GetWidth() / 2.0f;
-	float halfD = mTerrain.GetDepth() / 2.0f;
+	float halfW = Terrain::GetInstance()->GetWidth() / 2.0f;
+	float halfD = Terrain::GetInstance()->GetDepth() / 2.0f;
 	mSceneBounds.Radius = sqrtf((halfW*halfW) + (halfD*halfD))/5.0f;
 	mSceneBounds.Center.x = playerPos.x + 50.0f;
 	mSceneBounds.Center.y = 0.0f;

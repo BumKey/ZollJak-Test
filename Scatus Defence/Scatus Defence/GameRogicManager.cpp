@@ -103,7 +103,6 @@ void GameRogicManager::Add_Monster(UINT waveLevel)
 		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f + rand() % 150,
 			-0.1f, player->GetPos().z + 50.0f + rand() % 150);
 		info.Scale = 0.1f + MathHelper::RandF() / 5.0f;
-		info.Rot.y = 0;
 
 		Goblin::Type type;
 		if (i % 2) {
@@ -131,9 +130,8 @@ void GameRogicManager::Add_Monster(UINT waveLevel)
 	for (UINT i = 0; i < cyclopNum; ++i) {
 		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f + rand() % 150,
 			-0.1f, player->GetPos().z + 50.0f + rand() % 150);
-		info.Scale = 7.0f + MathHelper::RandF();
+		info.Scale = 6.0f + MathHelper::RandF();
 		info.Rot.x = MathHelper::Pi;
-		info.Rot.y = 0.0f;
 
 		Object_Mgr->AddMonster(new Cyclop(Resource_Mgr->GetSkinnedMesh(ObjectType::Cyclop), info));
 	}

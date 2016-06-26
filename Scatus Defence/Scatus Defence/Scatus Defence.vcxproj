@@ -192,6 +192,7 @@
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Sound_Manager.cpp" />
     <ClCompile Include="Ssao.cpp" />
+    <ClCompile Include="Temple.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TextureMgr.cpp" />
     <ClCompile Include="UI_Manager.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="Sky.h" />
     <ClInclude Include="Sound_Manager.h" />
     <ClInclude Include="Ssao.h" />
+    <ClInclude Include="Temple.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TextureMgr.h" />
     <ClInclude Include="UI_Manager.h" />
@@ -451,6 +453,7 @@
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyCode</AssemblerOutput>
       <AssemblerOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">fxc</AssemblerOutputFile>
     </FxCompile>
+    <FxCompile Include="FX\WireFrame.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

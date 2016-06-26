@@ -1,7 +1,9 @@
 #include "GameObject.h"
+#include "SceneMgr.h"
+
 UINT GameObject::GeneratedCount = 0;
 
-GameObject::GameObject() : m_bForOneHit(false),
+GameObject::GameObject() : m_bForOneHit(false), mHasTarget(false), mExtentY(0.0f),
 mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f),
 mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
 {
@@ -10,8 +12,8 @@ mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), m
 	mCollisionState = CollisionState::None;
 }
 
-GameObject::GameObject(GameMesh* mesh, const InstanceDesc& info) : mMesh(mesh), m_bForOneHit(false),
-mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f),
+GameObject::GameObject(GameMesh* mesh, const InstanceDesc& info) : mMesh(mesh), m_bForOneHit(false), mHasTarget(false),
+mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f), mExtentY(0.0f),
 mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
 {
 	mID = GeneratedCount++;
@@ -32,6 +34,8 @@ mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), m
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
+
+	InitBoundingObject();
 }
 
 
@@ -87,6 +91,36 @@ void GameObject::Die()
 {
 	mActionState = ActionState::Die;
 	// 죽을 때 필요한 처리들은 오버라이드롤 구현..
+}
+
+void GameObject::InitBoundingObject()
+{
+	XMFLOAT3 fp = mMesh->GetAABB().Center;
+	XMVECTOR vp = XMLoadFloat3(&fp);
+	vp = XMVector3TransformCoord(vp, XMLoadFloat4x4(&mWorld));
+
+	XMStoreFloat3(&mAABB.Center, vp);
+	mAABB.Extents = mMesh->GetAABB().Extents * mScaling;
+
+	mBS.Center = mAABB.Center;
+
+	FLOAT max = mAABB.Extents.x;
+	if (max < mAABB.Extents.y) max = mAABB.Extents.y;
+	else if (max < mAABB.Extents.z) max = mAABB.Extents.z;
+	mBS.Radius = max;
+}
+
+void GameObject::UpdateBoundingObject()
+{
+	XMFLOAT3 fp = mMesh->GetAABB().Center;
+	XMVECTOR vp = XMLoadFloat3(&fp);
+	vp = XMVector3TransformCoord(vp, XMLoadFloat4x4(&mWorld));
+
+	XMStoreFloat3(&mAABB.Center, vp);
+
+	mAABB.Center.y += mExtentY;
+	mBS.Center = mAABB.Center;
+	//mBS.Center.y += mExtentY;
 }
 
 void GameObject::Attack(GameObject * target)

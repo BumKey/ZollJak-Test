@@ -4,6 +4,7 @@
 class Monster : public SkinnedObject
 {
 public:
+	Monster();
 	Monster(SkinnedMesh* mesh, const InstanceDesc& info);
 	virtual ~Monster();
 

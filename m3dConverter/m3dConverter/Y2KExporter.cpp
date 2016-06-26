@@ -1,13 +1,19 @@
 #include "Y2KExporter.h"
 #include <iostream>
 
-Y2KExporter::Y2KExporter()
+Y2KExporter::Y2KExporter() : mHasAnim(false), mAxisCorrect(false)
 {
 }
 
 
 Y2KExporter::~Y2KExporter()
 {
+}
+
+void Y2KExporter::AxisCorrect(const XMFLOAT3 & value)
+{
+	mAxisCorrect = true;
+	mAxisCorrecter = value;
 }
 
 void Y2KExporter::LoadM3D(const std::string & inFileName, bool hasAnim)
@@ -27,6 +33,31 @@ void Y2KExporter::ExportY2K(const std::string & outFileName)
 {
 	std::ofstream fout(outFileName, std::ios::binary);
 	UINT strLen;
+
+	if (mAxisCorrect)
+	{
+		XMVECTOR v = XMLoadFloat3(&mAxisCorrecter);
+		XMMATRIX R = XMMatrixRotationRollPitchYawFromVector(v);
+		
+		if (mHasAnim) {
+			for (auto& v : mSkinnedVertices)
+			{
+				XMVECTOR p = XMLoadFloat3(&v.Pos);
+				p = XMVector3TransformCoord(p, R);
+
+				XMStoreFloat3(&v.Pos, p);
+			}
+		}
+		else {
+			for (auto& v : mBasicVertices)
+			{
+				XMVECTOR p = XMLoadFloat3(&v.Pos);
+				p = XMVector3TransformCoord(p, R);
+
+				XMStoreFloat3(&v.Pos, p);
+			}
+		}
+	}
 
 	if (mHasAnim)
 	{

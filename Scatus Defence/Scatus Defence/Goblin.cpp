@@ -23,14 +23,18 @@ Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type)
 	mAnimNames[Anims::idle] = "stand";
 	mAnimNames[Anims::walk] = "walk";
 	mAnimNames[Anims::look_around] = "stand2";
+
+	mExtentY = mAABB.Extents.x;
 }
 
 Goblin::~Goblin()
 {
 }
 
-void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight)
+void Goblin::DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform)
 {
+	const Camera& cam = *Camera::GetInstance();
+
 	XMMATRIX view = cam.View();
 	XMMATRIX proj = cam.Proj();
 	XMMATRIX viewProj = cam.ViewProj();
@@ -58,6 +62,8 @@ void Goblin::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLO
 
 	ID3DX11EffectTechnique* activeSkinnedTech = Effects::NormalMapFX->Light3TexSkinnedTech;
 	dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
+
+	float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
 
 	// Draw the animated characters.
 	D3DX11_TECHNIQUE_DESC techDesc;

@@ -17,15 +17,15 @@ public:
 	virtual~SkinnedObject();
 
 public:
-	void Init(SkinnedMesh* Mesh, const InstanceDesc& info);
+	virtual void Init(SkinnedMesh* mesh, const InstanceDesc& info);
 
 	virtual void Update(float dt);
 	virtual void Animate(float dt);
 
 
-	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight);
-	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const Camera& cam, const XMMATRIX& lightViewProj, const FLOAT& tHeight);
-	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc, const Camera& cam, const FLOAT& tHeight);
+	virtual void DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform);
+	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj);
+	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc);
 
 	bool  CurrAnimEnd();
 
@@ -36,7 +36,7 @@ private:
 	void SetClip();
 
 protected:
-	SkinnedMesh* mMesh;
+	XNA::OrientedBox mOOBB;
 
 	FLOAT mTimePos;;
 

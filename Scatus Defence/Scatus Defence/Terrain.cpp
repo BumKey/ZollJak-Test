@@ -4,7 +4,6 @@
 
 #include "Terrain.h"
 
-
 Terrain::Terrain() : 
 	mQuadPatchVB(0), 
 	mQuadPatchIB(0), 
@@ -125,9 +124,10 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* dc, const InitInfo
 		mInfo.BlendMapFilename.c_str(), 0, 0, &mBlendMapSRV, 0));
 }
 
-void Terrain::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform,
+void Terrain::DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform,
 	ID3D11ShaderResourceView* shadowMapSRV, const DirectionalLight lights[3])
 {
+	const Camera* cam = Camera::GetInstance();
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 	dc->IASetInputLayout(InputLayouts::Terrain);
 
@@ -139,7 +139,7 @@ void Terrain::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFL
 	if (GetAsyncKeyState('1') & 0x8000)
 		dc->RSSetState(RenderStates::WireframeRS);
 
-	XMMATRIX viewProj = cam.ViewProj();
+	XMMATRIX viewProj = cam->ViewProj();
 	XMMATRIX world  = XMLoadFloat4x4(&mWorld);
 	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
 	XMMATRIX worldViewProj = world*viewProj;
@@ -149,19 +149,20 @@ void Terrain::DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFL
 
 	// Set per frame constants.
 	Effects::TerrainFX->SetViewProj(viewProj);
-	Effects::TerrainFX->SetEyePosW(cam.GetPosition());
+	Effects::TerrainFX->SetEyePosW(cam->GetPosition());
 	Effects::TerrainFX->SetDirLights(lights);
 	Effects::TerrainFX->SetFogColor(Colors::Silver);
-	Effects::TerrainFX->SetFogStart(30.0f);
-	Effects::TerrainFX->SetFogRange(500.0f);
-	Effects::TerrainFX->SetMinDist(50.0f);
-	Effects::TerrainFX->SetMaxDist(1000.0f);
+	Effects::TerrainFX->SetFogStart(15.0f);
+	Effects::TerrainFX->SetFogRange(175.0f);
+	Effects::TerrainFX->SetMinDist(150.0f);
+	Effects::TerrainFX->SetMaxDist(500.0f);
 	Effects::TerrainFX->SetMinTess(0.0f);
-	Effects::TerrainFX->SetMaxTess(4.0f);
+	Effects::TerrainFX->SetMaxTess(6.0f);
 	Effects::TerrainFX->SetTexelCellSpaceU(1.0f / mInfo.HeightmapWidth);
 	Effects::TerrainFX->SetTexelCellSpaceV(1.0f / mInfo.HeightmapHeight);
 	Effects::TerrainFX->SetWorldCellSpace(mInfo.CellSpacing);
 	Effects::TerrainFX->SetWorldFrustumPlanes(worldPlanes);
+
 	
 	XMMATRIX shadowTransformMatrix = XMLoadFloat4x4(&shadowTransform);
 	Effects::TerrainFX->SetShadowMap(shadowMapSRV);

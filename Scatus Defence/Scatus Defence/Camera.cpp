@@ -269,10 +269,10 @@ void Camera::Update()
 	camPos.y = playerPos.y + fCamT.y*12.0f;
 	camPos.z = playerPos.z + fCamT.z*12.0f;
 
-	camPos.y += Scene_Mgr->GetTerrainHeight(camPos);
+	camPos.y += Terrain::GetInstance()->GetHeight(camPos);
 
 	lookPos.x = playerPos.x;
-	lookPos.y = playerPos.y + Scene_Mgr->GetTerrainHeight(playerPos) - mRot*10.0f;
+	lookPos.y = playerPos.y + Terrain::GetInstance()->GetHeight(playerPos) - mRot*10.0f;
 	lookPos.z = playerPos.z;
 
 	LookAt(camPos, lookPos, XMFLOAT3(0.0f, 1.0f, 0.0f));

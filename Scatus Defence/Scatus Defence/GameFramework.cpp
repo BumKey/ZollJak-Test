@@ -40,12 +40,26 @@ bool GameFrameWork::Init()
 	Texture_Mgr->Init(md3dDevice);
 	Resource_Mgr->Init(md3dDevice);
 
+	Terrain::InitInfo tii;
+	tii.HeightMapFilename = L"Textures/terrain3.raw";
+	tii.LayerMapFilename0 = L"Textures/grass2.dds";
+	tii.LayerMapFilename1 = L"Textures/darkdirt.dds";
+	tii.LayerMapFilename2 = L"Textures/red_dirt.dds";
+	tii.LayerMapFilename3 = L"Textures/lightdirt.dds";
+	tii.LayerMapFilename4 = L"Textures/dirt.dds";
+	tii.BlendMapFilename = L"Textures/blend.dds";
+	tii.HeightScale = 50.0f;
+	tii.HeightmapWidth = 513;
+	tii.HeightmapHeight = 513;
+	tii.CellSpacing = 2.5f;
+	Terrain::GetInstance()->Init(md3dDevice, md3dImmediateContext, tii);
+
 	InstanceDesc info;
 	// 250이 거의 끝자리
 	info.Pos = XMFLOAT3(170.0f, 0.05f, -280.0f);
 	info.Rot.y = 0.0f;
-	info.Scale = 0.2f;
-	Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(ObjectType::Goblin), info);
+	info.Scale = 0.05f;
+	Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(ObjectType::Warrior), info);
 
 	Object_Mgr->Init();
 
@@ -57,7 +71,6 @@ bool GameFrameWork::Init()
 
 	// Giljune's Code
 	Packet_Mgr->Init();
-
 
 	const XMFLOAT3& playerPos = Player::GetInstance()->GetPos();
 	XMFLOAT3 camPos = playerPos;
@@ -176,5 +189,10 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 	//		switcher = true;
 	//}
 	
+}
+
+void GameFrameWork::OnKeyDown(WPARAM keyState)
+{
+	//Player::GetInstance()->Mo
 }
 

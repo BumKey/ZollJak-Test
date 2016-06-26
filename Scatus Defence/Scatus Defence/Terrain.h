@@ -13,13 +13,13 @@
 #include "Effects.h"
 #include "Vertex.h"
 #include "RenderStates.h"
+#include "Singletone.h"
 #include <fstream>
 #include <sstream>
 
-class Camera;
 struct DirectionalLight;
 
-class Terrain
+class Terrain : public Singletone<Terrain>
 {
 public:
 	struct InitInfo
@@ -41,6 +41,8 @@ public:
 	Terrain();
 	~Terrain();
 
+	friend class Singletone<Terrain>;
+
 	float GetWidth()const;
 	float GetDepth()const;
 	float GetHeight(const XMFLOAT3& pos)const;
@@ -50,7 +52,7 @@ public:
 
 	void Init(ID3D11Device* device, ID3D11DeviceContext* dc, const InitInfo& initInfo);
 
-	void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform,
+	void DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform,
 		ID3D11ShaderResourceView* shadowMapSRV, const DirectionalLight lights[3]);
 
 private:

@@ -40,6 +40,28 @@ void PacketMgr::Init()
 	std::cout << "Server Connect Success" << std::endl;
 }
 
+void PacketMgr::SendPacket(cs_packet &packet)
+{
+	unsigned char *packet_buf;
+	char buf[MAX_BUFF_SIZE] = { 0, };
+
+	packet.size = sizeof(packet);
+	packet_buf = reinterpret_cast<unsigned char*>(&packet);
+	memcpy(buf, packet_buf, packet_buf[0]);
+	mSend_wsabuf.len = packet.size;
+	mSend_wsabuf.buf = buf;
+
+	int outBytes = 0;
+	WSABUF temp;
+	temp.buf = mSend_wsabuf.buf;
+	temp.len = mSend_wsabuf.len;
+	if (WSASend(mSocket, &temp, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
+	{
+		if (WSAGetLastError() != WSA_IO_PENDING)
+			err_display(L"WSASend() Error");
+	}
+}
+
 void PacketMgr::SendPacket(cs_packet_success &packet)
 {
 	unsigned char *packet_buf;

@@ -21,6 +21,8 @@ Cyclop::Cyclop(SkinnedMesh* mesh, const InstanceDesc& info) : Monster(mesh, info
 	mAnimNames[Anims::stunned_hit] = "stunned_hit";
 	mAnimNames[Anims::idle] = "idle";
 	mAnimNames[Anims::walk] = "walk";
+
+	mExtentY = mAABB.Extents.x;
 }
 
 

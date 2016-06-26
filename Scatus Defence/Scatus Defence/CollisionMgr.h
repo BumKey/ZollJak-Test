@@ -22,7 +22,10 @@ private:
 	void MovingCollision(float dt);
 	void PlayerAttackCollision();
 
-	bool LowDetectWithMonsters(GameObject* sourceObj);
-	void HighDetectWithMonsters(GameObject* sourceObj, std::vector<UINT>& outIndices);
+	void DetectWithMonsters(GameObject* sourceObj, std::vector<UINT>& outIndices);
+	bool DetectWithObstacles(GameObject* sourceObj, BasicObject& outObj);		// 성능을 위해 지물과는 보통 하나와 충돌한다고 가정한다.
+
+	// OOBB로 개선필요
+	bool Detect(const XMFLOAT3& sPos, const XMFLOAT3& dPos);
 };
 

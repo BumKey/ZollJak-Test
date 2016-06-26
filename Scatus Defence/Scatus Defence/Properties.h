@@ -44,10 +44,13 @@ namespace ObjectType {
 	enum Types
 	{
 		None = 0,
-		type_p_warrior, // 캐릭터 전사
-		type_p_archer, // 캐릭터 아처
-		type_p_builder, // 캐릭터 건축가
+
 		Player,
+		Warrior, // 캐릭터 전사
+		Archer, // 캐릭터 아처
+		Builder, // 캐릭터 건축가
+		
+		Monster,
 		Goblin, // 적- 고블린
 		Cyclop,
 		

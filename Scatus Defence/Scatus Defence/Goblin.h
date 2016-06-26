@@ -14,7 +14,7 @@ public:
 	~Goblin();
 
 public:
-	virtual void DrawToScene(ID3D11DeviceContext* dc, const Camera& cam, const XMFLOAT4X4& shadowTransform, const FLOAT& tHeight);
+	virtual void DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform);
 
 private:
 	Type mGoblinType;

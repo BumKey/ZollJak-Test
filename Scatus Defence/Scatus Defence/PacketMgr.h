@@ -19,7 +19,9 @@ public:
 
 public:
 	void Init();
-	void SendPacket(cs_packet_success &packet);
+
+	void SendPacket(cs_packet& packet);
+	void SendPacket(cs_packet_success& packet);
 	void ReadPacket();
 	void ProcessPacket(char* ptr);
 

@@ -1,5 +1,8 @@
 #include "GameFramework.h"
 
+#pragma warning (disable : 4996)
+#pragma warning (disable : 4838)
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	PSTR cmdLine, int showCmd)
 {

@@ -48,6 +48,10 @@ SkinnedMesh * ResourceMgr::GetSkinnedMesh(ObjectType::Types oType)
 		case ObjectType::Cyclop:
 			mMeshes[oType] = new SkinnedMesh(mDevice, "Models\\cyclop.y2k", L"Textures\\cyclop\\");
 			break;
+
+		case ObjectType::Warrior:
+			mMeshes[oType] = new SkinnedMesh(mDevice, "Models\\warrior.y2k", L"Textures\\warrior\\");
+			break;
 	
 		default:
 			assert(false, "Uncorrect SkinnedMesh Type");

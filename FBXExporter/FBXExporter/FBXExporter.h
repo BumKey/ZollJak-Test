@@ -8,6 +8,9 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
+
+typedef std::unordered_map<std::string, std::pair<UINT, UINT>> FrameInfo;
 
 class FBXExporter
 {
@@ -20,6 +23,7 @@ public:
 	void Export(const std::string& fileName, const std::string& clipName, std::ofstream& fout);
 
 	void SetClipNum(UINT num) { mClipNum = num; }
+	void AllInOneTakeMode(const FrameInfo& frameInfo);
 
 private:	// You should strict to ordoer of processes
 	void ProcessGeometry(FbxNode* node);	
@@ -46,7 +50,6 @@ private:	// You should strict to ordoer of processes
 	void WriteMesh(std::ostream& inStream);
 	void WriteAnimation(std::ostream& inStream);
 
-
 private:
 	FbxManager* mFbxMgr;
 	FbxScene* mScene;
@@ -57,6 +60,7 @@ private:
 	UINT mPrevCtrlPointCount;
 	UINT mPrevTriangleCount;
 
+	bool mAllInOneTakeMode;
 	bool mHasAnimation;
 
 	UINT mClipNum;
@@ -72,4 +76,5 @@ private:
 
 	std::unordered_map<UINT, Material*> mMaterials;
 	std::unordered_map<UINT, CtrlPoint> mControlPoints;
+	FrameInfo mFrameInfo;
 };

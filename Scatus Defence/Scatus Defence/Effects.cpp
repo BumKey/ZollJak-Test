@@ -28,6 +28,20 @@ Effect::~Effect()
 }
 #pragma endregion
 
+#pragma region WireFrame
+WireFrame::WireFrame(ID3D11Device* device, const std::wstring& filename)
+	: Effect(device, filename)
+{
+	WireFrameTech = mFX->GetTechniqueByName("Tech");
+	WorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
+}
+
+WireFrame::~WireFrame()
+{
+}
+
+#pragma endregion
+
 #pragma region BasicEffect
 BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	: Effect(device, filename)
@@ -485,6 +499,7 @@ DebugTexEffect::~DebugTexEffect()
 
 #pragma region Effects
 
+WireFrame*			   Effects::WireFX = 0;
 BasicEffect*           Effects::BasicFX = 0;
 NormalMapEffect*       Effects::NormalMapFX = 0;
 BuildShadowMapEffect*  Effects::BuildShadowMapFX = 0;
@@ -497,6 +512,7 @@ TerrainEffect* Effects::TerrainFX = 0;
 
 void Effects::InitAll(ID3D11Device* device)
 {
+	WireFX = new WireFrame(device, L"FX/WireFrame.fxo");
 	BasicFX = new BasicEffect(device, L"FX/Basic.fxo");
 	NormalMapFX = new NormalMapEffect(device, L"FX/NormalMap.fxo");
 	BuildShadowMapFX = new BuildShadowMapEffect(device, L"FX/BuildShadowMap.fxo");

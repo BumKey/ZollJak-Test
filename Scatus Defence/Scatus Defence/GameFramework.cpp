@@ -4,6 +4,7 @@
 GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 	: D3DApp(hInstance)
 {
+	srand(time(NULL));
 	mMainWndCaption = L"Scatus Defence Demo";
 
 	mLastMousePos.x = 0;
@@ -48,15 +49,15 @@ bool GameFrameWork::Init()
 	tii.LayerMapFilename3 = L"Textures/lightdirt.dds";
 	tii.LayerMapFilename4 = L"Textures/dirt.dds";
 	tii.BlendMapFilename = L"Textures/blend.dds";
-	tii.HeightScale = 50.0f;
+	tii.HeightScale = 70.0f;
 	tii.HeightmapWidth = 513;
 	tii.HeightmapHeight = 513;
-	tii.CellSpacing = 2.5f;
+	tii.CellSpacing = 3.0f;
 	Terrain::GetInstance()->Init(md3dDevice, md3dImmediateContext, tii);
 
 	InstanceDesc info;
 	// 250이 거의 끝자리
-	info.Pos = XMFLOAT3(170.0f, 0.05f, -280.0f);
+	info.Pos = XMFLOAT3(210.0f, 0.01f, -280.0f);
 	info.Rot.y = 0.0f;
 	info.Scale = 0.05f;
 	Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(ObjectType::Warrior), info);

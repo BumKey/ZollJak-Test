@@ -156,27 +156,27 @@ void ObjectMgr::CreateMap()
 {
 	InstanceDesc info;
 
-	info.Pos = XMFLOAT3(195.0f, 0.05f, -300.0f);
+	info.Pos = XMFLOAT3(250.0f, 0.05f, -370.0f);
 	info.Rot.y = 0.0f;
 	info.Scale = 0.3f;
 
 	AddObstacle(new BasicObject(Resource_Mgr->GetBasicMesh(ObjectType::Temple), info, Label::Basic));
 
 	auto player = Player::GetInstance();
-	for (UINT i = 0; i < 10; ++i)
+	for (UINT i = 0; i < 30; ++i)
 	{
-		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f - rand() % 100,
-			-0.1f, player->GetPos().z + 50.0f - rand() % 100);
+		info.Pos = XMFLOAT3(player->GetPos().x - 100.0f + rand() % 200,
+			-0.1f, player->GetPos().z + 80.0f - rand() % 200);
 		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
 		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2;
 
 		AddObstacle(new BasicObject(Resource_Mgr->GetBasicMesh(ObjectType::Tree), info, Label::AlphaBasic));
 	}
 
-	for (UINT i = 0; i < 20; ++i)
+	for (UINT i = 0; i < 30; ++i)
 	{
-		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f - rand() % 100,
-			-0.1f, player->GetPos().z + 50.0f - rand() % 100);
+		info.Pos = XMFLOAT3(player->GetPos().x + 80.0f - rand() % 200,
+			-0.1f, player->GetPos().z + 80.0f - rand() % 200);
 		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
 		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2.0f;
 

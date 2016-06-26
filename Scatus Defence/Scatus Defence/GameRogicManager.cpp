@@ -100,8 +100,8 @@ void GameRogicManager::Add_Monster(UINT waveLevel)
 	UINT goblinNum = mPerWaveMonsterNum[waveLevel][ObjectType::Goblin];
 	for (UINT i = 0; i < goblinNum; ++i)
 	{
-		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f + rand() % 150,
-			-0.1f, player->GetPos().z + 50.0f + rand() % 150);
+		info.Pos = XMFLOAT3(player->GetPos().x + 100.0f - rand() % 200,
+			-0.1f, player->GetPos().z + 100.0f + rand() % 200);
 		info.Scale = 0.1f + MathHelper::RandF() / 5.0f;
 
 		Goblin::Type type;
@@ -128,8 +128,8 @@ void GameRogicManager::Add_Monster(UINT waveLevel)
 
 	UINT cyclopNum = mPerWaveMonsterNum[waveLevel][ObjectType::Cyclop];
 	for (UINT i = 0; i < cyclopNum; ++i) {
-		info.Pos = XMFLOAT3(player->GetPos().x + 50.0f + rand() % 150,
-			-0.1f, player->GetPos().z + 50.0f + rand() % 150);
+		info.Pos = XMFLOAT3(player->GetPos().x + 100.0f + rand() % 200,
+			-0.1f, player->GetPos().z + 100.0f + rand() % 200);
 		info.Scale = 6.0f + MathHelper::RandF();
 		info.Rot.x = MathHelper::Pi;
 

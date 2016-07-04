@@ -1,7 +1,14 @@
 #pragma once
+
+#define WIN32_LEAN_AND_MEAN
+#include <WinSock2.h>
+#include <Windows.h>
 #include "protocol.h"
 #include "Singletone.h"
+#include <iostream>
 #include <vector>
+
+#pragma comment (lib, "ws2_32.lib")
 
 #define Packet_Mgr PacketMgr::GetInstance()
 

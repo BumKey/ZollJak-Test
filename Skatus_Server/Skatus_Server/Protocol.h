@@ -1,11 +1,12 @@
 #pragma once
-
-#include "stdafx.h"
+#include <d3dx11.h>
+#include <xnamath.h>
 
 // server -> client
 #define SC_POS				1
 #define SC_PUT_PLAYER		2
 #define SC_REMOVE_PLAYER	3
+#define SC_MONSTERS			4
 
 // client -> server
 #define CS_TEST				0
@@ -34,8 +35,14 @@
 
 #pragma pack(push, 1)
 
+enum GameState {
+	GameWaiting,
+	WaveWaiting,
+	WaveStart,
+	Waving,
+	GameOver
+};
 
-// server -> client
 struct ForClientInfo
 {
 	XMFLOAT3 pos;
@@ -43,7 +50,8 @@ struct ForClientInfo
 	FLOAT scale;
 };
 
-struct sc_packet_pos
+// server -> client
+struct sc_packet_objectInfo
 {
 	BYTE size;
 	BYTE type;

@@ -1,4 +1,3 @@
-#include <WinSock2.h>
 #include "PacketMgr.h"
 
 PacketMgr::PacketMgr()
@@ -128,16 +127,16 @@ void PacketMgr::ProcessPacket(char* ptr)
 		std::cout << "packet type : " << (int)ptr[1] << std::endl;
 		break;
 	case SC_POS:
-		std::cout << "packet type : \n" << ptr[1] << std::endl;
+		std::cout << "packet type : " << (int)ptr[1] << std::endl;
 		break;
 	case SC_REMOVE_PLAYER:
-		std::cout << "packet type : \n" << ptr[1] << std::endl;
+		std::cout << "packet type : " << (int)ptr[1] << std::endl;
 		break;
 	case CS_TEST:
 		std::cout << "packet success" << std::endl;
 		break;
 	default:
-		std::cout << "Unknown packet type : %d \n" << ptr[1] << std::endl;
+		std::cout << "Unknown packet type : " << (int)ptr[1] << std::endl;
 	}
 }
 

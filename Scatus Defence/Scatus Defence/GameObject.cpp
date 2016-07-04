@@ -98,7 +98,7 @@ void GameObject::InitBoundingObject()
 	XMFLOAT3 fp = mMesh->GetAABB().Center;
 	XMVECTOR vp = XMLoadFloat3(&fp);
 	vp = XMVector3TransformCoord(vp, XMLoadFloat4x4(&mWorld));
-
+	
 	XMStoreFloat3(&mAABB.Center, vp);
 	mAABB.Extents = mMesh->GetAABB().Extents * mScaling;
 
@@ -118,7 +118,7 @@ void GameObject::UpdateBoundingObject()
 
 	XMStoreFloat3(&mAABB.Center, vp);
 
-	mAABB.Center.y += mExtentY;
+	//mAABB.Center.y += mExtentY;
 	mBS.Center = mAABB.Center;
 	//mBS.Center.y += mExtentY;
 }

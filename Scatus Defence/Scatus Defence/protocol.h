@@ -1,15 +1,7 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include <iostream>
 #include <d3dx11.h>
 #include <xnamath.h>
-
-#pragma comment (lib, "ws2_32.lib")
-#pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dx11.lib")
-#pragma comment (lib, "d3dx10.lib")
 
 // server -> client
 #define SC_POS				1

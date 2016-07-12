@@ -15,7 +15,7 @@ void MyServer::Initialize()
 	g_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
 
 	// 오브젝트의 수만큼 루프를 돌면서, 구조체의 정보들을 초기화한다.
-	for (auto i = 0; i < MAX_OBJECT; ++i) {
+	for (auto i = 0; i < MAX_USER; ++i) {
 		g_clients[i].is_connected = FALSE; // 접속x
 		g_clients[i].recv_overlap.operation = OP_RECV;
 		g_clients[i].recv_overlap.wsabuf.buf = reinterpret_cast<CHAR *>(g_clients[i].recv_overlap.iocp_buffer);
@@ -50,7 +50,7 @@ unsigned char* MyServer::Pharse_Packet(DWORD id, unsigned char buf[]) {
 	case CS_TEST:
 	{
 		ForClientInfo info = *(reinterpret_cast<ForClientInfo*>(&buf[2]));
-		std::cout << "success : " << info.pos.x << " " << info.pos.y << " " << info.pos.z << std::endl;
+		std::cout << "success : " << info.Pos.x << " " << info.Pos.y << " " << info.Pos.z << std::endl;
 		break;
 	}
 	case CS_SUCCESS:
@@ -61,11 +61,9 @@ unsigned char* MyServer::Pharse_Packet(DWORD id, unsigned char buf[]) {
 	}
 	
 	cs_packet packet;
-	packet.cInfo.pos.x = 0.0;
-	packet.cInfo.pos.y = 0.0;
-	packet.cInfo.pos.z = 0.0;
-	packet.cInfo.rot = 0.0;
-	packet.cInfo.scale = 0.0;
+	packet.cInfo.Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	packet.cInfo.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	packet.cInfo.Scale = 0.0;
 	packet.size = sizeof(packet);
 	packet.type = CS_TEST;
 

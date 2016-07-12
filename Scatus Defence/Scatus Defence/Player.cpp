@@ -57,7 +57,7 @@ void Player::Move(float walk, float strafe)
 
 	packet.size = sizeof(packet);
 	packet.type = CS_TEST;
-	packet.cInfo.pos = mPosition;
+	packet.cInfo.Pos = mPosition;
 
 	if (walk != 0.0f)
 		Walk(walk);

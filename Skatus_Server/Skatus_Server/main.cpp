@@ -4,8 +4,9 @@
 
 // 전역 변수 추가 시, stdafx.h에도 extern 선언 추가할 것
 HANDLE			g_hIocp;				// IOCP 핸들
-Client			g_clients[MAX_OBJECT]; // 클라이언트의 정보를 가지고 오는 구조체
+Client			g_clients[MAX_USER]; // 클라이언트의 정보를 가지고 오는 구조체
 BOOL			g_isshutdown = FALSE;
+GameStateMgr	g_StateMgr;
 
 int main(int argc, char argv[])
 {

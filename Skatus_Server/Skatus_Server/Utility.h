@@ -18,7 +18,7 @@ struct Player {
 struct Client {
 	SOCKET s;
 	bool is_connected;
-	Player avatar;
+	ForClientInfo avatar;
 	Overlap_ex recv_overlap;
 	int packet_size;
 	int previous_size;

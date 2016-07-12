@@ -1,4 +1,5 @@
 #pragma once
+#include "protocol.h"
 
 namespace AttackType {
 	enum Types
@@ -37,33 +38,6 @@ namespace CollisionState {
 		None,
 		MovingCollision,
 		AttackCollision
-	};
-}
-
-namespace ObjectType {
-	enum Types
-	{
-		None = 0,
-
-		Player,
-		Warrior, // 캐릭터 전사
-		Archer, // 캐릭터 아처
-		Builder, // 캐릭터 건축가
-		
-		Monster,
-		Goblin, // 적- 고블린
-		Cyclop,
-		
-		Obstacle,
-		Tree,
-		Base,
-		Stairs,
-		Pillar1,
-		Pillar2,
-		Pillar3,
-		Pillar4,
-		Rock,
-		Temple
 	};
 }
 

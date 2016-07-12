@@ -23,7 +23,7 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		255
-#define MAX_USER			10
+#define MAX_USER			1
 #define MAX_MONSTER			100
 #define MAX_OBJECT			1000
 #define MAX_NPC				100
@@ -33,7 +33,36 @@
 #define OP_RECV				1
 #define OP_SEND				2
 
+#define PI					3.1415926535f
 #pragma pack(push, 1)
+
+
+namespace ObjectType {
+	enum Types
+	{
+		None = 0,
+
+		Player,
+		Warrior, // 캐릭터 전사
+		Archer, // 캐릭터 아처
+		Builder, // 캐릭터 건축가
+
+		Monster,
+		Goblin, // 적- 고블린
+		Cyclop,
+
+		Obstacle,
+		Tree,
+		Base,
+		Stairs,
+		Pillar1,
+		Pillar2,
+		Pillar3,
+		Pillar4,
+		Rock,
+		Temple
+	};
+}
 
 enum GameState {
 	GameWaiting,
@@ -45,9 +74,11 @@ enum GameState {
 
 struct ForClientInfo
 {
-	XMFLOAT3 pos;
-	FLOAT rot;
-	FLOAT scale;
+	BYTE ObjectType;
+
+	XMFLOAT3 Pos;
+	XMFLOAT3 Rot;
+	FLOAT Scale;
 };
 
 // server -> client

@@ -60,13 +60,9 @@ void MyThreads::Accept_Thread()
 			continue;
 		}
 
-		// 조건 인원이 접속 했을 때 게임상태 바꾸기
+		// 조건 인원이 접속 했을 때 Wave시작.
 		if (new_id >= MAX_USER - 1)
-		{
-			assert(g_StateMgr.GetCurrState() == GameState::GameWaiting);
-			g_StateMgr.FlowAdvance();
-			std::cout << "Entering WaveWaiting state..." << std::endl;
-		}
+			g_RogicMgr.WaveStart();
 
 		// 클라이언트 정보 초기화
 		g_clients[new_id].s = new_client;
@@ -209,6 +205,36 @@ void MyThreads::Worker_Thread()
 					remained = 0; // 다 처리했음
 				}
 			}
+
+			/* ==================================================================================================
+			이 워크쓰레드는 클라쪽에서 패킷이 왔을 때 실행된다고 가정.
+
+			현재 서버가 패킷을 보내는 구조는 
+			서버 로직으로 가지고있는 데이터들을 갱신하고
+			그 갱신된 데이터들을 접속된 모든 클라들한테서 잘 받았다는
+			답신 패킷을 받았을 때를 한 프레임으로 설정.
+			
+			답신 패킷을 모두 받은 후엔 다음 프레임을 수행한다.
+			자세한 사항은 ServerRogicMgr의 주석 참조.
+
+			위에 사항에 비효율적이거나 잘못된 부분 있다면 연락바람.
+
+			-----------------------------------------------------------------
+			현재 ServerRogicMgr의 사용예)
+
+			KeyInput타입의 패킷이 왔다면 cs_packet_move 구조체 채우고
+			g_RogicMgr.ProcessKeyInput(cs_packet_move);
+
+			MouseInput타입의 패킷이 왔다면 cs_packet_attack 구조체 채우고
+			g_RogicMgr.ProcessMouseInput(cs_packet_attack);
+
+			CS_SUCCES 패킷이 왔다면 <이것은 항상 와야함>
+			g_RogicMgr.Update() 수행.
+			-----------------------------------------------------------------
+
+			변동 사항은 테스트를 해봐야 알 수 있을 것 같음.
+			================================================================================================== */
+
 			DWORD flags = 0;
 			// (소켓, WSABUF구조체 포인터, WSABUF구조체 개수, NULL, 받아온 양, 오버랩 구조체의 포인터, 완료루틴의 포인터)
 			WSARecv(g_clients[key].s, &g_clients[key].recv_overlap.wsabuf, 1, NULL, &flags,

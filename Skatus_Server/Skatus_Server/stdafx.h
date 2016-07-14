@@ -18,10 +18,10 @@
 #pragma comment (lib, "d3dx10.lib")
 
 #include "protocol.h"
-#include "GameStateMgr.h"
+#include "ServerRogicMgr.h"
 #include "Utility.h"
 
 extern HANDLE	g_hIocp;
 extern Client	g_clients[MAX_USER];
 extern BOOL		g_isshutdown;
-extern GameStateMgr	g_StateMgr;
+extern ServerRogicMgr	g_RogicMgr;

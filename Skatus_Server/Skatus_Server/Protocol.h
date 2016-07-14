@@ -6,18 +6,19 @@
 #define SC_POS				1
 #define SC_PUT_PLAYER		2
 #define SC_REMOVE_PLAYER	3
-#define SC_MONSTERS			4
+#define SC_PER_FRAME		4
 
 // client -> server
-#define CS_TEST				0
-#define CS_UP				1
-#define CS_DOWN				2
-#define CS_LEFT				3
-#define CS_RIGHT			4
-#define CS_UP_LEFT			5
-#define CS_UP_RIGHT			6
-#define CS_DOWN_LEFT		7
-#define CS_DOWN_RIGHT		8
+#define CS_KEYINPUT			0
+#define CS_MOUSEINPUT		1
+//#define CS_UP				1
+//#define CS_DOWN				2
+//#define CS_LEFT				3
+//#define CS_RIGHT			4
+//#define CS_UP_LEFT			5
+//#define CS_UP_RIGHT			6
+//#define CS_DOWN_LEFT		7
+//#define CS_DOWN_RIGHT		8
 #define CS_SUCCESS			9
 
 #define SERVER_PORT			4000
@@ -35,7 +36,6 @@
 
 #define PI					3.1415926535f
 #pragma pack(push, 1)
-
 
 namespace ObjectType {
 	enum Types
@@ -64,6 +64,19 @@ namespace ObjectType {
 	};
 }
 
+namespace ActionState {
+	enum States
+	{
+		Idle,
+		Attack,
+		Walk,
+		Run,
+		Die,
+		Build,
+		Damage
+	};
+}
+
 enum GameState {
 	GameWaiting,
 	WaveWaiting,
@@ -75,6 +88,7 @@ enum GameState {
 struct ForClientInfo
 {
 	BYTE ObjectType;
+	BYTE ActionState;
 
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
@@ -82,13 +96,13 @@ struct ForClientInfo
 };
 
 // server -> client
-struct sc_packet_objectInfo
+struct sc_packet_PerFrame
 {
 	BYTE size;
 	BYTE type;
-	DWORD client_id;
+	DWORD time;
 
-	ForClientInfo cInfo;
+	std::vector<ForClientInfo> cInfos;
 };
 
 struct sc_packet_put_player
@@ -108,11 +122,20 @@ struct sc_packet_remove_player
 };
 
 // client -> server
-struct cs_packet
+struct cs_packet_move
 {
 	BYTE size;
 	BYTE type;
-	ForClientInfo cInfo;
+	DWORD client_id;
+
+	XMFLOAT3 pos;
+};
+
+struct cs_packet_attack
+{
+	BYTE size;
+	BYTE type;
+	DWORD client_id;
 };
 
 struct cs_packet_success

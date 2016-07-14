@@ -9,15 +9,16 @@
 #define SC_MONSTERS			4
 
 // client -> server
-#define CS_TEST				0
-#define CS_UP				1
-#define CS_DOWN				2
-#define CS_LEFT				3
-#define CS_RIGHT			4
-#define CS_UP_LEFT			5
-#define CS_UP_RIGHT			6
-#define CS_DOWN_LEFT		7
-#define CS_DOWN_RIGHT		8
+#define CS_KEYINPUT			0
+#define CS_MOUSEINPUT		1
+//#define CS_UP				1
+//#define CS_DOWN				2
+//#define CS_LEFT				3
+//#define CS_RIGHT			4
+//#define CS_UP_LEFT			5
+//#define CS_UP_RIGHT			6
+//#define CS_DOWN_LEFT		7
+//#define CS_DOWN_RIGHT		8
 #define CS_SUCCESS			9
 
 #define SERVER_PORT			4000
@@ -33,6 +34,7 @@
 #define OP_RECV				1
 #define OP_SEND				2
 
+#define PI					3.1415926535f
 #pragma pack(push, 1)
 
 
@@ -63,7 +65,7 @@ namespace ObjectType {
 	};
 }
 
-enum eGameState {
+enum GameState {
 	GameWaiting,
 	WaveWaiting,
 	WaveStart,
@@ -73,19 +75,20 @@ enum eGameState {
 
 struct ForClientInfo
 {
+	BYTE ObjectType;
+
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
 	FLOAT Scale;
 };
 
 // server -> client
-struct sc_packet_objectInfo
+struct sc_packet_objectInfos
 {
 	BYTE size;
 	BYTE type;
-	DWORD client_id;
 
-	ForClientInfo cInfo;
+	std::vector<ForClientInfo> cInfos;
 };
 
 struct sc_packet_put_player

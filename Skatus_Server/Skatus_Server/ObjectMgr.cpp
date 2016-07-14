@@ -20,16 +20,6 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 
 	switch (oType)
 	{
-	case ObjectType::Player:
-	case ObjectType::Warrior:
-	case ObjectType::Archer:
-	case ObjectType::Builder:
-		info.Pos = XMFLOAT3(rand()%20 + 200.0f , 0.0f, rand() % 20 - 280.0f);
-		info.Rot.y = 0.0f;
-		info.Scale = 0.05f;
-		mOurTeam.push_back(info);
-		break;
-
 	case ObjectType::Monster:
 	case ObjectType::Goblin:
 	case ObjectType::Cyclop:
@@ -48,21 +38,55 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		mObstacles.push_back(info);
 		break;
 	case ObjectType::Base:
+		break;
 	case ObjectType::Stairs:
+		break;
 	case ObjectType::Pillar1:
+		break;
 	case ObjectType::Pillar2:
+		break;
 	case ObjectType::Pillar3:
+		break;
 	case ObjectType::Pillar4:
+		break;
 	case ObjectType::Rock:
+		break;
 	case ObjectType::Temple:
 		info.Pos = XMFLOAT3(250.0f, 0.05f, -370.0f);
 		info.Rot.y = 0.0f;
 		info.Scale = 0.3f;
 		mObstacles.push_back(info);
 		break;
+
+	default:
+		assert(false, "incorrect type at AddObject");
+		break;
 	}
 
 	++mTotalObjectNum;
+}
+
+void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
+{
+	ForClientInfo info;
+	info.ObjectType = oType;
+
+	switch (oType)
+	{
+	case ObjectType::Player:
+	case ObjectType::Warrior:
+	case ObjectType::Archer:
+	case ObjectType::Builder:
+		info.Pos = XMFLOAT3(rand() % 20 + 200.0f, 0.0f, rand() % 20 - 280.0f);
+		info.Rot.y = 0.0f;
+		info.Scale = 0.05f;
+		mPlayers[client_id] = info;
+		break;
+
+	default:
+		assert(false, "incorrect type at AddObject");
+		break;
+	}
 }
 
 const std::vector<ForClientInfo>& ObjectMgr::GetAllObjects()
@@ -79,10 +103,15 @@ const std::vector<ForClientInfo>& ObjectMgr::GetAllObjects()
 	for (auto i : mMonsters)
 		mAllObjects.push_back(i);
 
-	for (auto i : mOurTeam)
+	for (auto i : mPlayers)
 		mAllObjects.push_back(i);
 
 	return mAllObjects;
+}
+
+void ObjectMgr::ReleaseAllMonsters()
+{
+	mMonsters.clear();
 }
 
 void ObjectMgr::CreateMap()

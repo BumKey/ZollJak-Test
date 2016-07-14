@@ -6,7 +6,7 @@
 HANDLE			g_hIocp;				// IOCP 핸들
 Client			g_clients[MAX_USER]; // 클라이언트의 정보를 가지고 오는 구조체
 BOOL			g_isshutdown = FALSE;
-GameStateMgr	g_StateMgr;
+ServerRogicMgr	g_RogicMgr;
 
 int main(int argc, char argv[])
 {

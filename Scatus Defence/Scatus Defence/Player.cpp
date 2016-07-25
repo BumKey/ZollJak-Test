@@ -53,11 +53,7 @@ void Player::CollisionMoving(const XMFLOAT3& dPos, float dt)
 
 void Player::Move(float walk, float strafe)
 {
-	cs_packet packet;
-
-	packet.size = sizeof(packet);
-	packet.type = CS_TEST;
-	packet.cInfo.Pos = mPosition;
+	mActionState = ActionState::Run;
 
 	if (walk != 0.0f)
 		Walk(walk);
@@ -65,7 +61,12 @@ void Player::Move(float walk, float strafe)
 	if (strafe != 0.0f)
 		Strafe(strafe);
 
-	mActionState = ActionState::Run;
+	cs_packet_move packet;
+
+	packet.size = sizeof(packet);
+	packet.type = CS_KEYINPUT;
+	packet.pos = mPosition;
+
 	Packet_Mgr->SendPacket(packet);
 }
 

@@ -3,6 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <WinSock2.h>
 #include <Windows.h>
+#include <assert.h>
 #include "protocol.h"
 #include "Singletone.h"
 #include <iostream>
@@ -27,15 +28,18 @@ public:
 public:
 	void Init();
 
-	void SendPacket(cs_packet& packet);
+	void SendPacket(cs_packet_move& packet);
+	void SendPacket(cs_packet_attack& packet);
 	void SendPacket(cs_packet_success& packet);
-	void ReadPacket();
+	bool ReadPacket();
 	void ProcessPacket(char* ptr);
 
 private:
 	void err_display(wchar_t *msg);
 
 private:
+	int mClientID;
+
 	SOCKET	mSocket;
 	WSABuf	mRecv_wsabuf;
 	char	mSend_buffer[MAX_BUFF_SIZE];
@@ -44,6 +48,5 @@ private:
 	char	packet_buffer[MAX_PACKET_SIZE];
 	DWORD	in_packet_size = 0;
 	int		saved_packet_size = 0;
-	int		my_id;
 };
 

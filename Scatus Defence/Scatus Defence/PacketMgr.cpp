@@ -1,6 +1,6 @@
 #include "PacketMgr.h"
 
-PacketMgr::PacketMgr()
+PacketMgr::PacketMgr() : mClientID(-1)
 {
 	mSend_wsabuf.buf = mSend_buffer;
 	mSend_wsabuf.len = MAX_BUFF_SIZE;
@@ -39,7 +39,32 @@ void PacketMgr::Init()
 	std::cout << "Server Connect Success" << std::endl;
 }
 
-void PacketMgr::SendPacket(cs_packet &packet)
+void PacketMgr::SendPacket(cs_packet_move &packet)
+{
+	assert(mClientID >= 0);
+
+	unsigned char *packet_buf;
+	char buf[MAX_BUFF_SIZE] = { 0, };
+
+	packet.size = sizeof(packet);
+	packet.client_id = mClientID;
+	packet_buf = reinterpret_cast<unsigned char*>(&packet);
+	memcpy(buf, packet_buf, packet_buf[0]);
+	mSend_wsabuf.len = packet.size;
+	mSend_wsabuf.buf = buf;
+
+	int outBytes = 0;
+	WSABUF temp;
+	temp.buf = mSend_wsabuf.buf;
+	temp.len = mSend_wsabuf.len;
+	if (WSASend(mSocket, &temp, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
+	{
+		if (WSAGetLastError() != WSA_IO_PENDING)
+			err_display(L"WSASend() Error");
+	}
+}
+
+void PacketMgr::SendPacket(cs_packet_attack &packet)
 {
 	unsigned char *packet_buf;
 	char buf[MAX_BUFF_SIZE] = { 0, };
@@ -83,7 +108,7 @@ void PacketMgr::SendPacket(cs_packet_success &packet)
 	}
 }
 
-void PacketMgr::ReadPacket()
+bool PacketMgr::ReadPacket()
 {
 	DWORD iobytes, ioflag = 0;
 	
@@ -94,6 +119,8 @@ void PacketMgr::ReadPacket()
 	{ 
 		if (WSAGetLastError() != WSA_IO_PENDING)
 			err_display(L"WSARecv() Error");
+
+		return false;
 	}
 	
 	BYTE *ptr = reinterpret_cast<BYTE *>(mRecv_buffer);
@@ -117,24 +144,32 @@ void PacketMgr::ReadPacket()
 			iobytes = 0;
 		}
 	}
+
+	return true;
 }
 
 void PacketMgr::ProcessPacket(char* ptr)
 {
 	switch (ptr[1])
 	{
-	case SC_PUT_PLAYER:
-		std::cout << "packet type : " << (int)ptr[1] << std::endl;
+	case SC_PUT_PLAYER: {
+		sc_packet_put_player *packet = reinterpret_cast<sc_packet_put_player*>(ptr);
+		mClientID = (*packet).client_id;
+
+		std::cout << "SC_PUT_PLAYER, ID" << mClientID << std::endl;
 		break;
+	}
 	case SC_POS:
-		std::cout << "packet type : " << (int)ptr[1] << std::endl;
+		std::cout << "SC_POS : " << (int)ptr[1] << std::endl;
 		break;
 	case SC_REMOVE_PLAYER:
-		std::cout << "packet type : " << (int)ptr[1] << std::endl;
+		std::cout << "SC_REMOVE_PLAYER : " << (int)ptr[1] << std::endl;
 		break;
-	case CS_TEST:
-		std::cout << "packet success" << std::endl;
+	case SC_PER_FRAME:	{
+		sc_packet_PerFrame *infos = reinterpret_cast<sc_packet_PerFrame*>(ptr);
+		std::cout << "SC_PER_FRAME, ObjectNum : " << (*infos).cInfos.size() << std::endl;
 		break;
+	}
 	default:
 		std::cout << "Unknown packet type : " << (int)ptr[1] << std::endl;
 	}

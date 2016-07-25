@@ -1,46 +1,6 @@
 #pragma once
 #include "protocol.h"
 
-namespace AttackType {
-	enum Types
-	{
-		type_shortdistance,
-		type_longdistance
-	};
-}
-
-namespace ActionState {
-	enum States
-	{
-		Idle,
-		Battle,
-		Walk,
-		Run,
-		Die,
-		Build,
-		Attack,
-		Damage
-	};
-}
-
-namespace AI_State {
-	enum States
-	{
-		None,
-		MovingToTarget,
-		AttackToTarget
-	};
-}
-
-namespace CollisionState {
-	enum States
-	{
-		None,
-		MovingCollision,
-		AttackCollision
-	};
-}
-
 class Properties
 {
 public:

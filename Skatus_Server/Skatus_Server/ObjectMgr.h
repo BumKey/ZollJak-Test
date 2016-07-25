@@ -10,9 +10,9 @@ public:
 	void AddObject(ObjectType::Types oType);
 	void AddPlayer(ObjectType::Types oType, DWORD client_id);
 
-	const std::vector<ForClientInfo>&		GetAllObjects();
-	std::vector<ForClientInfo>&				GetMonsters() { return mMonsters; }
-	ForClientInfo							GetPlayer(const DWORD& client_id) { return mPlayers[client_id]; }
+	const std::vector<ObjectInfo>&		GetAllObjects();
+	std::vector<ObjectInfo>&				GetMonsters() { return mMonsters; }
+	ObjectInfo							GetPlayer(const DWORD& client_id) { return mPlayers[client_id]; }
 	void ReleaseAllMonsters();
 
 private:
@@ -24,9 +24,9 @@ private:
 	UINT mMaxStructures;
 	UINT mTotalObjectNum;
 
-	std::vector<ForClientInfo>	mAllObjects;					
-	std::vector<ForClientInfo>	mObstacles;						
-	std::vector<ForClientInfo>	mStructures, mProjectiles;		
-	std::vector<ForClientInfo>	mMonsters;						
-	ForClientInfo				mPlayers[MAX_USER];				
+	std::vector<ObjectInfo>	mAllObjects;					
+	std::vector<ObjectInfo>	mObstacles;						
+	std::vector<ObjectInfo>	mStructures, mProjectiles;		
+	std::vector<ObjectInfo>	mMonsters;						
+	ObjectInfo				mPlayers[MAX_USER];				
 };

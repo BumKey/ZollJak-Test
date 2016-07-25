@@ -1,5 +1,7 @@
 #include "Threads.h"
 
+ServerRogicMgr	g_RogicMgr;
+
 // 어셉트 스레드
 void MyThreads::Accept_Thread()
 {
@@ -145,10 +147,10 @@ void MyThreads::Worker_Thread()
 	while (g_isshutdown == FALSE)
 	{
 		DWORD iosize;			// 전송된 데이터의 크기
-		DWORD key;				// Completion Key : 현재 넘겨받는 데이터는 플레이어의 ID값
+		DWORD id;				// Completion id : 현재 넘겨받는 데이터는 플레이어의 ID값
 		Overlap_ex *my_overlap; // Ex_Overlap 구조체
 
-		BOOL result = GetQueuedCompletionStatus(g_hIocp, &iosize, &key,
+		BOOL result = GetQueuedCompletionStatus(g_hIocp, &iosize, &id,
 			reinterpret_cast<LPOVERLAPPED *>(&my_overlap), INFINITE);
 
 		if (FALSE == result)
@@ -160,52 +162,70 @@ void MyThreads::Worker_Thread()
 		if (0 == iosize)
 		{
 			// 소켓 종료
-			closesocket(g_clients[key].s);
+			closesocket(g_clients[id].s);
 
 			// 접속을 종료 했다는 것을 다른 플레이어들에게 알리기 위한 패킷
 			sc_packet_remove_player disconnect;
 			disconnect.type = SC_REMOVE_PLAYER;
 			disconnect.size = sizeof(disconnect);
-			disconnect.client_id = key;
+			disconnect.client_id = id;
 
 			// 현재 접속 중인 모든 플레이어들에게 패킷을 전송
 			for (auto i = 0; i < MAX_USER; ++i) {
 				if (FALSE == g_clients[i].is_connected) continue; // 접속x
-				if (key == i) continue; // 본인은 제외하고
+				if (id == i) continue; // 본인은 제외하고
 				MyServer::Send_Packet(i, reinterpret_cast<unsigned char*>(&disconnect));
 			}
-			g_clients[key].is_connected = FALSE;
+			g_clients[id].is_connected = FALSE;
 		}
 
 		if (OP_RECV == my_overlap->operation) { // 리시브 일때
-			unsigned char *buf_ptr = g_clients[key].recv_overlap.iocp_buffer; // IOCP 버퍼
+			unsigned char *buf_ptr = g_clients[id].recv_overlap.iocp_buffer; // IOCP 버퍼
 			int remained = iosize; // 처리할 양
 			while (0 < remained) { // 처리 할 양이 있는 경우
-				if (0 == g_clients[key].packet_size) // 새로 패킷이 넘어오면
-					g_clients[key].packet_size = buf_ptr[0]; // 전송된 패킷의 사이즈를 저장
+				if (0 == g_clients[id].packet_size) // 새로 패킷이 넘어오면
+					g_clients[id].packet_size = buf_ptr[0]; // 전송된 패킷의 사이즈를 저장
 
-				int required = g_clients[key].packet_size - g_clients[key].previous_size; // 요구량 = 패킷 사이즈 - 이전에 넘어온 양
+				int required = g_clients[id].packet_size - g_clients[id].previous_size; // 요구량 = 패킷 사이즈 - 이전에 넘어온 양
 
 				if (remained >= required) { // 처리할 양 >= 요구량 -> 패킷 완성 가능
 											// 패킷버퍼+이전에 넘어온 량 <- 요구량
-					memcpy(g_clients[key].packet_buff + g_clients[key].previous_size, buf_ptr, required);
-					auto resultPacket = MyServer::Pharse_Packet(key, g_clients[key].packet_buff); // 패킷 처리 함수 호출
-					MyServer::Send_Packet(key, resultPacket);
+					memcpy(g_clients[id].packet_buff + g_clients[id].previous_size, buf_ptr, required);
+					MyServer::Pharse_Packet(id, g_clients[id].packet_buff); // 패킷 처리 함수 호출
+					MyServer::Send_Packet(id, g_clients[id].packet_buff);
 					buf_ptr += required; // 이번에 처리한 양 만큼 포인터 이동
 					remained -= required; // 전체 패킷사이즈 - 처리한 양
 										  // 패킷 처리를 완료함
-					g_clients[key].packet_size = 0;
-					g_clients[key].previous_size = 0;
+					g_clients[id].packet_size = 0;
+					g_clients[id].previous_size = 0;
 				}
 				else { // 전송이 덜됨
 					   // 패킷버퍼 + 이전 패킷 사이즈 <- 
-					memcpy(g_clients[key].packet_buff + g_clients[key].previous_size, buf_ptr, remained);
+					memcpy(g_clients[id].packet_buff + g_clients[id].previous_size, buf_ptr, remained);
 					buf_ptr += remained; // 작업한만큼 포인터 이동
-					g_clients[key].previous_size += remained; // 작업한 양
+					g_clients[id].previous_size += remained; // 작업한 양
 					remained = 0; // 다 처리했음
 				}
 			}
 
+			switch (g_clients[id].packet_buff[1])
+			{
+				case CS_SUCCESS:
+					g_RogicMgr.Update();
+					break;
+				case CS_KEYINPUT:
+				{
+					cs_packet_move* packet_m = reinterpret_cast<cs_packet_move*>(g_clients[id].packet_buff);
+					g_RogicMgr.ProcessKeyInput(*packet_m);
+					break;
+				}
+				case CS_MOUSEINPUT:
+				{
+					cs_packet_attack* packet_a = reinterpret_cast<cs_packet_attack*>(g_clients[id].packet_buff);
+					g_RogicMgr.ProcessMouseInput(*packet_a);
+					break;
+				}
+			}
 			/* ==================================================================================================
 			이 워크쓰레드는 클라쪽에서 패킷이 왔을 때 실행된다고 가정.
 
@@ -223,7 +243,7 @@ void MyThreads::Worker_Thread()
 			현재 ServerRogicMgr의 사용예)
 
 			KeyInput타입의 패킷이 왔다면 cs_packet_move 구조체 채우고
-			g_RogicMgr.ProcessKeyInput(cs_packet_move);
+			g_RogicMgr.ProcessidInput(cs_packet_move);
 
 			MouseInput타입의 패킷이 왔다면 cs_packet_attack 구조체 채우고
 			g_RogicMgr.ProcessMouseInput(cs_packet_attack);
@@ -237,8 +257,8 @@ void MyThreads::Worker_Thread()
 
 			DWORD flags = 0;
 			// (소켓, WSABUF구조체 포인터, WSABUF구조체 개수, NULL, 받아온 양, 오버랩 구조체의 포인터, 완료루틴의 포인터)
-			WSARecv(g_clients[key].s, &g_clients[key].recv_overlap.wsabuf, 1, NULL, &flags,
-				&g_clients[key].recv_overlap.original_Overlap, NULL);
+			WSARecv(g_clients[id].s, &g_clients[id].recv_overlap.wsabuf, 1, NULL, &flags,
+				&g_clients[id].recv_overlap.original_Overlap, NULL);
 		}
 		else if (OP_SEND == my_overlap->operation) { // 샌드 일때
 			delete my_overlap; // 확장 오버랩 구조체 메모리 반환

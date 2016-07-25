@@ -7,6 +7,8 @@
 #include "GameRogicManager.h"
 #include "GameStateMgr.h"
 #include "Singletone.h"
+#include "Camera.h"
+#include "Player.h"
 
 class GameFrameWork : public D3DApp
 {

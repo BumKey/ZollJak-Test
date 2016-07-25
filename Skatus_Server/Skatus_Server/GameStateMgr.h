@@ -7,11 +7,12 @@ public:
 	GameStateMgr();
 	~GameStateMgr();
 
+	void Reset() { mCurrState = eGameState::GameWaiting; }
 	void FlowAdvance();
 
-	void		SetGameOver() { mCurrState = GameState::GameOver; }
-	GameState	GetCurrState() const { return mCurrState; }
+	void		SetGameOver() { mCurrState = eGameState::GameOver; }
+	eGameState	GetCurrState() const { return mCurrState; }
 private:
-	GameState mCurrState;
+	eGameState mCurrState;
 };
 

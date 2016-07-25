@@ -1,12 +1,13 @@
 #pragma once
 #include <d3dx11.h>
 #include <xnamath.h>
+#include <vector>
 
 // server -> client
 #define SC_POS				1
 #define SC_PUT_PLAYER		2
 #define SC_REMOVE_PLAYER	3
-#define SC_MONSTERS			4
+#define SC_PER_FRAME		4
 
 // client -> server
 #define CS_KEYINPUT			0
@@ -37,7 +38,6 @@
 #define PI					3.1415926535f
 #pragma pack(push, 1)
 
-
 namespace ObjectType {
 	enum Types
 	{
@@ -65,7 +65,37 @@ namespace ObjectType {
 	};
 }
 
-enum GameState {
+namespace ActionState {
+	enum States
+	{
+		Idle,
+		Attack,
+		Walk,
+		Run,
+		Die,
+		Build,
+		Damage
+	};
+}
+
+namespace AI_State {
+	enum States
+	{
+		None,
+		MovingToTarget,
+		AttackToTarget
+	};
+}
+
+namespace CollisionState {
+	enum States
+	{
+		None,
+		MovingCollision,
+		AttackCollision
+	};
+}
+enum eGameState {
 	GameWaiting,
 	WaveWaiting,
 	WaveStart,
@@ -73,22 +103,36 @@ enum GameState {
 	GameOver
 };
 
-struct ForClientInfo
+struct ObjectInitInfo
 {
+
+
+};
+
+struct ObjectInfo
+{
+	BYTE ActionState;
 	BYTE ObjectType;
+
+	DWORD Hp;
+
+	FLOAT AttackSpeed;
+	FLOAT MoveSpeed;
 
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
 	FLOAT Scale;
+
 };
 
 // server -> client
-struct sc_packet_objectInfos
+struct sc_packet_PerFrame
 {
 	BYTE size;
 	BYTE type;
+	DWORD time;
 
-	std::vector<ForClientInfo> cInfos;
+	std::vector<ObjectInfo> cInfos;
 };
 
 struct sc_packet_put_player
@@ -97,7 +141,7 @@ struct sc_packet_put_player
 	BYTE type;
 	DWORD client_id;
 
-	ForClientInfo cInfo;
+	ObjectInfo cInfo;
 };
 
 struct sc_packet_remove_player
@@ -108,18 +152,26 @@ struct sc_packet_remove_player
 };
 
 // client -> server
-struct cs_packet
+struct cs_packet_move
 {
 	BYTE size;
 	BYTE type;
-	ForClientInfo cInfo;
+	DWORD client_id;
+
+	XMFLOAT3 pos;
+};
+
+struct cs_packet_attack
+{
+	BYTE size;
+	BYTE type;
+	DWORD client_id;
 };
 
 struct cs_packet_success
 {
 	BYTE size;
 	BYTE type;
-	bool success;
 };
 
 #pragma pack(pop)

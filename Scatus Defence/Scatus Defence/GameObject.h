@@ -6,6 +6,7 @@
 #include "Effects.h"
 #include "GameMesh.h"
 #include "Properties.h"
+#include "protocol.h"
 #include <list>
 #include "Utilities.h"
 

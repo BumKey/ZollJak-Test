@@ -1,6 +1,7 @@
 #pragma once
 #include <d3dx11.h>
 #include <xnamath.h>
+#include <vector>
 
 // server -> client
 #define SC_POS				1
@@ -77,7 +78,24 @@ namespace ActionState {
 	};
 }
 
-enum GameState {
+namespace AI_State {
+	enum States
+	{
+		None,
+		MovingToTarget,
+		AttackToTarget
+	};
+}
+
+namespace CollisionState {
+	enum States
+	{
+		None,
+		MovingCollision,
+		AttackCollision
+	};
+}
+enum eGameState {
 	GameWaiting,
 	WaveWaiting,
 	WaveStart,
@@ -85,14 +103,26 @@ enum GameState {
 	GameOver
 };
 
-struct ForClientInfo
+struct ObjectInitInfo
 {
-	BYTE ObjectType;
+
+
+};
+
+struct ObjectInfo
+{
 	BYTE ActionState;
+	BYTE ObjectType;
+
+	DWORD Hp;
+
+	FLOAT AttackSpeed;
+	FLOAT MoveSpeed;
 
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
 	FLOAT Scale;
+
 };
 
 // server -> client
@@ -102,7 +132,7 @@ struct sc_packet_PerFrame
 	BYTE type;
 	DWORD time;
 
-	std::vector<ForClientInfo> cInfos;
+	std::vector<ObjectInfo> cInfos;
 };
 
 struct sc_packet_put_player
@@ -111,7 +141,7 @@ struct sc_packet_put_player
 	BYTE type;
 	DWORD client_id;
 
-	ForClientInfo cInfo;
+	ObjectInfo cInfo;
 };
 
 struct sc_packet_remove_player
@@ -142,7 +172,6 @@ struct cs_packet_success
 {
 	BYTE size;
 	BYTE type;
-	bool success;
 };
 
 #pragma pack(pop)

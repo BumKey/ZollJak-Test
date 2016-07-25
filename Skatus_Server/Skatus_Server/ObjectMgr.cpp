@@ -15,7 +15,7 @@ ObjectMgr::~ObjectMgr()
 
 void ObjectMgr::AddObject(ObjectType::Types oType)
 {
-	ForClientInfo info;
+	ObjectInfo info;
 	info.ObjectType = oType;
 
 	switch (oType)
@@ -68,7 +68,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 
 void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 {
-	ForClientInfo info;
+	ObjectInfo info;
 	info.ObjectType = oType;
 
 	switch (oType)
@@ -89,7 +89,7 @@ void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 	}
 }
 
-const std::vector<ForClientInfo>& ObjectMgr::GetAllObjects()
+const std::vector<ObjectInfo>& ObjectMgr::GetAllObjects()
 {
 	mAllObjects.clear();
 	mAllObjects.reserve(mTotalObjectNum);

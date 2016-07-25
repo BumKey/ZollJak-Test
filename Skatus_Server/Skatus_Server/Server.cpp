@@ -43,29 +43,21 @@ void MyServer::Send_Packet(DWORD id, unsigned char *packet) {
 }
 
 // 패킷 처리 함수
-unsigned char* MyServer::Pharse_Packet(DWORD id, unsigned char buf[]) {
-
+void MyServer::Pharse_Packet(DWORD id, unsigned char buf[]) 
+{
 	switch (buf[1])
 	{
-	case CS_TEST:
-	{
-		ForClientInfo info = *(reinterpret_cast<ForClientInfo*>(&buf[2]));
-		std::cout << "success : " << info.Pos.x << " " << info.Pos.y << " " << info.Pos.z << std::endl;
+	case CS_SUCCESS:
+		std::cout << "CS_SUCCESS, ID : " << id << std::endl;
+		break;
+
+	case CS_KEYINPUT: {
+		auto packet = reinterpret_cast<cs_packet_move*>(buf);
+		std::cout << "CS_KEYINPUT, POS : " << (*packet).pos.x << ", "
+			<< (*packet).pos.y << ", " << (*packet).pos.z << std::endl;
 		break;
 	}
-	case CS_SUCCESS:
-		std::cout << "success, data value : " << buf[2] << std::endl;
-		break;
 	default:
 		break;
 	}
-	
-	cs_packet packet;
-	packet.cInfo.Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	packet.cInfo.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	packet.cInfo.Scale = 0.0;
-	packet.size = sizeof(packet);
-	packet.type = CS_TEST;
-
-	return reinterpret_cast<unsigned char*>(&packet);
 }

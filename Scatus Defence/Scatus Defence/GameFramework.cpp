@@ -105,13 +105,13 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
 	
-	cs_packet_success packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_SUCCESS;
-	packet.success = true;
-
-	Packet_Mgr->ReadPacket();
-	Packet_Mgr->SendPacket(packet);
+	if (Packet_Mgr->ReadPacket())
+	{
+		cs_packet_success packet;
+		packet.size = sizeof(packet);
+		packet.type = CS_SUCCESS;
+		Packet_Mgr->SendPacket(packet);
+	}
 
 	State_Mgr->Update(dt);
 	Object_Mgr->Update(dt);

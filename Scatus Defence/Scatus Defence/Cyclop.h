@@ -4,7 +4,7 @@
 class Cyclop : public Monster
 {
 public:
-	Cyclop(SkinnedMesh* mesh, const InstanceDesc& info);
+	Cyclop(SkinnedMesh* mesh, const SO_InitDesc& info);
 	~Cyclop();
 };
 

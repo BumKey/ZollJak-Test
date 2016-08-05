@@ -30,11 +30,11 @@ void MyThreads::Accept_Thread()
 		int addr_size = sizeof(client_addr);
 
 		// accept
-		SOCKET new_client = WSAAccept(accept_socket,
+		SOCKET newSocket = WSAAccept(accept_socket,
 			reinterpret_cast<sockaddr *>(&client_addr), &addr_size, NULL, NULL);
 
 		// 소켓 에러
-		if (new_client == INVALID_SOCKET) {
+		if (newSocket == INVALID_SOCKET) {
 			int error_no = WSAGetLastError();
 			error_display("Accept::WSAAccept", error_no);
 			while (TRUE);
@@ -48,9 +48,10 @@ void MyThreads::Accept_Thread()
 		// 클라이언트에게 ID를 할당
 		int new_id = -1;
 		for (auto i = 0; i < MAX_USER; ++i) {
-			if (FALSE == g_clients[i].is_connected) {
+			if (g_clients[i].is_connected == false) {
 				new_id = i;
-				std::cout << new_id << std::endl;
+				g_clients[i].is_connected = true;
+				std::cout << "New client is connected, ID : " << new_id << std::endl;
 				break;
 			}
 		}
@@ -58,82 +59,25 @@ void MyThreads::Accept_Thread()
 		// 클라이언트가 가득 차 더 이상 ID를 할당 받을 수 없을 때,
 		if (new_id == -1) {
 			std::cout << "Max Concurrent User excceded!\n";
-			closesocket(new_client);
+			closesocket(newSocket);
 			continue;
 		}
 
-		// 조건 인원이 접속 했을 때 Wave시작.
-		if (new_id >= MAX_USER - 1)
-			g_RogicMgr.WaveStart();
-
-		// 클라이언트 정보 초기화
-		g_clients[new_id].s = new_client;
-		g_clients[new_id].avatar.Pos.x = 0.0f;
-		g_clients[new_id].avatar.Pos.y = 0.0f;
-		g_clients[new_id].avatar.Pos.z = 0.0f;
-		g_clients[new_id].avatar.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		g_clients[new_id].avatar.Scale = 0.0f;
-		g_clients[new_id].packet_size = 0;
-		g_clients[new_id].previous_size = 0;
-		memset(&g_clients[new_id].recv_overlap.original_Overlap, 0,
-			sizeof(g_clients[new_id].recv_overlap.original_Overlap));
-
 		// IOCP 연결
-		CreateIoCompletionPort(reinterpret_cast<HANDLE>(new_client), g_hIocp, new_id, 0);
+		CreateIoCompletionPort(reinterpret_cast<HANDLE>(newSocket), g_hIocp, new_id, 0);
 
-		// 플레이어 추가 
-		sc_packet_put_player enter_packet;
-		enter_packet.size = sizeof(enter_packet);
-		enter_packet.type = SC_PUT_PLAYER;
-		enter_packet.client_id = new_id;
-		enter_packet.cInfo.Pos.x = g_clients[new_id].avatar.Pos.x;
-		enter_packet.cInfo.Pos.y = g_clients[new_id].avatar.Pos.y;
-		enter_packet.cInfo.Pos.z = g_clients[new_id].avatar.Pos.z;
-		enter_packet.cInfo.Rot = g_clients[new_id].avatar.Rot;
-		enter_packet.cInfo.Scale = g_clients[new_id].avatar.Scale;
-
-		// 접속한 본인에게 초기 정보를 전송한다.
-		MyServer::Send_Packet(new_id, reinterpret_cast<unsigned char *>(&enter_packet));
-
-		// 이미 접속한 플레이어들에게 새로운 플레이어가 들어왔다는 패킷을 전송
-		for (int i = 0; i < MAX_USER; ++i) {
-			if (i == new_id) continue; // 본인을 제외한
-			if (TRUE == g_clients[i].is_connected) // 접속한 플레이어들에게 패킷 전송 
-				MyServer::Send_Packet(i, reinterpret_cast<unsigned char *>(&enter_packet));
-		}
-
-		// 이미 접속한 플레이어들에 대한 정보 전송
-		for (int i = 0; i < MAX_USER; ++i)
-		{
-			// 접속한 유저가 처음 접속한 유저라면, for문을 돌 필요가 없으므로, break.
-			if (0 == new_id) break;
-			if (i == new_id) continue;
-			if (FALSE == g_clients[i].is_connected) continue;
-
-			sc_packet_put_player ex_enter_packet;
-			ex_enter_packet.size = sizeof(ex_enter_packet);
-			ex_enter_packet.type = SC_PUT_PLAYER;
-			ex_enter_packet.client_id = i;
-			ex_enter_packet.cInfo.Pos.x = g_clients[i].avatar.Pos.x;
-			ex_enter_packet.cInfo.Pos.y = g_clients[i].avatar.Pos.y;
-			ex_enter_packet.cInfo.Pos.z = g_clients[i].avatar.Pos.z;
-			ex_enter_packet.cInfo.Rot = g_clients[i].avatar.Rot;
-			ex_enter_packet.cInfo.Scale = g_clients[i].avatar.Scale;
-
-			// 플레이어 본인에게, 이미 접속한 유저들에 대한 정보를 전송한다.
-			MyServer::Send_Packet(new_id, reinterpret_cast<unsigned char*>(&ex_enter_packet));
-		}
+		g_RogicMgr.AddPlayer(newSocket, ObjectType::Warrior, new_id);
 
 		// 클라이언트 연결 정보 갱신
 		g_clients[new_id].is_connected = TRUE;
 
 		// 연속되는 작업을 위한 WSARecv 호출
 		DWORD flags = 0;
-		int ret = WSARecv(new_client, &g_clients[new_id].recv_overlap.wsabuf, 1, NULL,
+		int ret = WSARecv(newSocket, &g_clients[new_id].recv_overlap.wsabuf, 1, NULL,
 			&flags, &g_clients[new_id].recv_overlap.original_Overlap, NULL);
 
 		// 오류 처리
-		if (0 != ret) {
+		if (ret != 0) {
 			int error_no = WSAGetLastError();
 			if (WSA_IO_PENDING != error_no)
 				error_display("Accept:WSARecv()", error_no);
@@ -162,25 +106,23 @@ void MyThreads::Worker_Thread()
 		if (0 == iosize)
 		{
 			// 소켓 종료
-			closesocket(g_clients[id].s);
+			closesocket(g_clients[id].socket);
 
 			// 접속을 종료 했다는 것을 다른 플레이어들에게 알리기 위한 패킷
-			sc_packet_remove_player disconnect;
-			disconnect.type = SC_REMOVE_PLAYER;
-			disconnect.size = sizeof(disconnect);
-			disconnect.client_id = id;
+			SC_Remove_Player disconnect;
+			disconnect.ClientID = id;
 
 			// 현재 접속 중인 모든 플레이어들에게 패킷을 전송
 			for (auto i = 0; i < MAX_USER; ++i) {
 				if (FALSE == g_clients[i].is_connected) continue; // 접속x
 				if (id == i) continue; // 본인은 제외하고
-				MyServer::Send_Packet(i, reinterpret_cast<unsigned char*>(&disconnect));
+				MyServer::Send_Packet(i, reinterpret_cast<char*>(&disconnect));
 			}
 			g_clients[id].is_connected = FALSE;
 		}
 
-		if (OP_RECV == my_overlap->operation) { // 리시브 일때
-			unsigned char *buf_ptr = g_clients[id].recv_overlap.iocp_buffer; // IOCP 버퍼
+		if (my_overlap->operation == OP_RECV) { // 리시브 일때
+			char *buf_ptr = g_clients[id].recv_overlap.iocp_buffer; // IOCP 버퍼
 			int remained = iosize; // 처리할 양
 			while (0 < remained) { // 처리 할 양이 있는 경우
 				if (0 == g_clients[id].packet_size) // 새로 패킷이 넘어오면
@@ -191,8 +133,8 @@ void MyThreads::Worker_Thread()
 				if (remained >= required) { // 처리할 양 >= 요구량 -> 패킷 완성 가능
 											// 패킷버퍼+이전에 넘어온 량 <- 요구량
 					memcpy(g_clients[id].packet_buff + g_clients[id].previous_size, buf_ptr, required);
-					MyServer::Pharse_Packet(id, g_clients[id].packet_buff); // 패킷 처리 함수 호출
-					MyServer::Send_Packet(id, g_clients[id].packet_buff);
+					MyServer::Process_Packet(g_clients[id].packet_buff, g_RogicMgr); // 패킷 처리 함수 호출
+					//MyServer::Send_Packet(id, g_clients[id].packet_buff);
 					buf_ptr += required; // 이번에 처리한 양 만큼 포인터 이동
 					remained -= required; // 전체 패킷사이즈 - 처리한 양
 										  // 패킷 처리를 완료함
@@ -207,25 +149,7 @@ void MyThreads::Worker_Thread()
 					remained = 0; // 다 처리했음
 				}
 			}
-
-			switch (g_clients[id].packet_buff[1])
-			{
-				case CS_SUCCESS:
-					g_RogicMgr.Update();
-					break;
-				case CS_KEYINPUT:
-				{
-					cs_packet_move* packet_m = reinterpret_cast<cs_packet_move*>(g_clients[id].packet_buff);
-					g_RogicMgr.ProcessKeyInput(*packet_m);
-					break;
-				}
-				case CS_MOUSEINPUT:
-				{
-					cs_packet_attack* packet_a = reinterpret_cast<cs_packet_attack*>(g_clients[id].packet_buff);
-					g_RogicMgr.ProcessMouseInput(*packet_a);
-					break;
-				}
-			}
+	
 			/* ==================================================================================================
 			이 워크쓰레드는 클라쪽에서 패킷이 왔을 때 실행된다고 가정.
 
@@ -257,7 +181,7 @@ void MyThreads::Worker_Thread()
 
 			DWORD flags = 0;
 			// (소켓, WSABUF구조체 포인터, WSABUF구조체 개수, NULL, 받아온 양, 오버랩 구조체의 포인터, 완료루틴의 포인터)
-			WSARecv(g_clients[id].s, &g_clients[id].recv_overlap.wsabuf, 1, NULL, &flags,
+			WSARecv(g_clients[id].socket, &g_clients[id].recv_overlap.wsabuf, 1, NULL, &flags,
 				&g_clients[id].recv_overlap.original_Overlap, NULL);
 		}
 		else if (OP_SEND == my_overlap->operation) { // 샌드 일때

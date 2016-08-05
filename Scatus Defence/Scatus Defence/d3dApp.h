@@ -14,7 +14,6 @@
 #include "d3dUtil.h"
 #include "GameTimer.h"
 #include <string>
-#include "UI_Manager.h"
 class D3DApp
 {
 public:

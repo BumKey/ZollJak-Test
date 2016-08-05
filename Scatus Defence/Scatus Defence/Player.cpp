@@ -4,22 +4,16 @@ Player::Player() : SkinnedObject()
 {
 	mProperty.name = "Player";
 
-	mProperty.movespeed = 6.0f;
-	mProperty.hp_now = 100;
-	mProperty.attackspeed = 2.0f;
-	mProperty.attakpoint = 50.0f;
-
 	mObjectType = ObjectType::Player;
 
-	// 임시로 고블린 애니메이션
 	mAnimNames[Anims::attack1] = "attack01";
 	mAnimNames[Anims::attack2] = "attack02";
 	mAnimNames[Anims::hit] = "damage";
-	//mAnimNames[Anims::dead] = "dead";
-	//mAnimNames[Anims::drop_down] = "drop_down";
 	mAnimNames[Anims::run] = "run";
 	mAnimNames[Anims::idle] = "idle";
 	mAnimNames[Anims::walk] = "walk";
+
+	mTimer.Reset();
 }
 
 
@@ -27,8 +21,13 @@ Player::~Player()
 {
 }
 
-void Player::Init(SkinnedMesh * mesh, const InstanceDesc & info)
+void Player::Init(SkinnedMesh * mesh, const SO_InitDesc & info)
 {
+	mProperty.attackspeed = info.AttackSpeed;
+	mProperty.movespeed = info.MoveSpeed;
+	mProperty.hp_now = info.Hp;
+	mProperty.attakpoint = info.AttackPoint;
+
 	SkinnedObject::Init(mesh, info);
 }
 
@@ -36,8 +35,8 @@ void Player::Update(float dt)
 {
 	ProccessKeyInput(dt);
 
-	if ( (mActionState == ActionState::Attack || 
-		mActionState == ActionState::Damage) && CurrAnimEnd())
+	if ( (mActionState == ActionState::Attack || mActionState == ActionState::Damage) 
+		&& CurrAnimEnd())
 		mActionState = ActionState::Idle;
 
 	SkinnedObject::Update(dt);
@@ -61,13 +60,17 @@ void Player::Move(float walk, float strafe)
 	if (strafe != 0.0f)
 		Strafe(strafe);
 
-	cs_packet_move packet;
+	if (mTimer.TotalTime() > 0.01f)
+	{
+		CS_Move packet;
+		packet.Pos = mPosition;
 
-	packet.size = sizeof(packet);
-	packet.type = CS_KEYINPUT;
-	packet.pos = mPosition;
+		Packet_Mgr->SendPacket(packet);
+		mTimer.Reset();
 
-	Packet_Mgr->SendPacket(packet);
+	}
+	else
+		mTimer.Tick();
 }
 
 void Player::ProccessKeyInput(float dt)

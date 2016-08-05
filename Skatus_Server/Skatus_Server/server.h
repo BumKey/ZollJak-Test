@@ -1,8 +1,10 @@
 #pragma once
 #include "stdafx.h"
+#include "ServerRogicMgr.h"
 
+class ServerRogicMgr;
 namespace MyServer {
 	void Initialize();
-	void Pharse_Packet(DWORD id, unsigned char buf[]);
-	void Send_Packet(DWORD id, unsigned char *packet);
+	void Process_Packet(char* buf, ServerRogicMgr& rogicMgr);
+	void Send_Packet(DWORD id, char *packet);
 }

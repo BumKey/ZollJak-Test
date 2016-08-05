@@ -2,14 +2,20 @@
 
 PacketMgr::PacketMgr() : mClientID(-1)
 {
-	mSend_wsabuf.buf = mSend_buffer;
-	mSend_wsabuf.len = MAX_BUFF_SIZE;
-	mRecv_wsabuf.buf = mRecv_buffer;
-	mRecv_wsabuf.len = MAX_BUFF_SIZE;
+	mSendBuf.buf = new char[MAX_BUFF_SIZE];
+	mSendBuf.len = MAX_BUFF_SIZE;
+	mRecvBuf.buf = new char[MAX_BUFF_SIZE];
+	mRecvBuf.len = MAX_BUFF_SIZE;
+
+	mPacketBuf = new char[MAX_PACKET_SIZE];
 }
 
 PacketMgr::~PacketMgr()
 {
+	delete[] mSendBuf.buf;
+	delete[] mRecvBuf.buf;
+	delete[] mPacketBuf;
+
 	closesocket(mSocket);
 	WSACleanup();
 }
@@ -39,83 +45,19 @@ void PacketMgr::Init()
 	std::cout << "Server Connect Success" << std::endl;
 }
 
-void PacketMgr::SendPacket(cs_packet_move &packet)
+void PacketMgr::Update()
 {
-	assert(mClientID >= 0);
-
-	unsigned char *packet_buf;
-	char buf[MAX_BUFF_SIZE] = { 0, };
-
-	packet.size = sizeof(packet);
-	packet.client_id = mClientID;
-	packet_buf = reinterpret_cast<unsigned char*>(&packet);
-	memcpy(buf, packet_buf, packet_buf[0]);
-	mSend_wsabuf.len = packet.size;
-	mSend_wsabuf.buf = buf;
-
-	int outBytes = 0;
-	WSABUF temp;
-	temp.buf = mSend_wsabuf.buf;
-	temp.len = mSend_wsabuf.len;
-	if (WSASend(mSocket, &temp, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
+	if (ReadPacket())
 	{
-		if (WSAGetLastError() != WSA_IO_PENDING)
-			err_display(L"WSASend() Error");
-	}
-}
-
-void PacketMgr::SendPacket(cs_packet_attack &packet)
-{
-	unsigned char *packet_buf;
-	char buf[MAX_BUFF_SIZE] = { 0, };
-
-	packet.size = sizeof(packet);
-	packet_buf = reinterpret_cast<unsigned char*>(&packet);
-	memcpy(buf, packet_buf, packet_buf[0]);
-	mSend_wsabuf.len = packet.size;
-	mSend_wsabuf.buf = buf;
-
-	int outBytes = 0;
-	WSABUF temp;
-	temp.buf = mSend_wsabuf.buf;
-	temp.len = mSend_wsabuf.len;
-	if (WSASend(mSocket, &temp, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
-	{
-		if (WSAGetLastError() != WSA_IO_PENDING)
-			err_display(L"WSASend() Error");
-	}
-}
-
-void PacketMgr::SendPacket(cs_packet_success &packet)
-{
-	unsigned char *packet_buf;
-	char buf[MAX_BUFF_SIZE] = { 0, };
-
-	packet.size = sizeof(packet);
-	packet_buf = reinterpret_cast<unsigned char*>(&packet);
-	memcpy(buf, packet_buf, packet_buf[0]);
-	mSend_wsabuf.len = packet.size;
-	mSend_wsabuf.buf = buf;
-
-	int outBytes = 0;
-	WSABUF temp;
-	temp.buf = mSend_wsabuf.buf;
-	temp.len = mSend_wsabuf.len;
-	if (WSASend(mSocket, &temp, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
-	{
-		if (WSAGetLastError() != WSA_IO_PENDING)
-			err_display(L"WSASend() Error");
+		CS_Success packet;
+		SendPacket(packet);
 	}
 }
 
 bool PacketMgr::ReadPacket()
 {
-	DWORD iobytes, ioflag = 0;
-	
-	WSABUF temp;
-	temp.buf = mRecv_wsabuf.buf;
-	temp.len = mRecv_wsabuf.len;
-	if(WSARecv(mSocket, &temp, 1, &iobytes, &ioflag, NULL, NULL)==SOCKET_ERROR)
+	DWORD receivedBytes, ioflag = 0;
+	if(WSARecv(mSocket, &mRecvBuf, 1, &receivedBytes, &ioflag, NULL, NULL)==SOCKET_ERROR)
 	{ 
 		if (WSAGetLastError() != WSA_IO_PENDING)
 			err_display(L"WSARecv() Error");
@@ -123,55 +65,130 @@ bool PacketMgr::ReadPacket()
 		return false;
 	}
 	
-	BYTE *ptr = reinterpret_cast<BYTE *>(mRecv_buffer);
-
-	while (0 != iobytes)
+	if (receivedBytes == 0)
 	{
-		if (0 == in_packet_size) in_packet_size = ptr[0];
-		if (iobytes + saved_packet_size >= in_packet_size)
+		std::cout << "receivedData == 0 " << std::endl;
+		return false;
+	}
+
+	static UINT savedBytes = 0;
+	while (1)
+	{
+		auto header = reinterpret_cast<HEADER*>(mRecvBuf.buf);
+		UINT currPacketSize = header->Size;
+		if (receivedBytes + savedBytes >= currPacketSize)
 		{
-			memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
-			ProcessPacket(packet_buffer);
-			ptr += in_packet_size - saved_packet_size;
-			iobytes -= in_packet_size - saved_packet_size;
-			in_packet_size = 0;
-			saved_packet_size = 0;
+			UINT remainingData = currPacketSize - savedBytes;
+			// mPacketBuf의 사이즈보다 큰 패킷을 memcpy하면 메모리 오염!!
+			memcpy(mPacketBuf + savedBytes, mRecvBuf.buf, remainingData);
+
+			ProcessPacket(mPacketBuf);
+			savedBytes = 0;
+			break;
 		}
 		else
 		{
-			memcpy(packet_buffer + saved_packet_size, ptr, iobytes);
-			saved_packet_size += iobytes;
-			iobytes = 0;
+			memcpy(mPacketBuf + savedBytes, mRecvBuf.buf, receivedBytes);
+			savedBytes += receivedBytes;
 		}
 	}
 
 	return true;
 }
 
-void PacketMgr::ProcessPacket(char* ptr)
+void PacketMgr::ProcessPacket(char* packet)
 {
-	switch (ptr[1])
+	HEADER *header = reinterpret_cast<HEADER*>(packet);
+	switch (header->Type)
 	{
-	case SC_PUT_PLAYER: {
-		sc_packet_put_player *packet = reinterpret_cast<sc_packet_put_player*>(ptr);
-		mClientID = (*packet).client_id;
+	case eSC::PutPlayer: {
+		auto *p = reinterpret_cast<SC_PutPlayer*>(packet);
 
-		std::cout << "SC_PUT_PLAYER, ID" << mClientID << std::endl;
+		if(mClientID == -1)
+			mClientID = p->ClientID;
+
+		SO_InitDesc desc;
+		for (UINT i = 0; i < p->CurrPlayerNum; ++i)
+		{
+			desc.Pos = p->Player[i].Pos;
+			desc.Rot = p->Player[i].Rot;
+			desc.Scale = p->Player[i].Scale;
+			desc.AttackSpeed = p->Player[i].AttackSpeed;
+			desc.MoveSpeed = p->Player[i].MoveSpeed;
+			desc.Hp = p->Player[i].Hp;
+			auto type = p->Player[i].ObjectType;
+
+			if (i == p->ClientID) {
+				Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(type), desc);
+				Object_Mgr->AddPlayer(Player::GetInstance());
+			}
+			else 
+				Object_Mgr->AddPlayer(new Warrior(Resource_Mgr->GetSkinnedMesh(type), desc));
+		}
+
+		for (UINT i = 0; i < p->NumOfObjects; ++i)
+		{
+			desc.Pos = p->MapInfo[i].Pos;
+			desc.Rot = p->MapInfo[i].Rot;
+			desc.Scale = p->MapInfo[i].Scale;
+			auto type = p->MapInfo[i].ObjectType;
+
+			Object_Mgr->AddObstacle(type, desc);
+		}
+
+		Scene_Mgr->ComputeSceneBoundingBox();
+
+		std::cout << "SC_PUT_PLAYER, ID : " << mClientID << std::endl;
 		break;
 	}
-	case SC_POS:
-		std::cout << "SC_POS : " << (int)ptr[1] << std::endl;
+	case eSC::RemovePlayer:
+		std::cout << "SC_REMOVE_PLAYER : " << header->Type << std::endl;
 		break;
-	case SC_REMOVE_PLAYER:
-		std::cout << "SC_REMOVE_PLAYER : " << (int)ptr[1] << std::endl;
-		break;
-	case SC_PER_FRAME:	{
-		sc_packet_PerFrame *infos = reinterpret_cast<sc_packet_PerFrame*>(ptr);
-		std::cout << "SC_PER_FRAME, ObjectNum : " << (*infos).cInfos.size() << std::endl;
+	case eSC::PerFrame: {
+		auto *p = reinterpret_cast<SC_PerFrame*>(packet);
+		for (UINT i = 0; i < p->NumOfObjects; ++i)
+			Object_Mgr->Update(p->ID[i], p->Objects[i]);
+		
+		char* string;
+		switch (p->GameState)
+		{
+		case eGameState::WaveStart:
+			string = "WaveStart";
+			break;
+		case eGameState::WaveWaiting:
+			string = "WaveWaiting";
+			break;
+		case eGameState::Waving:
+			string = "Waving";
+			break;
+		case eGameState::GameWaiting:
+			string = "GameWaiting";
+			break;
+		}
+		std::cout << "[SC_PerFrame] CurrState : " << string <<
+			", ObjectNum : " << p->NumOfObjects << std::endl;
 		break;
 	}
+	case eSC::AddMonsters: {
+		auto *p = reinterpret_cast<SC_AddMonster*>(packet);
+		for (UINT i = 0; i < p->NumOfObjects; ++i)
+		{
+			SO_InitDesc desc;
+			desc.Pos = p->InitInfos[i].Pos;
+			desc.Rot = p->InitInfos[i].Rot;
+			desc.Scale = p->InitInfos[i].Scale;
+			desc.AttackSpeed = p->InitInfos[i].AttackSpeed;
+			desc.MoveSpeed = p->InitInfos[i].MoveSpeed;
+			auto type = p->InitInfos[i].ObjectType;
+
+			Object_Mgr->AddMonster(type, desc, p->ID[i]);
+		}
+		std::cout << "SC_ADD_MONSTER, ObjectNum : " << p->NumOfObjects<< std::endl;
+		break;
+	}
+
 	default:
-		std::cout << "Unknown packet type : " << (int)ptr[1] << std::endl;
+		std::cout << "Unknown packet type : " << header->Type << std::endl;
 	}
 }
 

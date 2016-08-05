@@ -1,187 +1,71 @@
 #include "ObjectMgr.h"
 
 // 임의의 수치임
-ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0)
+ObjectMgr::ObjectMgr() : mCurrPlayerNum(0)
 {
-	mMaxMonsters = mStage * 200;
-	mMaxStructures = mStage * 5;
 }
 
 ObjectMgr::~ObjectMgr()
 {
 }
 
-void ObjectMgr::Init()
+void ObjectMgr::AddMonster(const ObjectType::Types & type, const SO_InitDesc & desc, const UINT& id)
 {
-	CreateMap();
-}
-
-bool ObjectMgr::AddObstacle(BasicObject * basicObject)
-{
-	mObstacles.push_back(basicObject);
-	mAllObjects.push_back(basicObject);
-	++mTotalObjectNum;
-	return true;
-
-}
-
-bool ObjectMgr::AddStructure(BasicObject * basicObject)
-{
-	if (mStructures.size() <= mMaxStructures)
+	switch (type)
 	{
-		mStructures.push_back(basicObject);
-		mAllObjects.push_back(basicObject);
-		++mTotalObjectNum;
-		return true;
+	case ObjectType::Goblin:
+		Goblin::Type goblinType;
+		switch (id % 3)
+		{
+		case 0:
+			goblinType = Goblin::Type::Red;
+			break;
+		case 1:
+			goblinType = Goblin::Type::Green;
+			break;
+		case 2:
+			goblinType = Goblin::Type::Blue;
+			break;
+		}
+		mSkinnedObjects[mCurrPlayerNum + id] = new Goblin(Resource_Mgr->GetSkinnedMesh(type), desc, goblinType);
+		break;
+	case ObjectType::Cyclop:
+		mSkinnedObjects[mCurrPlayerNum + id] = new Cyclop(Resource_Mgr->GetSkinnedMesh(type), desc);
+		break;
+	default:
+		assert(false, "Wrong parameter: AddMonster, type");
+		break;
 	}
+}
+
+void ObjectMgr::AddObstacle(const ObjectType::Types & type, const BO_InitDesc & desc)
+{
+	assert(type >= ObjectType::Obstacle);
+	if (type == ObjectType::Tree)
+		mBasicObjects.push_back(new BasicObject(Resource_Mgr->GetBasicMesh(type), desc, Label::AlphaBasic));
 	else
-	{
-		//최대 개수 초과 생성불가 UI출력
-		return false;
-	}
-
+		mBasicObjects.push_back(new BasicObject(Resource_Mgr->GetBasicMesh(type), desc, Label::Basic));
 }
 
-bool ObjectMgr::AddProjectile(BasicObject * basicObject)
+void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
 {
-	mProjectiles.push_back(basicObject);
-	++mTotalObjectNum;
-	return true;
-}
-
-bool ObjectMgr::AddMonster(Monster* monster)
-{
-	if (mMonsters.size() <= mMaxMonsters) {
-		mMonsters.push_back(monster);
-		mAllObjects.push_back(monster);
-		++mTotalObjectNum;
-		return true;
-	}
-	else {
-		monster->Release();
-		return false;
-	}
-
-}
-
-bool ObjectMgr::AddOurTeam(SkinnedObject* skinnedObject)
-{
-	if (mOurTeam.size() <= mMaxMonsters) {
-		mOurTeam.push_back(skinnedObject);
-		mAllObjects.push_back(skinnedObject);
-		++mTotalObjectNum;
-		return true;
-	}
-	else {
-		
-		SafeDelete(skinnedObject);
-		return false;
-
-	}
-
-}
-
-void ObjectMgr::Update()
-{
-
-	mAllObjects.clear();
-	mAllObjects.reserve(mTotalObjectNum);
-
-	mAllObjects.push_back(Player::GetInstance());
-	for (auto i : mObstacles)
-		mAllObjects.push_back(i);
-
-	for (auto i : mStructures)
-		mAllObjects.push_back(i);
-
-	for (auto i : mMonsters) {
-		mAllObjects.push_back(i);
-	}
+	mSkinnedObjects[id]->SetPos(info.Pos);
 }
 
 void ObjectMgr::Update(float dt)
 {
 	mAllObjects.clear();
-	mAllObjects.reserve(mTotalObjectNum);
+	mAllObjects.reserve(mBasicObjects.size() + mSkinnedObjects.size());
 
-	mAllObjects.push_back(Player::GetInstance());
-	mOurTeam.push_back(Player::GetInstance());
-	for (auto i : mObstacles)
+	for (auto i : mBasicObjects)
 		mAllObjects.push_back(i);
 
-	for (auto i : mStructures)
-		mAllObjects.push_back(i);
-
-	Player::GetInstance()->Animate(dt);
-	for (auto i = mMonsters.begin(); i != mMonsters.end();)
+	for (auto i : mSkinnedObjects)
 	{
-		Monster*& monster = *i;
-		if (monster->IsDead() && monster->CurrAnimEnd())
-		{
-			monster->Release();
-			i = mMonsters.erase(i);
-		}
-		else
-		{
-			mAllObjects.push_back(monster);
-			mOppenents.push_back(monster);
-			monster->Animate(dt);
-
-			++i;
-		}
+		i.second->Animate(dt);
+		mAllObjects.push_back(i.second);
 	}
 
 	for (auto i : mAllObjects)
 		i->Update(dt);
 }
-
-void ObjectMgr::ReleaseAll()
-{
-	mAllObjects.clear();
-	mObstacles.clear();
-	mStructures.clear();
-	mMonsters.clear();
-	mOurTeam.clear();
-}
-
-void ObjectMgr::ReleaseAllMonsters()
-{
-	for (auto i : mMonsters)
-		i->Release();
-
-	mMonsters.clear();
-}
-
-void ObjectMgr::CreateMap()
-{
-	InstanceDesc info;
-
-	info.Pos = XMFLOAT3(250.0f, 0.05f, -370.0f);
-	info.Rot.y = 0.0f;
-	info.Scale = 0.3f;
-
-	AddObstacle(new BasicObject(Resource_Mgr->GetBasicMesh(ObjectType::Temple), info, Label::Basic));
-
-	auto player = Player::GetInstance();
-	for (UINT i = 0; i < 30; ++i)
-	{
-		info.Pos = XMFLOAT3(player->GetPos().x - 100.0f + rand() % 200,
-			-0.1f, player->GetPos().z + 80.0f - rand() % 200);
-		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2;
-
-		AddObstacle(new BasicObject(Resource_Mgr->GetBasicMesh(ObjectType::Tree), info, Label::AlphaBasic));
-	}
-
-	for (UINT i = 0; i < 30; ++i)
-	{
-		info.Pos = XMFLOAT3(player->GetPos().x + 80.0f - rand() % 200,
-			-0.1f, player->GetPos().z + 80.0f - rand() % 200);
-		info.Scale = MathHelper::RandF()*2.0f + 0.5f;
-		info.Rot.y = MathHelper::RandF()*MathHelper::Pi * 2.0f;
-
-		AddObstacle(new BasicObject(Resource_Mgr->GetBasicMesh(ObjectType::Rock), info, Label::Basic));
-	}
-}
-
-

@@ -5,7 +5,7 @@ BasicObject::BasicObject() : GameObject()
 	mObjectType = ObjectType::Obstacle;
 }
 
-BasicObject::BasicObject(BasicMesh * mesh, const InstanceDesc& info, Label label) : GameObject(mesh, info), mLabel(label)
+BasicObject::BasicObject(BasicMesh * mesh, const BO_InitDesc& info, Label label) : GameObject(mesh, info), mLabel(label)
 {
 	// 추후 여러 BasicObject 생기면 변경.
 	mObjectType = ObjectType::Obstacle;

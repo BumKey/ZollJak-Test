@@ -202,7 +202,9 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	int x = GET_X_LPARAM(lParam);
 	int y = GET_Y_LPARAM(lParam);
-
+	UI_Mgr->Set_nMessageID(msg);
+	UI_Mgr->Set_wParam(wParam);
+	UI_Mgr->UI_Scene_Mgr(x, y);
 	switch( msg )
 	{
 	// WM_ACTIVATE is sent when the window is activated or deactivated.  

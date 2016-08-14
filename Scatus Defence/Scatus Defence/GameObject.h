@@ -10,11 +10,24 @@
 #include <list>
 #include "Utilities.h"
 
+struct InstanceDesc
+{
+	XMFLOAT3 Pos;
+	XMFLOAT3 Rot;
+	FLOAT Scale;
+
+	InstanceDesc() {
+		Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		Scale = 1.0f;
+	}
+};
+
 class GameObject
 {
 public:
 	GameObject();
-	GameObject(GameMesh* mesh, const BO_InitDesc& info);
+	GameObject(GameMesh* mesh, const InstanceDesc& info);
 	virtual ~GameObject();
 
 public:
@@ -48,7 +61,6 @@ public:
 	XNA::AxisAlignedBox		GetAABB() const { return mAABB; }
 	XNA::Sphere				GetBS() const { return mBS; }
 
-	void					SetPos(const XMFLOAT3& pos) { mPosition = pos; }
 	void					SetHP(int hp) { mProperty.hp_now = hp; }
 	void					SetAttackState() { mActionState = ActionState::Attack; m_bForOneHit = true; }
 

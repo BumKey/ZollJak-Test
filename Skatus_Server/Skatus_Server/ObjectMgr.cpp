@@ -1,8 +1,7 @@
 #include "ObjectMgr.h"
 
 // 임의의 수치임
-ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0), mObjectGeneratedNum(MAX_USER),
-mCurrPlayerNum(0)
+ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0)
 {
 	mMaxMonsters = mStage * 200;
 	mMaxStructures = mStage * 5;
@@ -16,27 +15,27 @@ ObjectMgr::~ObjectMgr()
 
 void ObjectMgr::AddObject(ObjectType::Types oType)
 {
-	BO_InitDesc BasicInfo;
-	SO_InitDesc SkinnedInfo;
-	BasicInfo.ObjectType = oType;
-	SkinnedInfo.ObjectType = oType;
+	ObjectInfo info;
+	info.ObjectType = oType;
 
 	switch (oType)
 	{
 	case ObjectType::Monster:
 	case ObjectType::Goblin:
 	case ObjectType::Cyclop:
-		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, 0.0f, -180.0f + rand() % 200);
-		SkinnedInfo.Scale = 0.1f + ((float)(rand()) / (float)RAND_MAX) / 5.0f;
-		mMonsters[mObjectGeneratedNum++] = SkinnedInfo;
+		info.Pos = XMFLOAT3(300.0f - rand() % 200,
+			0.0f, -180.0f + rand() % 200);
+		info.Scale = 0.1f + ((float)(rand()) / (float)RAND_MAX) / 5.0f;
+		mMonsters.push_back(info);
 		break;
 
 	case ObjectType::Obstacle:
 	case ObjectType::Tree:
-		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 200, -0.1f, -300.0f + rand() % 200);
-		BasicInfo.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f + 0.5f;
-		BasicInfo.Rot.y = ((float)(rand()) / (float)RAND_MAX)*PI* 2;
-		mObstacles.push_back(BasicInfo);
+		info.Pos = XMFLOAT3(100.0f + rand() % 200,
+			-0.1f, -300.0f + rand() % 200);
+		info.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f + 0.5f;
+		info.Rot.y = ((float)(rand()) / (float)RAND_MAX)*PI* 2;
+		mObstacles.push_back(info);
 		break;
 	case ObjectType::Base:
 		break;
@@ -51,16 +50,12 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 	case ObjectType::Pillar4:
 		break;
 	case ObjectType::Rock:
-		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 200, -0.1f, -300.0f + rand() % 200);
-		BasicInfo.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f + 0.5f;
-		BasicInfo.Rot.y = ((float)(rand()) / (float)RAND_MAX)*PI * 2;
-		mObstacles.push_back(BasicInfo);
 		break;
 	case ObjectType::Temple:
-		BasicInfo.Pos = XMFLOAT3(250.0f, 0.05f, -370.0f);
-		BasicInfo.Rot.y = 0.0f;
-		BasicInfo.Scale = 0.3f;
-		mObstacles.push_back(BasicInfo);
+		info.Pos = XMFLOAT3(250.0f, 0.05f, -370.0f);
+		info.Rot.y = 0.0f;
+		info.Scale = 0.3f;
+		mObstacles.push_back(info);
 		break;
 
 	default:
@@ -73,34 +68,45 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 
 void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 {
-	assert(oType >= ObjectType::Player && oType <= ObjectType::Builder);
-
-	SO_InitDesc info;
+	ObjectInfo info;
 	info.ObjectType = oType;
-	info.Pos = XMFLOAT3(rand() % 20 + 200.0f, 0.0f, rand() % 20 - 280.0f);
-	info.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	info.Scale = 0.05f;
-	info.MoveSpeed = 9.0f;
-	info.AttackPoint = 50.0f;
-	info.AttackSpeed = 2.0f;
-	info.Hp = 100;
 
-	mPlayers[client_id] = info;
-	++mCurrPlayerNum;
-	assert(mCurrPlayerNum <= MAX_USER, "OVER THE MAX_USER!!");
+	switch (oType)
+	{
+	case ObjectType::Player:
+	case ObjectType::Warrior:
+	case ObjectType::Archer:
+	case ObjectType::Builder:
+		info.Pos = XMFLOAT3(rand() % 20 + 200.0f, 0.0f, rand() % 20 - 280.0f);
+		info.Rot.y = 0.0f;
+		info.Scale = 0.05f;
+		mPlayers[client_id] = info;
+		break;
+
+	default:
+		assert(false, "incorrect type at AddObject");
+		break;
+	}
 }
 
-const std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetAllSkinnedObjects()
+const std::vector<ObjectInfo>& ObjectMgr::GetAllObjects()
 {
-	std::unordered_map<UINT, SO_InitDesc> allObjects;
-	for (UINT i = 0; i < mCurrPlayerNum; ++i)
-		allObjects[i] = mPlayers[i];
+	mAllObjects.clear();
+	mAllObjects.reserve(mTotalObjectNum);
 
-	UINT count(mCurrPlayerNum);
-	for (auto m : mMonsters)
-		allObjects[count++] = m.second;
+	for (auto i : mObstacles)
+		mAllObjects.push_back(i);
 
-	return allObjects;
+	for (auto i : mStructures)
+		mAllObjects.push_back(i);
+
+	for (auto i : mMonsters)
+		mAllObjects.push_back(i);
+
+	for (auto i : mPlayers)
+		mAllObjects.push_back(i);
+
+	return mAllObjects;
 }
 
 void ObjectMgr::ReleaseAllMonsters()
@@ -112,10 +118,10 @@ void ObjectMgr::CreateMap()
 {
 	AddObject(ObjectType::Temple);
 
-	for (UINT i = 0; i < 20; ++i)
+	for (UINT i = 0; i < 30; ++i)
 		AddObject(ObjectType::Tree);
 
-	for (UINT i = 0; i < 20; ++i)
+	for (UINT i = 0; i < 30; ++i)
 		AddObject(ObjectType::Rock);
 }
 

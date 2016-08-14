@@ -1,6 +1,6 @@
 #include "Temple.h"
 
-Temple::Temple(BasicMesh * mesh, const BO_InitDesc & info, Label label)
+Temple::Temple(BasicMesh * mesh, const InstanceDesc & info, Label label)
 	: BasicObject(mesh, info, label)
 {
 

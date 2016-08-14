@@ -5,7 +5,7 @@ SkinnedObject::SkinnedObject() : GameObject(), mTimePos(0.0f)
 {
 }
 
-SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const SO_InitDesc& info) : GameObject(mesh, info),
+SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info) : GameObject(mesh, info),
 mTimePos(0.0f)
 {
 	mMesh = mesh;
@@ -16,7 +16,7 @@ SkinnedObject::~SkinnedObject()
 {
 }
 
-void SkinnedObject::Init(SkinnedMesh * mesh, const SO_InitDesc & info)
+void SkinnedObject::Init(SkinnedMesh * mesh, const InstanceDesc & info)
 {
 	mMesh = mesh;
 

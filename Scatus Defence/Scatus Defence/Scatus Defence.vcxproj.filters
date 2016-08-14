@@ -73,12 +73,12 @@
     <Filter Include="Managers">
       <UniqueIdentifier>{b20d9836-07af-48f8-afb1-4ebb49d75747}</UniqueIdentifier>
     </Filter>
+    <Filter Include="State Machine\GameStates">
+      <UniqueIdentifier>{e1f5283c-f2e3-45d0-9166-5e438e579f44}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Main">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="GameObject\SkinnedObject\Player">
-      <UniqueIdentifier>{6f4affe7-dcca-46c4-8458-4031795392df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +172,9 @@
     <ClCompile Include="Monster.cpp">
       <Filter>GameObject\SkinnedObject\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="GameRogicManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Main</Filter>
     </ClCompile>
@@ -184,8 +187,38 @@
     <ClCompile Include="2DMap.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="CollisionMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
     <ClCompile Include="Utilities.cpp">
       <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Begin.cpp">
+      <Filter>State Machine\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_GameOver.cpp">
+      <Filter>State Machine\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_GlobalState.cpp">
+      <Filter>State Machine\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Title.cpp">
+      <Filter>State Machine\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Waving.cpp">
+      <Filter>State Machine\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Wave_Waiting .cpp">
+      <Filter>State Machine\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Title_Option.cpp">
+      <Filter>State Machine\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Manager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Scene.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="winwav.cpp">
       <Filter>UI</Filter>
@@ -195,6 +228,9 @@
     </ClCompile>
     <ClCompile Include="PacketMgr.cpp">
       <Filter>NetWork</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateMgr.cpp">
+      <Filter>Managers</Filter>
     </ClCompile>
     <ClCompile Include="GameFramework.cpp">
       <Filter>Main</Filter>
@@ -209,10 +245,7 @@
       <Filter>GameObject\SkinnedObject\Monster</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>GameObject\SkinnedObject\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Warrior.cpp">
-      <Filter>GameObject\SkinnedObject\Player</Filter>
+      <Filter>GameObject\SkinnedObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -306,6 +339,9 @@
     <ClInclude Include="Monster.h">
       <Filter>GameObject\SkinnedObject\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="GameRogicManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
     <ClInclude Include="RogicTimer.h">
       <Filter>Base</Filter>
     </ClInclude>
@@ -315,8 +351,17 @@
     <ClInclude Include="2DMap.h">
       <Filter>Base</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionMgr.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
     <ClInclude Include="Utilities.h">
       <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Manager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Scene.h">
+      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="winwav.h">
       <Filter>UI</Filter>
@@ -329,6 +374,9 @@
     </ClInclude>
     <ClInclude Include="protocol.h">
       <Filter>NetWork</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateMgr.h">
+      <Filter>Managers</Filter>
     </ClInclude>
     <ClInclude Include="Singletone.h">
       <Filter>Main</Filter>
@@ -346,10 +394,7 @@
       <Filter>GameObject\SkinnedObject\Monster</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>GameObject\SkinnedObject\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Warrior.h">
-      <Filter>GameObject\SkinnedObject\Player</Filter>
+      <Filter>GameObject\SkinnedObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

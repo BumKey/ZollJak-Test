@@ -24,21 +24,18 @@ void MyServer::Initialize()
 }
 
 // 패킷 전송 함수
-void MyServer::Send_Packet(DWORD id, char *packet) {
+void MyServer::Send_Packet(DWORD id, unsigned char *packet) {
 	Overlap_ex *over = new Overlap_ex; // 동적 할당
 	memset(over, 0, sizeof(Overlap_ex)); // 메모리 초기화
 	over->operation = OP_SEND;
-
-	HEADER *header = reinterpret_cast<HEADER*>(packet);
-	over->wsabuf.buf = over->iocp_buffer; 
-	over->wsabuf.len = header->Size;
-	memcpy(over->iocp_buffer, packet, header->Size); // IOCP버퍼에 패킷 사이즈를 복사
-	std::cout << "SendPacket: " << header->Type << std::endl;
+	over->wsabuf.buf = reinterpret_cast<CHAR *>(over->iocp_buffer); //
+	over->wsabuf.len = packet[0]; // 패킷의 첫칸 = 사이즈
+	memcpy(over->iocp_buffer, packet, packet[0]); // IOCP버퍼에 패킷 사이즈를 복사
 
 				  // (소켓, WSABUF구조체 포인터, WSABUF구조체 개수, NULL, 호출 방식, 오버랩 구조체의 포인터, 완료루틴의 포인터)
-	int ret = WSASend(g_clients[id].socket, &over->wsabuf, 1, NULL, 0, &over->original_Overlap, NULL);
+	int ret = WSASend(g_clients[id].s, &over->wsabuf, 1, NULL, 0, &over->original_Overlap, NULL);
 	// 에러 처리
-	if (ret != 0) { // 데이터 전송을 완료했다면 0
+	if (0 != ret) { // 데이터 전송을 완료했다면 0
 		int err_no = WSAGetLastError();
 		error_display("Send_Packet:WSASend", err_no);
 		while (TRUE);
@@ -46,28 +43,18 @@ void MyServer::Send_Packet(DWORD id, char *packet) {
 }
 
 // 패킷 처리 함수
-void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
+void MyServer::Pharse_Packet(DWORD id, unsigned char buf[]) 
 {
-	HEADER *header = reinterpret_cast<HEADER*>(packet);
-	switch (header->Type)
+	switch (buf[1])
 	{
-	case eCS::Success: {
-		auto info = reinterpret_cast<CS_Success*>(packet);
-		std::cout << "CS_SUCCESS, ID : " << (int)info->ClientID << std::endl;
-		rogicMgr.Update();
+	case CS_SUCCESS:
+		std::cout << "CS_SUCCESS, ID : " << id << std::endl;
 		break;
-	}
-	case eCS::KeyInput: {
-		auto info = reinterpret_cast<CS_Move*>(packet);
-		std::cout << "CS_KEYINPUT, POS : " << info->Pos.x << ", "
-			<< info->Pos.y << ", " << info->Pos.z << std::endl;
-		rogicMgr.ProcessKeyInput(*info);
-		break;
-	}
-	case eCS::MouseInput: {
-		auto info = reinterpret_cast<CS_Attack*>(packet);
-		std::cout << "CS_MOUSEINPUT, ID : " << info->ClientID << std::endl;
-		rogicMgr.ProcessMouseInput(*info);
+
+	case CS_KEYINPUT: {
+		auto packet = reinterpret_cast<cs_packet_move*>(buf);
+		std::cout << "CS_KEYINPUT, POS : " << (*packet).pos.x << ", "
+			<< (*packet).pos.y << ", " << (*packet).pos.z << std::endl;
 		break;
 	}
 	default:

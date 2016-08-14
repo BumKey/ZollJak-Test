@@ -3,12 +3,31 @@
 #include <xnamath.h>
 #include <vector>
 
+// server -> client
+#define SC_POS				1
+#define SC_PUT_PLAYER		2
+#define SC_REMOVE_PLAYER	3
+#define SC_PER_FRAME		4
+
+// client -> server
+#define CS_KEYINPUT			0
+#define CS_MOUSEINPUT		1
+//#define CS_UP				1
+//#define CS_DOWN				2
+//#define CS_LEFT				3
+//#define CS_RIGHT			4
+//#define CS_UP_LEFT			5
+//#define CS_UP_RIGHT			6
+//#define CS_DOWN_LEFT		7
+//#define CS_DOWN_RIGHT		8
+#define CS_SUCCESS			9
+
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
-#define MAX_PACKET_SIZE		4000
-#define MAX_USER			2
+#define MAX_PACKET_SIZE		255
+#define MAX_USER			1
 #define MAX_MONSTER			100
-#define MAX_OBJECT			100
+#define MAX_OBJECT			1000
 #define MAX_NPC				100
 #define WORLDSIZE			100
 #define MONSTER_DURATION	1000
@@ -18,20 +37,6 @@
 
 #define PI					3.1415926535f
 #pragma pack(push, 1)
-
-// server -> client
-enum eSC {
-	PutPlayer,
-	RemovePlayer,
-	AddMonsters,
-	PerFrame
-};
-
-enum eCS {
-	Success,
-	KeyInput,
-	MouseInput
-};
 
 namespace ObjectType {
 	enum Types
@@ -98,109 +103,75 @@ enum eGameState {
 	GameOver
 };
 
-struct BO_InitDesc
+struct ObjectInitInfo
 {
-	BO_InitDesc() : Pos(0.0f, 0.0f, 0.0f), Rot(0.0f, 0.0f, 0.0f), Scale(0.0f)
-	{
-		ObjectType = ObjectType::None;
-	}
-	ObjectType::Types ObjectType;
 
-	XMFLOAT3 Pos;
-	XMFLOAT3 Rot;
-	FLOAT Scale;
-};
 
-struct SO_InitDesc : public BO_InitDesc
-{
-	SO_InitDesc() : BO_InitDesc(), Hp(100), AttackSpeed(0.0f), MoveSpeed(0.0f) {}
-	int Hp;
-
-	FLOAT AttackPoint;
-	FLOAT AttackSpeed;
-	FLOAT MoveSpeed;
 };
 
 struct ObjectInfo
 {
-	XMFLOAT3 Pos;
-};
+	BYTE ActionState;
+	BYTE ObjectType;
 
-struct HEADER
-{
-	UINT Size;
-	DWORD Type;
+	DWORD Hp;
+
+	FLOAT AttackSpeed;
+	FLOAT MoveSpeed;
+
+	XMFLOAT3 Pos;
+	XMFLOAT3 Rot;
+	FLOAT Scale;
+
 };
 
 // server -> client
-struct SC_PerFrame : public HEADER
+struct sc_packet_PerFrame
 {
-	SC_PerFrame() {
-		Size = sizeof(*this); Type = eSC::PerFrame;
-	}
-	eGameState GameState;
-	UINT Time;
-	UINT NumOfObjects;
-	UINT ID[50];
-	ObjectInfo Objects[50];
+	BYTE size;
+	BYTE type;
+	DWORD time;
+
+	std::vector<ObjectInfo> cInfos;
 };
 
-struct SC_AddMonster : public HEADER
+struct sc_packet_put_player
 {
-	SC_AddMonster() {
-		Size = sizeof(*this); Type = eSC::AddMonsters;
-	}
-	UINT NumOfObjects;
-	UINT ID[50];
-	SO_InitDesc InitInfos[50];
+	BYTE size;
+	BYTE type;
+	DWORD client_id;
+
+	ObjectInfo cInfo;
 };
 
-struct SC_PutPlayer : public HEADER
+struct sc_packet_remove_player
 {
-	SC_PutPlayer() {
-		Size = sizeof(*this); Type = eSC::PutPlayer;
-	}
-
-	BYTE ClientID;
-	BYTE CurrPlayerNum;
-	SO_InitDesc Player[MAX_USER];
-	UINT NumOfObjects;
-	BO_InitDesc MapInfo[50];
-};
-
-struct SC_Remove_Player : public HEADER
-{
-	SC_Remove_Player() {
-		Size = sizeof(*this); Type = eSC::RemovePlayer;
-	}
-	BYTE ClientID;
+	BYTE size;
+	BYTE type;
+	DWORD client_id;
 };
 
 // client -> server
-struct CS_Move : public HEADER
+struct cs_packet_move
 {
-	CS_Move() {
-		Size = sizeof(*this); Type = eCS::KeyInput;
-	}
+	BYTE size;
+	BYTE type;
+	DWORD client_id;
 
-	BYTE ClientID;
-	XMFLOAT3 Pos;
+	XMFLOAT3 pos;
 };
 
-struct CS_Attack : public HEADER
+struct cs_packet_attack
 {
-	CS_Attack() {
-		Size = sizeof(*this); Type = eCS::MouseInput;
-	}
-	BYTE ClientID;
+	BYTE size;
+	BYTE type;
+	DWORD client_id;
 };
 
-struct CS_Success : public HEADER
+struct cs_packet_success
 {
-	CS_Success() {
-		Size = sizeof(*this); Type = eCS::Success;
-	}
-	BYTE ClientID;
+	BYTE size;
+	BYTE type;
 };
 
-#pragma pack(pop) 
+#pragma pack(pop)

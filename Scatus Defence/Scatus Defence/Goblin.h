@@ -7,10 +7,10 @@ class Goblin : public Monster
 {
 public:
 	enum Type {
-		Red = 0, Green, Blue
+		Red, Green, Blue
 	};
 
-	Goblin(SkinnedMesh* mesh, const SO_InitDesc& info, Type type);
+	Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type);
 	~Goblin();
 
 public:

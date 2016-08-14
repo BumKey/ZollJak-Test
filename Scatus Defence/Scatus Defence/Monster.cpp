@@ -5,7 +5,7 @@ Monster::Monster() : SkinnedObject()
 	mAI_States = AI_State::None;
 }
 
-Monster::Monster(SkinnedMesh* mesh, const SO_InitDesc& info) : SkinnedObject(mesh, info)
+Monster::Monster(SkinnedMesh* mesh, const InstanceDesc& info) : SkinnedObject(mesh, info)
 {
 	mAI_States = AI_State::None;
 }

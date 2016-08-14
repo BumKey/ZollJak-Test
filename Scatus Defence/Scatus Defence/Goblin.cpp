@@ -1,15 +1,15 @@
 #include "Goblin.h"
 
-Goblin::Goblin(SkinnedMesh* mesh, const InstanceDesc& info, Type type)
+Goblin::Goblin(SkinnedMesh* mesh, const SO_InitDesc& info, Type type)
 	: Monster(mesh, info), mGoblinType(type)
 {
 	mProperty.name = "Goblin";
 
-	mProperty.hp_now = 100;
-	mProperty.movespeed = MathHelper::RandF(4.5f, 5.5f);
-	mProperty.attackspeed = MathHelper::RandF(0.6f, 1.1f);
+	mProperty.hp_now = info.Hp;
+	mProperty.movespeed = info.MoveSpeed;
+	mProperty.attackspeed = info.AttackSpeed;
 	mProperty.attackrange = 3.0f;
-	mProperty.attakpoint = 0.5f;
+	mProperty.attakpoint = info.AttackPoint;
 
 	mObjectType = ObjectType::Goblin;
 

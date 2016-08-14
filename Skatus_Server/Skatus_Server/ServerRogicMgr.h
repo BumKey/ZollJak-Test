@@ -13,17 +13,20 @@ public:
 
 	void WaveStart();
 	void Update();
-	void ProcessKeyInput(cs_packet_move& inPacket);
-	void ProcessMouseInput(cs_packet_attack& inPacket);
+	void AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& id);
+	void ProcessKeyInput(CS_Move& inPacket);
+	void ProcessMouseInput(CS_Attack& inPacket);
 
+	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer()[id]; }
 private:
 	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);
-	void SendPacket();
+	void SendPacketPerFrame();
+	void SendPacketToCreateMonsters();
 
 private:
-
 	UINT mCurrWaveLevel;
-	
+	UINT mCurrPlayerNum;
+
 	GameTimer		mGameTimer;
 	GameTimer		mRogicTimer;
 	GameStateMgr	mGameStateMgr;

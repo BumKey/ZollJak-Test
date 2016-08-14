@@ -11,7 +11,7 @@ class BasicObject : public GameObject
 {
 public:
 	BasicObject();
-	BasicObject(BasicMesh* mesh, const InstanceDesc& info, Label label);
+	BasicObject(BasicMesh* mesh, const BO_InitDesc& info, Label label);
 	~BasicObject();
 
 public:

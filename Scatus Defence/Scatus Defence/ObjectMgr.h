@@ -4,7 +4,8 @@
 #include "SkinnedObject.h"
 #include "ResourceMgr.h"
 #include "Player.h"
-#include "Monster.h"
+#include "Goblin.h"
+#include "Cyclop.h"
 #include "ResourceMgr.h"
 #include "Singletone.h"
 #include <vector>
@@ -23,40 +24,20 @@ private:
 
 	friend class Singletone<ObjectMgr>;
 public:
-	void Init();
-
-	bool AddProjectile(BasicObject* basicObject);
-	bool AddMonster(Monster* monster); // 충돌검사 길찾기를 위한 몬스터리스트, 다형성 구현을 위해skinnedObject*에서  GameObject*로
-	bool AddOurTeam(SkinnedObject* skinnedObject); // 충돌검사, 길찾기를 위한 아군 리스트
+	void AddPlayer(SkinnedObject* player) { mSkinnedObjects[mCurrPlayerNum++] = player; }
+	void AddMonster(const ObjectType::Types& type, const SO_InitDesc& desc, const UINT& id);
+	void AddObstacle(const ObjectType::Types& type, const BO_InitDesc& desc);
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
-	std::vector<Monster*>&				GetMonsters() { return mMonsters; }
-	std::vector<BasicObject*>&			GetObstacles() { return mObstacles; }
-	std::vector<GameObject*>&			GetOurTeam() { return mOurTeam; }
-	std::vector<GameObject*>&			GetOppenents() { return mOurTeam; }
 
-	void Update();
+	void Update(const UINT& id, const ObjectInfo& info);
 	void Update(float dt);
 
-	void ReleaseAll();
-	void ReleaseAllMonsters();
-
 private:
-	void CreateMap();
-	bool AddObstacle(BasicObject* basicObject);//bool 형으로 해서 나중에 객체 생성한계초과여부 확인
-	bool AddStructure(BasicObject* basicObject);
+	UINT mCurrPlayerNum;
 
-private:
-	UINT mStage;
-	UINT mMaxMonsters;
-	UINT mMaxStructures;
-	UINT mTotalObjectNum;
-
-	std::vector<GameObject*>	mAllObjects;					// 반복 순회가 가장 빠른 벡터로
-	std::vector<BasicObject*>	mObstacles;						// 생성된 후 삽입, 삭제가 이루어지지 않는 지형지물들의 컨테이너
-	std::vector<BasicObject*>		mStructures, mProjectiles;		// 삽입, 삭제 가능성이 있는 BasicObject(건물, 발사체), 낮은 가능성, 상황을 봐서 건물은 mOurs에 병합될 수도 있음
-	std::vector<Monster*>			mMonsters;						// 삽입, 삭제 가능성이 있는 SkinnedObject 
-	std::vector<GameObject*>		mOurTeam;				// 주로 아군 전사 NPC등을 넣을 리스트 // 현재는 단순히 플레이어 등을 넣어두는 리스트로 사용하겠음
-	std::vector<GameObject*>		mOppenents;
+	std::vector<GameObject*>						mAllObjects;					
+	std::vector<BasicObject*>						mBasicObjects;
+	std::unordered_map<UINT, SkinnedObject*>		mSkinnedObjects;
 };
 

@@ -10,9 +10,12 @@ public:
 	void AddObject(ObjectType::Types oType);
 	void AddPlayer(ObjectType::Types oType, DWORD client_id);
 
-	const std::vector<ObjectInfo>&		GetAllObjects();
-	std::vector<ObjectInfo>&				GetMonsters() { return mMonsters; }
-	ObjectInfo							GetPlayer(const DWORD& client_id) { return mPlayers[client_id]; }
+	void SetPlayerPos(const UINT& id, const XMFLOAT3& pos) { mPlayers[id].Pos = pos; }
+
+	const std::unordered_map<UINT, SO_InitDesc>	GetAllSkinnedObjects();
+	const std::unordered_map<UINT, SO_InitDesc>&	GetMonsters() { return mMonsters; }
+	const std::vector<BO_InitDesc>& GetAllBasicObjects() { return mObstacles; }
+	const auto						GetPlayer() { return mPlayers; }
 	void ReleaseAllMonsters();
 
 private:
@@ -23,10 +26,11 @@ private:
 	UINT mMaxMonsters;
 	UINT mMaxStructures;
 	UINT mTotalObjectNum;
+	UINT mObjectGeneratedNum;
+	UINT mCurrPlayerNum;
 
-	std::vector<ObjectInfo>	mAllObjects;					
-	std::vector<ObjectInfo>	mObstacles;						
-	std::vector<ObjectInfo>	mStructures, mProjectiles;		
-	std::vector<ObjectInfo>	mMonsters;						
-	ObjectInfo				mPlayers[MAX_USER];				
+	std::vector<BO_InitDesc>	mObstacles;						
+	std::vector<SO_InitDesc>	mStructures, mProjectiles;		
+	std::unordered_map<UINT, SO_InitDesc>	 mMonsters;						
+	SO_InitDesc				mPlayers[MAX_USER];				
 };

@@ -6,18 +6,15 @@
 #include <assert.h>
 #include "protocol.h"
 #include "Singletone.h"
+#include "ObjectMgr.h"
+#include "SceneMgr.h"
+#include "Warrior.h"
 #include <iostream>
 #include <vector>
 
 #pragma comment (lib, "ws2_32.lib")
 
 #define Packet_Mgr PacketMgr::GetInstance()
-
-struct WSABuf {
-	ULONG len;
-	CHAR* buf;
-};
-
 
 class PacketMgr : public Singletone<PacketMgr>
 {
@@ -27,26 +24,44 @@ public:
 
 public:
 	void Init();
+	void Update();
 
-	void SendPacket(cs_packet_move& packet);
-	void SendPacket(cs_packet_attack& packet);
-	void SendPacket(cs_packet_success& packet);
-	bool ReadPacket();
-	void ProcessPacket(char* ptr);
+	template <class T>
+	void SendPacket(T& packet);
+	char* GetPacket()				{ return mPacketBuf; }
 
 private:
+	bool ReadPacket();
+	void ProcessPacket(char* packet);
+
 	void err_display(wchar_t *msg);
 
 private:
 	int mClientID;
 
 	SOCKET	mSocket;
-	WSABuf	mRecv_wsabuf;
-	char	mSend_buffer[MAX_BUFF_SIZE];
-	WSABuf	mSend_wsabuf;
-	char	mRecv_buffer[MAX_BUFF_SIZE];
-	char	packet_buffer[MAX_PACKET_SIZE];
-	DWORD	in_packet_size = 0;
-	int		saved_packet_size = 0;
+	WSABUF	mRecvBuf;
+	WSABUF	mSendBuf;
+	eGameState mCurrGameState;
+
+	char* mPacketBuf;
 };
 
+template<class T>
+inline void PacketMgr::SendPacket(T & packet)
+{
+	char *packet_buf;
+
+	packet.ClientID = mClientID;
+	packet_buf = reinterpret_cast<char*>(&packet);
+
+	mSendBuf.len = packet.Size;
+	memcpy(mSendBuf.buf, packet_buf, packet.Size);
+
+	int outBytes = 0;
+	if (WSASend(mSocket, &mSendBuf, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
+	{
+		if (WSAGetLastError() != WSA_IO_PENDING)
+			err_display(L"WSASend() Error");
+	}
+}

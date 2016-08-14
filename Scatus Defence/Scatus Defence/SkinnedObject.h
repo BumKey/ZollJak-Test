@@ -13,11 +13,11 @@ class SkinnedObject : public GameObject
 {
 public:
 	SkinnedObject();
-	SkinnedObject(SkinnedMesh* mesh, const InstanceDesc& info);
+	SkinnedObject(SkinnedMesh* mesh, const SO_InitDesc& info);
 	virtual~SkinnedObject();
 
 public:
-	virtual void Init(SkinnedMesh* mesh, const InstanceDesc& info);
+	virtual void Init(SkinnedMesh* mesh, const SO_InitDesc& info);
 
 	virtual void Update(float dt);
 	virtual void Animate(float dt);

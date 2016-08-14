@@ -52,36 +52,14 @@ bool GameFrameWork::Init()
 	tii.HeightScale = 70.0f;
 	tii.HeightmapWidth = 513;
 	tii.HeightmapHeight = 513;
-	tii.CellSpacing = 3.0f;
+	tii.CellSpacing = 2.0f;
 	Terrain::GetInstance()->Init(md3dDevice, md3dImmediateContext, tii);
-
-	InstanceDesc info;
-	// 250이 거의 끝자리
-	info.Pos = XMFLOAT3(210.0f, 0.01f, -280.0f);
-	info.Rot.y = 0.0f;
-	info.Scale = 0.05f;
-	Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(ObjectType::Warrior), info);
-
-	Object_Mgr->Init();
-
-	UI_Mgr->CreateFactorys();
-	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd(), mSwapChain);
-	UI_Mgr->Load_All_UI();
 
 	Sound_Mgr->Create_Sound(D3DApp::MainWnd());
 
 	// Giljune's Code
 	Packet_Mgr->Init();
 
-	const XMFLOAT3& playerPos = Player::GetInstance()->GetPos();
-	XMFLOAT3 camPos = playerPos;
-	camPos.y += 10.0f;
-	camPos.z -= 20.0f;
-	Camera::GetInstance()->LookAt(camPos, playerPos, XMFLOAT3(0.0f, 1.0f, 0.0f));
-
-	Object_Mgr->Update();
-	Scene_Mgr->ComputeSceneBoundingBox();
-	
 	return true;
 }
 
@@ -91,10 +69,6 @@ void GameFrameWork::OnResize()
 
 	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 	Scene_Mgr->OnResize(mClientWidth, mClientHeight, mDepthStencilView, mRenderTargetView);
-
-	UI_Mgr->CreateFactorys();
-	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd(), mSwapChain);
-	//UI_Mgr->Load_All_UI();
 }
 
 void GameFrameWork::UpdateScene(float dt)
@@ -105,30 +79,16 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
 	
-	if (Packet_Mgr->ReadPacket())
-	{
-		cs_packet_success packet;
-		packet.size = sizeof(packet);
-		packet.type = CS_SUCCESS;
-		Packet_Mgr->SendPacket(packet);
-	}
-
-	State_Mgr->Update(dt);
+	Packet_Mgr->Update();
 	Object_Mgr->Update(dt);
-	Collision_Mgr->Update(dt);
-	Rogic_Mgr->Update(dt);
 
-	Scene_Mgr->Update(dt);
-
-	Player::GetInstance()->Update(dt);
 	Camera::GetInstance()->Update();
-
+	Scene_Mgr->Update(dt);
 }
 
 void GameFrameWork::DrawScene()
 {
 	Scene_Mgr->DrawScene();
-	UI_Mgr->Print_All_UI();
 
 	HR(mSwapChain->Present(0, 0));
 }
@@ -137,9 +97,11 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
-	Rogic_Mgr->OnMouseDown = true;
 	if (btnState & MK_LBUTTON) {
 		Player::GetInstance()->SetAttackState();
+
+		CS_Attack packet;
+		Packet_Mgr->SendPacket(packet);
 	}
 	
 	SetCapture(mhMainWnd);
@@ -147,7 +109,6 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 
 void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 {
-	Rogic_Mgr->OnMouseDown = false;
 	ReleaseCapture();
 }
 

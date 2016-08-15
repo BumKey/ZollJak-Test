@@ -7,8 +7,10 @@ mCurrPlayerNum(0)
 	mMaxMonsters = mStage * 200;
 	mMaxStructures = mStage * 5;
 
-	mPlayerYpos[MAX_USER] = { 0.0f };
-
+	for (int i = 0; i < MAX_USER; ++i) {
+		mConnected[i] = false;
+		mPlayerYpos[i] = 0.0f;
+	}
 	CreateMap();
 }
 
@@ -88,32 +90,45 @@ void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 	info.Hp = 100;
 
 	mPlayers[client_id] = info;
+	mConnected[client_id] = true;
 	++mCurrPlayerNum;
 	assert(mCurrPlayerNum <= MAX_USER, "OVER THE MAX_USER!!");
 }
 
-const std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetAllSkinnedObjects()
+void ObjectMgr::RemovePlayer(const UINT & id)
 {
-	std::unordered_map<UINT, SO_InitDesc> allObjects;
-	SO_InitDesc players[MAX_USER];
-	for (UINT i = 0; i < mCurrPlayerNum; ++i) {
-		players[i] = mPlayers[i];
+	--mCurrPlayerNum;
+	mConnected[id] = false;
+	mPlayers[id].ActionState = ActionState::Die;
+}
 
-		players[i].Pos.y = -0.1f;
-		if (mPlayerYpos[i] != 0.0f) {
-			players[i].Pos.y += mPlayerYpos[i];
-			mPlayerYpos[i] = 0.0f;
+const std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetPlayers()
+{
+	std::unordered_map<UINT, SO_InitDesc> rt;
+	SO_InitDesc players[MAX_USER];
+	for (UINT i = 0; i < MAX_USER; ++i) {
+		if (mConnected[i])
+		{
+			players[i] = mPlayers[i];
+
+			players[i].Pos.y = -0.1f;
+			if (mPlayerYpos[i] != 0.0f) {
+				players[i].Pos.y += mPlayerYpos[i];
+				mPlayerYpos[i] = 0.0f;
+			}
 		}
 	}
 
-	for (UINT i = 0; i < mCurrPlayerNum; ++i) 
-		allObjects[i] = players[i];
+	for (UINT i = 0; i < MAX_USER; ++i)
+	{
+		rt[i] = players[i];
+	}
 
-	UINT count(mCurrPlayerNum);
-	for (auto m : mMonsters)
-		allObjects[count++] = m.second;
+	//UINT count(mCurrPlayerNum);
+	//for (auto m : mMonsters)
+	//	allObjects[count++] = m.second;
 
-	return allObjects;
+	return rt;
 }
 
 const SO_InitDesc & ObjectMgr::GetPlayer(const UINT & id)

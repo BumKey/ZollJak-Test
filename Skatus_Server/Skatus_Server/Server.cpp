@@ -29,11 +29,28 @@ void MyServer::Send_Packet(DWORD id, char *packet) {
 	memset(over, 0, sizeof(Overlap_ex)); // 메모리 초기화
 	over->operation = OP_SEND;
 
+	char* string = 0;
 	HEADER *header = reinterpret_cast<HEADER*>(packet);
+	switch (header->Type)
+	{
+	case eSC::AddMonsters:
+		string = "AddMonsters";
+		break;
+	case eSC::InitPlayer:
+		string = "InitPlayer";
+		break;
+	case eSC::PerFrame:
+		string = "PerFrame";
+		break;
+	case eSC::PutOtherPlayers:
+		string = "PutOtherPlayer";
+		break;
+	}
+
 	over->wsabuf.buf = over->iocp_buffer; 
 	over->wsabuf.len = header->Size;
 	memcpy(over->iocp_buffer, packet, header->Size); // IOCP버퍼에 패킷 사이즈를 복사
-	std::cout << "SendPacket: " << header->Type << std::endl;
+	std::cout << "SendPacket: "<< string << " To " << id << std::endl;
 
 				  // (소켓, WSABUF구조체 포인터, WSABUF구조체 개수, NULL, 호출 방식, 오버랩 구조체의 포인터, 완료루틴의 포인터)
 	int ret = WSASend(g_clients[id].socket, &over->wsabuf, 1, NULL, 0, &over->original_Overlap, NULL);
@@ -54,6 +71,7 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 	case eCS::Success: {
 		auto info = reinterpret_cast<CS_Success*>(packet);
 		std::cout << "CS_SUCCESS, ID : " << (int)info->ClientID << std::endl;
+		rogicMgr.UnLock(info->ClientID);
 		rogicMgr.Update(info->ClientID);
 		break;
 	}

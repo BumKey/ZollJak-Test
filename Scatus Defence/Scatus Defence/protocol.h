@@ -23,7 +23,6 @@
 enum eSC {
 	InitPlayer,
 	PutOtherPlayers,
-	RemovePlayer,
 	AddMonsters,
 	PerFrame
 };
@@ -116,6 +115,7 @@ struct SO_InitDesc : public BO_InitDesc
 {
 	SO_InitDesc() : BO_InitDesc(), Hp(100), AttackSpeed(0.0f), MoveSpeed(0.0f) {}
 	int Hp;
+	ActionState::States ActionState;
 
 	FLOAT AttackPoint;
 	FLOAT AttackSpeed;
@@ -124,6 +124,7 @@ struct SO_InitDesc : public BO_InitDesc
 
 struct ObjectInfo
 {
+	ActionState::States ActionState;
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
 };
@@ -178,14 +179,6 @@ struct SC_PutOtherPlayers : public HEADER
 
 	BYTE CurrPlayerNum;
 	SO_InitDesc Player[MAX_USER];
-};
-
-struct SC_Remove_Player : public HEADER
-{
-	SC_Remove_Player() {
-		Size = sizeof(*this); Type = eSC::RemovePlayer;
-	}
-	BYTE ClientID;
 };
 
 // client -> server

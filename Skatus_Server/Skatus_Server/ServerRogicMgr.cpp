@@ -15,6 +15,8 @@ mNewID(-1)
 	mGameTimer.Reset();
 
 	mPutPlayerEvent = false;
+	for (bool l : mLock)
+		l = false;
 }
 
 
@@ -98,12 +100,14 @@ void ServerRogicMgr::Update(const UINT& clientID)
 		std::cout << "Waving..." << std::endl;
 	}
 
-	if (mPutPlayerEvent && clientID != mNewID)
-		SendPacketPutOtherPlayers(clientID);
-	else if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
-		SendPacketToCreateMonsters(clientID);
-	else
-		SendPacketPerFrame(clientID);
+	if (mLock[clientID] == false) {
+		if (mPutPlayerEvent && clientID != mNewID)
+			SendPacketPutOtherPlayers(clientID);
+		else if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
+			SendPacketToCreateMonsters(clientID);
+		else
+			SendPacketPerFrame(clientID);
+	}
 }
 
 void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& newID)
@@ -136,6 +140,12 @@ void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oT
 	// 플레이어 본인에게, 이미 접속한 유저들에 대한 정보를 전송한다.
 	MyServer::Send_Packet(newID, reinterpret_cast<char *>(&packet));
 
+}
+
+void ServerRogicMgr::RemovePlayer(const UINT & id)
+{
+	--mCurrPlayerNum;
+	mObjectMgr.RemovePlayer(id);
 }
 
 /// <summary> 현재는 충돌체크 미구현
@@ -204,18 +214,19 @@ FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)
 
 void ServerRogicMgr::SendPacketPerFrame(const UINT& clientID)
 {
-	auto objects = mObjectMgr.GetAllSkinnedObjects();
+	auto players = mObjectMgr.GetPlayers();
 
 	SC_PerFrame packet;
 	packet.GameState = mGameStateMgr.GetCurrState();
 	packet.Time = mRogicTimer.TotalTime();
-	packet.NumOfObjects = objects.size();
+	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum();
 
 	UINT count(0);
-	for (auto o : objects) {
+	for (auto o : players) {
 		packet.ID[count] = o.first;
 		packet.Objects[count].Pos = o.second.Pos;
 		packet.Objects[count].Rot = o.second.Rot;
+		packet.Objects[count].ActionState = o.second.ActionState;
 		++count;
 	}
 

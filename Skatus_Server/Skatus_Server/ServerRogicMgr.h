@@ -14,9 +14,12 @@ public:
 	void WaveStart();
 	void Update(const UINT& clientID);
 	void AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& id);
+	void RemovePlayer(const UINT& id);
 	void ProcessKeyInput(CS_Move& inPacket);
 	void ProcessMouseInput(CS_Attack& inPacket);
 
+	void Lock(const UINT& id) { mLock[id] = true; }
+	void UnLock(const UINT& id) { mLock[id] = false; }
 	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
 private:
 	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);
@@ -26,7 +29,7 @@ private:
 
 private:
 	bool mPutPlayerEvent;
-
+	bool mLock[MAX_USER];
 	UINT mNewID;
 	UINT mCurrWaveLevel;
 	UINT mCurrPlayerNum;

@@ -70,6 +70,7 @@ void MyThreads::Accept_Thread()
 
 		// 클라이언트 연결 정보 갱신
 		g_clients[new_id].is_connected = TRUE;
+		g_RogicMgr.UnLock(new_id);
 
 		// 연속되는 작업을 위한 WSARecv 호출
 		DWORD flags = 0;
@@ -103,24 +104,14 @@ void MyThreads::Worker_Thread()
 		}
 
 		// 전송된 데이터가 0이라는 것은 접속을 종료 했다는 것을 의미
-		if (0 == iosize)
+		if (iosize == 0)
 		{
+			g_RogicMgr.RemovePlayer(id);
 			// 소켓 종료
 			closesocket(g_clients[id].socket);
-
-			// 접속을 종료 했다는 것을 다른 플레이어들에게 알리기 위한 패킷
-			SC_Remove_Player disconnect;
-			disconnect.ClientID = id;
-
-			// 현재 접속 중인 모든 플레이어들에게 패킷을 전송
-			for (auto i = 0; i < MAX_USER; ++i) {
-				if (!g_clients[i].is_connected && id != i)
-					MyServer::Send_Packet(i, reinterpret_cast<char*>(&disconnect));
-			}
-			g_clients[id].is_connected = FALSE;
+			g_clients[id].is_connected = false;
 		}
-
-		if (my_overlap->operation == OP_RECV) { // 리시브 일때
+		else if (my_overlap->operation == OP_RECV) { // 리시브 일때
 			char *buf_ptr = g_clients[id].recv_overlap.iocp_buffer; // IOCP 버퍼
 			int remained = iosize; // 처리할 양
 			while (0 < remained) { // 처리 할 양이 있는 경우

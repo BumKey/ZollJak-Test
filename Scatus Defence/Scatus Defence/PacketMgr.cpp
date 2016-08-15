@@ -166,13 +166,11 @@ void PacketMgr::ProcessPacket(char* packet)
 			}
 		}
 		std::cout << "SC_PUT_OTHER_PLAYERS, CurrPlayerNum : " << p->CurrPlayerNum << std::endl;
-	}
-	case eSC::RemovePlayer:
-		std::cout << "SC_REMOVE_PLAYER : " << header->Type << std::endl;
 		break;
+	}
 	case eSC::PerFrame: {
 		auto *p = reinterpret_cast<SC_PerFrame*>(packet);
-		for (UINT i = 0; i < p->NumOfObjects; ++i)
+		for (UINT i = 0; i < MAX_USER; ++i)
 			Object_Mgr->Update(p->ID[i], p->Objects[i]);
 		
 		char* string;

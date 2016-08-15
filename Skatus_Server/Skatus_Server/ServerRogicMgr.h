@@ -12,18 +12,22 @@ public:
 	~ServerRogicMgr();
 
 	void WaveStart();
-	void Update();
+	void Update(const UINT& clientID);
 	void AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& id);
 	void ProcessKeyInput(CS_Move& inPacket);
 	void ProcessMouseInput(CS_Attack& inPacket);
 
-	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer()[id]; }
+	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
 private:
 	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);
-	void SendPacketPerFrame();
-	void SendPacketToCreateMonsters();
+	void SendPacketPerFrame(const UINT& clientID);
+	void SendPacketPutOtherPlayers(const UINT& clientID);
+	void SendPacketToCreateMonsters(const UINT& clientID);
 
 private:
+	bool mPutPlayerEvent;
+
+	UINT mNewID;
 	UINT mCurrWaveLevel;
 	UINT mCurrPlayerNum;
 

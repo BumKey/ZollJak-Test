@@ -7,6 +7,8 @@ mCurrPlayerNum(0)
 	mMaxMonsters = mStage * 200;
 	mMaxStructures = mStage * 5;
 
+	mPlayerYpos[MAX_USER] = { 0.0f };
+
 	CreateMap();
 }
 
@@ -26,16 +28,16 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 	case ObjectType::Monster:
 	case ObjectType::Goblin:
 	case ObjectType::Cyclop:
-		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, 0.0f, -180.0f + rand() % 200);
+		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
 		SkinnedInfo.Scale = 0.1f + ((float)(rand()) / (float)RAND_MAX) / 5.0f;
 		mMonsters[mObjectGeneratedNum++] = SkinnedInfo;
 		break;
 
 	case ObjectType::Obstacle:
 	case ObjectType::Tree:
-		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 200, -0.1f, -300.0f + rand() % 200);
 		BasicInfo.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f + 0.5f;
 		BasicInfo.Rot.y = ((float)(rand()) / (float)RAND_MAX)*PI* 2;
+		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 200, -0.1f*BasicInfo.Scale, -300.0f + rand() % 200);
 		mObstacles.push_back(BasicInfo);
 		break;
 	case ObjectType::Base:
@@ -51,13 +53,13 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 	case ObjectType::Pillar4:
 		break;
 	case ObjectType::Rock:
-		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 200, -0.1f, -300.0f + rand() % 200);
 		BasicInfo.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f + 0.5f;
 		BasicInfo.Rot.y = ((float)(rand()) / (float)RAND_MAX)*PI * 2;
+		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 200, -0.5f*BasicInfo.Scale, -300.0f + rand() % 200);
 		mObstacles.push_back(BasicInfo);
 		break;
 	case ObjectType::Temple:
-		BasicInfo.Pos = XMFLOAT3(250.0f, 0.05f, -370.0f);
+		BasicInfo.Pos = XMFLOAT3(250.0f, -0.01f, -370.0f);
 		BasicInfo.Rot.y = 0.0f;
 		BasicInfo.Scale = 0.3f;
 		mObstacles.push_back(BasicInfo);
@@ -77,7 +79,7 @@ void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 
 	SO_InitDesc info;
 	info.ObjectType = oType;
-	info.Pos = XMFLOAT3(rand() % 20 + 200.0f, 0.0f, rand() % 20 - 280.0f);
+	info.Pos = XMFLOAT3(rand() % 20 + 200.0f, -0.1f, rand() % 20 - 280.0f);
 	info.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	info.Scale = 0.05f;
 	info.MoveSpeed = 9.0f;
@@ -93,14 +95,30 @@ void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 const std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetAllSkinnedObjects()
 {
 	std::unordered_map<UINT, SO_InitDesc> allObjects;
-	for (UINT i = 0; i < mCurrPlayerNum; ++i)
-		allObjects[i] = mPlayers[i];
+	SO_InitDesc players[MAX_USER];
+	for (UINT i = 0; i < mCurrPlayerNum; ++i) {
+		players[i] = mPlayers[i];
+
+		players[i].Pos.y = -0.1f;
+		if (mPlayerYpos[i] != 0.0f) {
+			players[i].Pos.y += mPlayerYpos[i];
+			mPlayerYpos[i] = 0.0f;
+		}
+	}
+
+	for (UINT i = 0; i < mCurrPlayerNum; ++i) 
+		allObjects[i] = players[i];
 
 	UINT count(mCurrPlayerNum);
 	for (auto m : mMonsters)
 		allObjects[count++] = m.second;
 
 	return allObjects;
+}
+
+const SO_InitDesc & ObjectMgr::GetPlayer(const UINT & id)
+{
+	return mPlayers[id];
 }
 
 void ObjectMgr::ReleaseAllMonsters()

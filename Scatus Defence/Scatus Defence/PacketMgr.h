@@ -29,7 +29,7 @@ public:
 	template <class T>
 	void SendPacket(T& packet);
 	char* GetPacket()				{ return mPacketBuf; }
-
+	int GetClientID() const { return mClientID; }
 private:
 	bool ReadPacket();
 	void ProcessPacket(char* packet);
@@ -38,6 +38,7 @@ private:
 
 private:
 	int mClientID;
+	bool mConnected[MAX_USER];
 
 	SOCKET	mSocket;
 	WSABUF	mRecvBuf;

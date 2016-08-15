@@ -51,16 +51,29 @@ private:
 	void BuildShadowTransform();
 	void CreateShadowMap();
 	void CreateSsaoMap();
+
 	void BuildScreenQuadGeometryBuffers(ID3D11Device* device);
 	void BuildDebugSphere(ID3D11Device* device);
+	void BuildTreeSpritesBuffer(ID3D11Device * device);
+	void BuildGrassSpritesBuffer(ID3D11Device * device);
+
+	void DrawTreeSprites();
+	void DrawGrassSprites();
 	void DrawScreenQuad();
 	void DrawBS();
 
 private:
+	float mLightRotationAngle;
+	static const UINT TreeCount = 500;
+	static const UINT GrassCount = 2000;
+
 	ID3D11DeviceContext* md3dImmediateContext;
 	ID3D11DepthStencilView* mDepthStencilView;
 	ID3D11RenderTargetView* mRenderTargetView;
 	D3D11_VIEWPORT mScreenViewport;
+
+	XMFLOAT3 mOriginalLightDir[3];
+	DirectionalLight mDirLights[3];
 
 	XMFLOAT4X4 mLightView;
 	XMFLOAT4X4 mLightProj;
@@ -69,9 +82,8 @@ private:
 	ID3D11Buffer* mScreenQuadVB;
 	ID3D11Buffer* mScreenQuadIB;
 
-	float mLightRotationAngle;
-	XMFLOAT3 mOriginalLightDir[3];
-	DirectionalLight mDirLights[3];
+	ID3D11Buffer* mTreeSpritesVB;
+	ID3D11Buffer* mGrassSpritesVB;
 
 	ID3D11Buffer* mSkySphereVB;
 	ID3D11Buffer* mSkySphereIB;
@@ -84,6 +96,11 @@ private:
 	Ssao* mSsao;
 	Sky* mSky;
 
+	Material mTreeMat;
+	Material mGrassMat;
+
+	ID3D11ShaderResourceView* mTreeTextureMapArraySRV;
+	ID3D11ShaderResourceView* mGrassTextureMapArraySRV;
 	BoundingSphere mSceneBounds;
 };
 

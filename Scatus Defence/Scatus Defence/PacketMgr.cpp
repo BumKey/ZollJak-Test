@@ -8,6 +8,9 @@ PacketMgr::PacketMgr() : mClientID(-1)
 	mRecvBuf.len = MAX_BUFF_SIZE;
 
 	mPacketBuf = new char[MAX_PACKET_SIZE];
+
+	for (UINT i = 0; i < MAX_USER; ++i)
+		mConnected[i] =  false;
 }
 
 PacketMgr::~PacketMgr()
@@ -101,13 +104,26 @@ void PacketMgr::ProcessPacket(char* packet)
 	HEADER *header = reinterpret_cast<HEADER*>(packet);
 	switch (header->Type)
 	{
-	case eSC::PutPlayer: {
-		auto *p = reinterpret_cast<SC_PutPlayer*>(packet);
-
-		if(mClientID == -1)
-			mClientID = p->ClientID;
+	case eSC::InitPlayer: {
+		auto *p = reinterpret_cast<SC_InitPlayer*>(packet);
 
 		SO_InitDesc desc;
+		if (mClientID == -1) {
+			mClientID = p->ClientID;
+
+			desc.Pos = p->Player[mClientID].Pos;
+			desc.Rot = p->Player[mClientID].Rot;
+			desc.Scale = p->Player[mClientID].Scale;
+			desc.AttackSpeed = p->Player[mClientID].AttackSpeed;
+			desc.MoveSpeed = p->Player[mClientID].MoveSpeed;
+			desc.Hp = p->Player[mClientID].Hp;
+			auto type = p->Player[mClientID].ObjectType;
+
+			mConnected[mClientID] = true;
+			Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(type), desc);
+			Object_Mgr->AddPlayer(Player::GetInstance(), mClientID);
+		}
+
 		for (UINT i = 0; i < p->CurrPlayerNum; ++i)
 		{
 			desc.Pos = p->Player[i].Pos;
@@ -118,12 +134,10 @@ void PacketMgr::ProcessPacket(char* packet)
 			desc.Hp = p->Player[i].Hp;
 			auto type = p->Player[i].ObjectType;
 
-			if (i == p->ClientID) {
-				Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(type), desc);
-				Object_Mgr->AddPlayer(Player::GetInstance());
+			if (mConnected[i] == false) {
+				Object_Mgr->AddPlayer(new Warrior(Resource_Mgr->GetSkinnedMesh(type), desc), i);
+				mConnected[i] = true;
 			}
-			else 
-				Object_Mgr->AddPlayer(new Warrior(Resource_Mgr->GetSkinnedMesh(type), desc));
 		}
 
 		for (UINT i = 0; i < p->NumOfObjects; ++i)
@@ -135,11 +149,23 @@ void PacketMgr::ProcessPacket(char* packet)
 
 			Object_Mgr->AddObstacle(type, desc);
 		}
-
+		
 		Scene_Mgr->ComputeSceneBoundingBox();
 
-		std::cout << "SC_PUT_PLAYER, ID : " << mClientID << std::endl;
+		std::cout << "SC_INIT_PLAYER, ID : " << mClientID << std::endl;
 		break;
+	}
+	case eSC::PutOtherPlayers: {
+		auto *p = reinterpret_cast<SC_PutOtherPlayers*>(packet);
+		for (UINT i = 0; i < p->CurrPlayerNum; ++i)
+		{
+			if (mConnected[i] == false) {
+				Object_Mgr->AddPlayer(new Warrior(Resource_Mgr->GetSkinnedMesh(
+					p->Player[i].ObjectType), p->Player[i]), i);
+				mConnected[i] = true;
+			}
+		}
+		std::cout << "SC_PUT_OTHER_PLAYERS, CurrPlayerNum : " << p->CurrPlayerNum << std::endl;
 	}
 	case eSC::RemovePlayer:
 		std::cout << "SC_REMOVE_PLAYER : " << header->Type << std::endl;

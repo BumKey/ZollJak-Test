@@ -6,7 +6,7 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
-#define MAX_USER			2
+#define MAX_USER			3
 #define MAX_MONSTER			100
 #define MAX_OBJECT			100
 #define MAX_NPC				100
@@ -21,7 +21,8 @@
 
 // server -> client
 enum eSC {
-	PutPlayer,
+	InitPlayer,
+	PutOtherPlayers,
 	RemovePlayer,
 	AddMonsters,
 	PerFrame
@@ -124,6 +125,7 @@ struct SO_InitDesc : public BO_InitDesc
 struct ObjectInfo
 {
 	XMFLOAT3 Pos;
+	XMFLOAT3 Rot;
 };
 
 struct HEADER
@@ -155,10 +157,10 @@ struct SC_AddMonster : public HEADER
 	SO_InitDesc InitInfos[50];
 };
 
-struct SC_PutPlayer : public HEADER
+struct SC_InitPlayer : public HEADER
 {
-	SC_PutPlayer() {
-		Size = sizeof(*this); Type = eSC::PutPlayer;
+	SC_InitPlayer() {
+		Size = sizeof(*this); Type = eSC::InitPlayer;
 	}
 
 	BYTE ClientID;
@@ -166,6 +168,16 @@ struct SC_PutPlayer : public HEADER
 	SO_InitDesc Player[MAX_USER];
 	UINT NumOfObjects;
 	BO_InitDesc MapInfo[50];
+};
+
+struct SC_PutOtherPlayers : public HEADER
+{
+	SC_PutOtherPlayers() {
+		Size = sizeof(*this); Type = eSC::PutOtherPlayers;
+	}
+
+	BYTE CurrPlayerNum;
+	SO_InitDesc Player[MAX_USER];
 };
 
 struct SC_Remove_Player : public HEADER
@@ -185,6 +197,9 @@ struct CS_Move : public HEADER
 
 	BYTE ClientID;
 	XMFLOAT3 Pos;
+	XMFLOAT3 Rot;
+	FLOAT MoveSpeed;
+	FLOAT DeltaTime;
 };
 
 struct CS_Attack : public HEADER

@@ -27,13 +27,10 @@ namespace Vertex
 		XMFLOAT4 TangentU;
 	};
 
-	struct PosNormalTexSkinned
+	struct TreePointSprite
 	{
 		XMFLOAT3 Pos;
-		XMFLOAT3 Normal;
-		XMFLOAT2 Tex;
-		XMFLOAT3 Weights;
-		BYTE BoneIndices[4];
+		XMFLOAT2 Size;
 	};
 
 	struct PosNormalTexTanSkinned
@@ -61,9 +58,8 @@ public:
 	static const D3D11_INPUT_ELEMENT_DESC Pos[1];
 	static const D3D11_INPUT_ELEMENT_DESC Basic32[3];
 	static const D3D11_INPUT_ELEMENT_DESC PosNormalTexTan[4];
-	static const D3D11_INPUT_ELEMENT_DESC PosNormalTexSkinned[5];
 	static const D3D11_INPUT_ELEMENT_DESC PosNormalTexTanSkinned[6];
-
+	static const D3D11_INPUT_ELEMENT_DESC TreePointSprite[2];
 	static const D3D11_INPUT_ELEMENT_DESC Terrain[3];
 };
 
@@ -76,7 +72,7 @@ public:
 	static ID3D11InputLayout* Pos;
 	static ID3D11InputLayout* Basic32;
 	static ID3D11InputLayout* PosNormalTexTan;
-	static ID3D11InputLayout* PosNormalTexSkinned;
+	static ID3D11InputLayout* TreePointSprite;
 	static ID3D11InputLayout* PosNormalTexTanSkinned;
 
 	static ID3D11InputLayout* Terrain;

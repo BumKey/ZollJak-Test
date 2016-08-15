@@ -1,6 +1,7 @@
 #include "ServerRogicMgr.h"
 
-ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(0), mCurrPlayerNum(0)
+ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(0), mCurrPlayerNum(0),
+mNewID(-1)
 {
 	mPerWaveMonsterNum[1][ObjectType::Goblin] = 15;
 	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 2;
@@ -12,6 +13,8 @@ ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(0), mCurrPlayerNum(0)
 	mPerWaveMonsterNum[3][ObjectType::Cyclop] = 10;
 
 	mGameTimer.Reset();
+
+	mPutPlayerEvent = false;
 }
 
 
@@ -37,7 +40,7 @@ void ServerRogicMgr::WaveStart()
 /// 플레이어의 입력(이벤트) 처리는 비동기적으로 구현. (ProcessKeyInput 함수 참조)
 /// 이벤트 발생 시 해당 프레임에 갱신된 데이터를 같이 넣어 패킷 발송
 /// </summary>
-void ServerRogicMgr::Update()
+void ServerRogicMgr::Update(const UINT& clientID)
 {
 	// 전체 게임시간은 Pause하지 않는 이상 계속 계산.
 	mGameTimer.Tick();
@@ -95,71 +98,86 @@ void ServerRogicMgr::Update()
 		std::cout << "Waving..." << std::endl;
 	}
 
-	if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
-		SendPacketToCreateMonsters();
+	if (mPutPlayerEvent && clientID != mNewID)
+		SendPacketPutOtherPlayers(clientID);
+	else if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
+		SendPacketToCreateMonsters(clientID);
 	else
-		SendPacketPerFrame();
+		SendPacketPerFrame(clientID);
 }
 
-void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& id)
+void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& newID)
 {
 	++mCurrPlayerNum;
+	mNewID = newID;
+	mPutPlayerEvent = true;
 
-	mObjectMgr.AddPlayer(oType, id);
-	auto player = mObjectMgr.GetPlayer();
+	mObjectMgr.AddPlayer(oType, newID);
+	auto player = mObjectMgr.GetPlayer(newID);
 
 	// 클라이언트 정보 초기화
-	g_clients[id].socket = socket;
-	g_clients[id].avatar = player[id];
-	g_clients[id].packet_size = 0;
-	g_clients[id].previous_size = 0;
-	memset(&g_clients[id].recv_overlap.original_Overlap, 0,
-		sizeof(g_clients[id].recv_overlap.original_Overlap));
+	g_clients[newID].socket = socket;
+	g_clients[newID].avatar = player;
+	g_clients[newID].packet_size = 0;
+	g_clients[newID].previous_size = 0;
+	memset(&g_clients[newID].recv_overlap.original_Overlap, 0,
+		sizeof(g_clients[newID].recv_overlap.original_Overlap));
 
-	SC_PutPlayer packet;
-	packet.ClientID = id;
+	SC_InitPlayer packet;
+	packet.ClientID = newID;
 	packet.CurrPlayerNum = mCurrPlayerNum;
 	for (int i = 0; i < mCurrPlayerNum; ++i)
-		packet.Player[i] = player[i];
+		packet.Player[i] = mObjectMgr.GetPlayer(i);
 
 	packet.NumOfObjects = mObjectMgr.GetAllBasicObjects().size();
 	for (UINT i = 0; i < packet.NumOfObjects; ++i)
 		packet.MapInfo[i] = mObjectMgr.GetAllBasicObjects()[i];
 
-	// 이미 접속한 플레이어들에게도 새로운 플레이어가 들어왔다는 패킷을 전송
-	for (int i = 0; i < mCurrPlayerNum; ++i) 
-			MyServer::Send_Packet(i, reinterpret_cast<char *>(&packet));
+	// 플레이어 본인에게, 이미 접속한 유저들에 대한 정보를 전송한다.
+	MyServer::Send_Packet(newID, reinterpret_cast<char *>(&packet));
 
-	//// 이미 접속한 플레이어들에 대한 정보 전송
-	//for (int i = 0; i < MAX_USER; ++i)
-	//{
-	//	// 접속한 유저가 처음 접속한 유저라면, for문을 돌 필요가 없으므로, break.
-	//	if (g_clients[i].is_connected == true && i != new_id)
-	//	{
-	//		sc_packet_put_player ex_enter_packet;
-	//		ex_enter_packet.size = sizeof(ex_enter_packet);
-	//		ex_enter_packet.type = SC_PUT_PLAYER;
-	//		ex_enter_packet.client_id = i;
-	//		ex_enter_packet.Player.ObjectType = g_clients[i].avatar.ObjectType;
-	//		ex_enter_packet.Player.Pos.x = g_clients[i].avatar.Pos.x;
-	//		ex_enter_packet.Player.Rot = g_clients[i].avatar.Rot;
-	//		ex_enter_packet.Player.Scale = g_clients[i].avatar.Scale;
-
-	//		// 플레이어 본인에게, 이미 접속한 유저들에 대한 정보를 전송한다.
-	//		MyServer::Send_Packet(new_id, reinterpret_cast<char*>(&ex_enter_packet));
-	//	}
-	//}
 }
 
 /// <summary> 현재는 충돌체크 미구현
 /// 이것이 데드레커닝인진 모르지만 플레이어의 위치를
-/// 0.2초 정도 추정해서 설정한다.
+/// 5프레임 정도 추정해서 설정한다.
 /// </summary>
 void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 {
-	XMFLOAT3 dir = Float3Normalize(inPacket.Pos - mObjectMgr.GetPlayer()[inPacket.ClientID].Pos);
-	XMFLOAT3 pos = inPacket.Pos + dir;
-	mObjectMgr.SetPlayerPos(inPacket.ClientID, pos);
+	auto player = mObjectMgr.GetPlayer(inPacket.ClientID);
+
+	float destY = inPacket.Pos.y;
+	float currY = player.Pos.y;
+	float yDiff = destY - currY;
+	float slowFactor = 10.0f * (yDiff);
+
+	XMFLOAT3 dir, pos;
+
+	if (currY < 0.0f)
+	{
+		dir = Float3Normalize(inPacket.Pos - player.Pos);
+		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f;
+		pos.y = destY;
+	}
+	else if (yDiff >= 0.3f && yDiff < 0.6f)
+	{
+		dir = Float3Normalize(inPacket.Pos - player.Pos);
+		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f/slowFactor;
+		pos.y = destY;
+	}
+	else if (yDiff >= 0.6f)
+	{
+		pos = player.Pos;
+	}
+	else 
+	{
+		dir = Float3Normalize(inPacket.Pos - player.Pos);
+		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f;
+		pos.y = destY;
+	}
+
+	mObjectMgr.SetPlayerRot(inPacket.ClientID, inPacket.Rot);
+	mObjectMgr.SetPlayerPosXZ(inPacket.ClientID, pos);
 }
 
 /// <summary> 현재는 충돌체크 미구현
@@ -184,7 +202,7 @@ FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)
 	return sqrtf(x*x + y*y);
 }
 
-void ServerRogicMgr::SendPacketPerFrame()
+void ServerRogicMgr::SendPacketPerFrame(const UINT& clientID)
 {
 	auto objects = mObjectMgr.GetAllSkinnedObjects();
 
@@ -197,14 +215,44 @@ void ServerRogicMgr::SendPacketPerFrame()
 	for (auto o : objects) {
 		packet.ID[count] = o.first;
 		packet.Objects[count].Pos = o.second.Pos;
+		packet.Objects[count].Rot = o.second.Rot;
 		++count;
 	}
 
-	for (UINT i = 0; i < mCurrPlayerNum; ++i)
-		MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
+	MyServer::Send_Packet(clientID, reinterpret_cast<char*>(&packet));
 }
 
-void ServerRogicMgr::SendPacketToCreateMonsters()
+void ServerRogicMgr::SendPacketPutOtherPlayers(const UINT & clientID)
+{
+	static bool sended[MAX_USER] = { false, };
+	sended[mNewID] = true;
+
+	// 이미 접속한 플레이어들에 대한 정보 전송
+	SC_PutOtherPlayers packet;
+	packet.CurrPlayerNum = mCurrPlayerNum;
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		// 접속한 유저가 처음 접속한 유저라면, for문을 돌 필요가 없으므로, break.
+		if (g_clients[i].is_connected == true && i != clientID)
+			packet.Player[i] = mObjectMgr.GetPlayer(i);
+	}
+	MyServer::Send_Packet(clientID, reinterpret_cast<char*>(&packet));
+	sended[clientID] = true;
+
+	bool b = true;;
+	for (int i = 0; i < mCurrPlayerNum; ++i) {
+		if (sended[i] == false)
+			b = false;
+	}
+
+	if (b) {
+		mPutPlayerEvent = false;
+		for (int i = 0; i < MAX_USER; ++i)
+			sended[i] = false;
+	}
+}
+
+void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& clientID)
 {
 	auto monsters = mObjectMgr.GetMonsters();
 
@@ -218,6 +266,5 @@ void ServerRogicMgr::SendPacketToCreateMonsters()
 		++count;
 	}
 
-	for (UINT i = 0; i < mCurrPlayerNum; ++i)
-		MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
+	MyServer::Send_Packet(clientID, reinterpret_cast<char*>(&packet));
 }

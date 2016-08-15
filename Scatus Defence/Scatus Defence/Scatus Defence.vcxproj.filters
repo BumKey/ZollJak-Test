@@ -386,5 +386,8 @@
     <FxCompile Include="FX\WireFrame.fx">
       <Filter>Effect\FX</Filter>
     </FxCompile>
+    <FxCompile Include="FX\TreeSprite.fx">
+      <Filter>Effect\FX</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

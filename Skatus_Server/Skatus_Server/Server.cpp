@@ -54,7 +54,7 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 	case eCS::Success: {
 		auto info = reinterpret_cast<CS_Success*>(packet);
 		std::cout << "CS_SUCCESS, ID : " << (int)info->ClientID << std::endl;
-		rogicMgr.Update();
+		rogicMgr.Update(info->ClientID);
 		break;
 	}
 	case eCS::KeyInput: {

@@ -9,6 +9,12 @@ ObjectMgr::~ObjectMgr()
 {
 }
 
+void ObjectMgr::AddPlayer(SkinnedObject * player, const UINT& id)
+{
+	mSkinnedObjects[id] = player;
+	++mCurrPlayerNum;
+}
+
 void ObjectMgr::AddMonster(const ObjectType::Types & type, const SO_InitDesc & desc, const UINT& id)
 {
 	switch (type)
@@ -49,7 +55,12 @@ void ObjectMgr::AddObstacle(const ObjectType::Types & type, const BO_InitDesc & 
 
 void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
 {
-	mSkinnedObjects[id]->SetPos(info.Pos);
+	if (id < mCurrPlayerNum) {
+		mSkinnedObjects[id]->SetPos(info.Pos);
+
+		if(id != Packet_Mgr->GetClientID())
+			mSkinnedObjects[id]->SetRot(info.Rot);
+	}
 }
 
 void ObjectMgr::Update(float dt)
@@ -60,10 +71,10 @@ void ObjectMgr::Update(float dt)
 	for (auto i : mBasicObjects)
 		mAllObjects.push_back(i);
 
-	for (auto i : mSkinnedObjects)
+	for (UINT i = 0; i < mCurrPlayerNum; ++i)
 	{
-		i.second->Animate(dt);
-		mAllObjects.push_back(i.second);
+		mSkinnedObjects[i]->Animate(dt);
+		mAllObjects.push_back(mSkinnedObjects[i]);
 	}
 
 	for (auto i : mAllObjects)

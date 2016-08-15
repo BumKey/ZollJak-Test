@@ -114,9 +114,8 @@ void MyThreads::Worker_Thread()
 
 			// 현재 접속 중인 모든 플레이어들에게 패킷을 전송
 			for (auto i = 0; i < MAX_USER; ++i) {
-				if (FALSE == g_clients[i].is_connected) continue; // 접속x
-				if (id == i) continue; // 본인은 제외하고
-				MyServer::Send_Packet(i, reinterpret_cast<char*>(&disconnect));
+				if (!g_clients[i].is_connected && id != i)
+					MyServer::Send_Packet(i, reinterpret_cast<char*>(&disconnect));
 			}
 			g_clients[id].is_connected = FALSE;
 		}

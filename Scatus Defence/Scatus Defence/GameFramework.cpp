@@ -35,12 +35,6 @@ bool GameFrameWork::Init()
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
 
-	Scene_Mgr->Init(md3dDevice, md3dImmediateContext,
-		mDepthStencilView, mRenderTargetView, mClientWidth, mClientHeight);
-
-	Texture_Mgr->Init(md3dDevice);
-	Resource_Mgr->Init(md3dDevice);
-
 	Terrain::InitInfo tii;
 	tii.HeightMapFilename = L"Textures/terrain3.raw";
 	tii.LayerMapFilename0 = L"Textures/grass2.dds";
@@ -54,6 +48,15 @@ bool GameFrameWork::Init()
 	tii.HeightmapHeight = 513;
 	tii.CellSpacing = 2.0f;
 	Terrain::GetInstance()->Init(md3dDevice, md3dImmediateContext, tii);
+
+	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+
+	Scene_Mgr->Init(md3dDevice, md3dImmediateContext,
+		mDepthStencilView, mRenderTargetView,
+		mClientWidth, mClientHeight);
+
+	Texture_Mgr->Init(md3dDevice);
+	Resource_Mgr->Init(md3dDevice);
 
 	Sound_Mgr->Create_Sound(D3DApp::MainWnd());
 

@@ -182,6 +182,28 @@ BasicEffect::~BasicEffect()
 }
 #pragma endregion
 
+#pragma region TreeSpriteEffect
+TreeSpriteEffect::TreeSpriteEffect(ID3D11Device* device, const std::wstring& filename)
+	: Effect(device, filename)
+{
+	Light3Tech = mFX->GetTechniqueByName("Light3");
+	Light3TexAlphaClipTech = mFX->GetTechniqueByName("Light3TexAlphaClip");
+	Light3TexAlphaClipFogTech = mFX->GetTechniqueByName("Light3TexAlphaClipFog");
+
+	ViewProj = mFX->GetVariableByName("gViewProj")->AsMatrix();
+	EyePosW = mFX->GetVariableByName("gEyePosW")->AsVector();
+	FogColor = mFX->GetVariableByName("gFogColor")->AsVector();
+	FogStart = mFX->GetVariableByName("gFogStart")->AsScalar();
+	FogRange = mFX->GetVariableByName("gFogRange")->AsScalar();
+	DirLights = mFX->GetVariableByName("gDirLights");
+	Mat = mFX->GetVariableByName("gMaterial");
+	TreeTextureMapArray = mFX->GetVariableByName("gTreeMapArray")->AsShaderResource();
+}
+
+TreeSpriteEffect::~TreeSpriteEffect()
+{
+}
+#pragma endregion
 #pragma region NormalMapEffect
 NormalMapEffect::NormalMapEffect(ID3D11Device* device, const std::wstring& filename)
 	: Effect(device, filename)
@@ -508,6 +530,7 @@ SsaoEffect*            Effects::SsaoFX = 0;
 SsaoBlurEffect*        Effects::SsaoBlurFX = 0;
 SkyEffect*             Effects::SkyFX = 0;
 DebugTexEffect*        Effects::DebugTexFX = 0;
+TreeSpriteEffect*		Effects::TreeSpriteFX = 0;
 TerrainEffect* Effects::TerrainFX = 0;
 
 void Effects::InitAll(ID3D11Device* device)
@@ -522,6 +545,7 @@ void Effects::InitAll(ID3D11Device* device)
 	SkyFX = new SkyEffect(device, L"FX/Sky.fxo");
 	DebugTexFX = new DebugTexEffect(device, L"FX/DebugTexture.fxo");
 	TerrainFX = new TerrainEffect(device, L"FX/Terrain.fxo");
+	TreeSpriteFX = new TreeSpriteEffect(device, L"FX/TreeSprite.fxo");
 }
 
 void Effects::DestroyAll()
@@ -535,6 +559,7 @@ void Effects::DestroyAll()
 	SafeDelete(SkyFX);
 	SafeDelete(DebugTexFX);
 	SafeDelete(TerrainFX);
+	SafeDelete(TreeSpriteFX);
 }
 
 #pragma endregion

@@ -24,7 +24,7 @@ private:
 
 	friend class Singletone<ObjectMgr>;
 public:
-	void AddPlayer(SkinnedObject* player) { mSkinnedObjects[mCurrPlayerNum++] = player; }
+	void AddPlayer(SkinnedObject* player, const UINT& id);
 	void AddMonster(const ObjectType::Types& type, const SO_InitDesc& desc, const UINT& id);
 	void AddObstacle(const ObjectType::Types& type, const BO_InitDesc& desc);
 

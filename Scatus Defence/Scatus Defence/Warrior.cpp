@@ -4,7 +4,7 @@
 
 Warrior::Warrior(SkinnedMesh* mesh, const SO_InitDesc& info) : SkinnedObject(mesh, info)
 {
-	mProperty.name = "Player";
+	mProperty.name = "Player_Warrior";
 
 	mObjectType = ObjectType::Player;
 

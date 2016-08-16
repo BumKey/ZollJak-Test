@@ -65,7 +65,7 @@ void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
 	if (mConnected[id] && id != Packet_Mgr->GetClientID()) 
 	{
 		mPlayers[id]->SetPos(info.Pos);
-
+		mPlayers[id]->SetState(info.ActionState);
 		if (id != Packet_Mgr->GetClientID())
 			mPlayers[id]->SetRot(info.Rot);
 	}

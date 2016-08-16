@@ -72,6 +72,7 @@ void Player::Move(float walk, float strafe)
 		packet.Pos = mPosition;
 		packet.Pos.y = Terrain::GetInstance()->GetHeight(mPosition);
 		packet.Rot = mRotation;
+		packet.ActionState = mActionState;
 		packet.MoveSpeed = mProperty.movespeed;
 		packet.DeltaTime = dt;
 		Packet_Mgr->SetMovePacket(packet);

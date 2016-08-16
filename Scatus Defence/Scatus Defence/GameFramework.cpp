@@ -40,6 +40,9 @@ bool GameFrameWork::Init()
 
 	Texture_Mgr->Init(md3dDevice);
 	Resource_Mgr->Init(md3dDevice);
+	mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
+	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());
+
 
 	Terrain::InitInfo tii;
 	tii.HeightMapFilename = L"Textures/terrain3.raw";
@@ -78,26 +81,29 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트에서 키보드, 마우스 등 이벤트가 발생한다.
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
-	
+	G_State_Mgr->Update();
 	Packet_Mgr->Update();
 	Object_Mgr->Update(dt);
 
 	Camera::GetInstance()->Update();
 	Scene_Mgr->Update(dt);
+	
 }
 
 void GameFrameWork::DrawScene()
 {
 	Scene_Mgr->DrawScene();
-
+	UI_Mgr->Print_All_UI();
 	HR(mSwapChain->Present(0, 0));
 }
 
 void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
+
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 	if (btnState & MK_LBUTTON) {
+		
 		Player::GetInstance()->SetAttackState();
 
 		CS_Attack packet;

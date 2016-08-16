@@ -30,6 +30,9 @@ private :
 		  double remain_time;
 		  double wavetimer;
 		  double attacktimer;
+		  int m_time;
+		  int m_wave_level;
+
 
 public:
 	
@@ -42,6 +45,10 @@ public:
 	Gamestate_type gamestate;
 	double Get_remain_Wait_time() { return nextwave_time - wavetimer; }
 	double Get_remain_Wave_time() { return remain_time - wavetimer; }
+	int Get_Wavelevel() { return m_wave_level; }
+	void Set_Wavelevel(int num) { m_wave_level = num; }
+	int Get_time() { return m_time ; }
+	void Set_time(int num) { m_time = num; }
 	void SetBeforeTime();
 	void SetCurrentTime();
 	void SetWaveTimer();

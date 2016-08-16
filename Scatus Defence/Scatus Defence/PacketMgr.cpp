@@ -110,6 +110,7 @@ void PacketMgr::ProcessPacket(char* packet)
 		SO_InitDesc desc;
 		for (UINT i = 0; i < p->CurrPlayerNum; ++i)
 		{
+			
 			desc.Pos = p->Player[i].Pos;
 			desc.Rot = p->Player[i].Rot;
 			desc.Scale = p->Player[i].Scale;
@@ -148,17 +149,21 @@ void PacketMgr::ProcessPacket(char* packet)
 		auto *p = reinterpret_cast<SC_PerFrame*>(packet);
 		for (UINT i = 0; i < p->NumOfObjects; ++i)
 			Object_Mgr->Update(p->ID[i], p->Objects[i]);
-		
+
+	
 		char* string;
 		switch (p->GameState)
 		{
 		case eGameState::WaveStart:
 			string = "WaveStart";
+		
 			break;
-		case eGameState::WaveWaiting:
+		case eGameState::WaveWaiting:	
+			Time_Mgr->gamestate = game_waiting_wave;
 			string = "WaveWaiting";
 			break;
 		case eGameState::Waving:
+			Time_Mgr->gamestate = game_waving;
 			string = "Waving";
 			break;
 		case eGameState::GameWaiting:
@@ -167,6 +172,8 @@ void PacketMgr::ProcessPacket(char* packet)
 		}
 		std::cout << "[SC_PerFrame] CurrState : " << string <<
 			", ObjectNum : " << p->NumOfObjects << std::endl;
+		Time_Mgr->Set_Wavelevel(p->RoundLevel);
+		Time_Mgr->Set_time(p->Time);
 		break;
 	}
 	case eSC::AddMonsters: {
@@ -190,6 +197,7 @@ void PacketMgr::ProcessPacket(char* packet)
 	default:
 		std::cout << "Unknown packet type : " << header->Type << std::endl;
 	}
+
 }
 
 void PacketMgr::err_display(wchar_t *msg)

@@ -5,6 +5,7 @@
 GameStateMgr::GameStateMgr()
 {
 	mCurrState = eGameState::GameWaiting;
+	Round_level = 1;
 }
 
 
@@ -22,4 +23,5 @@ void GameStateMgr::FlowAdvance()
 		mCurrState = eGameState::Waving;
 	else if (mCurrState == eGameState::Waving && mCurrState != eGameState::GameOver)
 		mCurrState = eGameState::WaveWaiting;
+	
 }

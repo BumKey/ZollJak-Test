@@ -59,7 +59,7 @@ Sound_Manager::~Sound_Manager()
 }
 void Sound_Manager::Create_Sound(HWND hwnd)
 {
-
+	/*
 	Sound_BG temp_bg;
 	Sound_Effects temp_effect;
 	Sound_3DEffects temp_3D_effect;
@@ -143,6 +143,7 @@ void Sound_Manager::Create_Sound(HWND hwnd)
 	
 
 	//pDSSndBuffBack->SetCurrentPosition(0);
+	*/
 }
 
 bool Sound_Manager::AllocDSound(IDirectSound3DBuffer* &dsbuff, WinWave* ww, DSBUFFERDESC &dsdesc)//3DÃÊ±âÈ­
@@ -277,6 +278,7 @@ bool Sound_Manager::AllocDSound(IDirectSound3DBuffer* &dsbuff, WinWave* ww, DSBU
 
 	void Sound_Manager::PlayEffect(Sound_effect_type effect_id)
 	{
+		/*
 		for (auto i : Sounds_Effects_list)
 		{
 			if (i.Sounds_effect_type == effect_id)
@@ -284,6 +286,7 @@ bool Sound_Manager::AllocDSound(IDirectSound3DBuffer* &dsbuff, WinWave* ww, DSBU
 				i.Sound_buffer->Play(0, 0, 0);
 			}
 		}
+		*/
 	}
 	void Sound_Manager::PlayBG(Sound_BG_type)
 	{

@@ -152,9 +152,11 @@
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="ServerRogicMgr.h" />
     <ClInclude Include="server.h" />
+    <ClInclude Include="Server_Collision.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Threads.h" />
     <ClInclude Include="Utility.h" />
+    <ClInclude Include="xnacollision.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameStateMgr.cpp" />
@@ -163,8 +165,10 @@
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="ServerRogicMgr.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Server_Collision.cpp" />
     <ClCompile Include="Threads.cpp" />
     <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="xnacollision.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

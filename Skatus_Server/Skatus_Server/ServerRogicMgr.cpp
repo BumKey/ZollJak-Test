@@ -1,6 +1,7 @@
 #include "ServerRogicMgr.h"
 
-ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(0), mCurrPlayerNum(0)
+
+ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(2), mCurrPlayerNum(0)
 {
 	mPerWaveMonsterNum[1][ObjectType::Goblin] = 15;
 	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 2;
@@ -12,6 +13,8 @@ ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(0), mCurrPlayerNum(0)
 	mPerWaveMonsterNum[3][ObjectType::Cyclop] = 10;
 
 	mGameTimer.Reset();
+	mRogicTimer.Reset();
+
 }
 
 
@@ -28,6 +31,7 @@ void ServerRogicMgr::WaveStart()
 	mGameStateMgr.FlowAdvance();
 	mRogicTimer.Reset();
 
+
 	std::cout << "Entering WaveWaiting state..." << std::endl;
 }
 
@@ -39,11 +43,12 @@ void ServerRogicMgr::WaveStart()
 /// </summary>
 void ServerRogicMgr::Update()
 {
+	
 	// 전체 게임시간은 Pause하지 않는 이상 계속 계산.
 	mGameTimer.Tick();
 
 	// 조건 인원이 접속 했을 때 Wave시작.
-	if (mCurrPlayerNum >= MAX_USER && mGameStateMgr.GetCurrState() == eGameState::GameWaiting)
+	if (mCurrPlayerNum <= MAX_USER && mGameStateMgr.GetCurrState() == eGameState::GameWaiting)
 		WaveStart();
 
 	if (mGameStateMgr.GetCurrState() == eGameState::WaveWaiting)
@@ -53,37 +58,21 @@ void ServerRogicMgr::Update()
 		// 2. 5초의 시간동안 대기, 시간 정보 패킷 전송
 		// 3. 게임상태 진행
 		// 4. 로직 타이머 리셋
-
-		if (mRogicTimer.TotalTime() == 0.0f)
+			if (mRogicTimer.TotalTime() == 0.0f)
 			mObjectMgr.ReleaseAllMonsters();
 
-		mRogicTimer.Tick();
 		
-		if (mRogicTimer.TotalTime() > 5.0f)
+		if (mRogicTimer.TotalTime() > 350.0f)
 		{
 			mGameStateMgr.FlowAdvance();
-			mRogicTimer.Reset();
+			
+		
 		}
 
 		std::cout << "WaveWaiting..." << std::endl;
 	}
 	else if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
 	{
-		// =========== WaveStart 상태일 때 =============
-		// 1. 옵젝 생성
-		// 2. 옵젝 정보 패킷 전송
-		// 3. 게임상태 진행
-		// 4. 로직 타이머 리셋
-
-		for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel]) {
-			for (UINT i = 0; i < oType.second; ++i)
-				mObjectMgr.AddObject(oType.first);
-		}
-
-		mGameStateMgr.FlowAdvance();
-		mRogicTimer.Reset();
-
-		std::cout << "WaveStart..." << std::endl;
 	}
 	else if (mGameStateMgr.GetCurrState() == eGameState::Waving)
 	{
@@ -91,12 +80,40 @@ void ServerRogicMgr::Update()
 		// 1. 죽은 몬스터들 처리
 		// 2. 게임 상태들(남은 몬스터, 남은시간들 등..) 처리
 		// 3. 로직 타이머 리셋
+		if (mRogicTimer.TotalTime() > 10.0f)
+		{
+			mGameStateMgr.FlowAdvance();
+			mRogicTimer.Reset();
 
+		}
 		std::cout << "Waving..." << std::endl;
 	}
+	
+	mRogicTimer.Tick();
 
 	if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
-		SendPacketToCreateMonsters();
+	{
+
+		// =========== WaveStart 상태일 때 =============
+		// 1. 옵젝 생성
+		// 2. 옵젝 정보 패킷 전송
+		// 3. 게임상태 진행
+		// 4. 로직 타이머 리셋
+		mCurrWaveLevel++;
+	
+		
+		for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel]) {
+	//	for (UINT i = 0; i < oType.second; ++i)
+			//	mObjectMgr.AddMonster(oType.first);
+		}
+		//SendPacketToCreateMonsters();
+		mGameStateMgr.FlowAdvance();
+
+		mRogicTimer.Reset();
+
+
+		std::cout << "WaveStart..." << std::endl;
+	}
 	else
 		SendPacketPerFrame();
 }
@@ -159,7 +176,14 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 {
 	XMFLOAT3 dir = Float3Normalize(inPacket.Pos - mObjectMgr.GetPlayer()[inPacket.ClientID].Pos);
 	XMFLOAT3 pos = inPacket.Pos + dir;
+	
+	mCollisionMgr.GetObjmgr().SetPlayerPos(inPacket.ClientID, pos);
+	mCollisionMgr.GetObjmgr().GetPlayer()[inPacket.ClientID].radius.Center = pos;
 	mObjectMgr.SetPlayerPos(inPacket.ClientID, pos);
+	mObjectMgr.GetPlayer()[inPacket.ClientID].radius.Center = pos;
+	mCollisionMgr.SetObjmgr(mObjectMgr);
+	mCollisionMgr.Col_Obstacle(inPacket.ClientID);
+
 }
 
 /// <summary> 현재는 충돌체크 미구현
@@ -191,6 +215,7 @@ void ServerRogicMgr::SendPacketPerFrame()
 	SC_PerFrame packet;
 	packet.GameState = mGameStateMgr.GetCurrState();
 	packet.Time = mRogicTimer.TotalTime();
+	packet.RoundLevel = GetWaveLevel();
 	packet.NumOfObjects = objects.size();
 
 	UINT count(0);
@@ -206,6 +231,7 @@ void ServerRogicMgr::SendPacketPerFrame()
 
 void ServerRogicMgr::SendPacketToCreateMonsters()
 {
+
 	auto monsters = mObjectMgr.GetMonsters();
 
 	SC_AddMonster packet;

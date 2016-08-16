@@ -13,6 +13,7 @@
 
 #include "d3dUtil.h"
 #include "GameTimer.h"
+#include "UI_Manager.h"
 #include <string>
 class D3DApp
 {

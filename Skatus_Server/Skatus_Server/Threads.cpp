@@ -94,7 +94,7 @@ void MyThreads::Worker_Thread()
 		DWORD id;				// Completion id : 현재 넘겨받는 데이터는 플레이어의 ID값
 		Overlap_ex *my_overlap; // Ex_Overlap 구조체
 
-		BOOL result = GetQueuedCompletionStatus(g_hIocp, &iosize, &id,
+		BOOL result = GetQueuedCompletionStatus(g_hIocp, &iosize, (PULONG_PTR)&id,
 			reinterpret_cast<LPOVERLAPPED *>(&my_overlap), INFINITE);
 
 		if (FALSE == result)

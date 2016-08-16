@@ -2,7 +2,7 @@
 #include <d3dx11.h>
 #include <xnamath.h>
 #include <vector>
-
+#include "xnacollision.h"
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
@@ -109,6 +109,7 @@ struct BO_InitDesc
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
 	FLOAT Scale;
+	XNA::AxisAlignedBox AAB;
 };
 
 struct SO_InitDesc : public BO_InitDesc
@@ -119,6 +120,8 @@ struct SO_InitDesc : public BO_InitDesc
 	FLOAT AttackPoint;
 	FLOAT AttackSpeed;
 	FLOAT MoveSpeed;
+	XNA::Sphere radius;
+
 };
 
 struct ObjectInfo
@@ -139,6 +142,7 @@ struct SC_PerFrame : public HEADER
 		Size = sizeof(*this); Type = eSC::PerFrame;
 	}
 	eGameState GameState;
+	UINT RoundLevel;
 	UINT Time;
 	UINT NumOfObjects;
 	UINT ID[50];

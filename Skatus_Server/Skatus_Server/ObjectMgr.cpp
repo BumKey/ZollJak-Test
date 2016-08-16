@@ -6,16 +6,50 @@ mCurrPlayerNum(0)
 {
 	mMaxMonsters = mStage * 200;
 	mMaxStructures = mStage * 5;
-
+	mMonsterNum = 0;
 	CreateMap();
 }
 
 ObjectMgr::~ObjectMgr()
 {
 }
+void ObjectMgr::AddMonster(ObjectType::Types oType)
+{
+	SO_InitDesc info;
+	if (oType == ObjectType::Cyclop)
+	{
+		
+		info.ObjectType = oType;
+		info.Pos = XMFLOAT3(300.0f - rand() % 200, 0.0f, -180.0f + rand() % 200);
+		info.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		info.Scale = 0.1f + ((float)(rand()) / (float)RAND_MAX) / 5.0f;
+		info.MoveSpeed = 9.0f;
+		info.AttackPoint = 20.0f;
+		info.AttackSpeed = 2.0f;
+		info.Hp = 100;
+	}
+	else if (oType == ObjectType::Cyclop)
+	{
+		
+		info.ObjectType = oType;
+		info.Pos = XMFLOAT3(300.0f - rand() % 200, 0.0f, -180.0f + rand() % 200);
+		info.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		info.Scale = 0.1f + ((float)(rand()) / (float)RAND_MAX) / 5.0f;
+		info.MoveSpeed = 9.0f;
+		info.AttackPoint = 5.0f;
+		info.AttackSpeed = 2.0f;
+		info.Hp = 100;
+	}
+	
 
+	//mMonsters[mObjectGeneratedNum++] = SkinnedInfo;
+	mMonsters[mObjectGeneratedNum++] = info;
+	assert(mMonsterNum <= mMaxMonsters, "OVER THE MAX_Monster!!");
+
+}
 void ObjectMgr::AddObject(ObjectType::Types oType)
 {
+
 	BO_InitDesc BasicInfo;
 	SO_InitDesc SkinnedInfo;
 	BasicInfo.ObjectType = oType;
@@ -35,6 +69,8 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 	case ObjectType::Tree:
 		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 200, -0.1f, -300.0f + rand() % 200);
 		BasicInfo.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f + 0.5f;
+		BasicInfo.AAB.Center = BasicInfo.Pos;
+		BasicInfo.AAB.Extents = BasicInfo.Pos+XMFLOAT3(1,30,1);
 		BasicInfo.Rot.y = ((float)(rand()) / (float)RAND_MAX)*PI* 2;
 		mObstacles.push_back(BasicInfo);
 		break;
@@ -54,12 +90,16 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 200, -0.1f, -300.0f + rand() % 200);
 		BasicInfo.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f + 0.5f;
 		BasicInfo.Rot.y = ((float)(rand()) / (float)RAND_MAX)*PI * 2;
+		BasicInfo.AAB.Center = BasicInfo.Pos;
+		BasicInfo.AAB.Extents = BasicInfo.Pos + XMFLOAT3(3,3 ,3 );
 		mObstacles.push_back(BasicInfo);
 		break;
 	case ObjectType::Temple:
 		BasicInfo.Pos = XMFLOAT3(250.0f, 0.05f, -370.0f);
 		BasicInfo.Rot.y = 0.0f;
 		BasicInfo.Scale = 0.3f;
+		BasicInfo.AAB.Center = BasicInfo.Pos;
+		BasicInfo.AAB.Extents = BasicInfo.Pos + XMFLOAT3(100, 100 , 100 );
 		mObstacles.push_back(BasicInfo);
 		break;
 
@@ -84,6 +124,8 @@ void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 	info.AttackPoint = 50.0f;
 	info.AttackSpeed = 2.0f;
 	info.Hp = 100;
+	info.radius.Center = info.Pos;
+	info.radius.Radius = 25;
 
 	mPlayers[client_id] = info;
 	++mCurrPlayerNum;
@@ -105,6 +147,7 @@ const std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetAllSkinnedObjects()
 
 void ObjectMgr::ReleaseAllMonsters()
 {
+	mMonsterNum = 0;
 	mMonsters.clear();
 }
 

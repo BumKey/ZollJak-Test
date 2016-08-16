@@ -80,6 +80,9 @@
     <Filter Include="GameObject\SkinnedObject\Player">
       <UniqueIdentifier>{6f4affe7-dcca-46c4-8458-4031795392df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameState_Mgr">
+      <UniqueIdentifier>{a18078b4-4825-454d-b147-5375befb2096}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicMeshData.cpp">
@@ -213,6 +216,36 @@
     </ClCompile>
     <ClCompile Include="Warrior.cpp">
       <Filter>GameObject\SkinnedObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Begin.cpp">
+      <Filter>GameState_Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_GameOver.cpp">
+      <Filter>GameState_Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_GlobalState.cpp">
+      <Filter>GameState_Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Title.cpp">
+      <Filter>GameState_Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Title_Option.cpp">
+      <Filter>GameState_Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Wave_Waiting .cpp">
+      <Filter>GameState_Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Waving.cpp">
+      <Filter>GameState_Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Manager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Scene.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateMgr.cpp">
+      <Filter>GameState_Mgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -350,6 +383,15 @@
     </ClInclude>
     <ClInclude Include="Warrior.h">
       <Filter>GameObject\SkinnedObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateMgr.h">
+      <Filter>GameState_Mgr</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Manager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Scene.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

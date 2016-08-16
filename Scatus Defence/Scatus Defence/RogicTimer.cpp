@@ -11,6 +11,7 @@ RogicTimer::RogicTimer()
 	before_wave = 0;
 	attacktimer = 0;
 	gamestate = game_title;
+	m_wave_level = -1;
 	
 }
 

@@ -14,5 +14,6 @@ public:
 	eGameState	GetCurrState() const { return mCurrState; }
 private:
 	eGameState mCurrState;
+	int Round_level;
 };
 

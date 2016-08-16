@@ -48,10 +48,9 @@ void ServerRogicMgr::Update(const UINT& clientID)
 	mGameTimer.Tick();
 
 	// 조건 인원이 접속 했을 때 Wave시작.
-	if (mCurrPlayerNum >= MAX_USER && mGameStateMgr.GetCurrState() == eGameState::GameWaiting)
+	if (mCurrPlayerNum <= MAX_USER && mGameStateMgr.GetCurrState() == eGameState::GameWaiting)
 		WaveStart();
 
-	bool flowAdvance(false);
 	if (mGameStateMgr.GetCurrState() == eGameState::WaveWaiting)
 	{
 		// =========== WaveWaiting 상태일 때 =============
@@ -59,16 +58,15 @@ void ServerRogicMgr::Update(const UINT& clientID)
 		// 2. 5초의 시간동안 대기, 시간 정보 패킷 전송
 		// 3. 게임상태 진행
 		// 4. 로직 타이머 리셋
-
 		if (mRogicTimer.TotalTime() == 0.0f)
 			mObjectMgr.ReleaseAllMonsters();
 
-	
-		
+
 		if (mRogicTimer.TotalTime() > 5.0f)
 		{
-			mCurrWaveLevel++;
-			flowAdvance = true;
+			mGameStateMgr.FlowAdvance();
+
+
 		}
 
 		std::cout << "WaveWaiting..." << std::endl;
@@ -80,13 +78,18 @@ void ServerRogicMgr::Update(const UINT& clientID)
 		// 2. 옵젝 정보 패킷 전송
 		// 3. 게임상태 진행
 		// 4. 로직 타이머 리셋
+		mCurrWaveLevel++;
 
-		for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel]) {
-			for (UINT i = 0; i < oType.second; ++i)
-				mObjectMgr.AddObject(oType.first);
-		}
 
-		flowAdvance = true;
+		//for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel]) {
+		//	//	for (UINT i = 0; i < oType.second; ++i)
+		//	//	mObjectMgr.AddMonster(oType.first);
+		//}
+		//SendPacketToCreateMonsters();
+		mGameStateMgr.FlowAdvance();
+
+		mRogicTimer.Reset();
+
 
 		std::cout << "WaveStart..." << std::endl;
 	}
@@ -96,35 +99,18 @@ void ServerRogicMgr::Update(const UINT& clientID)
 		// 1. 죽은 몬스터들 처리
 		// 2. 게임 상태들(남은 몬스터, 남은시간들 등..) 처리
 		// 3. 로직 타이머 리셋
-
-		auto monsters = mObjectMgr.GetMonsters();
-		auto players = mObjectMgr.GetPlayers();
-		for (auto m : monsters)
+		if (mRogicTimer.TotalTime() > 10.0f)
 		{
-			FLOAT minDist = 1000.0f;
-			for (auto p : players)
-			{
-				MathHelper::Min(minDist, Distance2D(m.second.Pos, p.second.Pos));
-			}
-			//m.second.Pos = 
+			mGameStateMgr.FlowAdvance();
+			mRogicTimer.Reset();
+
 		}
 		std::cout << "Waving..." << std::endl;
 	}
+
 	mRogicTimer.Tick();
-	if (mLock[clientID] == false) {
-		if (mPutPlayerEvent && clientID != mNewID)
-			SendPacketPutOtherPlayers(clientID);
-		else if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
-			SendPacketToCreateMonsters(clientID);
-		else
-			SendPacketPerFrame(clientID);
-	}
 
-	if (flowAdvance) {
-		mGameStateMgr.FlowAdvance();
-
-		mRogicTimer.Reset();
-	}
+	SendPacketPerFrame(clientID);
 }
 
 void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& newID)

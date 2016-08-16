@@ -1,10 +1,10 @@
 #include "ServerRogicMgr.h"
 
-ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(0), mCurrPlayerNum(0),
+ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(1), mCurrPlayerNum(0),
 mNewID(-1)
 {
 	mPerWaveMonsterNum[1][ObjectType::Goblin] = 15;
-	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 2;
+	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 5;
 
 	mPerWaveMonsterNum[2][ObjectType::Goblin] = 20;
 	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 5;
@@ -51,6 +51,7 @@ void ServerRogicMgr::Update(const UINT& clientID)
 	if (mCurrPlayerNum >= MAX_USER && mGameStateMgr.GetCurrState() == eGameState::GameWaiting)
 		WaveStart();
 
+	bool flowAdvance(false);
 	if (mGameStateMgr.GetCurrState() == eGameState::WaveWaiting)
 	{
 		// =========== WaveWaiting 상태일 때 =============
@@ -66,8 +67,7 @@ void ServerRogicMgr::Update(const UINT& clientID)
 		
 		if (mRogicTimer.TotalTime() > 5.0f)
 		{
-			mGameStateMgr.FlowAdvance();
-			mRogicTimer.Reset();
+			flowAdvance = true;
 		}
 
 		std::cout << "WaveWaiting..." << std::endl;
@@ -85,8 +85,7 @@ void ServerRogicMgr::Update(const UINT& clientID)
 				mObjectMgr.AddObject(oType.first);
 		}
 
-		mGameStateMgr.FlowAdvance();
-		mRogicTimer.Reset();
+		flowAdvance = true;
 
 		std::cout << "WaveStart..." << std::endl;
 	}
@@ -97,6 +96,17 @@ void ServerRogicMgr::Update(const UINT& clientID)
 		// 2. 게임 상태들(남은 몬스터, 남은시간들 등..) 처리
 		// 3. 로직 타이머 리셋
 
+		auto monsters = mObjectMgr.GetMonsters();
+		auto players = mObjectMgr.GetPlayers();
+		for (auto m : monsters)
+		{
+			FLOAT minDist = 1000.0f;
+			for (auto p : players)
+			{
+				MathHelper::Min(minDist, Distance2D(m.second.Pos, p.second.Pos));
+			}
+			//m.second.Pos = 
+		}
 		std::cout << "Waving..." << std::endl;
 	}
 
@@ -107,6 +117,11 @@ void ServerRogicMgr::Update(const UINT& clientID)
 			SendPacketToCreateMonsters(clientID);
 		else
 			SendPacketPerFrame(clientID);
+	}
+
+	if (flowAdvance) {
+		mGameStateMgr.FlowAdvance();
+		mRogicTimer.Reset();
 	}
 }
 
@@ -159,7 +174,7 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 	float destY = inPacket.Pos.y;
 	float currY = player.Pos.y;
 	float yDiff = destY - currY;
-	float slowFactor = 10.0f * (yDiff);
+	float slowFactor = 5.0f * (yDiff);
 
 	XMFLOAT3 dir, pos;
 
@@ -175,7 +190,7 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f/slowFactor;
 		pos.y = destY;
 	}
-	else if (yDiff >= 0.6f)
+	else if (yDiff >= 0.8f)
 	{
 		pos = player.Pos;
 	}
@@ -215,19 +230,25 @@ FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)
 void ServerRogicMgr::SendPacketPerFrame(const UINT& clientID)
 {
 	auto players = mObjectMgr.GetPlayers();
+	auto monsters = mObjectMgr.GetMonsters();
 
 	SC_PerFrame packet;
 	packet.GameState = mGameStateMgr.GetCurrState();
 	packet.Time = mRogicTimer.TotalTime();
-	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum();
+	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
 
-	UINT count(0);
-	for (auto o : players) {
-		packet.ID[count] = o.first;
-		packet.Objects[count].Pos = o.second.Pos;
-		packet.Objects[count].Rot = o.second.Rot;
-		packet.Objects[count].ActionState = o.second.ActionState;
-		++count;
+	for (auto p : players) {
+		UINT id = p.first;
+		packet.Players[id].Pos = p.second.Pos;
+		packet.Players[id].Rot = p.second.Rot;
+		packet.Players[id].ActionState = p.second.ActionState;
+	}
+
+	for (auto m : monsters) {
+		packet.Target[m.first] = eMonsterTarget::Temple;
+		packet.Monsters[m.first].Pos = m.second.Pos;
+		packet.Monsters[m.first].Rot = m.second.Rot;
+		packet.Monsters[m.first].ActionState = m.second.ActionState;
 	}
 
 	MyServer::Send_Packet(clientID, reinterpret_cast<char*>(&packet));
@@ -272,9 +293,7 @@ void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& clientID)
 	
 	UINT count(0);
 	for (auto m : monsters) {
-		packet.ID[count] = m.first;
-		packet.InitInfos[count] = m.second;
-		++count;
+		packet.InitInfos[m.first] = m.second;
 	}
 
 	MyServer::Send_Packet(clientID, reinterpret_cast<char*>(&packet));

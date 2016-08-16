@@ -6,8 +6,8 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
-#define MAX_USER			3
-#define MAX_MONSTER			100
+#define MAX_USER			1
+#define MAX_MONSTER			50
 #define MAX_OBJECT			100
 #define MAX_NPC				100
 #define WORLDSIZE			100
@@ -90,6 +90,14 @@ namespace CollisionState {
 		AttackCollision
 	};
 }
+
+enum eMonsterTarget {
+	Temple,
+	Player0,
+	Player1,
+	Player2
+};
+
 enum eGameState {
 	GameWaiting,
 	WaveWaiting,
@@ -113,7 +121,10 @@ struct BO_InitDesc
 
 struct SO_InitDesc : public BO_InitDesc
 {
-	SO_InitDesc() : BO_InitDesc(), Hp(100), AttackSpeed(0.0f), MoveSpeed(0.0f) {}
+	SO_InitDesc() : BO_InitDesc(), Hp(100), AttackSpeed(0.0f), MoveSpeed(0.0f)
+	{
+		ActionState = ActionState::Die;
+	}
 	int Hp;
 	ActionState::States ActionState;
 
@@ -144,8 +155,9 @@ struct SC_PerFrame : public HEADER
 	eGameState GameState;
 	UINT Time;
 	UINT NumOfObjects;
-	UINT ID[50];
-	ObjectInfo Objects[50];
+	ObjectInfo Players[MAX_USER];
+	ObjectInfo Monsters[MAX_MONSTER];
+	eMonsterTarget Target[MAX_MONSTER];
 };
 
 struct SC_AddMonster : public HEADER
@@ -154,8 +166,7 @@ struct SC_AddMonster : public HEADER
 		Size = sizeof(*this); Type = eSC::AddMonsters;
 	}
 	UINT NumOfObjects;
-	UINT ID[50];
-	SO_InitDesc InitInfos[50];
+	SO_InitDesc InitInfos[MAX_MONSTER];
 };
 
 struct SC_InitPlayer : public HEADER

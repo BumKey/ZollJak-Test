@@ -1,8 +1,8 @@
 #include "ObjectMgr.h"
 
 // 임의의 수치임
-ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0), mObjectGeneratedNum(MAX_USER),
-mCurrPlayerNum(0)
+ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0), mMonsterGeneratedNum(0),
+mCurrPlayerNum(0), mTemplePos(XMFLOAT3(230.0f, -0.01f, -370.0f))
 {
 	mMaxMonsters = mStage * 200;
 	mMaxStructures = mStage * 5;
@@ -29,16 +29,22 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 	{
 	case ObjectType::Monster:
 	case ObjectType::Goblin:
+		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
+		SkinnedInfo.Rot = XMFLOAT3(0.0f, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
+		SkinnedInfo.Scale = 0.2f + MathHelper::RandF(0.2f, 1.0f);
+		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
+		break;
 	case ObjectType::Cyclop:
 		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
-		SkinnedInfo.Scale = 0.1f + ((float)(rand()) / (float)RAND_MAX) / 5.0f;
-		mMonsters[mObjectGeneratedNum++] = SkinnedInfo;
+		SkinnedInfo.Rot = XMFLOAT3(MathHelper::Pi, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
+		SkinnedInfo.Scale = 3.0f + MathHelper::RandF(2.0f, 5.0f);
+		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
 		break;
 
 	case ObjectType::Obstacle:
 	case ObjectType::Tree:
-		BasicInfo.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f + 0.5f;
-		BasicInfo.Rot.y = ((float)(rand()) / (float)RAND_MAX)*PI* 2;
+		BasicInfo.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f +  0.5f;
+		BasicInfo.Rot.y = MathHelper::RandF(0.0f, MathHelper::Pi * 2);
 		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 200, -0.1f*BasicInfo.Scale, -300.0f + rand() % 200);
 		mObstacles.push_back(BasicInfo);
 		break;
@@ -61,7 +67,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		mObstacles.push_back(BasicInfo);
 		break;
 	case ObjectType::Temple:
-		BasicInfo.Pos = XMFLOAT3(250.0f, -0.01f, -370.0f);
+		BasicInfo.Pos = mTemplePos;
 		BasicInfo.Rot.y = 0.0f;
 		BasicInfo.Scale = 0.3f;
 		mObstacles.push_back(BasicInfo);

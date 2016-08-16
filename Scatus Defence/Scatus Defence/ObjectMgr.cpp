@@ -88,6 +88,12 @@ void ObjectMgr::Update(float dt)
 		}
 	}
 
+	for (auto m : mMonsters)
+	{
+		m->Animate(dt);
+		mAllObjects.push_back(m);
+	}
+
 	for (auto i : mAllObjects)
 		i->Update(dt);
 }

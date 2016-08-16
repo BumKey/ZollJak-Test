@@ -171,7 +171,7 @@ void PacketMgr::ProcessPacket(char* packet)
 	case eSC::PerFrame: {
 		auto *p = reinterpret_cast<SC_PerFrame*>(packet);
 		for (UINT i = 0; i < MAX_USER; ++i)
-			Object_Mgr->Update(p->ID[i], p->Objects[i]);
+			Object_Mgr->Update(i, p->Players[i]);
 		
 		char* string;
 		switch (p->GameState)
@@ -205,7 +205,7 @@ void PacketMgr::ProcessPacket(char* packet)
 			desc.MoveSpeed = p->InitInfos[i].MoveSpeed;
 			auto type = p->InitInfos[i].ObjectType;
 
-			Object_Mgr->AddMonster(type, desc, p->ID[i]);
+			Object_Mgr->AddMonster(type, desc, i);
 		}
 		std::cout << "SC_ADD_MONSTER, ObjectNum : " << p->NumOfObjects<< std::endl;
 		break;

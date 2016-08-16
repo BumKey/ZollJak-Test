@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="GameStateMgr.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="MathHelper.h" />
     <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="ServerRogicMgr.h" />
@@ -160,6 +161,7 @@
     <ClCompile Include="GameStateMgr.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="ServerRogicMgr.cpp" />
     <ClCompile Include="Server.cpp" />

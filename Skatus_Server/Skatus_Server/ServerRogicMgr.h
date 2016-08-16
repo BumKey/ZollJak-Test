@@ -21,11 +21,13 @@ public:
 	void Lock(const UINT& id) { mLock[id] = true; }
 	void UnLock(const UINT& id) { mLock[id] = false; }
 	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
+
 private:
-	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);
 	void SendPacketPerFrame(const UINT& clientID);
 	void SendPacketPutOtherPlayers(const UINT& clientID);
 	void SendPacketToCreateMonsters(const UINT& clientID);
+
+	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);
 
 private:
 	bool mPutPlayerEvent;

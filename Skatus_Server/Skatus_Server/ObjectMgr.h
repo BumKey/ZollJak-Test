@@ -13,12 +13,13 @@ public:
 	void RemovePlayer(const UINT& id);
 
 	UINT GetCurrPlayerNum() const { return mCurrPlayerNum; }
+	const XMFLOAT3 GetTemplePos() { return mTemplePos; }
 
 	void SetPlayerRot(const UINT& id, const XMFLOAT3& rot) { mPlayers[id].Rot = rot; }
 	void SetPlayerPosXZ(const UINT& id, const XMFLOAT3& pos) { mPlayers[id].Pos = pos; }
 	void SetPlayerPosY(const UINT& id, const FLOAT& y) { mPlayerYpos[id] = y; }
 
-	const std::unordered_map<UINT, SO_InitDesc>	GetPlayers();
+	const std::unordered_map<UINT, SO_InitDesc>		GetPlayers();
 	const std::unordered_map<UINT, SO_InitDesc>&	GetMonsters() { return mMonsters; }
 	const std::vector<BO_InitDesc>& GetAllBasicObjects() { return mObstacles; }
 	const SO_InitDesc&				GetPlayer(const UINT& id);
@@ -32,8 +33,10 @@ private:
 	UINT mMaxMonsters;
 	UINT mMaxStructures;
 	UINT mTotalObjectNum;
-	UINT mObjectGeneratedNum;
+	UINT mMonsterGeneratedNum;
 	UINT mCurrPlayerNum;
+
+	const XMFLOAT3 mTemplePos;
 
 	std::vector<BO_InitDesc>	mObstacles;						
 	std::vector<SO_InitDesc>	mStructures, mProjectiles;		

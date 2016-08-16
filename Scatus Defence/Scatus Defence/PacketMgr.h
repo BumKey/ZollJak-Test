@@ -39,6 +39,7 @@ private:
 private:
 	int mClientID;
 	bool mConnected[MAX_USER];
+	bool mSended;
 
 	SOCKET	mSocket;
 	WSABUF	mRecvBuf;
@@ -59,10 +60,13 @@ inline void PacketMgr::SendPacket(T & packet)
 	mSendBuf.len = packet.Size;
 	memcpy(mSendBuf.buf, packet_buf, packet.Size);
 
-	int outBytes = 0;
-	if (WSASend(mSocket, &mSendBuf, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
-	{
-		if (WSAGetLastError() != WSA_IO_PENDING)
-			err_display(L"WSASend() Error");
+	if (mSended == false) {
+		int outBytes = 0;
+		if (WSASend(mSocket, &mSendBuf, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
+		{
+			if (WSAGetLastError() != WSA_IO_PENDING)
+				err_display(L"WSASend() Error");
+		}
 	}
+	mSended = true;
 }

@@ -1,6 +1,6 @@
 #include "PacketMgr.h"
 
-PacketMgr::PacketMgr() : mClientID(-1)
+PacketMgr::PacketMgr() : mClientID(-1), mSended(false)
 {
 	mSendBuf.buf = new char[MAX_BUFF_SIZE];
 	mSendBuf.len = MAX_BUFF_SIZE;
@@ -55,6 +55,8 @@ void PacketMgr::Update()
 		CS_Success packet;
 		SendPacket(packet);
 	}
+	else
+		Update();
 }
 
 bool PacketMgr::ReadPacket()
@@ -79,6 +81,11 @@ bool PacketMgr::ReadPacket()
 	{
 		auto header = reinterpret_cast<HEADER*>(mRecvBuf.buf);
 		UINT currPacketSize = header->Size;
+		if (currPacketSize >= MAX_PACKET_SIZE)
+		{
+			return false;
+		}
+
 		if (receivedBytes + savedBytes >= currPacketSize)
 		{
 			UINT remainingData = currPacketSize - savedBytes;
@@ -87,9 +94,10 @@ bool PacketMgr::ReadPacket()
 
 			ProcessPacket(mPacketBuf);
 			savedBytes = 0;
+			mSended = false;
 			break;
 		}
-		else
+		else 
 		{
 			memcpy(mPacketBuf + savedBytes, mRecvBuf.buf, receivedBytes);
 			savedBytes += receivedBytes;

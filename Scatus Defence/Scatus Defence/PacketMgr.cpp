@@ -1,6 +1,6 @@
 #include "PacketMgr.h"
 
-PacketMgr::PacketMgr() : mClientID(-1)
+PacketMgr::PacketMgr() : mClientID(-1), mSended(false)
 {
 	mSendBuf.buf = new char[MAX_BUFF_SIZE];
 	mSendBuf.len = MAX_BUFF_SIZE;
@@ -38,7 +38,7 @@ void PacketMgr::Init()
 
 	memset(&recv_addr, 0, sizeof(recv_addr));
 	recv_addr.sin_family = AF_INET;
-	recv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	recv_addr.sin_addr.s_addr = inet_addr("192.168.2.114");
 	recv_addr.sin_port = htons(SERVER_PORT);
 
 	// connect()
@@ -55,6 +55,8 @@ void PacketMgr::Update()
 		CS_Success packet;
 		SendPacket(packet);
 	}
+	else
+		Update();
 }
 
 bool PacketMgr::ReadPacket()
@@ -79,6 +81,11 @@ bool PacketMgr::ReadPacket()
 	{
 		auto header = reinterpret_cast<HEADER*>(mRecvBuf.buf);
 		UINT currPacketSize = header->Size;
+		if (currPacketSize >= MAX_PACKET_SIZE)
+		{
+			return false;
+		}
+
 		if (receivedBytes + savedBytes >= currPacketSize)
 		{
 			UINT remainingData = currPacketSize - savedBytes;
@@ -87,9 +94,10 @@ bool PacketMgr::ReadPacket()
 
 			ProcessPacket(mPacketBuf);
 			savedBytes = 0;
+			mSended = false;
 			break;
 		}
-		else
+		else 
 		{
 			memcpy(mPacketBuf + savedBytes, mRecvBuf.buf, receivedBytes);
 			savedBytes += receivedBytes;

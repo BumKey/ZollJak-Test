@@ -161,6 +161,9 @@ void ServerRogicMgr::RemovePlayer(const UINT & id)
 {
 	--mCurrPlayerNum;
 	mObjectMgr.RemovePlayer(id);
+
+	if (mCurrPlayerNum <= 0)
+		mGameStateMgr.Reset();
 }
 
 /// <summary> 현재는 충돌체크 미구현

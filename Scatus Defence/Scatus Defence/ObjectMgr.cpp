@@ -62,7 +62,7 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 
 void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
 {
-	if (mConnected[id]) 
+	if (mConnected[id] && id != Packet_Mgr->GetClientID()) 
 	{
 		mPlayers[id]->SetPos(info.Pos);
 

@@ -38,7 +38,7 @@ void PacketMgr::Init()
 
 	memset(&recv_addr, 0, sizeof(recv_addr));
 	recv_addr.sin_family = AF_INET;
-	recv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	recv_addr.sin_addr.s_addr = inet_addr("192.168.2.114");
 	recv_addr.sin_port = htons(SERVER_PORT);
 
 	// connect()

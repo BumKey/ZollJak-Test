@@ -63,10 +63,11 @@ void ServerRogicMgr::Update(const UINT& clientID)
 		if (mRogicTimer.TotalTime() == 0.0f)
 			mObjectMgr.ReleaseAllMonsters();
 
-		mRogicTimer.Tick();
+	
 		
 		if (mRogicTimer.TotalTime() > 5.0f)
 		{
+			mCurrWaveLevel++;
 			flowAdvance = true;
 		}
 
@@ -109,7 +110,7 @@ void ServerRogicMgr::Update(const UINT& clientID)
 		}
 		std::cout << "Waving..." << std::endl;
 	}
-
+	mRogicTimer.Tick();
 	if (mLock[clientID] == false) {
 		if (mPutPlayerEvent && clientID != mNewID)
 			SendPacketPutOtherPlayers(clientID);
@@ -121,6 +122,7 @@ void ServerRogicMgr::Update(const UINT& clientID)
 
 	if (flowAdvance) {
 		mGameStateMgr.FlowAdvance();
+
 		mRogicTimer.Reset();
 	}
 }
@@ -238,6 +240,7 @@ void ServerRogicMgr::SendPacketPerFrame(const UINT& clientID)
 	SC_PerFrame packet;
 	packet.GameState = mGameStateMgr.GetCurrState();
 	packet.Time = mRogicTimer.TotalTime();
+	packet.Roundlevel = mCurrWaveLevel;
 	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
 
 	for (auto p : players) {

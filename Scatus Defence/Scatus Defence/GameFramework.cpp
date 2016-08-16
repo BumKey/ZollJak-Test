@@ -57,7 +57,8 @@ bool GameFrameWork::Init()
 
 	Texture_Mgr->Init(md3dDevice);
 	Resource_Mgr->Init(md3dDevice);
-
+	mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
+	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());
 	Sound_Mgr->Create_Sound(D3DApp::MainWnd());
 
 	// Giljune's Code
@@ -84,6 +85,7 @@ void GameFrameWork::UpdateScene(float dt)
 	
 	if (Packet_Mgr->ReadPacket())
 	{
+		G_State_Mgr->Update();
 		Object_Mgr->Update(dt);
 
 		Camera::GetInstance()->Update();
@@ -98,7 +100,7 @@ void GameFrameWork::UpdateScene(float dt)
 void GameFrameWork::DrawScene()
 {
 	Scene_Mgr->DrawScene();
-
+	UI_Mgr->Print_All_UI();
 	HR(mSwapChain->Present(0, 0));
 }
 

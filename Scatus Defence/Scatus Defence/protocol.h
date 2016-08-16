@@ -123,7 +123,7 @@ struct SO_InitDesc : public BO_InitDesc
 {
 	SO_InitDesc() : BO_InitDesc(), Hp(100), AttackSpeed(0.0f), MoveSpeed(0.0f)
 	{
-		ActionState = ActionState::Die;
+		ActionState = ActionState::Idle;
 	}
 	int Hp;
 	ActionState::States ActionState;
@@ -155,6 +155,7 @@ struct SC_PerFrame : public HEADER
 	eGameState GameState;
 	UINT Time;
 	UINT NumOfObjects;
+	UINT Roundlevel;
 	ObjectInfo Players[MAX_USER];
 	ObjectInfo Monsters[MAX_MONSTER];
 	eMonsterTarget Target[MAX_MONSTER];

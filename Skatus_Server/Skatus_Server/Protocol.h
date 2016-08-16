@@ -202,6 +202,7 @@ struct CS_Move : public HEADER
 	BYTE ClientID;
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
+	ActionState::States ActionState;
 	FLOAT MoveSpeed;
 	FLOAT DeltaTime;
 };

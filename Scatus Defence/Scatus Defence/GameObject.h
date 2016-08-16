@@ -52,6 +52,7 @@ public:
 	void					SetRot(const XMFLOAT3& rot) { mRotation = rot; }
 	void					SetHP(int hp) { mProperty.hp_now = hp; }
 	void					SetState(const ActionState::States state) { mActionState = state; }
+	void					SetAttackState() { mActionState = ActionState::Attack; m_bForOneHit = true; }
 
 	bool					IsAttack() { return mActionState == ActionState::Attack ? true : false; }
 	bool					IsDead() { return mActionState == ActionState::Die ? true : false; }

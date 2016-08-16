@@ -80,12 +80,16 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 		std::cout << "CS_KEYINPUT, POS : " << info->Pos.x << ", "
 			<< info->Pos.y << ", " << info->Pos.z << std::endl;
 		rogicMgr.ProcessKeyInput(*info);
+		rogicMgr.UnLock(info->ClientID);
+		rogicMgr.Update(info->ClientID);
 		break;
 	}
 	case eCS::MouseInput: {
 		auto info = reinterpret_cast<CS_Attack*>(packet);
 		std::cout << "CS_MOUSEINPUT, ID : " << info->ClientID << std::endl;
 		rogicMgr.ProcessMouseInput(*info);
+		rogicMgr.UnLock(info->ClientID);
+		rogicMgr.Update(info->ClientID);
 		break;
 	}
 	default:

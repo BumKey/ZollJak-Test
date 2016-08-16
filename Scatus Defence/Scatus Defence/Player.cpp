@@ -74,7 +74,8 @@ void Player::Move(float walk, float strafe)
 		packet.Rot = mRotation;
 		packet.MoveSpeed = mProperty.movespeed;
 		packet.DeltaTime = dt;
-		Packet_Mgr->SendPacket(packet);
+		Packet_Mgr->SetMovePacket(packet);
+		Packet_Mgr->SetSendState(PacketMgr::MOVE);
 		mTimer.Reset();
 	}
 	else

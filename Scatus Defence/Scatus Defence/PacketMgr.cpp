@@ -1,6 +1,6 @@
 #include "PacketMgr.h"
 
-PacketMgr::PacketMgr() : mClientID(-1), mSended(false)
+PacketMgr::PacketMgr() : mClientID(-1)
 {
 	mSendBuf.buf = new char[MAX_BUFF_SIZE];
 	mSendBuf.len = MAX_BUFF_SIZE;
@@ -48,17 +48,6 @@ void PacketMgr::Init()
 	std::cout << "Server Connect Success" << std::endl;
 }
 
-void PacketMgr::Update()
-{
-	if (ReadPacket())
-	{
-		CS_Success packet;
-		SendPacket(packet);
-	}
-	else
-		Update();
-}
-
 bool PacketMgr::ReadPacket()
 {
 	DWORD receivedBytes, ioflag = 0;
@@ -94,7 +83,7 @@ bool PacketMgr::ReadPacket()
 
 			ProcessPacket(mPacketBuf);
 			savedBytes = 0;
-			mSended = false;
+			mSendState = eSendPacket::SUCCESS;
 			break;
 		}
 		else 
@@ -105,6 +94,25 @@ bool PacketMgr::ReadPacket()
 	}
 
 	return true;
+}
+
+void PacketMgr::SendPacket()
+{
+	switch (mSendState)
+	{
+	case SUCCESS: {
+		CS_Success packet;
+		packet.ClientID = mClientID;
+		SendPacket(packet);
+		break;
+	}
+	case MOVE: {
+		SendPacket(mMovePacket);
+		break;
+	}
+	case ATTACK:
+		break;
+	}
 }
 
 void PacketMgr::ProcessPacket(char* packet)

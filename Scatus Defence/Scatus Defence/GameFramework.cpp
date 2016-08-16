@@ -82,11 +82,17 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
 	
-	Packet_Mgr->Update();
-	Object_Mgr->Update(dt);
+	if (Packet_Mgr->ReadPacket())
+	{
+		Object_Mgr->Update(dt);
 
-	Camera::GetInstance()->Update();
-	Scene_Mgr->Update(dt);
+		Camera::GetInstance()->Update();
+		Scene_Mgr->Update(dt);
+
+		Packet_Mgr->SendPacket();
+	}
+	else
+		UpdateScene(dt);
 }
 
 void GameFrameWork::DrawScene()
@@ -104,7 +110,7 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 		Player::GetInstance()->SetAttackState();
 
 		CS_Attack packet;
-		Packet_Mgr->SendPacket(packet);
+		Packet_Mgr->SetSendState(PacketMgr::ATTACK);
 	}
 	
 	SetCapture(mhMainWnd);

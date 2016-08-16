@@ -22,24 +22,34 @@ public:
 	PacketMgr();
 	~PacketMgr();
 
+	enum eSendPacket {
+		SUCCESS,
+		MOVE,
+		ATTACK
+	};
+
 public:
 	void Init();
-	void Update();
+	bool ReadPacket();
+	void SendPacket();
 
-	template <class T>
-	void SendPacket(T& packet);
+	void SetMovePacket(const CS_Move& packet) { mMovePacket = packet; }
+	void SetSendState(const eSendPacket state) { mSendState = state; }
+
 	char* GetPacket()				{ return mPacketBuf; }
 	int GetClientID() const { return mClientID; }
 private:
-	bool ReadPacket();
 	void ProcessPacket(char* packet);
-
+	template <class T>
+	void SendPacket(T& packet);
 	void err_display(wchar_t *msg);
 
 private:
 	int mClientID;
 	bool mConnected[MAX_USER];
-	bool mSended;
+
+	CS_Move mMovePacket;
+	eSendPacket mSendState;
 
 	SOCKET	mSocket;
 	WSABUF	mRecvBuf;
@@ -60,13 +70,10 @@ inline void PacketMgr::SendPacket(T & packet)
 	mSendBuf.len = packet.Size;
 	memcpy(mSendBuf.buf, packet_buf, packet.Size);
 
-	if (mSended == false) {
-		int outBytes = 0;
-		if (WSASend(mSocket, &mSendBuf, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
-		{
-			if (WSAGetLastError() != WSA_IO_PENDING)
-				err_display(L"WSASend() Error");
-		}
+	int outBytes = 0;
+	if (WSASend(mSocket, &mSendBuf, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
+	{
+		if (WSAGetLastError() != WSA_IO_PENDING)
+			err_display(L"WSASend() Error");
 	}
-	mSended = true;
 }

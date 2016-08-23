@@ -30,6 +30,7 @@ public:
 
 	void RemovePlayer(const UINT& id);
 
+	std::vector<Monster*>&				GetMonsters() { return mMonsters; }
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
 
 	void Update(const UINT& id, const ObjectInfo& info);

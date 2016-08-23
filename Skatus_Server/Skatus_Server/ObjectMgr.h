@@ -18,9 +18,9 @@ public:
 	void SetPlayerRot(const UINT& id, const XMFLOAT3& rot) { mPlayers[id].Rot = rot; }
 	void SetPlayerPosXZ(const UINT& id, const XMFLOAT3& pos) { mPlayers[id].Pos = pos; }
 	void SetPlayerPosY(const UINT& id, const FLOAT& y) { mPlayerYpos[id] = y; }
-
+	void SetPlayerState(const UINT& id, const ActionState::States state) { mPlayers[id].ActionState = state; }
 	const std::unordered_map<UINT, SO_InitDesc>		GetPlayers();
-	const std::unordered_map<UINT, SO_InitDesc>&	GetMonsters() { return mMonsters; }
+	std::unordered_map<UINT, SO_InitDesc>&	GetMonsters() { return mMonsters; }
 	const std::vector<BO_InitDesc>& GetAllBasicObjects() { return mObstacles; }
 	const SO_InitDesc&				GetPlayer(const UINT& id);
 	void ReleaseAllMonsters();

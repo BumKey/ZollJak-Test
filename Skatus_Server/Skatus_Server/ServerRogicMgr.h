@@ -18,6 +18,7 @@ public:
 	void ProcessKeyInput(CS_Move& inPacket);
 	void ProcessMouseInput(CS_Attack& inPacket);
 
+	void PlayerNoMove(const UINT& id) { mObjectMgr.SetPlayerState(id, ActionState::Idle); }
 	void Lock(const UINT& id) { mLock[id] = true; }
 	void UnLock(const UINT& id) { mLock[id] = false; }
 	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }

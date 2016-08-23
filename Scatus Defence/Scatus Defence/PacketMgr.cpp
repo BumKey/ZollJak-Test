@@ -38,7 +38,7 @@ void PacketMgr::Init()
 
 	memset(&recv_addr, 0, sizeof(recv_addr));
 	recv_addr.sin_family = AF_INET;
-	recv_addr.sin_addr.s_addr = inet_addr("192.168.2.114");
+	recv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	recv_addr.sin_port = htons(SERVER_PORT);
 
 	// connect()
@@ -189,6 +189,16 @@ void PacketMgr::ProcessPacket(char* packet)
 		for (UINT i = 0; i < MAX_USER; ++i)
 			Object_Mgr->Update(i, p->Players[i]);
 		
+		auto& monsters = Object_Mgr->GetMonsters();
+		if (monsters.size() > 0) {
+			for (UINT i = 0; i < p->NumOfObjects - 1; ++i)
+			{
+				//monsters[i]->SetTarget(Player::GetInstance());
+				/*monsters[i]->SetPos(p->Monsters[i].Pos);
+				monsters[i]->SetState(p->Monsters[i].ActionState);
+				monsters[i]->SetRot(p->Monsters[i].Rot);*/
+			}
+		}
 		char* string;
 		switch (p->GameState)
 		{

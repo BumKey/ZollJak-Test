@@ -66,7 +66,7 @@ void Player::Move(float walk, float strafe)
 		dt = abs(strafe);
 	}
 
-	if (mTimer.TotalTime() > 0.01f)
+	if (mTimer.TotalTime() > 0.1f)
 	{
 		CS_Move packet;
 		packet.Pos = mPosition;

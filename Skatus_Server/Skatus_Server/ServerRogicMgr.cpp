@@ -97,15 +97,13 @@ void ServerRogicMgr::Update(const UINT& clientID)
 		// 3. 로직 타이머 리셋
 
 		auto monsters = mObjectMgr.GetMonsters();
-		auto players = mObjectMgr.GetPlayers();
-		for (auto m : monsters)
+		auto temple = mObjectMgr.GetTemplePos();
+
+		for (auto& m : monsters)
 		{
-			FLOAT minDist = 1000.0f;
-			for (auto p : players)
-			{
-				MathHelper::Min(minDist, Distance2D(m.second.Pos, p.second.Pos));
-			}
-			//m.second.Pos = 
+			XMFLOAT3 dir = Float3Normalize(temple - m.second.Pos);
+			m.second.Pos = m.second.Pos + dir*m.second.MoveSpeed;
+			m.second.ActionState = ActionState::Run;
 		}
 		std::cout << "Waving..." << std::endl;
 	}
@@ -162,8 +160,10 @@ void ServerRogicMgr::RemovePlayer(const UINT & id)
 	--mCurrPlayerNum;
 	mObjectMgr.RemovePlayer(id);
 
-	if (mCurrPlayerNum <= 0)
+	if (mCurrPlayerNum <= 0) {
+		mObjectMgr.ReleaseAllMonsters();
 		mGameStateMgr.Reset();
+	}
 }
 
 /// <summary> 현재는 충돌체크 미구현
@@ -204,6 +204,7 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 		pos.y = destY;
 	}
 
+	mObjectMgr.SetPlayerState(inPacket.ClientID, inPacket.ActionState);
 	mObjectMgr.SetPlayerRot(inPacket.ClientID, inPacket.Rot);
 	mObjectMgr.SetPlayerPosXZ(inPacket.ClientID, pos);
 }
@@ -238,7 +239,7 @@ void ServerRogicMgr::SendPacketPerFrame(const UINT& clientID)
 	SC_PerFrame packet;
 	packet.GameState = mGameStateMgr.GetCurrState();
 	packet.Time = mRogicTimer.TotalTime();
-	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
+	packet.NumOfObjects = monsters.size();
 
 	for (auto p : players) {
 		UINT id = p.first;
@@ -289,6 +290,8 @@ void ServerRogicMgr::SendPacketPutOtherPlayers(const UINT & clientID)
 
 void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& clientID)
 {
+	static bool sended[MAX_USER] = { false, };
+
 	auto monsters = mObjectMgr.GetMonsters();
 
 	SC_AddMonster packet;
@@ -299,5 +302,20 @@ void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& clientID)
 		packet.InitInfos[m.first] = m.second;
 	}
 
-	MyServer::Send_Packet(clientID, reinterpret_cast<char*>(&packet));
+	if (sended[clientID] == false) {
+		MyServer::Send_Packet(clientID, reinterpret_cast<char*>(&packet));
+		sended[clientID] = true;
+	}
+
+	bool b(true);
+	for (int i = 0; i < mCurrPlayerNum; ++i) {
+		if (sended[i] == false)
+			b = false;
+	}
+
+	if (b)
+	{
+		for (int i = 0; i < MAX_USER; ++i)
+			sended[i] = false;
+	}
 }

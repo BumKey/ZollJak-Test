@@ -243,6 +243,7 @@ void WorkerThreadStart()
 				if (key == i) continue;
 				SendPacket(i, reinterpret_cast<unsigned char*>(&discon));
 			}
+			printf("id : %d가 접속을 종료하였습니다. \n", key);
 			clients[key].is_connected = false;
 		}
 
@@ -354,6 +355,8 @@ void AcceptThreadStart()
 		enter_packet.y = clients[new_id].avatar.y;
 
 		SendPacket(new_id, reinterpret_cast<unsigned char *>(&enter_packet));
+
+		printf("id : %d가 접속하였습니다. \n", new_id);
 
 		for (auto i = 0; i < MAX_USER; ++i) {
 			if (false == clients[i].is_connected) continue;

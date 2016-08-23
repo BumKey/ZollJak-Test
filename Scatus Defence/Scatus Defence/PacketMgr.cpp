@@ -23,32 +23,34 @@ PacketMgr::~PacketMgr()
 	WSACleanup();
 }
 
-void PacketMgr::Init()
+void PacketMgr::Init(HWND hwnd)
 {
 	WSADATA	wsaData;
-	SOCKADDR_IN recv_addr;
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 		err_display(L"WSAStartup() Error");
 
 	// WSASocket()
-	mSocket = WSASocket(PF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	mSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
 	if (mSocket == INVALID_SOCKET)
 		err_display(L"WSASocket() Error");
 
-	memset(&recv_addr, 0, sizeof(recv_addr));
-	recv_addr.sin_family = AF_INET;
-	recv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	recv_addr.sin_port = htons(SERVER_PORT);
+	SOCKADDR_IN ServerAddr;
+	ZeroMemory(&ServerAddr, sizeof(SOCKADDR_IN));
+	ServerAddr.sin_family = AF_INET;
+	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	ServerAddr.sin_port = htons(SERVER_PORT);
 
 	// connect()
-	if (connect(mSocket, (SOCKADDR*)&recv_addr, sizeof(recv_addr)) == SOCKET_ERROR)
-		err_display(L"connect() Error");
+	int Result = WSAConnect(mSocket, (SOCKADDR*)&ServerAddr, sizeof(ServerAddr),
+		NULL, NULL, NULL, NULL);
+	
+	WSAAsyncSelect(mSocket, hwnd, WM_SOCKET, FD_CLOSE | FD_READ);
 
 	std::cout << "Server Connect Success" << std::endl;
 }
 
-bool PacketMgr::ReadPacket()
+bool PacketMgr::ReadPacket(SOCKET sock)
 {
 	DWORD receivedBytes, ioflag = 0;
 	if(WSARecv(mSocket, &mRecvBuf, 1, &receivedBytes, &ioflag, NULL, NULL)==SOCKET_ERROR)

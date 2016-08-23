@@ -16,6 +16,8 @@
 #define OP_RECV				1
 #define OP_SEND				2
 
+#define WM_SOCKET			WM_USER + 1
+
 #define PI					3.1415926535f
 #pragma pack(push, 1)
 

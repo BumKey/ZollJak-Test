@@ -5,6 +5,7 @@
 #include "d3dApp.h"
 #include <WindowsX.h>
 #include <sstream>
+#include "PacketMgr.h"
 
 namespace
 {
@@ -26,8 +27,8 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	: mhAppInst(hInstance),
 	mMainWndCaption(L"D3D11 Application"),
 	md3dDriverType(D3D_DRIVER_TYPE_HARDWARE),
-	mClientWidth(1920),
-	mClientHeight(1080),
+	mClientWidth(800),
+	mClientHeight(600),
 	mEnable4xMsaa(false),
 	mhMainWnd(0),
 	mAppPaused(false),
@@ -53,6 +54,7 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 
 D3DApp::~D3DApp()
 {
+	WSACleanup();
 	ReleaseCOM(mRenderTargetView);
 	ReleaseCOM(mDepthStencilView);
 	ReleaseCOM(mSwapChain);
@@ -326,8 +328,28 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
+	case WM_SOCKET:
+	{
+		if (WSAGETSELECTERROR(lParam)) {
+			closesocket((SOCKET)wParam);
+			exit(-1);
+			break;
+		}
+		switch (WSAGETSELECTERROR(lParam))
+		{
+		case FD_READ:
+			Packet_Mgr->ReadPacket((SOCKET)wParam);
+			break;
+		case FD_CLOSE:
+			closesocket((SOCKET)wParam);
+			exit(-1);
+			break;
+		}
 	}
 
+	default:break;
+
+	}
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
@@ -365,6 +387,9 @@ bool D3DApp::InitMainWindow()
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 		return false;
 	}
+
+	// Server Code
+	Packet_Mgr->Init(mhMainWnd);
 
 	ShowWindow(mhMainWnd, SW_SHOW);
 	UpdateWindow(mhMainWnd);

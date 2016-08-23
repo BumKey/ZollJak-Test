@@ -15,6 +15,7 @@
 #include "GameTimer.h"
 #include "UI_Manager.h"
 #include <string>
+
 class D3DApp
 {
 public:

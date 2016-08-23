@@ -1,38 +1,5 @@
 #include "stdafx.h"
 
-#include "protocol.h"
-
-#define NUM_THREADS 4
-
-#define OP_RECV  1
-#define OP_SEND  2
-
-using namespace std;
-
-struct Overlap_ex {
-	WSAOVERLAPPED original_overlap;
-	int operation;
-	WSABUF wsabuf;
-	unsigned char iocp_buffer[MAX_BUFF_SIZE];
-};
-
-struct Player {
-	int x;
-	int y;
-};
-
-struct Client {
-	SOCKET s;
-	bool is_connected;
-	unordered_set <int> view_list;
-	mutex vl_lock;
-	Player avatar;
-	Overlap_ex recv_overlap;
-	int	packet_size;
-	int previous_size;
-	unsigned char packet_buff[MAX_PACKET_SIZE];
-};
-
 Client clients[MAX_USER];
 
 HANDLE g_hIocp;

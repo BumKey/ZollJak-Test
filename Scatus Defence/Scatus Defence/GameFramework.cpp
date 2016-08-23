@@ -61,9 +61,6 @@ bool GameFrameWork::Init()
 	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());
 	Sound_Mgr->Create_Sound(D3DApp::MainWnd());
 
-	// Giljune's Code
-	Packet_Mgr->Init();
-
 	return true;
 }
 
@@ -83,18 +80,16 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
 	
-	if (Packet_Mgr->ReadPacket())
-	{
-		G_State_Mgr->Update();
-		Object_Mgr->Update(dt);
 
-		Camera::GetInstance()->Update();
-		Scene_Mgr->Update(dt);
+	G_State_Mgr->Update();
+	Object_Mgr->Update(dt);
 
-		Packet_Mgr->SendPacket();
-	}
-	else
-		UpdateScene(dt);
+	Camera::GetInstance()->Update();
+	Scene_Mgr->Update(dt);
+
+	Packet_Mgr->SendPacket();
+
+	//UpdateScene(dt);
 }
 
 void GameFrameWork::DrawScene()

@@ -29,8 +29,8 @@ public:
 	};
 
 public:
-	void Init();
-	bool ReadPacket();
+	void Init(HWND hwnd);
+	bool ReadPacket(SOCKET sock);
 	void SendPacket();
 
 	void SetMovePacket(const CS_Move& packet) { mMovePacket = packet; }

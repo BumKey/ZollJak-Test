@@ -1,5 +1,6 @@
-#pragma once
-#include <Windows.h>
+/*
+	Protocol header
+*/
 
 #define MAX_BUFF_SIZE   4000
 #define MAX_PACKET_SIZE  255

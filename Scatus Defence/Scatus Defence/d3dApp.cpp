@@ -54,7 +54,6 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 
 D3DApp::~D3DApp()
 {
-	WSACleanup();
 	ReleaseCOM(mRenderTargetView);
 	ReleaseCOM(mDepthStencilView);
 	ReleaseCOM(mSwapChain);
@@ -66,6 +65,9 @@ D3DApp::~D3DApp()
 
 	ReleaseCOM(md3dImmediateContext);
 	ReleaseCOM(md3dDevice);
+
+	// Server Code
+	WSACleanup();
 }
 
 HINSTANCE D3DApp::AppInst()const

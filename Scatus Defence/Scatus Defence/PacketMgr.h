@@ -38,6 +38,8 @@ public:
 
 	char* GetPacket()				{ return mPacketBuf; }
 	int GetClientID() const { return mClientID; }
+
+	SOCKET GetSocket() { return mSocket; }
 private:
 	void ProcessPacket(char* packet);
 	template <class T>

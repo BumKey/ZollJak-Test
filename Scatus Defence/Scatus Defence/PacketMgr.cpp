@@ -42,7 +42,7 @@ void PacketMgr::Init(HWND hwnd)
 	ServerAddr.sin_port = htons(SERVER_PORT);
 
 	// connect()
-	int Result = WSAConnect(mSocket, (SOCKADDR*)&ServerAddr, sizeof(ServerAddr),
+	int Result = WSAConnect(mSocket, (sockaddr*)&ServerAddr, sizeof(ServerAddr),
 		NULL, NULL, NULL, NULL);
 	
 	WSAAsyncSelect(mSocket, hwnd, WM_SOCKET, FD_CLOSE | FD_READ);
@@ -53,7 +53,7 @@ void PacketMgr::Init(HWND hwnd)
 bool PacketMgr::ReadPacket(SOCKET sock)
 {
 	DWORD receivedBytes, ioflag = 0;
-	if(WSARecv(mSocket, &mRecvBuf, 1, &receivedBytes, &ioflag, NULL, NULL)==SOCKET_ERROR)
+	if(WSARecv(sock, &mRecvBuf, 1, &receivedBytes, &ioflag, NULL, NULL)==SOCKET_ERROR)
 	{ 
 		if (WSAGetLastError() != WSA_IO_PENDING)
 			err_display(L"WSARecv() Error");

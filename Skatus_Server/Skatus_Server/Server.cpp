@@ -71,7 +71,6 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 	case eCS::Success: {
 		auto info = reinterpret_cast<CS_Success*>(packet);
 		std::cout << "CS_SUCCESS, ID : " << (int)info->ClientID << std::endl;
-		rogicMgr.PlayerNoMove(info->ClientID);
 		rogicMgr.UnLock(info->ClientID);
 		rogicMgr.Update(info->ClientID);
 		break;

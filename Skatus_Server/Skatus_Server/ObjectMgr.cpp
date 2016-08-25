@@ -32,16 +32,12 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
 		SkinnedInfo.Rot = XMFLOAT3(0.0f, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
 		SkinnedInfo.Scale = 0.2f + MathHelper::RandF(0.2f, 0.5f);
-		SkinnedInfo.MoveSpeed = MathHelper::RandF(3.0f, 6.0f);
-		SkinnedInfo.AttackSpeed = MathHelper::RandF(2.0f, 4.0f);
 		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
 		break;
 	case ObjectType::Cyclop:
 		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
 		SkinnedInfo.Rot = XMFLOAT3(MathHelper::Pi, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
 		SkinnedInfo.Scale = 3.0f + MathHelper::RandF(2.0f, 5.0f);
-		SkinnedInfo.MoveSpeed = MathHelper::RandF(2.0f, 5.0f);
-		SkinnedInfo.AttackSpeed = MathHelper::RandF(1.0f, 3.0f);
 		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
 		break;
 

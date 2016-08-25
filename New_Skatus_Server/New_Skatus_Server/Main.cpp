@@ -211,6 +211,8 @@ void WorkerThreadStart()
 				SendPacket(i, reinterpret_cast<unsigned char*>(&discon));
 			}
 			clients[key].is_connected = false;
+
+			printf("id : %d가 접속을 종료하였습니다. \n", key);
 		}
 
 		if (OP_RECV == my_overlap->operation) {
@@ -321,6 +323,8 @@ void AcceptThreadStart()
 		enter_packet.y = clients[new_id].avatar.y;
 
 		SendPacket(new_id, reinterpret_cast<unsigned char *>(&enter_packet));
+
+		printf("id : %d가 접속 하였습니다. \n", new_id);
 
 		for (auto i = 0; i < MAX_USER; ++i) {
 			if (false == clients[i].is_connected) continue;

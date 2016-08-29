@@ -4,7 +4,16 @@
 class GameStateMgr
 {
 public:
-	GameStateMgr();
+	GameStateMgr() { mCurrState = eGameState::GameWaiting; }
 	~GameStateMgr();
+
+	void Reset() { mCurrState = eGameState::GameWaiting; }
+	void FlowAdvance();
+
+	void SetGameOver() { mCurrState = eGameState::GameOver; }
+	eGameState GetCurrState() const { return mCurrState; }
+
+private:
+	eGameState mCurrState;
 };
 

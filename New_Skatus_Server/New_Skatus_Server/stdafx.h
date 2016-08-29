@@ -7,9 +7,13 @@
 #include <thread>
 #include <iostream>
 #include <unordered_set>
+#include <unordered_map>
+#include <assert.h>
 #include <mutex>
 
 #include "protocol.h"
+
+#include "MathHelper.h"
 
 using namespace std;
 

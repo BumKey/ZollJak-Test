@@ -53,6 +53,7 @@ void SendPacket(int id, unsigned char *packet)
 	Overlap_ex *over = new Overlap_ex;
 	memset(over, 0, sizeof(Overlap_ex));
 	over->operation = OP_SEND;
+
 	over->wsabuf.buf = reinterpret_cast<CHAR *>(over->iocp_buffer);
 	over->wsabuf.len = packet[0];
 	memcpy(over->iocp_buffer, packet, packet[0]);

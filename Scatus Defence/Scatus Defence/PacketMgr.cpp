@@ -38,7 +38,7 @@ void PacketMgr::Init()
 
 	memset(&recv_addr, 0, sizeof(recv_addr));
 	recv_addr.sin_family = AF_INET;
-	recv_addr.sin_addr.s_addr = inet_addr("192.168.2.114");
+	recv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	recv_addr.sin_port = htons(SERVER_PORT);
 
 	// connect()
@@ -189,16 +189,20 @@ void PacketMgr::ProcessPacket(char* packet)
 		for (UINT i = 0; i < MAX_USER; ++i)
 			Object_Mgr->Update(i, p->Players[i]);
 		
+
 		char* string;
 		switch (p->GameState)
 		{
 		case eGameState::WaveStart:
 			string = "WaveStart";
+
 			break;
 		case eGameState::WaveWaiting:
+			Time_Mgr->gamestate = game_waiting_wave;
 			string = "WaveWaiting";
 			break;
 		case eGameState::Waving:
+			Time_Mgr->gamestate = game_waving;
 			string = "Waving";
 			break;
 		case eGameState::GameWaiting:
@@ -207,6 +211,8 @@ void PacketMgr::ProcessPacket(char* packet)
 		}
 		std::cout << "[SC_PerFrame] CurrState : " << string <<
 			", ObjectNum : " << p->NumOfObjects << std::endl;
+		Time_Mgr->Set_Wavelevel(p->Roundlevel);
+		Time_Mgr->Set_time(p->Time);
 		break;
 	}
 	case eSC::AddMonsters: {

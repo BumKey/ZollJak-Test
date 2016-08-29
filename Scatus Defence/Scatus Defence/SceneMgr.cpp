@@ -142,7 +142,10 @@ void SceneMgr::DrawScene()
 		DrawBS();
 
 	if(GetAsyncKeyState('Z') & 0x8000)
-		DrawScreenQuad();
+		DrawScreenQuadSsao();
+
+	if (GetAsyncKeyState('C') & 0x8000)
+		DrawScreenQuadShadow();
 
 	mSky->Draw(md3dImmediateContext, cam);
 
@@ -284,7 +287,7 @@ void SceneMgr::DrawGrassSprites()
 	}
 }
 
-void SceneMgr::DrawScreenQuad()
+void SceneMgr::DrawScreenQuadSsao()
 {
 	UINT stride = sizeof(Vertex::Basic32);
 	UINT offset = 0;
@@ -309,6 +312,38 @@ void SceneMgr::DrawScreenQuad()
 	{
 		Effects::DebugTexFX->SetWorldViewProj(world);
 		Effects::DebugTexFX->SetTexture(mSsao->AmbientSRV());
+
+		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+		md3dImmediateContext->DrawIndexed(6, 0, 0);
+	}
+}
+
+
+void SceneMgr::DrawScreenQuadShadow()
+{
+	UINT stride = sizeof(Vertex::Basic32);
+	UINT offset = 0;
+
+	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
+	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	md3dImmediateContext->IASetVertexBuffers(0, 1, &mScreenQuadVB, &stride, &offset);
+	md3dImmediateContext->IASetIndexBuffer(mScreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+
+	// Scale and shift quad to lower-right corner.
+	XMMATRIX world(
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.0f, 1.0f);
+
+	ID3DX11EffectTechnique* tech = Effects::DebugTexFX->ViewRedTech;
+	D3DX11_TECHNIQUE_DESC techDesc;
+
+	tech->GetDesc(&techDesc);
+	for (UINT p = 0; p < techDesc.Passes; ++p)
+	{
+		Effects::DebugTexFX->SetWorldViewProj(world);
+		Effects::DebugTexFX->SetTexture(mSmap->DepthMapSRV());
 
 		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);

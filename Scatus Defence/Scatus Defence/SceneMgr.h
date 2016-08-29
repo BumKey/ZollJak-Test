@@ -59,7 +59,8 @@ private:
 
 	void DrawTreeSprites();
 	void DrawGrassSprites();
-	void DrawScreenQuad();
+	void DrawScreenQuadSsao();
+	void DrawScreenQuadShadow();
 	void DrawBS();
 
 private:

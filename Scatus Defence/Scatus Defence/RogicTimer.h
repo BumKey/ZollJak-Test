@@ -30,6 +30,8 @@ private :
 		  double remain_time;
 		  double wavetimer;
 		  double attacktimer;
+		  int m_wave_level;
+		  int m_time;
 
 public:
 	
@@ -49,7 +51,10 @@ public:
 	int GetWaveTime() { return wavetimer; }
 	bool AttackTimer(double attack_speed);
 	int GetPlayTime();
-	
+	int Get_Wavelevel() { return m_wave_level; }
+	int Get_time() { return m_time; }
+	 void Set_Wavelevel(int num) { m_wave_level = num; }
+	void Set_time(int num) {m_time = num; }
 	RogicTimer();
 	~RogicTimer();
 	bool WaveTimer();

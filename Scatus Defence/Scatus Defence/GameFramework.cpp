@@ -80,6 +80,7 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트에서 키보드, 마우스 등 이벤트가 발생한다.
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
+	Packet_Mgr->SendPacket();
 	G_State_Mgr->Update();
 	Object_Mgr->Update(dt);
 

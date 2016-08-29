@@ -100,6 +100,7 @@ bool PacketMgr::ReadPacket(SOCKET sock)
 
 void PacketMgr::SendPacket()
 {
+	mSendState = eSendPacket::ATTACK;
 	switch (mSendState)
 	{
 	case SUCCESS: {

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAMETIMER_H
+#define GAMETIMER_H
 
 class GameTimer
 {
@@ -27,3 +28,4 @@ private:
 	bool mStopped;
 };
 
+#endif // !GAMETIMER_H

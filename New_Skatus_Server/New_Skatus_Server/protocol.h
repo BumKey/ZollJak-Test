@@ -179,11 +179,11 @@ struct SC_PerFrame : public HEADER
 	}
 	eGameState GameState;
 	UINT Time;
-	UINT NumOfObject;
+	UINT NumOfObjects;
 	UINT Roundlevel;
 	ObjectInfo Players[MAX_USER];
 	ObjectInfo Monsters[MAX_MONSTER];
-	eMonsterTarget target[MAX_MONSTER];
+	eMonsterTarget Target[MAX_MONSTER];
 };
 
 struct SC_AddMonster : public HEADER

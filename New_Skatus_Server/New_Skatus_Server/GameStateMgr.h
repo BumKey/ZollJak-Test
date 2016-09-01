@@ -1,5 +1,7 @@
 #pragma once
-#include "protocol.h"
+#ifndef GAMESTATEMGR_H
+#define GAMESTATEMGR_H 
+#include "stdafx.h"
 
 class GameStateMgr
 {
@@ -17,3 +19,4 @@ private:
 	eGameState mCurrState;
 };
 
+#endif // !GAMESTATEMGR_H

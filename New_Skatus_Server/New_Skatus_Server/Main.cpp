@@ -22,10 +22,10 @@ void error_display(char *msg, int err_no)
 
 bool Is_InRange(int a, int b)
 {
-	int dist = (clients[a].avatar.x - clients[b].avatar.x)
-		*(clients[a].avatar.x - clients[b].avatar.x)
-		+ (clients[a].avatar.y - clients[b].avatar.y)
-		* (clients[a].avatar.y - clients[b].avatar.y);
+	int dist = (clients[a].avatar.Pos.x - clients[b].avatar.Pos.x)
+		*(clients[a].avatar.Pos.x - clients[b].avatar.Pos.x)
+		+ (clients[a].avatar.Pos.y - clients[b].avatar.Pos.y)
+		* (clients[a].avatar.Pos.y - clients[b].avatar.Pos.y);
 	return dist <= VIEW_RADIUS * VIEW_RADIUS;
 }
 
@@ -73,8 +73,8 @@ void SendPutPlayerPacket(int client, int object)
 	packet.id = object;
 	packet.size = sizeof(packet);
 	packet.type = SC_PUT_PLAYER;
-	packet.x = clients[object].avatar.x;
-	packet.y = clients[object].avatar.y;
+	packet.x = clients[object].avatar.Pos.x;
+	packet.y = clients[object].avatar.Pos.y;
 
 	SendPacket(client, reinterpret_cast<unsigned char *>(&packet));
 }
@@ -91,8 +91,8 @@ void SendRemovePlayerPacket(int client, int object)
 
 void ProcessPacket(int id, unsigned char buf[])
 {
-	int x = clients[id].avatar.x;
-	int y = clients[id].avatar.y;
+	int x = clients[id].avatar.Pos.x;
+	int y = clients[id].avatar.Pos.y;
 
 	switch (buf[1])
 	{
@@ -108,8 +108,8 @@ void ProcessPacket(int id, unsigned char buf[])
 	if (x < 0) x = 0;
 	if (x >= BOARD_WIDTH) x = BOARD_WIDTH - 1;
 
-	clients[id].avatar.x = x;
-	clients[id].avatar.y = y;
+	clients[id].avatar.Pos.x = x;
+	clients[id].avatar.Pos.y = y;
 
 	sc_packet_pos mov_packet;
 	mov_packet.id = id;
@@ -120,7 +120,7 @@ void ProcessPacket(int id, unsigned char buf[])
 
 	SendPacket(id, reinterpret_cast<unsigned char *>(&mov_packet));
 
-	printf("id = %d, 좌표 : %d,%d <X,Y> - 패킷 전송완료 \n", id, clients[id].avatar.x, clients[id].avatar.y);
+	printf("id = %d, 좌표 : %d,%d <X,Y> - 패킷 전송완료 \n", id, clients[id].avatar.Pos.x, clients[id].avatar.Pos.y);
 
 	unordered_set <int> new_list;
 	for (auto i = 0; i < MAX_USER; ++i) {
@@ -302,8 +302,8 @@ void AcceptThreadStart()
 		}
 
 		clients[new_id].s = new_client;
-		clients[new_id].avatar.x = 4;
-		clients[new_id].avatar.y = 4;
+		clients[new_id].avatar.Pos.x = 4;
+		clients[new_id].avatar.Pos.y = 4;
 		clients[new_id].packet_size = 0;
 		clients[new_id].previous_size = 0;
 		memset(&clients[new_id].recv_overlap.original_overlap, 0,
@@ -320,8 +320,8 @@ void AcceptThreadStart()
 		enter_packet.id = new_id;
 		enter_packet.size = sizeof(enter_packet);
 		enter_packet.type = SC_PUT_PLAYER;
-		enter_packet.x = clients[new_id].avatar.x;
-		enter_packet.y = clients[new_id].avatar.y;
+		enter_packet.x = clients[new_id].avatar.Pos.x;
+		enter_packet.y = clients[new_id].avatar.Pos.y;
 
 		SendPacket(new_id, reinterpret_cast<unsigned char *>(&enter_packet));
 
@@ -345,8 +345,8 @@ void AcceptThreadStart()
 			clients[new_id].view_list.insert(i);
 			clients[new_id].vl_lock.unlock();
 			enter_packet.id = i;
-			enter_packet.x = clients[i].avatar.x;
-			enter_packet.y = clients[i].avatar.y;
+			enter_packet.x = clients[i].avatar.Pos.x;
+			enter_packet.y = clients[i].avatar.Pos.y;
 			SendPacket(new_id, reinterpret_cast<unsigned char *>(&enter_packet));
 		}
 		clients[new_id].is_connected = true;
@@ -390,3 +390,8 @@ int main()
 	accept_thread.join();
 	Cleanup();
 }
+
+/*
+	변경이 필요한 함수
+*/
+

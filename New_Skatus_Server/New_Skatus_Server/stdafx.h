@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning (disable : 4996)
 
 #include <WinSock2.h>
 #include <Windows.h>
@@ -14,6 +15,10 @@
 #include "protocol.h"
 
 #include "MathHelper.h"
+#include "Utility.h"
+
+#include "GameTimer.h"
+
 
 using namespace std;
 
@@ -38,9 +43,24 @@ struct Client {
 	bool is_connected;
 	unordered_set <int> view_list;
 	mutex vl_lock;
-	Player avatar;
+	SO_InitDesc avatar;
 	Overlap_ex recv_overlap;
 	int	packet_size;
 	int previous_size;
 	unsigned char packet_buff[MAX_PACKET_SIZE];
 };
+
+
+/*
+	extern variable
+*/
+
+extern Client clients[MAX_USER];
+extern HANDLE g_hIocp;
+extern bool g_isshutdown;
+
+/*
+	extern function
+*/
+
+void SendPacket(int id, unsigned char *packet);

@@ -158,15 +158,7 @@
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameMesh.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="GameStateMgr.cpp" />
     <ClCompile Include="GameTimer.cpp" />
-    <ClCompile Include="Game_Begin.cpp" />
-    <ClCompile Include="Game_GameOver.cpp" />
-    <ClCompile Include="Game_GlobalState.cpp" />
-    <ClCompile Include="Game_Title.cpp" />
-    <ClCompile Include="Game_Title_Option.cpp" />
-    <ClCompile Include="Game_Wave_Waiting .cpp" />
-    <ClCompile Include="Game_Waving.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="Goblin.cpp" />
     <ClCompile Include="LightHelper.cpp" />
@@ -193,8 +185,6 @@
     <ClCompile Include="Temple.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TextureMgr.cpp" />
-    <ClCompile Include="UI_Manager.cpp" />
-    <ClCompile Include="UI_Scene.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="Warrior.cpp" />
@@ -214,7 +204,6 @@
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameMesh.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameStateMgr.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Goblin.h" />
@@ -243,8 +232,6 @@
     <ClInclude Include="Temple.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TextureMgr.h" />
-    <ClInclude Include="UI_Manager.h" />
-    <ClInclude Include="UI_Scene.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Warrior.h" />

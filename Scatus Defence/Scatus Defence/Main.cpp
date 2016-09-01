@@ -16,5 +16,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	if (!gameFramework.Init())
 		return 0;
 
-	return gameFramework.Run();
+	int msg = gameFramework.Run();
 }

@@ -18,8 +18,6 @@ public:
 	void ProcessKeyInput(CS_Move& inPacket);
 	void ProcessMouseInput(CS_Attack& inPacket);
 
-	void Lock(const UINT& id) { mLock[id] = true; }
-	void UnLock(const UINT& id) { mLock[id] = false; }
 	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
 
 private:
@@ -31,7 +29,7 @@ private:
 
 private:
 	bool mPutPlayerEvent;
-	bool mLock[MAX_USER];
+
 	UINT mNewID;
 	UINT mCurrWaveLevel;
 	UINT mCurrPlayerNum;

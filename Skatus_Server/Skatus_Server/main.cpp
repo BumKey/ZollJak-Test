@@ -36,7 +36,5 @@ int main(int argc, char argv[])
 
 			WSACleanup();
 		}
-		else
-			Sleep(1000);
 	}
 }

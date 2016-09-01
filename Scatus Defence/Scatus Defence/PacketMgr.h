@@ -4,13 +4,12 @@
 #include <WinSock2.h>
 #include <Windows.h>
 #include <assert.h>
+#include <iostream>
+#include <thread>
+#include <vector>
+
 #include "protocol.h"
 #include "Singletone.h"
-#include "ObjectMgr.h"
-#include "SceneMgr.h"
-#include "Warrior.h"
-#include <iostream>
-#include <vector>
 #include "RogicTimer.h"
 #pragma comment (lib, "ws2_32.lib")
 
@@ -22,41 +21,29 @@ public:
 	PacketMgr();
 	~PacketMgr();
 
-	enum eSendPacket {
-		SUCCESS,
-		MOVE,
-		ATTACK
-	};
-
 public:
 	void Init();
-	bool ReadPacket();
-	void SendPacket();
 
-	void SetMovePacket(const CS_Move& packet) { mMovePacket = packet; }
-	void SetSendState(const eSendPacket state) { mSendState = state; }
-
-	char* GetPacket()				{ return mPacketBuf; }
-	int GetClientID() const { return mClientID; }
-private:
-	void ProcessPacket(char* packet);
 	template <class T>
 	void SendPacket(T& packet);
+	static void ReadPacket();
+
 	void err_display(wchar_t *msg);
 
+public:
+	int ClientID;
+	bool PacketReceived;
+	bool Connected[MAX_USER];
+
+	SOCKET	Socket;
+	WSABUF	SendBuf;
+	WSABUF	RecvBuf;
+	eGameState CurrGameState;
+
+	char* PacketBuf;
+
 private:
-	int mClientID;
-	bool mConnected[MAX_USER];
-
-	CS_Move mMovePacket;
-	eSendPacket mSendState;
-
-	SOCKET	mSocket;
-	WSABUF	mRecvBuf;
-	WSABUF	mSendBuf;
-	eGameState mCurrGameState;
-
-	char* mPacketBuf;
+	std::thread* mWorkerThread;
 };
 
 template<class T>
@@ -64,14 +51,14 @@ inline void PacketMgr::SendPacket(T & packet)
 {
 	char *packet_buf;
 
-	packet.ClientID = mClientID;
+	packet.ClientID = Packet_Mgr->ClientID;
 	packet_buf = reinterpret_cast<char*>(&packet);
 
-	mSendBuf.len = packet.Size;
-	memcpy(mSendBuf.buf, packet_buf, packet.Size);
+	SendBuf.len = packet.Size;
+	memcpy(SendBuf.buf, packet_buf, packet.Size);
 
 	int outBytes = 0;
-	if (WSASend(mSocket, &mSendBuf, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
+	if (WSASend(Socket, &SendBuf, 1, (LPDWORD)&outBytes, 0, NULL, NULL) == SOCKET_ERROR)
 	{
 		if (WSAGetLastError() != WSA_IO_PENDING)
 			err_display(L"WSASend() Error");

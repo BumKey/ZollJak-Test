@@ -68,19 +68,11 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 	HEADER *header = reinterpret_cast<HEADER*>(packet);
 	switch (header->Type)
 	{
-	case eCS::Success: {
-		auto info = reinterpret_cast<CS_Success*>(packet);
-		std::cout << "CS_SUCCESS, ID : " << (int)info->ClientID << std::endl;
-		rogicMgr.UnLock(info->ClientID);
-		rogicMgr.Update(info->ClientID);
-		break;
-	}
 	case eCS::KeyInput: {
 		auto info = reinterpret_cast<CS_Move*>(packet);
 		std::cout << "CS_KEYINPUT, POS : " << info->Pos.x << ", "
 			<< info->Pos.y << ", " << info->Pos.z << std::endl;
 		rogicMgr.ProcessKeyInput(*info);
-		rogicMgr.UnLock(info->ClientID);
 		rogicMgr.Update(info->ClientID);
 		break;
 	}
@@ -88,7 +80,6 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 		auto info = reinterpret_cast<CS_Attack*>(packet);
 		std::cout << "CS_MOUSEINPUT, ID : " << info->ClientID << std::endl;
 		rogicMgr.ProcessMouseInput(*info);
-		rogicMgr.UnLock(info->ClientID);
 		rogicMgr.Update(info->ClientID);
 		break;
 	}

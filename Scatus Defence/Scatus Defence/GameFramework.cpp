@@ -57,12 +57,14 @@ bool GameFrameWork::Init()
 
 	Texture_Mgr->Init(md3dDevice);
 	Resource_Mgr->Init(md3dDevice);
-	mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
-	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());
+	/*mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
+	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());*/
 	Sound_Mgr->Create_Sound(D3DApp::MainWnd());
 
 	// Giljune's Code
 	Packet_Mgr->Init();
+
+	Scene_Mgr->ComputeSceneBoundingBox();
 
 	return true;
 }
@@ -83,24 +85,142 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
 	
-	if (Packet_Mgr->ReadPacket())
-	{
-		G_State_Mgr->Update();
-		Object_Mgr->Update(dt);
-
-		Camera::GetInstance()->Update();
-		Scene_Mgr->Update(dt);
-
-		Packet_Mgr->SendPacket();
+	if (Packet_Mgr->PacketReceived) {
+		ProcessPacket(Packet_Mgr->PacketBuf);
+		Packet_Mgr->PacketReceived = false;
 	}
-	else
-		UpdateScene(dt);
+
+	Object_Mgr->Update(dt);
+
+	Camera::GetInstance()->Update();
+	Scene_Mgr->Update(dt);
+}
+
+void GameFrameWork::ProcessPacket(char * packet)
+{
+	int& clientID = Packet_Mgr->ClientID;
+	HEADER *header = reinterpret_cast<HEADER*>(packet);
+	switch (header->Type)
+	{
+	case eSC::InitPlayer: {
+		auto *p = reinterpret_cast<SC_InitPlayer*>(packet);
+
+		SO_InitDesc desc;
+		if (clientID == -1) {
+			clientID = p->ClientID;
+
+			desc.Pos = p->Player[clientID].Pos;
+			desc.Rot = p->Player[clientID].Rot;
+			desc.Scale = p->Player[clientID].Scale;
+			desc.AttackSpeed = p->Player[clientID].AttackSpeed;
+			desc.MoveSpeed = p->Player[clientID].MoveSpeed;
+			desc.Hp = p->Player[clientID].Hp;
+			auto type = p->Player[clientID].ObjectType;
+
+			Packet_Mgr->Connected[clientID] = true;
+			Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(type), desc);
+			Object_Mgr->AddMainPlayer(Player::GetInstance(), clientID);
+		}
+
+		for (UINT i = 0; i < p->CurrPlayerNum; ++i)
+		{
+			desc.Pos = p->Player[i].Pos;
+			desc.Rot = p->Player[i].Rot;
+			desc.Scale = p->Player[i].Scale;
+			desc.AttackSpeed = p->Player[i].AttackSpeed;
+			desc.MoveSpeed = p->Player[i].MoveSpeed;
+			desc.Hp = p->Player[i].Hp;
+			auto type = p->Player[i].ObjectType;
+
+			if (Packet_Mgr->Connected[clientID] == false) {
+				Object_Mgr->AddOtherPlayer(desc, i);
+				Packet_Mgr->Connected[clientID] = true;
+			}
+		}
+
+		for (UINT i = 0; i < p->NumOfObjects; ++i)
+		{
+			desc.Pos = p->MapInfo[i].Pos;
+			desc.Rot = p->MapInfo[i].Rot;
+			desc.Scale = p->MapInfo[i].Scale;
+			auto type = p->MapInfo[i].ObjectType;
+
+			Object_Mgr->AddObstacle(type, desc);
+		}
+
+		std::cout << "SC_INIT_PLAYER, ID : " << clientID << std::endl;
+		break;
+	}
+	case eSC::PutOtherPlayers: {
+		auto *p = reinterpret_cast<SC_PutOtherPlayers*>(packet);
+		for (UINT i = 0; i < p->CurrPlayerNum; ++i)
+		{
+			if (Packet_Mgr->Connected[clientID] == false) {
+				Object_Mgr->AddOtherPlayer(p->Player[i], i);
+				Packet_Mgr->Connected[clientID] = true;
+			}
+		}
+		std::cout << "SC_PUT_OTHER_PLAYERS, CurrPlayerNum : " << p->CurrPlayerNum << std::endl;
+		break;
+	}
+	case eSC::PerFrame: {
+		auto *p = reinterpret_cast<SC_PerFrame*>(packet);
+		for (UINT i = 0; i < MAX_USER; ++i)
+			Object_Mgr->Update(i, p->Players[i]);
+
+
+		char* string;
+		switch (p->GameState)
+		{
+		case eGameState::WaveStart:
+			string = "WaveStart";
+
+			break;
+		case eGameState::WaveWaiting:
+			Time_Mgr->gamestate = game_waiting_wave;
+			string = "WaveWaiting";
+			break;
+		case eGameState::Waving:
+			Time_Mgr->gamestate = game_waving;
+			string = "Waving";
+			break;
+		case eGameState::GameWaiting:
+			string = "GameWaiting";
+			break;
+		}
+		std::cout << "[SC_PerFrame] CurrState : " << string <<
+			", ObjectNum : " << p->NumOfObjects << std::endl;
+		Time_Mgr->Set_Wavelevel(p->Roundlevel);
+		Time_Mgr->Set_time(p->Time);
+		break;
+	}
+	case eSC::AddMonsters: {
+		auto *p = reinterpret_cast<SC_AddMonster*>(packet);
+		for (UINT i = 0; i < p->NumOfObjects; ++i)
+		{
+			SO_InitDesc desc;
+			desc.Pos = p->InitInfos[i].Pos;
+			desc.Rot = p->InitInfos[i].Rot;
+			desc.Scale = p->InitInfos[i].Scale;
+			desc.AttackSpeed = p->InitInfos[i].AttackSpeed;
+			desc.MoveSpeed = p->InitInfos[i].MoveSpeed;
+			auto type = p->InitInfos[i].ObjectType;
+
+			Object_Mgr->AddMonster(type, desc, i);
+		}
+		std::cout << "SC_ADD_MONSTER, ObjectNum : " << p->NumOfObjects << std::endl;
+		break;
+	}
+
+	default:
+		std::cout << "Unknown packet type : " << header->Type << std::endl;
+	}
 }
 
 void GameFrameWork::DrawScene()
 {
 	Scene_Mgr->DrawScene();
-	UI_Mgr->Print_All_UI();
+	//UI_Mgr->Print_All_UI();
 	HR(mSwapChain->Present(0, 0));
 }
 
@@ -112,7 +232,6 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 		Player::GetInstance()->SetAttackState();
 
 		CS_Attack packet;
-		Packet_Mgr->SetSendState(PacketMgr::ATTACK);
 	}
 	
 	SetCapture(mhMainWnd);
@@ -168,4 +287,3 @@ void GameFrameWork::OnKeyDown(WPARAM keyState)
 {
 	//Player::GetInstance()->Mo
 }
-

@@ -11,10 +11,21 @@ ObjectMgr::~ObjectMgr()
 {
 }
 
-void ObjectMgr::AddPlayer(SkinnedObject * player, const UINT& id)
+void ObjectMgr::AddMainPlayer(SkinnedObject* obj, const UINT& id)
 {
-	mPlayers[id] = player;
+	mPlayers[id] = obj;
 	mConnected[id] = true;
+}
+
+void ObjectMgr::AddOtherPlayer(SO_InitDesc desc, const UINT& id)
+{
+	switch (desc.ObjectType)
+	{
+	case ObjectType::Warrior:
+		mPlayers[id] = new Warrior(Resource_Mgr->GetSkinnedMesh(desc.ObjectType), desc);
+		mConnected[id] = true;
+		break;
+	}
 }
 
 void ObjectMgr::AddMonster(const ObjectType::Types & type, const SO_InitDesc & desc, const UINT& id)
@@ -62,13 +73,13 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 
 void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
 {
-	if (mConnected[id] && id != Packet_Mgr->GetClientID()) 
-	{
-		mPlayers[id]->SetPos(info.Pos);
-		mPlayers[id]->SetState(info.ActionState);
-		if (id != Packet_Mgr->GetClientID())
-			mPlayers[id]->SetRot(info.Rot);
-	}
+	//if (mConnected[id] && id != Packet_Mgr->GetClientID()) 
+	//{
+	//	mPlayers[id]->SetPos(info.Pos);
+	//	mPlayers[id]->SetState(info.ActionState);
+	//	if (id != Packet_Mgr->GetClientID())
+	//		mPlayers[id]->SetRot(info.Rot);
+	//}
 }
 
 void ObjectMgr::Update(float dt)

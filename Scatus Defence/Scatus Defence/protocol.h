@@ -28,7 +28,6 @@ enum eSC {
 };
 
 enum eCS {
-	Success,
 	KeyInput,
 	MouseInput
 };
@@ -212,14 +211,6 @@ struct CS_Attack : public HEADER
 {
 	CS_Attack() {
 		Size = sizeof(*this); Type = eCS::MouseInput;
-	}
-	BYTE ClientID;
-};
-
-struct CS_Success : public HEADER
-{
-	CS_Success() {
-		Size = sizeof(*this); Type = eCS::Success;
 	}
 	BYTE ClientID;
 };

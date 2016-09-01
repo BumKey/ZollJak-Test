@@ -66,7 +66,7 @@ void Player::Move(float walk, float strafe)
 		dt = abs(strafe);
 	}
 
-	if (mTimer.TotalTime() > 0.01f)
+	if (mTimer.TotalTime() > 0.1f)
 	{
 		CS_Move packet;
 		packet.Pos = mPosition;
@@ -75,8 +75,8 @@ void Player::Move(float walk, float strafe)
 		packet.ActionState = mActionState;
 		packet.MoveSpeed = mProperty.movespeed;
 		packet.DeltaTime = dt;
-		Packet_Mgr->SetMovePacket(packet);
-		Packet_Mgr->SetSendState(PacketMgr::MOVE);
+
+		Packet_Mgr->SendPacket(packet);
 		mTimer.Reset();
 	}
 	else

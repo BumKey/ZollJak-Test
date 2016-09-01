@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Goblin.h"
 #include "Cyclop.h"
+#include "Warrior.h"
 #include "ResourceMgr.h"
 #include "Singletone.h"
 #include <vector>
@@ -24,7 +25,8 @@ private:
 
 	friend class Singletone<ObjectMgr>;
 public:
-	void AddPlayer(SkinnedObject* player, const UINT& id);
+	void AddMainPlayer(SkinnedObject* obj, const UINT& id);
+	void AddOtherPlayer(SO_InitDesc desc, const UINT& id);
 	void AddMonster(const ObjectType::Types& type, const SO_InitDesc& desc, const UINT& id);
 	void AddObstacle(const ObjectType::Types& type, const BO_InitDesc& desc);
 

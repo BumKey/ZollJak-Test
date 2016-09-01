@@ -10,7 +10,6 @@
 
 #pragma once
 #include "d3dUtil.h"
-#include "Terrain.h"
 #include "Singletone.h"
 
 class Camera : public Singletone<Camera>

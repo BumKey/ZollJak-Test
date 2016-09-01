@@ -15,8 +15,6 @@ mNewID(-1)
 	mGameTimer.Reset();
 
 	mPutPlayerEvent = false;
-	for (bool l : mLock)
-		l = false;
 }
 
 

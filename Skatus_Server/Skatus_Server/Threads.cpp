@@ -70,7 +70,6 @@ void MyThreads::Accept_Thread()
 
 		// 클라이언트 연결 정보 갱신
 		g_clients[new_id].is_connected = TRUE;
-		g_RogicMgr.UnLock(new_id);
 
 		// 연속되는 작업을 위한 WSARecv 호출
 		DWORD flags = 0;

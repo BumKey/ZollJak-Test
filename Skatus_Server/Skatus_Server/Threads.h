@@ -7,4 +7,5 @@ namespace MyThreads {
 
 	void Accept_Thread();
 	void Worker_Thread();
+	void Rogic_Thread();
 }

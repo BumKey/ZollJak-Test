@@ -115,27 +115,30 @@ void GameFrameWork::ProcessPacket(char * packet)
 			desc.AttackSpeed = p->Player[clientID].AttackSpeed;
 			desc.MoveSpeed = p->Player[clientID].MoveSpeed;
 			desc.Hp = p->Player[clientID].Hp;
-			auto type = p->Player[clientID].ObjectType;
 
-			Packet_Mgr->Connected[clientID] = true;
+			auto type = p->Player[clientID].ObjectType;
 			Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(type), desc);
+
 			Object_Mgr->AddMainPlayer(Player::GetInstance(), clientID);
+			Packet_Mgr->Connected[clientID] = true;
 		}
 
 		for (UINT i = 0; i < p->CurrPlayerNum; ++i)
 		{
+			if (Packet_Mgr->Connected[i])
+				continue;
+
+			desc.ObjectType = p->Player[i].ObjectType;
 			desc.Pos = p->Player[i].Pos;
 			desc.Rot = p->Player[i].Rot;
 			desc.Scale = p->Player[i].Scale;
 			desc.AttackSpeed = p->Player[i].AttackSpeed;
 			desc.MoveSpeed = p->Player[i].MoveSpeed;
 			desc.Hp = p->Player[i].Hp;
-			auto type = p->Player[i].ObjectType;
 
-			if (Packet_Mgr->Connected[clientID] == false) {
-				Object_Mgr->AddOtherPlayer(desc, i);
-				Packet_Mgr->Connected[clientID] = true;
-			}
+			Object_Mgr->AddOtherPlayer(desc, i);
+			Packet_Mgr->Connected[i] = true;
+			
 		}
 
 		for (UINT i = 0; i < p->NumOfObjects; ++i)
@@ -151,23 +154,13 @@ void GameFrameWork::ProcessPacket(char * packet)
 		std::cout << "SC_INIT_PLAYER, ID : " << clientID << std::endl;
 		break;
 	}
-	case eSC::PutOtherPlayers: {
-		auto *p = reinterpret_cast<SC_PutOtherPlayers*>(packet);
-		for (UINT i = 0; i < p->CurrPlayerNum; ++i)
-		{
-			if (Packet_Mgr->Connected[clientID] == false) {
-				Object_Mgr->AddOtherPlayer(p->Player[i], i);
-				Packet_Mgr->Connected[clientID] = true;
-			}
-		}
-		std::cout << "SC_PUT_OTHER_PLAYERS, CurrPlayerNum : " << p->CurrPlayerNum << std::endl;
-		break;
-	}
+
 	case eSC::PerFrame: {
 		auto *p = reinterpret_cast<SC_PerFrame*>(packet);
-		for (UINT i = 0; i < MAX_USER; ++i)
-			Object_Mgr->Update(i, p->Players[i]);
-
+		for (UINT i = 0; i < MAX_USER; ++i) {
+			if(Packet_Mgr->Connected[i] && i != Packet_Mgr->ClientID)
+				Object_Mgr->Update(i, p->Players[i]);
+		}
 
 		char* string;
 		switch (p->GameState)

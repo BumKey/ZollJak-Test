@@ -61,39 +61,40 @@ void PacketMgr::ReadPacket()
 	static UINT savedBytes = 0;
 	DWORD receivedBytes, ioflag = 0;
 
-	while (1)
-	{
-		if (WSARecv(socket, &recvBuf, 1, &receivedBytes, &ioflag, NULL, NULL) == SOCKET_ERROR)
-		{
-			if (WSAGetLastError() != WSA_IO_PENDING)
-				Packet_Mgr->err_display(L"WSARecv() Error");
-		}
-
-		if (receivedBytes == 0)
-			std::cout << "receivedData == 0 " << std::endl;
-
-		while (1)
-		{
-			auto header = reinterpret_cast<HEADER*>(recvBuf.buf);
-
-			UINT currPacketSize = header->Size;
-			if (currPacketSize >= MAX_PACKET_SIZE)
-				break;
-
-			if (receivedBytes + savedBytes >= currPacketSize)
+	while (1) {
+		if (Packet_Mgr->PacketReceived == false) {
+			if (WSARecv(socket, &recvBuf, 1, &receivedBytes, &ioflag, NULL, NULL) == SOCKET_ERROR)
 			{
-				UINT remainingData = currPacketSize - savedBytes;
-				// mPacketBuf의 사이즈보다 큰 패킷을 memcpy하면 메모리 오염!!
-				memcpy(packetBuf + savedBytes, recvBuf.buf, remainingData);
-
-				Packet_Mgr->PacketReceived = true;
-				savedBytes = 0;
-				break;
+				if (WSAGetLastError() != WSA_IO_PENDING)
+					Packet_Mgr->err_display(L"WSARecv() Error");
 			}
-			else
+
+			if (receivedBytes == 0)
+				std::cout << "receivedData == 0 " << std::endl;
+
+			while (1)
 			{
-				memcpy(packetBuf + savedBytes, recvBuf.buf, receivedBytes);
-				savedBytes += receivedBytes;
+				auto header = reinterpret_cast<HEADER*>(recvBuf.buf);
+
+				UINT currPacketSize = header->Size;
+				if (currPacketSize >= MAX_PACKET_SIZE)
+					break;
+
+				if (receivedBytes + savedBytes >= currPacketSize)
+				{
+					UINT remainingData = currPacketSize - savedBytes;
+					// mPacketBuf의 사이즈보다 큰 패킷을 memcpy하면 메모리 오염!!
+					memcpy(packetBuf + savedBytes, recvBuf.buf, remainingData);
+
+					Packet_Mgr->PacketReceived = true;
+					savedBytes = 0;
+					break;
+				}
+				else
+				{
+					memcpy(packetBuf + savedBytes, recvBuf.buf, receivedBytes);
+					savedBytes += receivedBytes;
+				}
 			}
 		}
 	}

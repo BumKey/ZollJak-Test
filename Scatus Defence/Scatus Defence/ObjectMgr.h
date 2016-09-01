@@ -42,6 +42,5 @@ private:
 	std::vector<BasicObject*>						mBasicObjects;
 	std::vector<Monster*>							mMonsters;
 	SkinnedObject*									mPlayers[MAX_USER];
-	bool											mConnected[MAX_USER];
 };
 

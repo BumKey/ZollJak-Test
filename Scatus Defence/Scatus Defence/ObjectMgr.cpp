@@ -3,8 +3,6 @@
 // 임의의 수치임
 ObjectMgr::ObjectMgr()
 {
-	for (int i = 0; i < MAX_USER; ++i)
-		mConnected[i] = false;
 }
 
 ObjectMgr::~ObjectMgr()
@@ -14,7 +12,6 @@ ObjectMgr::~ObjectMgr()
 void ObjectMgr::AddMainPlayer(SkinnedObject* obj, const UINT& id)
 {
 	mPlayers[id] = obj;
-	mConnected[id] = true;
 }
 
 void ObjectMgr::AddOtherPlayer(SO_InitDesc desc, const UINT& id)
@@ -23,7 +20,6 @@ void ObjectMgr::AddOtherPlayer(SO_InitDesc desc, const UINT& id)
 	{
 	case ObjectType::Warrior:
 		mPlayers[id] = new Warrior(Resource_Mgr->GetSkinnedMesh(desc.ObjectType), desc);
-		mConnected[id] = true;
 		break;
 	}
 }
@@ -68,18 +64,14 @@ void ObjectMgr::AddObstacle(const ObjectType::Types & type, const BO_InitDesc & 
 
 void ObjectMgr::RemovePlayer(const UINT & id)
 {
-	mConnected[id] = false;
+	Packet_Mgr->Connected[id] = false;
 }
 
 void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
 {
-	//if (mConnected[id] && id != Packet_Mgr->GetClientID()) 
-	//{
-	//	mPlayers[id]->SetPos(info.Pos);
-	//	mPlayers[id]->SetState(info.ActionState);
-	//	if (id != Packet_Mgr->GetClientID())
-	//		mPlayers[id]->SetRot(info.Rot);
-	//}
+	mPlayers[id]->SetPos(info.Pos);
+	mPlayers[id]->SetState(info.ActionState);
+	mPlayers[id]->SetRot(info.Rot);
 }
 
 void ObjectMgr::Update(float dt)
@@ -92,7 +84,7 @@ void ObjectMgr::Update(float dt)
 
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		if (mConnected[i])
+		if (Packet_Mgr->Connected[i])
 		{
 			mPlayers[i]->Animate(dt);
 			mAllObjects.push_back(mPlayers[i]);

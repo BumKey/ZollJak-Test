@@ -68,9 +68,6 @@ void MyThreads::Accept_Thread()
 
 		g_RogicMgr.AddPlayer(newSocket, ObjectType::Warrior, new_id);
 
-		// 클라이언트 연결 정보 갱신
-		g_clients[new_id].is_connected = TRUE;
-
 		// 연속되는 작업을 위한 WSARecv 호출
 		DWORD flags = 0;
 		int ret = WSARecv(newSocket, &g_clients[new_id].recv_overlap.wsabuf, 1, NULL,
@@ -180,5 +177,14 @@ void MyThreads::Worker_Thread()
 			std::cout << "Unknown IOCP event!\n";
 			exit(-1);
 		}
+	}
+}
+
+void MyThreads::Rogic_Thread()
+{
+	while (1)
+	{
+		g_RogicMgr.Update();
+		Sleep(1000);
 	}
 }

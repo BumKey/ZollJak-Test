@@ -16,10 +16,7 @@ public:
 
 protected:
 	virtual void AttackToTarget(float dt);
-	virtual void MoveToTarget(float dt);
-
-private:
-	float AngleToTarget(XMVECTOR vTarget);
+	virtual void MoveToTargetObject(float dt);
 
 private:
 	AI_State::States mAI_States;

@@ -16,7 +16,7 @@ Monster::~Monster()
 }
 
 // 이 메서드는 현재 타겟이 설정되어 있다고 가정한다.
-void Monster::MoveToTarget(float dt)
+void Monster::MoveToTargetObject(float dt)
 {
 	assert(mTarget);
 	if (mCollisionState == CollisionState::None && mActionState != ActionState::Attack 
@@ -31,7 +31,7 @@ void Monster::MoveToTarget(float dt)
 		XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
 
 		// 방향으로 회전
-		float angle = AngleToTarget(vTarget)*dt*MathHelper::Pi;
+		float angle = MathHelper::AngleToTarget(vTarget, mCurrLook)*dt*MathHelper::Pi;
 
 		RotateY(angle);
 
@@ -48,7 +48,7 @@ void Monster::Update(float dt)
 		if (mAI_States == AI_State::AttackToTarget)
 			AttackToTarget(dt);
 		else if (mAI_States == AI_State::MovingToTarget)
-			MoveToTarget(dt);
+			MoveToTargetObject(dt);
 	}
 }
 
@@ -77,23 +77,11 @@ void Monster::SetAI_State(AI_State::States state)
 		mAI_States = state;
 }
 
-float Monster::AngleToTarget(XMVECTOR vTarget)
-{
-	// 방향으로 회전
-	XMFLOAT3 fTargetDir;
-	XMStoreFloat3(&fTargetDir, vTarget);
-	float dot = -fTargetDir.x*mCurrLook.x - fTargetDir.z*mCurrLook.z;
-	float det = -fTargetDir.x*mCurrLook.z + fTargetDir.z*mCurrLook.x;
-	float angle = atan2(det, dot);
-
-	return angle;
-}
-
 void Monster::AttackToTarget(float dt)
 {
 	// 방향으로 회전
-	XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
-	float angle = AngleToTarget(vTarget)*dt*MathHelper::Pi;
+	XMVECTOR vTarget =	MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
+	float angle =		MathHelper::AngleToTarget(vTarget, mCurrLook)*dt*MathHelper::Pi;
 
 	RotateY(angle);
 
@@ -102,5 +90,4 @@ void Monster::AttackToTarget(float dt)
 		Attack(mTarget);
 		mTarget->ChangeActionState(ActionState::Damage);
 	}
-	
 }

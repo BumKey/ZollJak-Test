@@ -217,6 +217,28 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc)
 	}
 }
 
+void SkinnedObject::MoveToTargetPos(XMFLOAT3 targetPos, float dt)
+{
+	if (mCollisionState == CollisionState::None && mActionState != ActionState::Attack
+		&& mActionState != ActionState::Damage && mActionState != ActionState::Die)
+	{
+		XMVECTOR vTarget = MathHelper::TargetVector2D(targetPos, mPosition);
+
+		XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
+		XMVECTOR p = XMLoadFloat3(&mPosition);
+
+		// 방향으로 이동
+		XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
+
+		// 방향으로 회전
+		float angle = MathHelper::AngleToTarget(vTarget, mCurrLook)*dt*MathHelper::Pi;
+
+		RotateY(angle);
+
+		ChangeActionState(ActionState::Run);
+	}
+}
+
 void SkinnedObject::SetClip()
 {
 	if (mActionState == ActionState::Idle)

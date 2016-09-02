@@ -86,17 +86,17 @@ void GameFrameWork::UpdateScene(float dt)
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
 	
 	if (Packet_Mgr->PacketReceived) {
-		ProcessPacket(Packet_Mgr->PacketBuf);
+		ProcessPacket(Packet_Mgr->PacketBuf, dt);
 		Packet_Mgr->PacketReceived = false;
 	}
 
-	Object_Mgr->Update(dt);
+	Object_Mgr->Animate(dt);
 
 	Camera::GetInstance()->Update();
 	Scene_Mgr->Update(dt);
 }
 
-void GameFrameWork::ProcessPacket(char * packet)
+void GameFrameWork::ProcessPacket(char * packet, float dt)
 {
 	int& clientID = Packet_Mgr->ClientID;
 	HEADER *header = reinterpret_cast<HEADER*>(packet);
@@ -159,7 +159,7 @@ void GameFrameWork::ProcessPacket(char * packet)
 		auto *p = reinterpret_cast<SC_PerFrame*>(packet);
 		for (UINT i = 0; i < MAX_USER; ++i) {
 			if(Packet_Mgr->Connected[i] && i != Packet_Mgr->ClientID)
-				Object_Mgr->Update(i, p->Players[i]);
+				Object_Mgr->Update(i, p->Players[i], dt);
 		}
 
 		char* string;

@@ -9,6 +9,7 @@
 
 #include <Windows.h>
 #include <xnamath.h>
+#include "Utilities.h"
 
 class MathHelper
 {
@@ -51,6 +52,7 @@ public:
 
 	// Returns the polar angle of the point (x,y) in [0, 2*PI).
 	static float AngleFromXY(float x, float y);
+	static float AngleToTarget(XMVECTOR vTarget, XMFLOAT3 currLook);
 
 	static XMVECTOR TargetVector2D(XMFLOAT3 target, XMFLOAT3 origin);
 	static FLOAT DistanceVector(XMFLOAT3 l, XMFLOAT3 r);

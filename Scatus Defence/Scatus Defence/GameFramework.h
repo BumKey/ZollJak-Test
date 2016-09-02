@@ -17,7 +17,7 @@ public:
 	bool Init();
 	void OnResize();
 	void UpdateScene(float dt);
-	void ProcessPacket(char* packet);
+	void ProcessPacket(char* packet, float dt);
 	void DrawScene();
 
 	void OnMouseDown(WPARAM btnState, int x, int y);

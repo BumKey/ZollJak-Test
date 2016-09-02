@@ -29,6 +29,9 @@ public:
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj) = 0;
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc) = 0;
 
+	virtual void MoveToTargetObject(float dt) {}
+	virtual void MoveToTargetPos(XMFLOAT3 targetPos, float dt) {}
+
 	virtual void Release();
 	virtual void ChangeActionState(ActionState::States aState);
 

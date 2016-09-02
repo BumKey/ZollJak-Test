@@ -22,10 +22,11 @@ public:
 	virtual void Update(float dt);
 	virtual void Animate(float dt);
 
-
 	virtual void DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform);
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj);
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc);
+
+	virtual void MoveToTargetPos(XMFLOAT3 targetPos, float dt);
 
 	bool  CurrAnimEnd();
 

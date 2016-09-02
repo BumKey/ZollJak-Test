@@ -31,6 +31,19 @@ float MathHelper::AngleFromXY(float x, float y)
 	return theta;
 }
 
+float MathHelper::AngleToTarget(XMVECTOR vTarget, XMFLOAT3 currLook)
+{
+	// 방향으로 회전
+	XMFLOAT3 fTargetDir;
+	XMStoreFloat3(&fTargetDir, vTarget);
+
+	float dot = -fTargetDir.x*currLook.x - fTargetDir.z*currLook.z;
+	float det = -fTargetDir.x*currLook.z + fTargetDir.z*currLook.x;
+	float angle = atan2(det, dot);
+
+	return angle;
+}
+
 FLOAT MathHelper::DistanceVector(XMFLOAT3 l, XMFLOAT3 r)
 {
 	FLOAT a = l.x - r.x;

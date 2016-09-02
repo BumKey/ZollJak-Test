@@ -34,8 +34,8 @@ public:
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
 
-	void Update(const UINT& id, const ObjectInfo& info);
-	void Update(float dt);
+	void Update(const UINT& id, const ObjectInfo& info, float dt);
+	void Animate(float dt);
 
 private:
 	std::vector<GameObject*>						mAllObjects;					

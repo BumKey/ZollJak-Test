@@ -67,14 +67,14 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 	Packet_Mgr->Connected[id] = false;
 }
 
-void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
+void ObjectMgr::Update(const UINT & id, const ObjectInfo & info, float dt)
 {
-	mPlayers[id]->SetPos(info.Pos);
+	mPlayers[id]->MoveToTargetPos(info.Pos, dt);
 	mPlayers[id]->SetState(info.ActionState);
 	mPlayers[id]->SetRot(info.Rot);
 }
 
-void ObjectMgr::Update(float dt)
+void ObjectMgr::Animate(float dt)
 {
 	mAllObjects.clear();
 	mAllObjects.reserve(mBasicObjects.size() + MAX_USER);

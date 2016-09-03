@@ -6,29 +6,6 @@ HANDLE g_hIocp;
 bool	g_isshutdown = false;
 #pragma comment (lib, "ws2_32.lib")
 
-void error_display(char *msg, int err_no)
-{
-	WCHAR *lpMsgBuf;
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, err_no,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR)&lpMsgBuf, 0, NULL);
-	printf("%s", msg);
-	wprintf(L"에러%s\n", lpMsgBuf);
-	LocalFree(lpMsgBuf);
-}
-
-bool Is_InRange(int a, int b)
-{
-	int dist = (clients[a].avatar.Pos.x - clients[b].avatar.Pos.x)
-		*(clients[a].avatar.Pos.x - clients[b].avatar.Pos.x)
-		+ (clients[a].avatar.Pos.y - clients[b].avatar.Pos.y)
-		* (clients[a].avatar.Pos.y - clients[b].avatar.Pos.y);
-	return dist <= VIEW_RADIUS * VIEW_RADIUS;
-}
-
 void Initialize()
 {
 	for (auto i = 0; i < MAX_USER; ++i) {
@@ -269,10 +246,11 @@ void AcceptThreadStart()
 	listen_addr.sin_family = AF_INET;
 	listen_addr.sin_addr.s_addr = htonl(ADDR_ANY);
 	listen_addr.sin_port = htons(MY_SERVER_PORT);
-	// listen_addr.sin_zero = 0;
+
 	::bind(accept_socket,
 		reinterpret_cast<sockaddr *>(&listen_addr), sizeof(listen_addr));
 	listen(accept_socket, 10);
+
 	// listen
 	while (false == g_isshutdown)
 	{
@@ -287,6 +265,8 @@ void AcceptThreadStart()
 			error_display("Accept::WSAAccept", error_no);
 			while (true);
 		}
+		else
+			cout << "Server Connect Success" << endl;
 
 		int new_id = -1;
 		for (auto i = 0; i < MAX_USER; ++i)
@@ -300,12 +280,21 @@ void AcceptThreadStart()
 			closesocket(new_client);
 			continue;
 		}
-
+		
+		// 새로운 클라이언트가 들어오면 그에 대한 정보를 전역변수인 클라이언트에 넣어준다.
 		clients[new_id].s = new_client;
-		clients[new_id].avatar.Pos.x = 4;
-		clients[new_id].avatar.Pos.y = 4;
+		clients[new_id].avatar.ObjectType = ObjectType::Warrior;
+		clients[new_id].avatar.Pos = XMFLOAT3(rand()%20+200.0f, -0.1f, rand()%20-280.0f);
+		clients[new_id].avatar.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		clients[new_id].avatar.Scale = 0.05f;
+		clients[new_id].avatar.MoveSpeed = 9.0f;
+		clients[new_id].avatar.AttackPoint = 50.0f;
+		clients[new_id].avatar.AttackSpeed = 2.0f;
+		clients[new_id].avatar.Hp = 100;
+
 		clients[new_id].packet_size = 0;
 		clients[new_id].previous_size = 0;
+
 		memset(&clients[new_id].recv_overlap.original_overlap, 0,
 			sizeof(clients[new_id].recv_overlap.original_overlap));
 
@@ -327,6 +316,7 @@ void AcceptThreadStart()
 
 		printf("id : %d가 접속 하였습니다. \n", new_id);
 
+		// 본인을 제외한 나머지 인원들에게 자신이 들어왔음을 보내는 패킷
 		for (auto i = 0; i < MAX_USER; ++i) {
 			if (false == clients[i].is_connected) continue;
 			if (i == new_id) continue;
@@ -337,6 +327,7 @@ void AcceptThreadStart()
 			SendPacket(i, reinterpret_cast<unsigned char *>(&enter_packet));
 		}
 
+		// 본인을 제외하고 기존에 들어와 있는 인원들에 대한 정보를 보내는 패킷
 		for (auto i = 0; i < MAX_USER; ++i) {
 			if (false == clients[i].is_connected) continue;
 			if (i == new_id) continue;

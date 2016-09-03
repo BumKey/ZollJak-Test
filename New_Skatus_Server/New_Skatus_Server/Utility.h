@@ -19,3 +19,10 @@ bool operator!=(XMFLOAT2 l, XMFLOAT2 r);
 XMFLOAT4 Float4Normalize(const XMFLOAT4& in);
 XMFLOAT3 Float3Normalize(const XMFLOAT3& in);
 XMFLOAT2 Float2Normalize(const XMFLOAT2& in);
+
+/*
+	Server Function
+*/
+
+void error_display(char *msg, int err_no);
+bool Is_InRange(int a, int b);

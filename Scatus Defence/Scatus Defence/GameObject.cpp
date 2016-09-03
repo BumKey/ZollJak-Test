@@ -3,7 +3,7 @@
 
 UINT GameObject::GeneratedCount = 0;
 
-GameObject::GameObject() : m_bForOneHit(false), mHasTarget(false), mExtentY(0.0f),
+GameObject::GameObject() : m_bForOneHit(false), mExtentY(0.0f),
 mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f),
 mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
 {
@@ -12,9 +12,8 @@ mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), m
 	mCollisionState = CollisionState::None;
 }
 
-GameObject::GameObject(GameMesh* mesh, const BO_InitDesc& info) : mMesh(mesh), m_bForOneHit(false), mHasTarget(false),
-mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f), mExtentY(0.0f),
-mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
+GameObject::GameObject(GameMesh* mesh, const BO_InitDesc& info) : mMesh(mesh), m_bForOneHit(false),
+mDirection(0.0f, 0.0f, 0.0f), mExtentY(0.0f),mUp(0.0f, 1.0f, 0.0f)
 {
 	mID = GeneratedCount++;
 	mActionState = ActionState::Idle;
@@ -29,6 +28,7 @@ mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), m
 	mScaling = info.Scale;
 	mRotation = info.Rot;
 	mPosition = info.Pos;
+	mTargetPos = mPosition;
 
 	R = XMMatrixRotationY(info.Rot.y);
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
@@ -37,7 +37,6 @@ mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), m
 
 	InitBoundingObject();
 }
-
 
 GameObject::~GameObject()
 {
@@ -150,14 +149,6 @@ void GameObject::ChangeActionState(ActionState::States aState)
 {
 	if (mActionState != ActionState::Die)
 		mActionState = aState;
-}
-
-void GameObject::SetTarget(GameObject * target)
-{
-	if (target) {
-		mTarget = target;
-		mHasTarget = true;
-	}
 }
 
 void GameObject::Release()

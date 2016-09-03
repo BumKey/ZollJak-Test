@@ -10,11 +10,13 @@
 
 #include "protocol.h"
 #include "Singletone.h"
+#include "ObjectMgr.h"
+#include "Player.h"
 #include "RogicTimer.h"
 #pragma comment (lib, "ws2_32.lib")
 
 #define Packet_Mgr PacketMgr::GetInstance()
-
+#define MAX_TABLE 10
 class PacketMgr : public Singletone<PacketMgr>
 {
 public:
@@ -26,13 +28,15 @@ public:
 
 	template <class T>
 	void SendPacket(T& packet);
-	static void ReadPacket();
 
 	void err_display(wchar_t *msg);
 
+private:
+	static void ProcessPacket();
+	static void ReadPacket();
+
 public:
 	int ClientID;
-	bool PacketReceived;
 	bool Connected[MAX_USER];
 
 	SOCKET	Socket;
@@ -40,10 +44,16 @@ public:
 	WSABUF	RecvBuf;
 	eGameState CurrGameState;
 
-	char* PacketBuf;
+	struct PacketTable {
+		bool On;
+		char* buf;
+		PacketTable() : On(false) { buf = new char[MAX_PACKET_SIZE]; }
+	};
+
+	PacketTable PacketTable[MAX_TABLE];
 
 private:
-	std::thread* mWorkerThread;
+	std::thread* mWorkerThreads[2];
 };
 
 template<class T>

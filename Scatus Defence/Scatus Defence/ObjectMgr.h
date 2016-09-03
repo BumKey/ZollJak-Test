@@ -1,16 +1,14 @@
 #pragma once
-#include "GameObject.h"
-#include "BasicObject.h"
-#include "SkinnedObject.h"
+#include <vector>
+#include <map>
+
+#include "Singletone.h"
 #include "ResourceMgr.h"
-#include "Player.h"
+#include "PacketMgr.h"
+#include "BasicObject.h"
 #include "Goblin.h"
 #include "Cyclop.h"
 #include "Warrior.h"
-#include "ResourceMgr.h"
-#include "Singletone.h"
-#include <vector>
-#include <map>
 
 #define Object_Mgr ObjectMgr::GetInstance()
 
@@ -34,8 +32,8 @@ public:
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
 
-	void Update(const UINT& id, const ObjectInfo& info, float dt);
-	void Animate(float dt);
+	void Update(const UINT& id, const ObjectInfo& info);
+	void Update(float dt);
 
 private:
 	std::vector<GameObject*>						mAllObjects;					

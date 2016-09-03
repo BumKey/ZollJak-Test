@@ -5,6 +5,7 @@
 #include "RenderStates.h"
 #include "ResourceMgr.h"
 #include "ObjectMgr.h"
+#include "Player.h"
 #include "Camera.h"
 #include "MathHelper.h"
 #include "Terrain.h"

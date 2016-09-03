@@ -14,9 +14,8 @@ public:
 
 	void		SetAI_State(AI_State::States state);
 
-protected:
 	virtual void AttackToTarget(float dt);
-	virtual void MoveToTargetObject(float dt);
+	virtual void MoveToTarget(float dt);
 
 private:
 	AI_State::States mAI_States;

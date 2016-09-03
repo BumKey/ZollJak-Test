@@ -217,12 +217,12 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc)
 	}
 }
 
-void SkinnedObject::MoveToTargetPos(XMFLOAT3 targetPos, float dt)
+void SkinnedObject::MoveToTarget(float dt)
 {
 	if (mCollisionState == CollisionState::None && mActionState != ActionState::Attack
 		&& mActionState != ActionState::Damage && mActionState != ActionState::Die)
 	{
-		XMVECTOR vTarget = MathHelper::TargetVector2D(targetPos, mPosition);
+		XMVECTOR vTarget = MathHelper::TargetVector2D(mTargetPos, mPosition);
 
 		XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
 		XMVECTOR p = XMLoadFloat3(&mPosition);

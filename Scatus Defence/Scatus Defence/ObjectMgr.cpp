@@ -67,14 +67,14 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 	Packet_Mgr->Connected[id] = false;
 }
 
-void ObjectMgr::Update(const UINT & id, const ObjectInfo & info, float dt)
+void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
 {
-	mPlayers[id]->MoveToTargetPos(info.Pos, dt);
+	mPlayers[id]->SetTarget(info.Pos);
 	mPlayers[id]->SetState(info.ActionState);
 	mPlayers[id]->SetRot(info.Rot);
 }
 
-void ObjectMgr::Animate(float dt)
+void ObjectMgr::Update(float dt)
 {
 	mAllObjects.clear();
 	mAllObjects.reserve(mBasicObjects.size() + MAX_USER);
@@ -87,6 +87,9 @@ void ObjectMgr::Animate(float dt)
 		if (Packet_Mgr->Connected[i])
 		{
 			mPlayers[i]->Animate(dt);
+			if(i != Packet_Mgr->ClientID)
+				mPlayers[i]->MoveToTarget(dt);
+
 			mAllObjects.push_back(mPlayers[i]);
 		}
 	}
@@ -94,6 +97,7 @@ void ObjectMgr::Animate(float dt)
 	for (auto m : mMonsters)
 	{
 		m->Animate(dt);
+		m->MoveToTarget(dt);
 		mAllObjects.push_back(m);
 	}
 

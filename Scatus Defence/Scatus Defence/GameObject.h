@@ -29,8 +29,7 @@ public:
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj) = 0;
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc) = 0;
 
-	virtual void MoveToTargetObject(float dt) {}
-	virtual void MoveToTargetPos(XMFLOAT3 targetPos, float dt) {}
+	virtual void MoveToTarget(float dt) {}
 
 	virtual void Release();
 	virtual void ChangeActionState(ActionState::States aState);
@@ -44,7 +43,6 @@ public:
 	UINT					GetID() const { return mID; }
 	UINT					GetObjectGeneratedCount() const { return GeneratedCount; }
 	Properties				GetProperty() const { return mProperty; }
-	GameObject*				GetTarget() const { return mTarget; }
 	ObjectType::Types		GetObjectType() const { return mObjectType; }
 	ActionState::States		GetActionState() const { return mActionState; }
 	CollisionState::States  GetCollisionState() const { return mCollisionState; }
@@ -60,10 +58,9 @@ public:
 	bool					IsAttack() { return mActionState == ActionState::Attack ? true : false; }
 	bool					IsDead() { return mActionState == ActionState::Die ? true : false; }
 	bool					OneHit() { return m_bForOneHit; }
-	bool					HasTarget() { return mHasTarget; }
 
-	void					SetTarget(GameObject* target);
-	void					SetNoTarget() { mTarget = nullptr; mHasTarget = false; }
+	void					SetTarget(XMFLOAT3 pos) { pos.y = -0.1; mTargetPos = pos; }
+	void					SetNoTarget() { mTargetPos = mPosition; }
 	void					SetNoneCollision() { mCollisionState = CollisionState::None; }
 
 	void  PrintLocation(); //객체 위치값출력 반환
@@ -92,18 +89,17 @@ protected:
 	XMFLOAT3 mCurrLook;
 	XMFLOAT3 mPrevLook;
 	XMFLOAT3 mDirection;
+	XMFLOAT3 mTargetPos;
 
 	Properties mProperty;
 	ActionState::States mActionState;
 	CollisionState::States mCollisionState;
 	ObjectType::Types mObjectType;
-	GameObject* mTarget;
 
 private:
 	UINT mID;
 	static UINT GeneratedCount;
 
 	bool m_bForOneHit;
-	bool mHasTarget;
 };
 

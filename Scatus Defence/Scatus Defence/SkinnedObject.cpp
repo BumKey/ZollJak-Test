@@ -231,9 +231,8 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc)
 
 void SkinnedObject::MoveToTarget(float dt)
 {
-	if (abs(mPosition.x - mTargetPos.x) <= 0.1f &&
-		abs(mPosition.y - mTargetPos.y) <= 0.1f &&
-		abs(mPosition.z - mTargetPos.z) <= 0.1f)
+	if (abs(mPosition.x - mTargetPos.x) <= 0.01f &&
+		abs(mPosition.z - mTargetPos.z) <= 0.01f)
 	{
 		ChangeActionState(ActionState::Idle);
 	}
@@ -246,11 +245,6 @@ void SkinnedObject::MoveToTarget(float dt)
 
 		// 방향으로 이동
 		XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, vTarget, p));
-
-		// 방향으로 회전
-		float angle = MathHelper::AngleToTarget(vTarget, mCurrLook)*dt*MathHelper::Pi;
-
-		RotateY(angle);
 
 		ChangeActionState(ActionState::Run);
 	}

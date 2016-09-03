@@ -87,8 +87,10 @@ void ObjectMgr::Update(float dt)
 		if (Packet_Mgr->Connected[i])
 		{
 			mPlayers[i]->Animate(dt);
-			if(i != Packet_Mgr->ClientID)
+			if (i != Packet_Mgr->ClientID) {
 				mPlayers[i]->MoveToTarget(dt);
+				mPlayers[i]->Update(dt);
+			}
 
 			mAllObjects.push_back(mPlayers[i]);
 		}

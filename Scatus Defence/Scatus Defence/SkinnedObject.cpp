@@ -280,9 +280,9 @@ void SkinnedObject::SetClip()
 bool SkinnedObject::IsActionStateChangeAble()
 {
 	if (mActionState != ActionState::Attack && mActionState != ActionState::Damage && mActionState != ActionState::Die)
-		return false;
-	else
 		return true;
+	else
+		return false;
 }
 
 void SkinnedObject::ChangeActionState(ActionState::States state)

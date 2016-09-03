@@ -289,6 +289,8 @@ void SkinnedObject::ChangeActionState(ActionState::States state)
 {
 	if (IsActionStateChangeAble())
 		mActionState = state;
+	else if (state == ActionState::Idle)
+		mActionState = state;
 }
 
 bool SkinnedObject::CurrAnimEnd()

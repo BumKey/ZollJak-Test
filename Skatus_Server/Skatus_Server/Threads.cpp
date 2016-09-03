@@ -185,6 +185,6 @@ void MyThreads::Rogic_Thread()
 	while (1)
 	{
 		g_RogicMgr.Update();
-		Sleep(10000);
+		Sleep(1000);
 	}
 }

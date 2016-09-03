@@ -40,6 +40,18 @@ void SkinnedObject::Init(SkinnedMesh * mesh, const SO_InitDesc & info)
 	mFinalTransforms.resize(mesh->SkinnedData.BoneCount());
 }
 
+void SkinnedObject::Walk(float dt)
+{
+	GameObject::Walk(dt);
+	ChangeActionState(ActionState::Run);
+}
+
+void SkinnedObject::Strafe(float dt)
+{
+	GameObject::Strafe(dt);
+	ChangeActionState(ActionState::Run);
+}
+
 void SkinnedObject::Update(float dt)
 {
 	XMVECTOR vR = XMLoadFloat3(&mRight);
@@ -219,8 +231,13 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc)
 
 void SkinnedObject::MoveToTarget(float dt)
 {
-	if (mCollisionState == CollisionState::None && mActionState != ActionState::Attack
-		&& mActionState != ActionState::Damage && mActionState != ActionState::Die)
+	if (abs(mPosition.x - mTargetPos.x) <= 0.1f &&
+		abs(mPosition.y - mTargetPos.y) <= 0.1f &&
+		abs(mPosition.z - mTargetPos.z) <= 0.1f)
+	{
+		ChangeActionState(ActionState::Idle);
+	}
+	else if (mCollisionState == CollisionState::None && IsActionStateChangeAble())
 	{
 		XMVECTOR vTarget = MathHelper::TargetVector2D(mTargetPos, mPosition);
 
@@ -266,7 +283,21 @@ void SkinnedObject::SetClip()
 		mCurrClipName = mAnimNames[Anims::hit];
 }
 
-bool SkinnedObject::CurrAnimEnd() 
+bool SkinnedObject::IsActionStateChangeAble()
+{
+	if (mActionState != ActionState::Attack && mActionState != ActionState::Damage && mActionState != ActionState::Die)
+		return false;
+	else
+		return true;
+}
+
+void SkinnedObject::ChangeActionState(ActionState::States state)
+{
+	if (IsActionStateChangeAble())
+		mActionState = state;
+}
+
+bool SkinnedObject::CurrAnimEnd()
 {
 	if (mTimePos > static_cast<SkinnedMesh*>(mMesh)->SkinnedData.GetClipEndTime(mCurrClipName))
 		return true;

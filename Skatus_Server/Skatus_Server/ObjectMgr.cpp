@@ -9,7 +9,6 @@ mCurrPlayerNum(0), mTemplePos(XMFLOAT3(230.0f, -0.01f, -370.0f))
 
 	for (int i = 0; i < MAX_USER; ++i) {
 		mConnected[i] = false;
-		mPlayerYpos[i] = 0.0f;
 	}
 	CreateMap();
 }
@@ -116,12 +115,7 @@ const std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetPlayers()
 		if (mConnected[i])
 		{
 			players[i] = mPlayers[i];
-
 			players[i].Pos.y = -0.1f;
-			if (mPlayerYpos[i] != 0.0f) {
-				players[i].Pos.y += mPlayerYpos[i];
-				mPlayerYpos[i] = 0.0f;
-			}
 		}
 	}
 

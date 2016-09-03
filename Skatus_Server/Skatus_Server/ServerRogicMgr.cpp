@@ -192,7 +192,7 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 	}
 
 	mObjectMgr.SetPlayerRot(inPacket.ClientID, inPacket.Rot);
-	mObjectMgr.SetPlayerPosXZ(inPacket.ClientID, pos);
+	mObjectMgr.SetPlayerPos(inPacket.ClientID, pos);
 }
 
 /// <summary> 현재는 충돌체크 미구현

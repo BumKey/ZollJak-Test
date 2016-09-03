@@ -32,7 +32,6 @@ public:
 	virtual void MoveToTarget(float dt) {}
 
 	virtual void Release();
-	virtual void ChangeActionState(ActionState::States aState);
 
 	GameMesh*				GetMesh() const { return mMesh; }
 	XMFLOAT4X4				GetWorld() const { return mWorld; }

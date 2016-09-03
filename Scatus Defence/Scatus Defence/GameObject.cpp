@@ -51,8 +51,6 @@ void GameObject::Walk(float d)
 	XMVECTOR l = XMLoadFloat3(&mCurrLook);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
-
-	ChangeActionState(ActionState::Run);
 }
 
 void GameObject::Strafe(float d)
@@ -64,8 +62,6 @@ void GameObject::Strafe(float d)
 	XMVECTOR r = XMLoadFloat3(&mRight);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
-
-	ChangeActionState(ActionState::Run);
 }
 
 void GameObject::RotateY(float angle)
@@ -143,12 +139,6 @@ void GameObject::Attack(GameObject * target)
 
 		m_bForOneHit = false;
 	}
-}
-
-void GameObject::ChangeActionState(ActionState::States aState)
-{
-	if (mActionState != ActionState::Die)
-		mActionState = aState;
 }
 
 void GameObject::Release()

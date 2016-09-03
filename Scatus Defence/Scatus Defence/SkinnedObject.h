@@ -19,6 +19,9 @@ public:
 public:
 	virtual void Init(SkinnedMesh* mesh, const SO_InitDesc& info);
 
+	virtual void Walk(float dt);
+	virtual void Strafe(float dt);
+
 	virtual void Update(float dt);
 	virtual void Animate(float dt);
 
@@ -32,6 +35,10 @@ public:
 
 	virtual std::string	GetAnimName(Anims& eAnim); const
 	void  SetMovingSpeed(FLOAT speed) { mProperty.movespeed = speed; }
+
+protected:
+	bool IsActionStateChangeAble();
+	void ChangeActionState(ActionState::States state);
 
 private:
 	void SetClip();

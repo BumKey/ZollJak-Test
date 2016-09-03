@@ -16,8 +16,7 @@ public:
 	const XMFLOAT3 GetTemplePos() { return mTemplePos; }
 
 	void SetPlayerRot(const UINT& id, const XMFLOAT3& rot) { mPlayers[id].Rot = rot; }
-	void SetPlayerPosXZ(const UINT& id, const XMFLOAT3& pos) { mPlayers[id].Pos = pos; }
-	void SetPlayerPosY(const UINT& id, const FLOAT& y) { mPlayerYpos[id] = y; }
+	void SetPlayerPos(const UINT& id, XMFLOAT3 pos) { pos.y = -0.1f; mPlayers[id].Pos = pos; }
 
 	const std::unordered_map<UINT, SO_InitDesc>		GetPlayers();
 	const std::unordered_map<UINT, SO_InitDesc>&	GetMonsters() { return mMonsters; }
@@ -42,6 +41,5 @@ private:
 	std::vector<SO_InitDesc>	mStructures, mProjectiles;		
 	std::unordered_map<UINT, SO_InitDesc>	 mMonsters;						
 	SO_InitDesc				mPlayers[MAX_USER];		
-	float					mPlayerYpos[MAX_USER];
 	bool					mConnected[MAX_USER];
 };

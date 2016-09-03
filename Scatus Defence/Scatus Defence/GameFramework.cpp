@@ -62,7 +62,7 @@ bool GameFrameWork::Init()
 	Sound_Mgr->Create_Sound(D3DApp::MainWnd());
 
 	// Giljune's Code
-	Packet_Mgr->Init();
+	Packet_Mgr->Init(mhMainWnd);
 
 	Scene_Mgr->ComputeSceneBoundingBox();
 

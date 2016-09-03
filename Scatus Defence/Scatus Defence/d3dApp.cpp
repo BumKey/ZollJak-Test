@@ -326,6 +326,31 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
+
+	case WM_SOCKET:
+	{
+		if (WSAGETSELECTERROR(lParam)) {
+			closesocket((SOCKET)wParam);
+			exit(-1);
+			break;
+		}
+
+		switch (WSAGETSELECTEVENT(lParam))
+		{
+		case FD_READ:
+			Packet_Mgr->ReadPacket((SOCKET)wParam);
+			break;
+		case FD_CLOSE:
+			closesocket((SOCKET)wParam);
+			exit(-1);
+			break;
+
+		default:
+			break;
+		}
+		return 0;
+	}
+		return 0;
 	}
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);

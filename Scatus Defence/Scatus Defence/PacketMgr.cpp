@@ -2,10 +2,12 @@
 
 PacketMgr::PacketMgr() : ClientID(-1)
 {
-	SendBuf.buf = new char[MAX_BUFF_SIZE];
-	SendBuf.len = MAX_BUFF_SIZE;
-	RecvBuf.buf = new char[MAX_BUFF_SIZE];
-	RecvBuf.len = MAX_BUFF_SIZE;
+	mSendBuf.buf = new char[MAX_BUFF_SIZE];
+	mSendBuf.len = MAX_BUFF_SIZE;
+	mRecvBuf.buf = new char[MAX_BUFF_SIZE];
+	mRecvBuf.len = MAX_BUFF_SIZE;
+
+	mPacketBuf = new char[MAX_PACKET_SIZE];
 
 	for (auto& d : Connected)
 		d = false;
@@ -13,17 +15,14 @@ PacketMgr::PacketMgr() : ClientID(-1)
 
 PacketMgr::~PacketMgr()
 {
-	delete[] SendBuf.buf;
-	delete[] RecvBuf.buf;
+	delete[] mSendBuf.buf;
+	delete[] mRecvBuf.buf;
 
-	mWorkerThreads[0]->join();
-	mWorkerThreads[1]->join();
-
-	closesocket(Socket);
+	closesocket(mSocket);
 	WSACleanup();
 }
 
-void PacketMgr::Init()
+void PacketMgr::Init(HWND mainHwnd)
 {
 	WSADATA	wsaData;
 	SOCKADDR_IN recv_addr;
@@ -32,8 +31,8 @@ void PacketMgr::Init()
 		err_display(L"WSAStartup() Error");
 
 	// WSASocket()
-	Socket = WSASocket(PF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
-	if (Socket == INVALID_SOCKET)
+	mSocket = WSASocket(PF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	if (mSocket == INVALID_SOCKET)
 		err_display(L"WSASocket() Error");
 
 	memset(&recv_addr, 0, sizeof(recv_addr));
@@ -42,119 +41,81 @@ void PacketMgr::Init()
 	recv_addr.sin_port = htons(SERVER_PORT);
 
 	// connect()
-	if (connect(Socket, (SOCKADDR*)&recv_addr, sizeof(recv_addr)) == SOCKET_ERROR)
+	if (connect(mSocket, (SOCKADDR*)&recv_addr, sizeof(recv_addr)) == SOCKET_ERROR)
 		err_display(L"connect() Error");
 
-	mWorkerThreads[0] = new std::thread(ReadPacket);
-	mWorkerThreads[1] = new std::thread(ReadPacket);
+	WSAAsyncSelect(mSocket, mainHwnd, WM_SOCKET, FD_CLOSE | FD_READ);
 
 	std::cout << "Server Connect Success" << std::endl;
 }
 
-void PacketMgr::ReadPacket()
+void PacketMgr::ReadPacket(SOCKET socket)
 {
-	SOCKET& socket = Packet_Mgr->Socket;
-	WSABUF& recvBuf = Packet_Mgr->RecvBuf;
-	auto& packetTable = Packet_Mgr->PacketTable;
-
 	static UINT savedBytes = 0;
 	DWORD receivedBytes, ioflag = 0;
 
-	while (1) {
-		if (WSARecv(socket, &recvBuf, 1, &receivedBytes, &ioflag, NULL, NULL) == SOCKET_ERROR)
+	if (WSARecv(socket, &mRecvBuf, 1, &receivedBytes, &ioflag, NULL, NULL) == SOCKET_ERROR)
+	{
+		if (WSAGetLastError() != WSA_IO_PENDING)
+			Packet_Mgr->err_display(L"WSARecv() Error");
+	}
+
+	if (receivedBytes == 0)
+		std::cout << "receivedData == 0 " << std::endl;
+
+	while (1)
+	{
+		auto header = reinterpret_cast<HEADER*>(mRecvBuf.buf);
+
+		UINT tableNum(0);
+		UINT currPacketSize = header->Size;
+
+		if (currPacketSize >= MAX_PACKET_SIZE)
+			break;
+
+		if (receivedBytes + savedBytes >= currPacketSize)
 		{
-			if (WSAGetLastError() != WSA_IO_PENDING)
-				Packet_Mgr->err_display(L"WSARecv() Error");
+			UINT remainingData = currPacketSize - savedBytes;
+			// mPacketBuf의 사이즈보다 큰 패킷을 memcpy하면 메모리 오염!!
+			memcpy(mPacketBuf + savedBytes, mRecvBuf.buf, remainingData);
+			ProcessPacket();
+			savedBytes = 0;
+			break;
 		}
-
-		if (receivedBytes == 0)
-			std::cout << "receivedData == 0 " << std::endl;
-
-		while (1)
+		else
 		{
-			auto header = reinterpret_cast<HEADER*>(recvBuf.buf);
-
-			UINT tableNum(0);
-			UINT currPacketSize = header->Size;
-
-			if (header->Type == eSC::PerFrame) {
-				for (UINT i = 3; i < MAX_TABLE; ++i)
-				{
-					if (packetTable[i].On == false) {
-						packetTable[i].On = true;
-						tableNum = i;
-					}
-				}
-			}
-			else {
-				for (UINT i = 0; i < 3; ++i) 
-				{
-					if (packetTable[i].On == false) {
-						packetTable[i].On = true;
-						tableNum = i;
-					}
-				}
-			}
-
-			if (currPacketSize >= MAX_PACKET_SIZE)
-				break;
-
-			if (receivedBytes + savedBytes >= currPacketSize)
-			{
-				UINT remainingData = currPacketSize - savedBytes;
-				// mPacketBuf의 사이즈보다 큰 패킷을 memcpy하면 메모리 오염!!
-				memcpy(packetTable[tableNum].buf + savedBytes, recvBuf.buf, remainingData);
-				ProcessPacket();
-				savedBytes = 0;
-				break;
-			}
-			else
-			{
-				memcpy(packetTable[tableNum].buf + savedBytes, recvBuf.buf, receivedBytes);
-				savedBytes += receivedBytes;
-			}
+			memcpy(mPacketBuf + savedBytes, mRecvBuf.buf, receivedBytes);
+			savedBytes += receivedBytes;
 		}
 	}
 }
 
 void PacketMgr::ProcessPacket()
 {
-	int& clientID = Packet_Mgr->ClientID;
-	auto packetTable = Packet_Mgr->PacketTable;
-
-	char* packet;
-	for (UINT i = 0; i < MAX_TABLE; ++i)
-	{
-		if (packetTable[i].On) {
-			packet = packetTable[i].buf;
-			packetTable[i].On = false;
-			break;
-		}
-	}
-
-	assert(packet);
-	HEADER *header = reinterpret_cast<HEADER*>(packet);
+	int& ClientID = Packet_Mgr->ClientID;
+	
+	HEADER *header = reinterpret_cast<HEADER*>(mPacketBuf);
 	switch (header->Type)
 	{
 	case eSC::InitPlayer: {
-		auto *p = reinterpret_cast<SC_InitPlayer*>(packet);
+		auto *p = reinterpret_cast<SC_InitPlayer*>(mPacketBuf);
 
 		SO_InitDesc desc;
-		if (clientID == -1) {
-			clientID = p->ClientID;
+		if (ClientID == -1) {
+			ClientID = p->ClientID;
 
-			desc.Pos = p->Player[clientID].Pos;
-			desc.Rot = p->Player[clientID].Rot;
-			desc.Scale = p->Player[clientID].Scale;
-			desc.AttackSpeed = p->Player[clientID].AttackSpeed;
-			desc.MoveSpeed = p->Player[clientID].MoveSpeed;
-			desc.Hp = p->Player[clientID].Hp;
+			desc.Pos = p->Player[ClientID].Pos;
+			desc.Rot = p->Player[ClientID].Rot;
+			desc.Scale = p->Player[ClientID].Scale;
+			desc.AttackSpeed = p->Player[ClientID].AttackSpeed;
+			desc.MoveSpeed = p->Player[ClientID].MoveSpeed;
+			desc.Hp = p->Player[ClientID].Hp;
 
-			auto type = p->Player[clientID].ObjectType;
+			auto type = p->Player[ClientID].ObjectType;
 			Player::GetInstance()->Init(Resource_Mgr->GetSkinnedMesh(type), desc);
 
-			Object_Mgr->AddMainPlayer(Player::GetInstance(), clientID);
-			Packet_Mgr->Connected[clientID] = true;
+			Object_Mgr->AddMainPlayer(Player::GetInstance(), ClientID);
+			Packet_Mgr->Connected[ClientID] = true;
 		}
 
 		for (UINT i = 0; i < p->CurrPlayerNum; ++i)
@@ -185,12 +146,12 @@ void PacketMgr::ProcessPacket()
 			Object_Mgr->AddObstacle(type, desc);
 		}
 
-		std::cout << "SC_INIT_PLAYER, ID : " << clientID << std::endl;
+		std::cout << "SC_INIT_PLAYER, ID : " << ClientID << std::endl;
 		break;
 	}
 
 	case eSC::PerFrame: {
-		auto *p = reinterpret_cast<SC_PerFrame*>(packet);
+		auto *p = reinterpret_cast<SC_PerFrame*>(mPacketBuf);
 		for (UINT i = 0; i < MAX_USER; ++i) {
 			if (Packet_Mgr->Connected[i] && i != Packet_Mgr->ClientID)
 				Object_Mgr->Update(i, p->Players[i]);
@@ -222,7 +183,7 @@ void PacketMgr::ProcessPacket()
 		break;
 	}
 	case eSC::AddMonsters: {
-		auto *p = reinterpret_cast<SC_AddMonster*>(packet);
+		auto *p = reinterpret_cast<SC_AddMonster*>(mPacketBuf);
 		for (UINT i = 0; i < p->NumOfObjects; ++i)
 		{
 			SO_InitDesc desc;

@@ -1,9 +1,14 @@
 #include "stdafx.h"
+#include "ObjectMgr.h"
+#include "ServerRogicMgr.h"
 
 Client clients[MAX_USER];
 
 HANDLE g_hIocp;
 bool	g_isshutdown = false;
+ObjectMgr g_objectmgr;
+ServerRogicMgr g_serverRogicmgr;
+
 #pragma comment (lib, "ws2_32.lib")
 
 void Initialize()
@@ -66,8 +71,59 @@ void SendRemovePlayerPacket(int client, int object)
 	SendPacket(client, reinterpret_cast<unsigned char *>(&packet));
 }
 
-void ProcessPacket(int id, unsigned char buf[])
+void ProcessKeyInput(CS_Move &inPacket)
 {
+	auto player = g_objectmgr.GetPlayer(inPacket.ClientID);
+
+	float destY = inPacket.Pos.y;
+	float currY = player.Pos.y;
+	float yDiff = destY - currY;
+	float slowFactor = 5.0f * (yDiff);
+
+	XMFLOAT3 dir, pos;
+
+	if (currY < 0.0f)
+	{
+		dir = Float3Normalize(inPacket.Pos - player.Pos);
+		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f;
+		pos.y = destY;
+	}
+	else if (yDiff >= 0.3f && yDiff < 0.6f)
+	{
+		dir = Float3Normalize(inPacket.Pos - player.Pos);
+		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f / slowFactor;
+		pos.y = destY;
+	}
+	else if (yDiff >= 0.8f)
+	{
+		pos = player.Pos;
+	}
+	else
+	{
+		dir = Float3Normalize(inPacket.Pos - player.Pos);
+		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f;
+		pos.y = destY;
+	}
+
+	g_objectmgr.SetPlayerRot(inPacket.ClientID, inPacket.Rot);
+	g_objectmgr.SetPlayerPosXZ(inPacket.ClientID, pos);
+}
+
+void ProcessMouseInput(CS_Attack &inPacket)
+{
+	/*
+	auto player = mObjectMgr.GetPlayer(inPacket.ClientID);
+	auto monsters = mObjectMgr.GetMonsters();
+	for (auto m : monsters)
+	{
+	if (Distance2D(player.Pos, m.Pos) < 3.5f)
+	m.ActionState = ActionState::Damage;
+	}*/
+}
+
+void ProcessPacket(int id, unsigned char *packet)
+{
+	/*
 	int x = clients[id].avatar.Pos.x;
 	int y = clients[id].avatar.Pos.y;
 
@@ -98,70 +154,101 @@ void ProcessPacket(int id, unsigned char buf[])
 	SendPacket(id, reinterpret_cast<unsigned char *>(&mov_packet));
 
 	printf("id = %d, 좌표 : %d,%d <X,Y> - 패킷 전송완료 \n", id, clients[id].avatar.Pos.x, clients[id].avatar.Pos.y);
-
-	unordered_set <int> new_list;
-	for (auto i = 0; i < MAX_USER; ++i) {
-		if (false == clients[i].is_connected) continue;
-		if (i == id) continue;
-		if (false == Is_InRange(i, id)) continue;
-		new_list.insert(i);
+	*/
+	HEADER *header = reinterpret_cast<HEADER*>(packet);
+	switch (header->Type)
+	{
+	case eCS::Success: {
+		auto info = reinterpret_cast<CS_Success*>(packet);
+		cout << "CS_SUCCESS, ID : " << (int)info->ClientID << endl;
+		g_serverRogicmgr.UnLock(info->ClientID);
+		g_serverRogicmgr.Update(info->ClientID);
+		break;
+	}
+	case eCS::KeyInput: {
+		auto info = reinterpret_cast<CS_Move*>(packet);
+		std::cout << "CS_KEYINPUT, POS : " << info->Pos.x << ", "
+			<< info->Pos.y << ", " << info->Pos.z << std::endl;
+		ProcessKeyInput(*info);
+		g_serverRogicmgr.UnLock(info->ClientID);
+		g_serverRogicmgr.Update(info->ClientID);
+		break;
+	}
+	case eCS::MouseInput: {
+		auto info = reinterpret_cast<CS_Attack*>(packet);
+		std::cout << "CS_MOUSEINPUT, ID : " << info->ClientID << std::endl;
+		ProcessMouseInput(*info);
+		g_serverRogicmgr.UnLock(info->ClientID);
+		g_serverRogicmgr.Update(info->ClientID);
+		break;
+	}
+	default:
+		break;
 	}
 
-	for (auto i : new_list) {
-		clients[id].vl_lock.lock();
-		if (0 == clients[id].view_list.count(i)) { // 새로 뷰리스트에 들어오는 객체 처리
-			clients[id].view_list.insert(i);
-			clients[id].vl_lock.unlock();
-			SendPutPlayerPacket(id, i);
+	//unordered_set <int> new_list;
+	//for (auto i = 0; i < MAX_USER; ++i) {
+	//	if (false == clients[i].is_connected) continue;
+	//	if (i == id) continue;
+	//	if (false == Is_InRange(i, id)) continue;
+	//	new_list.insert(i);
+	//}
 
-			clients[i].vl_lock.lock();
-			if (0 == clients[i].view_list.count(id)) {
-				clients[i].view_list.insert(id);
-				clients[i].vl_lock.unlock();
-				SendPutPlayerPacket(i, id);
-			}
-			else {
-				clients[i].vl_lock.unlock();
-				SendPacket(i, reinterpret_cast<unsigned char *>(&mov_packet));
-			}
-		}
-		else { // 뷰리스트에 계속 유지되어 있는 객체 처리
-			clients[id].vl_lock.unlock();
-			clients[i].vl_lock.lock();
-			if (1 == clients[i].view_list.count(id)) {
-				clients[i].vl_lock.unlock();
-				SendPacket(i, reinterpret_cast<unsigned char *>(&mov_packet));
-			}
-			else {
-				clients[i].view_list.insert(id);
-				clients[i].vl_lock.unlock();
-				SendPutPlayerPacket(i, id);
-			}
-		}
-	}
+	//for (auto i : new_list) {
+	//	clients[id].vl_lock.lock();
+	//	if (0 == clients[id].view_list.count(i)) { // 새로 뷰리스트에 들어오는 객체 처리
+	//		clients[id].view_list.insert(i);
+	//		clients[id].vl_lock.unlock();
+	//		SendPutPlayerPacket(id, i);
 
-	// 뷰리스트에서 나가는 객체 처리
-	vector <int> remove_list;
-	clients[id].vl_lock.lock();
-	for (auto i : clients[id].view_list) {
-		if (0 != new_list.count(i)) continue;
-		remove_list.push_back(i);
-	}
-	for (auto i : remove_list) clients[id].view_list.erase(i);
-	clients[id].vl_lock.unlock();
+	//		clients[i].vl_lock.lock();
+	//		if (0 == clients[i].view_list.count(id)) {
+	//			clients[i].view_list.insert(id);
+	//			clients[i].vl_lock.unlock();
+	//			SendPutPlayerPacket(i, id);
+	//		}
+	//		else {
+	//			clients[i].vl_lock.unlock();
+	//			SendPacket(i, reinterpret_cast<unsigned char *>(&mov_packet));
+	//		}
+	//	}
+	//	else { // 뷰리스트에 계속 유지되어 있는 객체 처리
+	//		clients[id].vl_lock.unlock();
+	//		clients[i].vl_lock.lock();
+	//		if (1 == clients[i].view_list.count(id)) {
+	//			clients[i].vl_lock.unlock();
+	//			SendPacket(i, reinterpret_cast<unsigned char *>(&mov_packet));
+	//		}
+	//		else {
+	//			clients[i].view_list.insert(id);
+	//			clients[i].vl_lock.unlock();
+	//			SendPutPlayerPacket(i, id);
+	//		}
+	//	}
+	//}
 
-	for (auto i : remove_list)
-		SendRemovePlayerPacket(id, i);
+	//// 뷰리스트에서 나가는 객체 처리
+	//vector <int> remove_list;
+	//clients[id].vl_lock.lock();
+	//for (auto i : clients[id].view_list) {
+	//	if (0 != new_list.count(i)) continue;
+	//	remove_list.push_back(i);
+	//}
+	//for (auto i : remove_list) clients[id].view_list.erase(i);
+	//clients[id].vl_lock.unlock();
 
-	for (auto i : remove_list) {
-		clients[i].vl_lock.lock();
-		if (0 != clients[i].view_list.count(id)) {
-			clients[i].view_list.erase(id);
-			clients[i].vl_lock.unlock();
-			SendRemovePlayerPacket(i, id);
-		}
-		else 	clients[i].vl_lock.unlock();
-	}
+	//for (auto i : remove_list)
+	//	SendRemovePlayerPacket(id, i);
+
+	//for (auto i : remove_list) {
+	//	clients[i].vl_lock.lock();
+	//	if (0 != clients[i].view_list.count(id)) {
+	//		clients[i].view_list.erase(id);
+	//		clients[i].vl_lock.unlock();
+	//		SendRemovePlayerPacket(i, id);
+	//	}
+	//	else 	clients[i].vl_lock.unlock();
+	//}
 }
 
 void WorkerThreadStart()
@@ -179,7 +266,10 @@ void WorkerThreadStart()
 		}
 		if (0 == iosize) {
 			closesocket(clients[key].s);
-			sc_packet_remove_player discon;
+			/*
+				제거하는 패킷 구현해야함.
+			*/
+			/*sc_packet_remove_player discon;
 			discon.id = key;
 			discon.size = sizeof(discon);
 			discon.type = SC_REMOVE_PLAYER;
@@ -188,9 +278,8 @@ void WorkerThreadStart()
 				if (key == i) continue;
 				SendPacket(i, reinterpret_cast<unsigned char*>(&discon));
 			}
+			printf("id : %d가 접속을 종료하였습니다. \n", key);*/
 			clients[key].is_connected = false;
-
-			printf("id : %d가 접속을 종료하였습니다. \n", key);
 		}
 
 		if (OP_RECV == my_overlap->operation) {
@@ -305,12 +394,24 @@ void AcceptThreadStart()
 		clients[new_id].view_list.clear();
 		clients[new_id].vl_lock.unlock();
 
-		sc_packet_put_player enter_packet;
+		/*sc_packet_put_player enter_packet;
 		enter_packet.id = new_id;
 		enter_packet.size = sizeof(enter_packet);
 		enter_packet.type = SC_PUT_PLAYER;
 		enter_packet.x = clients[new_id].avatar.Pos.x;
-		enter_packet.y = clients[new_id].avatar.Pos.y;
+		enter_packet.y = clients[new_id].avatar.Pos.y;*/
+
+		SC_InitPlayer enter_packet;
+		enter_packet.ClientID = new_id;
+		enter_packet.CurrPlayerNum = new_id + 1;
+
+		// 쓸모가 없을 것 같은 서버 패킷 메모리 낭비가 될 여지가 있는 코드 - 변경할 필요 있음.
+		for (int i = 0; i < new_id + 1; ++i)
+			enter_packet.Player[i] = g_objectmgr.GetPlayer(i);
+
+		enter_packet.NumOfObjects = g_objectmgr.GetAllBasicObjects().size();
+		for (UINT i = 0; i < enter_packet.NumOfObjects; ++i)
+			enter_packet.MapInfo[i] = g_objectmgr.GetAllBasicObjects()[i];
 
 		SendPacket(new_id, reinterpret_cast<unsigned char *>(&enter_packet));
 
@@ -327,19 +428,23 @@ void AcceptThreadStart()
 			SendPacket(i, reinterpret_cast<unsigned char *>(&enter_packet));
 		}
 
-		// 본인을 제외하고 기존에 들어와 있는 인원들에 대한 정보를 보내는 패킷
-		for (auto i = 0; i < MAX_USER; ++i) {
-			if (false == clients[i].is_connected) continue;
-			if (i == new_id) continue;
-			if (false == Is_InRange(i, new_id)) continue;
-			clients[new_id].vl_lock.lock();
-			clients[new_id].view_list.insert(i);
-			clients[new_id].vl_lock.unlock();
-			enter_packet.id = i;
-			enter_packet.x = clients[i].avatar.Pos.x;
-			enter_packet.y = clients[i].avatar.Pos.y;
-			SendPacket(new_id, reinterpret_cast<unsigned char *>(&enter_packet));
-		}
+		//// 본인을 제외하고 기존에 들어와 있는 인원들에 대한 정보를 보내는 패킷
+		//for (auto i = 0; i < MAX_USER; ++i) {
+		//	if (false == clients[i].is_connected) continue;
+		//	if (i == new_id) continue;
+		//	if (false == Is_InRange(i, new_id)) continue;
+		//	clients[new_id].vl_lock.lock();
+		//	clients[new_id].view_list.insert(i);
+		//	clients[new_id].vl_lock.unlock();
+		//	/*enter_packet.id = i;
+		//	enter_packet.x = clients[i].avatar.Pos.x;
+		//	enter_packet.y = clients[i].avatar.Pos.y;*/
+		//	/* 
+		//		어떻게 기존의 코드를 추가할지 고민해야 되는 부분 
+		//	*/
+		//	SendPacket(new_id, reinterpret_cast<unsigned char *>(&enter_packet));
+		//}
+
 		clients[new_id].is_connected = true;
 		DWORD flags = 0;
 		int ret = WSARecv(new_client, &clients[new_id].recv_overlap.wsabuf, 1, NULL,

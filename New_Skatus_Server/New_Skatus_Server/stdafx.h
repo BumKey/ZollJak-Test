@@ -18,8 +18,6 @@
 #include "Utility.h"
 
 #include "GameTimer.h"
-
-
 using namespace std;
 
 /* 

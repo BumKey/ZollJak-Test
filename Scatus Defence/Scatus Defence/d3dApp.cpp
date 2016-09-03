@@ -337,7 +337,7 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			exit(-1);
 			break;
 		}
-		switch (WSAGETSELECTERROR(lParam))
+		switch (WSAGETSELECTEVENT(lParam))
 		{
 		case FD_READ:
 			Packet_Mgr->ReadPacket((SOCKET)wParam);

@@ -1,4 +1,7 @@
 #pragma once
+#ifndef OBJECTMGR_H
+#define OBJECTMGR_H
+
 #include "stdafx.h"
 
 class ObjectMgr
@@ -46,3 +49,4 @@ private:
 	bool					mConnected[MAX_USER];
 };
 
+#endif // !OBJECTMGR_H

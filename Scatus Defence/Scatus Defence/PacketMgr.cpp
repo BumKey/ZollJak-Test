@@ -154,7 +154,11 @@ void PacketMgr::ProcessPacket()
 		auto *p = reinterpret_cast<SC_PerFrame*>(mPacketBuf);
 		for (UINT i = 0; i < MAX_USER; ++i) {
 			if (Packet_Mgr->Connected[i] && i != Packet_Mgr->ClientID)
-				Object_Mgr->Update(i, p->Players[i]);
+				Object_Mgr->UpdatePlayer(i, p->Players[i]);
+		}
+
+		for (UINT i = 0; i < p->NumOfObjects - Object_Mgr->GetCurrPlayerNum(); ++i) {
+			Object_Mgr->UpdateMonster(i, p->Monsters[i]);
 		}
 
 		char* string;

@@ -1,7 +1,7 @@
 #include "ObjectMgr.h"
 
 // 임의의 수치임
-ObjectMgr::ObjectMgr()
+ObjectMgr::ObjectMgr() : mCurrPlayerNum(0)
 {
 }
 
@@ -11,11 +11,13 @@ ObjectMgr::~ObjectMgr()
 
 void ObjectMgr::AddMainPlayer(SkinnedObject* obj, const UINT& id)
 {
+	++mCurrPlayerNum;
 	mPlayers[id] = obj;
 }
 
 void ObjectMgr::AddOtherPlayer(SO_InitDesc desc, const UINT& id)
 {
+	++mCurrPlayerNum;
 	switch (desc.ObjectType)
 	{
 	case ObjectType::Warrior:
@@ -67,11 +69,17 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 	Packet_Mgr->Connected[id] = false;
 }
 
-void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
+void ObjectMgr::UpdatePlayer(const UINT & id, const ObjectInfo & info)
 {
+	assert(id <= 3);
 	mPlayers[id]->SetTarget(info.Pos);
 	mPlayers[id]->SetState(info.ActionState);
 	mPlayers[id]->SetRot(info.Rot);
+}
+
+void ObjectMgr::UpdateMonster(const UINT & id, const ObjectInfo & info)
+{
+	mMonsters[id]->SetTarget(info.Pos);
 }
 
 void ObjectMgr::Update(float dt)
@@ -100,6 +108,7 @@ void ObjectMgr::Update(float dt)
 	{
 		m->Animate(dt);
 		m->MoveToTarget(dt);
+		m->Update(dt);
 		mAllObjects.push_back(m);
 	}
 

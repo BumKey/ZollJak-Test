@@ -31,11 +31,14 @@ public:
 	void RemovePlayer(const UINT& id);
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
-
-	void Update(const UINT& id, const ObjectInfo& info);
+	UINT								GetCurrPlayerNum() const { return mCurrPlayerNum; }
+	void UpdatePlayer(const UINT& id, const ObjectInfo& info);
+	void UpdateMonster(const UINT& id, const ObjectInfo& info);
 	void Update(float dt);
 
 private:
+	UINT mCurrPlayerNum;
+
 	std::vector<GameObject*>						mAllObjects;					
 	std::vector<BasicObject*>						mBasicObjects;
 	std::vector<Monster*>							mMonsters;

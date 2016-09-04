@@ -31,12 +31,18 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
 		SkinnedInfo.Rot = XMFLOAT3(0.0f, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
 		SkinnedInfo.Scale = 0.2f + MathHelper::RandF(0.2f, 0.5f);
+		SkinnedInfo.MoveSpeed = 5.5f + MathHelper::RandF(0.0f, 1.5f);
+		SkinnedInfo.AttackPoint = 10.0f;
+		SkinnedInfo.AttackSpeed = 1.0f;
 		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
 		break;
 	case ObjectType::Cyclop:
 		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
 		SkinnedInfo.Rot = XMFLOAT3(MathHelper::Pi, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
 		SkinnedInfo.Scale = 3.0f + MathHelper::RandF(2.0f, 5.0f);
+		SkinnedInfo.MoveSpeed = 4.0f + MathHelper::RandF(0.0f, 1.5f);
+		SkinnedInfo.AttackPoint = 10.0f;
+		SkinnedInfo.AttackSpeed = 1.0f;
 		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
 		break;
 
@@ -105,6 +111,30 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 	--mCurrPlayerNum;
 	mConnected[id] = false;
 	mPlayers[id].ActionState = ActionState::Die;
+}
+
+void ObjectMgr::SetMonstersTarget()
+{
+	for (auto& m : mMonsters)
+	{
+		FLOAT dis[MAX_USER];
+		FLOAT minDis = FLT_MAX;
+		for (UINT i = 0; i < MAX_USER; ++i)
+		{
+			if (mConnected[i]) {
+				dis[i] = MathHelper::DistanceVector(mPlayers[i].Pos, m.second.Pos);
+				minDis = MathHelper::Min(minDis, dis[i]);
+			}
+		}
+
+		for (UINT i = 0; i < MAX_USER; ++i)
+		{
+			if (abs(dis[i] - minDis) <= 0.01f) {
+				m.second.Pos = mPlayers[i].Pos;
+				break;
+			}
+		}
+	}
 }
 
 const std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetPlayers()

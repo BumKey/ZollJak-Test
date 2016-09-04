@@ -71,7 +71,7 @@ void SkinnedObject::Update(float dt)
 	XMStoreFloat3(&mPrevLook, vOL);
 
 	if (mRotation.y >= MathHelper::Pi*2.0f)
-		mRotation.y = 0.0f;
+		mRotation.y -= MathHelper::Pi*2.0f;
 
 	XMMATRIX S = XMMatrixScaling(mScaling, mScaling, mScaling);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(mRotation.x, mRotation.y, mRotation.z);

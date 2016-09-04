@@ -42,13 +42,13 @@ void Monster::Update(float dt)
 {
 	SkinnedObject::Update(dt);
 
-	if (mActionState != ActionState::Die || mActionState != ActionState::Damage)
+	/*if (mActionState != ActionState::Die || mActionState != ActionState::Damage)
 	{
 		if (mAI_States == AI_State::AttackToTarget)
 			AttackToTarget(dt);
 		else if (mAI_States == AI_State::MovingToTarget)
 			MoveToTarget(dt);
-	}
+	}*/
 }
 
 void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)

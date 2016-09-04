@@ -76,12 +76,11 @@ void ServerRogicMgr::Update()
 		// 4. 로직 타이머 리셋
 		mCurrWaveLevel++;
 
-
-		//for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel]) {
-		//	//	for (UINT i = 0; i < oType.second; ++i)
-		//	//	mObjectMgr.AddMonster(oType.first);
-		//}
-		//SendPacketToCreateMonsters();
+		for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel]) {
+				for (UINT i = 0; i < oType.second; ++i)
+				mObjectMgr.AddObject(oType.first);
+		}
+		SendPacketToCreateMonsters();
 		mGameStateMgr.FlowAdvance();
 
 		mRogicTimer.Reset();
@@ -95,7 +94,10 @@ void ServerRogicMgr::Update()
 		// 1. 죽은 몬스터들 처리
 		// 2. 게임 상태들(남은 몬스터, 남은시간들 등..) 처리
 		// 3. 로직 타이머 리셋
-		if (mRogicTimer.TotalTime() > 10.0f)
+
+		SetMonstersTarget();
+
+		if (mRogicTimer.TotalTime() > 100.0f)
 		{
 			mGameStateMgr.FlowAdvance();
 			mRogicTimer.Reset();
@@ -215,6 +217,11 @@ FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)
 	float y = a.z - b.z;
 
 	return sqrtf(x*x + y*y);
+}
+
+void ServerRogicMgr::SetMonstersTarget()
+{
+	mObjectMgr.SetMonstersTarget();
 }
 
 void ServerRogicMgr::SendPacketPerFrame()

@@ -21,6 +21,8 @@ public:
 	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
 
 private:
+	void SetMonstersTarget();
+
 	void SendPacketPerFrame();
 	void SendPacketToCreateMonsters();
 

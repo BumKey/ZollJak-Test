@@ -6,7 +6,7 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
-#define MAX_USER			1
+#define MAX_USER			2
 #define MAX_MONSTER			50
 #define MAX_OBJECT			100
 #define MAX_NPC				100
@@ -24,7 +24,8 @@ enum eSC {
 	InitPlayer,
 	PutOtherPlayers,
 	AddMonsters,
-	PerFrame
+	PlayerInfo,
+	MonInfo
 };
 
 enum eCS {
@@ -90,13 +91,6 @@ namespace CollisionState {
 	};
 }
 
-enum eMonsterTarget {
-	Temple,
-	Player0,
-	Player1,
-	Player2
-};
-
 enum eGameState {
 	GameWaiting,
 	WaveWaiting,
@@ -146,18 +140,24 @@ struct HEADER
 };
 
 // server -> client
-struct SC_PerFrame : public HEADER
+struct SC_PlayerInfo : public HEADER
 {
-	SC_PerFrame() {
-		Size = sizeof(*this); Type = eSC::PerFrame;
+	SC_PlayerInfo() {
+		Size = sizeof(*this); Type = eSC::PlayerInfo;
+	}
+	ObjectInfo Players[MAX_USER];
+};
+
+struct SC_MonInfo : public HEADER
+{
+	SC_MonInfo() {
+		Size = sizeof(*this); Type = eSC::MonInfo;
 	}
 	eGameState GameState;
 	UINT Time;
 	UINT NumOfObjects;
 	UINT Roundlevel;
-	ObjectInfo Players[MAX_USER];
 	ObjectInfo Monsters[MAX_MONSTER];
-	eMonsterTarget Target[MAX_MONSTER];
 };
 
 struct SC_AddMonster : public HEADER

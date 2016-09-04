@@ -20,10 +20,11 @@ public:
 
 	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
 
+	void SendPacketMonInfo();
+	void SendPacektPlayerInfo();
+
 private:
 	void SetMonstersTarget();
-
-	void SendPacketPerFrame();
 	void SendPacketToCreateMonsters();
 
 	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);

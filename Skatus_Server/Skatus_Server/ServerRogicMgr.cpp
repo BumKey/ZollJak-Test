@@ -108,7 +108,11 @@ void ServerRogicMgr::Update()
 
 	mRogicTimer.Tick();
 
-	SendPacketPerFrame();
+	// 이것을 외부로하고
+	// 몬스터 정보를 1초단위로
+	// 플레이어 위치 정보는 더 짧게
+	// 패킷 구조체를 나누어야 하나?
+	//SendPacketPerFrame();
 }
 
 void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& newID)
@@ -226,26 +230,18 @@ void ServerRogicMgr::SetMonstersTarget()
 	mObjectMgr.SetMonstersTarget();
 }
 
-void ServerRogicMgr::SendPacketPerFrame()
+void ServerRogicMgr::SendPacketMonInfo()
 {
 	auto players = mObjectMgr.GetPlayers();
 	auto monsters = mObjectMgr.GetMonsters();
 
-	SC_PerFrame packet;
+	SC_MonInfo packet;
 	packet.GameState = mGameStateMgr.GetCurrState();
 	packet.Time = mRogicTimer.TotalTime();
 	packet.Roundlevel = mCurrWaveLevel;
 	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
 
-	for (auto p : players) {
-		UINT id = p.first;
-		packet.Players[id].Pos = p.second.Pos;
-		packet.Players[id].Rot = p.second.Rot;
-		packet.Players[id].ActionState = p.second.ActionState;
-	}
-
 	for (auto m : monsters) {
-		packet.Target[m.first] = eMonsterTarget::Temple;
 		packet.Monsters[m.first].Pos = m.second.Pos;
 		packet.Monsters[m.first].Rot = m.second.Rot;
 		packet.Monsters[m.first].ActionState = m.second.ActionState;
@@ -254,8 +250,24 @@ void ServerRogicMgr::SendPacketPerFrame()
 	for (UINT i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].is_connected) 
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
+	}
+}
 
-		players[i].ActionState = ActionState::Idle;
+void ServerRogicMgr::SendPacektPlayerInfo()
+{
+	SC_PlayerInfo packet;
+
+	auto& players = mObjectMgr.GetPlayers();
+	for (auto p : players) {
+		UINT id = p.first;
+		packet.Players[id].Pos = p.second.Pos;
+		packet.Players[id].Rot = p.second.Rot;
+		packet.Players[id].ActionState = p.second.ActionState;
+	}
+
+	for (UINT i = 0; i < MAX_USER; ++i) {
+		if (g_clients[i].is_connected)
+			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
 	}
 }
 

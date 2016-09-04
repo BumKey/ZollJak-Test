@@ -39,8 +39,11 @@ void MyServer::Send_Packet(DWORD id, char *packet) {
 	case eSC::InitPlayer:
 		string = "InitPlayer";
 		break;
-	case eSC::PerFrame:
-		string = "PerFrame";
+	case eSC::PlayerInfo:
+		string = "PlayerInfo";
+		break;
+	case eSC::MonInfo:
+		string = "MonInfo";
 		break;
 	case eSC::PutOtherPlayers:
 		string = "PutOtherPlayer";

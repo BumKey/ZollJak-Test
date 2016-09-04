@@ -182,9 +182,28 @@ void MyThreads::Worker_Thread()
 
 void MyThreads::Rogic_Thread()
 {
+	GameTimer timer[2];
+	enum eTimer { MonInfo = 0, PlayerInfo };
+	timer[MonInfo].Reset();
+	timer[PlayerInfo].Reset();
+
 	while (1)
 	{
-		g_RogicMgr.Update();
-		Sleep(1000);
+		for (int i = 0; i < 2; ++i)
+			timer[i].Tick();
+
+		if (timer[MonInfo].TotalTime() > 3.0f) {
+			g_RogicMgr.Update();
+			g_RogicMgr.SendPacketMonInfo();
+
+			timer[MonInfo].Reset();
+		}
+
+		if (timer[PlayerInfo].TotalTime() > 0.3f) {
+			g_RogicMgr.SendPacektPlayerInfo();
+
+			timer[PlayerInfo].Reset();
+		}
+		
 	}
 }

@@ -3,21 +3,19 @@
 
 UINT GameObject::GeneratedCount = 0;
 
-GameObject::GameObject() : m_bForOneHit(false), mExtentY(0.0f),
+GameObject::GameObject() : mExtentY(0.0f),
 mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f),
 mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
 {
 	mID = GeneratedCount++;
-	mActionState = ActionState::Idle;
 	mCollisionState = CollisionState::None;
 }
 
-GameObject::GameObject(GameMesh* mesh, const BO_InitDesc& info) : mMesh(mesh), m_bForOneHit(false),
+GameObject::GameObject(GameMesh* mesh, const BO_InitDesc& info) : mMesh(mesh),
 mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f), mExtentY(0.0f),
 mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
 {
 	mID = GeneratedCount++;
-	mActionState = ActionState::Idle;
 	mCollisionState = CollisionState::None;
 
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
@@ -83,12 +81,6 @@ void  GameObject::PrintLocation()
 		mProperty.name, mPosition.x, mPosition.y, mPosition.z);
 }
 
-void GameObject::Die()
-{
-	mActionState = ActionState::Die;
-	// 죽을 때 필요한 처리들은 오버라이드롤 구현..
-}
-
 void GameObject::InitBoundingObject()
 {
 	XMFLOAT3 fp = mMesh->GetAABB().Center;
@@ -117,29 +109,6 @@ void GameObject::UpdateBoundingObject()
 	//mAABB.Center.y += mExtentY;
 	mBS.Center = mAABB.Center;
 	//mBS.Center.y += mExtentY;
-}
-
-void GameObject::Attack(GameObject * target)
-{
-	if (target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
-	{
-		int mTarget_hp = target->GetProperty().hp_now;
-		int armor = target->GetProperty().guardpoint;
-		float damage = mProperty.attakpoint;
-
-		target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
-		target->SetHP(mTarget_hp - damage);
-
-		printf("공격을 성공했습니다. 상대의 체력 : %d \n", target->GetProperty().hp_now);
-
-		if (target->GetProperty().hp_now <= 0)
-		{
-			target->Die();
-			printf("타겟 사망");
-		}
-
-		m_bForOneHit = false;
-	}
 }
 
 void GameObject::Release()

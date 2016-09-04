@@ -202,13 +202,8 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 /// </summary>
 void ServerRogicMgr::ProcessMouseInput(CS_Attack & inPacket)
 {
-	/*auto player = mObjectMgr.GetPlayer(inPacket.ClientID);
-	auto monsters = mObjectMgr.GetMonsters();
-	for (auto m : monsters)
-	{
-		if (Distance2D(player.Pos, m.Pos) < 3.5f)
-			m.ActionState = ActionState::Damage;
-	}*/
+	auto& player = mObjectMgr.GetPlayer(inPacket.ClientID);
+	player.ActionState = ActionState::Attack;
 }
 
 FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)
@@ -250,8 +245,10 @@ void ServerRogicMgr::SendPacketPerFrame()
 	}
 
 	for (UINT i = 0; i < MAX_USER; ++i) {
-		if (g_clients[i].is_connected)
+		if (g_clients[i].is_connected) 
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
+
+		players[i].ActionState = ActionState::Idle;
 	}
 }
 

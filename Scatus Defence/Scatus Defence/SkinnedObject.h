@@ -25,6 +25,9 @@ public:
 	virtual void Update(float dt);
 	virtual void Animate(float dt);
 
+	virtual void Attack(SkinnedObject* target);
+	virtual void Die();
+
 	virtual void DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform);
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj);
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc);
@@ -33,17 +36,25 @@ public:
 
 	bool  CurrAnimEnd();
 
-	virtual std::string	GetAnimName(Anims& eAnim); const
-	void  SetMovingSpeed(FLOAT speed) { mProperty.movespeed = speed; }
+	void					SetMovingSpeed(FLOAT speed) { mProperty.movespeed = speed; }
 
-protected:
-	bool IsActionStateChangeAble();
+	ActionState::States		GetActionState() const { return mActionState; }
+	virtual std::string		GetAnimName(Anims& eAnim); const
+
+	bool					IsAttack() { return mActionState == ActionState::Attack ? true : false; }
+	bool					IsDead() { return mActionState == ActionState::Die ? true : false; }
+	bool					OneHit() { return m_bForOneHit; }
+
 	void ChangeActionState(ActionState::States state);
+	bool IsActionStateChangeAble();
 
 private:
 	void SetClip();
 
 protected:
+	ActionState::States mActionState;
+	bool m_bForOneHit;
+
 	XNA::OrientedBox mOOBB;
 
 	FLOAT mTimePos;;

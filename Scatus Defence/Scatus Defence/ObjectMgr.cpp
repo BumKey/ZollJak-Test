@@ -72,9 +72,11 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 void ObjectMgr::UpdatePlayer(const UINT & id, const ObjectInfo & info)
 {
 	assert(id <= 3);
-	mPlayers[id]->SetTarget(info.Pos);
-	mPlayers[id]->SetState(info.ActionState);
+	mPlayers[id]->SetTarget(info.Pos);;
 	mPlayers[id]->SetRot(info.Rot);
+
+	if (info.ActionState == ActionState::Attack)
+		mPlayers[id]->ChangeActionState(info.ActionState);
 }
 
 void ObjectMgr::UpdateMonster(const UINT & id, const ObjectInfo & info)
@@ -107,7 +109,6 @@ void ObjectMgr::Update(float dt)
 	for (auto m : mMonsters)
 	{
 		m->Animate(dt);
-		m->MoveToTarget(dt);
 		m->Update(dt);
 		mAllObjects.push_back(m);
 	}

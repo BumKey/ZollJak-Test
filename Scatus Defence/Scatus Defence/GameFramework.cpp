@@ -103,9 +103,20 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 	if (btnState & MK_LBUTTON) {
-		Player::GetInstance()->SetAttackState();
+		Player::GetInstance()->ChangeActionState(ActionState::Attack);
 
 		CS_Attack packet;
+		Packet_Mgr->SendPacket(packet);
+
+		auto monsters = Object_Mgr->GetMonsters();
+		const XMFLOAT3 p_pos = Player::GetInstance()->GetPos();
+		const XMFLOAT3 p_front = Player::GetInstance()->GetLook()*-3.0f;
+		for (auto& m : monsters)
+		{
+			if (MathHelper::DistanceVector(p_pos+p_front, m->GetPos()) <= 3.5f) {
+				Player::GetInstance()->Attack(m);
+			}
+		}
 	}
 	
 	SetCapture(mhMainWnd);

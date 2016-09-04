@@ -31,6 +31,7 @@ public:
 	void RemovePlayer(const UINT& id);
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
+	std::vector<Monster*>				GetMonsters() { return mMonsters; }
 	UINT								GetCurrPlayerNum() const { return mCurrPlayerNum; }
 	void UpdatePlayer(const UINT& id, const ObjectInfo& info);
 	void UpdateMonster(const UINT& id, const ObjectInfo& info);

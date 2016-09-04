@@ -6,14 +6,21 @@ SkinnedObject::SkinnedObject() : GameObject(), mTimePos(0.0f)
 }
 
 SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const SO_InitDesc& info) : GameObject(mesh, info),
-mTimePos(0.0f)
+mTimePos(0.0f), m_bForOneHit(false)
 {
 	mMesh = mesh;
+	mActionState = ActionState::Idle;
 	mFinalTransforms.resize(mesh->SkinnedData.BoneCount());
 }
 
 SkinnedObject::~SkinnedObject()
 {
+}
+
+void SkinnedObject::Die()
+{
+	mActionState = ActionState::Die;
+	// 죽을 때 필요한 처리들은 오버라이드롤 구현..
 }
 
 void SkinnedObject::Init(SkinnedMesh * mesh, const SO_InitDesc & info)
@@ -91,6 +98,8 @@ void SkinnedObject::Animate(float dt)
 
 	if (mActionState == ActionState::Attack)
 		mTimePos += dt*mProperty.attackspeed;
+	else if (mActionState == ActionState::Damage)
+		mTimePos += dt*0.5f;
 	else
 		mTimePos += dt*mProperty.movespeed/5.0f;
 
@@ -306,6 +315,30 @@ std::string SkinnedObject::GetAnimName(Anims & eAnim)
 	return mAnimNames[eAnim]; 
 }
 
+void SkinnedObject::Attack(SkinnedObject * target)
+{
+	if (target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
+	{
+		int mTarget_hp = target->GetProperty().hp_now;
+		int armor = target->GetProperty().guardpoint;
+		float damage = mProperty.attakpoint;
+
+		target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+		target->SetHP(mTarget_hp - damage);
+
+		printf("공격을 성공했습니다. 상대의 체력 : %d \n", target->GetProperty().hp_now);
+
+		if (target->GetProperty().hp_now <= 0)
+		{
+			target->Die();
+			printf("타겟 사망");
+		}
+		else
+			target->ChangeActionState(ActionState::Damage);
+
+		m_bForOneHit = false;
+	}
+}
 
 void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const XMMATRIX & lightViewProj)
 {

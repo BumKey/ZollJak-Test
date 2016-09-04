@@ -34,6 +34,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		SkinnedInfo.MoveSpeed = 5.5f + MathHelper::RandF(0.0f, 1.5f);
 		SkinnedInfo.AttackPoint = 10.0f;
 		SkinnedInfo.AttackSpeed = 1.0f;
+		SkinnedInfo.Hp = 30.0f;
 		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
 		break;
 	case ObjectType::Cyclop:
@@ -43,6 +44,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		SkinnedInfo.MoveSpeed = 4.0f + MathHelper::RandF(0.0f, 1.5f);
 		SkinnedInfo.AttackPoint = 10.0f;
 		SkinnedInfo.AttackSpeed = 1.0f;
+		SkinnedInfo.Hp = 100.0f;
 		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
 		break;
 
@@ -96,7 +98,7 @@ void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 	info.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	info.Scale = 0.05f;
 	info.MoveSpeed = 9.0f;
-	info.AttackPoint = 50.0f;
+	info.AttackPoint = 5.0f;
 	info.AttackSpeed = 2.0f;
 	info.Hp = 100;
 
@@ -137,7 +139,7 @@ void ObjectMgr::SetMonstersTarget()
 	}
 }
 
-const std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetPlayers()
+std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetPlayers()
 {
 	std::unordered_map<UINT, SO_InitDesc> rt;
 	SO_InitDesc players[MAX_USER];
@@ -161,7 +163,7 @@ const std::unordered_map<UINT, SO_InitDesc> ObjectMgr::GetPlayers()
 	return rt;
 }
 
-const SO_InitDesc & ObjectMgr::GetPlayer(const UINT & id)
+SO_InitDesc & ObjectMgr::GetPlayer(const UINT & id)
 {
 	return mPlayers[id];
 }

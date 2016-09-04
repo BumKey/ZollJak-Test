@@ -19,10 +19,10 @@ public:
 	void SetPlayerPos(const UINT& id, XMFLOAT3 pos) { pos.y = -0.1f; mPlayers[id].Pos = pos; }
 	void SetMonstersTarget();
 
-	const std::unordered_map<UINT, SO_InitDesc>		GetPlayers();
-	const std::unordered_map<UINT, SO_InitDesc>&	GetMonsters() { return mMonsters; }
-	const std::vector<BO_InitDesc>& GetAllBasicObjects() { return mObstacles; }
-	const SO_InitDesc&				GetPlayer(const UINT& id);
+	std::unordered_map<UINT, SO_InitDesc>		GetPlayers();
+	std::unordered_map<UINT, SO_InitDesc>&		GetMonsters() { return mMonsters; }
+	std::vector<BO_InitDesc>& GetAllBasicObjects() { return mObstacles; }
+	SO_InitDesc&				GetPlayer(const UINT& id);
 	void ReleaseAllMonsters();
 
 private:

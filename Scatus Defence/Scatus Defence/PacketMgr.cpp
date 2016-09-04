@@ -108,6 +108,7 @@ void PacketMgr::ProcessPacket()
 			desc.Rot = p->Player[ClientID].Rot;
 			desc.Scale = p->Player[ClientID].Scale;
 			desc.AttackSpeed = p->Player[ClientID].AttackSpeed;
+			desc.AttackPoint = p->Player[ClientID].AttackPoint;
 			desc.MoveSpeed = p->Player[ClientID].MoveSpeed;
 			desc.Hp = p->Player[ClientID].Hp;
 
@@ -196,6 +197,8 @@ void PacketMgr::ProcessPacket()
 			desc.Scale = p->InitInfos[i].Scale;
 			desc.AttackSpeed = p->InitInfos[i].AttackSpeed;
 			desc.MoveSpeed = p->InitInfos[i].MoveSpeed;
+			desc.Hp = p->InitInfos[i].Hp;
+			desc.AttackPoint = p->InitInfos[i].AttackPoint;
 			auto type = p->InitInfos[i].ObjectType;
 
 			Object_Mgr->AddMonster(type, desc, i);

@@ -42,13 +42,10 @@ void Monster::Update(float dt)
 {
 	SkinnedObject::Update(dt);
 
-	/*if (mActionState != ActionState::Die || mActionState != ActionState::Damage)
+	if (mActionState != ActionState::Die || mActionState != ActionState::Damage)
 	{
-		if (mAI_States == AI_State::AttackToTarget)
-			AttackToTarget(dt);
-		else if (mAI_States == AI_State::MovingToTarget)
-			MoveToTarget(dt);
-	}*/
+		MoveToTarget(dt);
+	}
 }
 
 void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
@@ -67,13 +64,13 @@ void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
 
 void Monster::SetAI_State(AI_State::States state)
 {
-	if (mAI_States != AI_State::AttackToTarget && state == AI_State::AttackToTarget)
+	/*if (mAI_States != AI_State::AttackToTarget && state == AI_State::AttackToTarget)
 	{
 		mAI_States = state;
 		SetAttackState();
 	}
 	else
-		mAI_States = state;
+		mAI_States = state;*/
 }
 
 void Monster::AttackToTarget(float dt)

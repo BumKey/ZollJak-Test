@@ -23,8 +23,6 @@ public:
 	virtual void RotateY(float angle);
 	virtual void Update(float dt) = 0;
 
-	void Attack(GameObject* target);
-
 	virtual void DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform) = 0;
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj) = 0;
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc) = 0;
@@ -43,7 +41,6 @@ public:
 	UINT					GetObjectGeneratedCount() const { return GeneratedCount; }
 	Properties				GetProperty() const { return mProperty; }
 	ObjectType::Types		GetObjectType() const { return mObjectType; }
-	ActionState::States		GetActionState() const { return mActionState; }
 	CollisionState::States  GetCollisionState() const { return mCollisionState; }
 	XNA::AxisAlignedBox		GetAABB() const { return mAABB; }
 	XNA::Sphere				GetBS() const { return mBS; }
@@ -51,21 +48,12 @@ public:
 	void					SetPos(const XMFLOAT3& pos) { mPosition = pos; }
 	void					SetRot(const XMFLOAT3& rot) { mRotation = rot; }
 	void					SetHP(int hp) { mProperty.hp_now = hp; }
-	void					SetState(const ActionState::States state) { mActionState = state; }
-	void					SetAttackState() { mActionState = ActionState::Attack; m_bForOneHit = true; }
-
-	bool					IsAttack() { return mActionState == ActionState::Attack ? true : false; }
-	bool					IsDead() { return mActionState == ActionState::Die ? true : false; }
-	bool					OneHit() { return m_bForOneHit; }
 
 	void					SetTarget(XMFLOAT3 pos) { pos.y = -0.1; mTargetPos = pos; }
 	void					SetNoTarget() { mTargetPos = mPosition; }
 	void					SetNoneCollision() { mCollisionState = CollisionState::None; }
 
 	void  PrintLocation(); //객체 위치값출력 반환
-
-	// Behaves
-	virtual void Die();
 
 protected:
 	void InitBoundingObject();
@@ -91,14 +79,11 @@ protected:
 	XMFLOAT3 mTargetPos;
 
 	Properties mProperty;
-	ActionState::States mActionState;
 	CollisionState::States mCollisionState;
 	ObjectType::Types mObjectType;
 
 private:
 	UINT mID;
 	static UINT GeneratedCount;
-
-	bool m_bForOneHit;
 };
 

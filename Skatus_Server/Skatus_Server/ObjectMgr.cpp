@@ -30,7 +30,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 	case ObjectType::Goblin:
 		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
 		SkinnedInfo.Rot = XMFLOAT3(0.0f, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
-		SkinnedInfo.Scale = 0.2f + MathHelper::RandF(0.2f, 0.5f);
+		SkinnedInfo.Scale = 0.2f + MathHelper::RandF(0.1f, 0.4f);
 		SkinnedInfo.MoveSpeed = 5.5f + MathHelper::RandF(0.0f, 1.5f);
 		SkinnedInfo.AttackPoint = 10.0f;
 		SkinnedInfo.AttackSpeed = 1.0f;
@@ -40,7 +40,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 	case ObjectType::Cyclop:
 		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
 		SkinnedInfo.Rot = XMFLOAT3(MathHelper::Pi, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
-		SkinnedInfo.Scale = 3.0f + MathHelper::RandF(2.0f, 5.0f);
+		SkinnedInfo.Scale = 2.5f + MathHelper::RandF(1.5f, 3.0f);
 		SkinnedInfo.MoveSpeed = 4.0f + MathHelper::RandF(0.0f, 1.5f);
 		SkinnedInfo.AttackPoint = 10.0f;
 		SkinnedInfo.AttackSpeed = 1.0f;
@@ -98,7 +98,7 @@ void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 	info.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	info.Scale = 0.05f;
 	info.MoveSpeed = 9.0f;
-	info.AttackPoint = 5.0f;
+	info.AttackPoint = 50.0f;
 	info.AttackSpeed = 2.0f;
 	info.Hp = 100;
 

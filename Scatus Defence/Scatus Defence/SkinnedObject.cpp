@@ -330,7 +330,7 @@ void SkinnedObject::Attack(SkinnedObject * target)
 
 		if (target->GetProperty().hp_now <= 0)
 		{
-			target->Die();
+			//target->Die();
 			printf("Å¸°Ù »ç¸Á");
 		}
 		else

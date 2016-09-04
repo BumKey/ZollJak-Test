@@ -111,8 +111,8 @@ void MyThreads::Worker_Thread()
 			char *buf_ptr = g_clients[id].recv_overlap.iocp_buffer; // IOCP 버퍼
 			int remained = iosize; // 처리할 양
 			while (0 < remained) { // 처리 할 양이 있는 경우
-				if (0 == g_clients[id].packet_size) // 새로 패킷이 넘어오면
-					g_clients[id].packet_size = buf_ptr[0]; // 전송된 패킷의 사이즈를 저장
+				if (g_clients[id].packet_size == 0) // 새로 패킷이 넘어오면
+					g_clients[id].packet_size = reinterpret_cast<HEADER*>(buf_ptr)->Size; // 전송된 패킷의 사이즈를 저장
 
 				int required = g_clients[id].packet_size - g_clients[id].previous_size; // 요구량 = 패킷 사이즈 - 이전에 넘어온 양
 

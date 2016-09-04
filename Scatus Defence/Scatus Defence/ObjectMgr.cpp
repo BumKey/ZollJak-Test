@@ -82,6 +82,8 @@ void ObjectMgr::UpdatePlayer(const UINT & id, const ObjectInfo & info)
 void ObjectMgr::UpdateMonster(const UINT & id, const ObjectInfo & info)
 {
 	mMonsters[id]->SetTarget(info.Pos);
+	if (info.ActionState == ActionState::Die)
+		mMonsters[id]->ChangeActionState(info.ActionState);
 }
 
 void ObjectMgr::Update(float dt)

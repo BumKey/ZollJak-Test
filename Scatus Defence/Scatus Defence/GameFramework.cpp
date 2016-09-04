@@ -105,9 +105,6 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	if (btnState & MK_LBUTTON) {
 		Player::GetInstance()->ChangeActionState(ActionState::Attack);
 
-		CS_Attack packet;
-		Packet_Mgr->SendPacket(packet);
-
 		auto monsters = Object_Mgr->GetMonsters();
 		const XMFLOAT3 p_pos = Player::GetInstance()->GetPos();
 		const XMFLOAT3 p_front = Player::GetInstance()->GetLook()*-3.0f;
@@ -117,6 +114,14 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 				Player::GetInstance()->Attack(m);
 			}
 		}
+
+		CS_Attack packet;
+		packet.Mon_Num = monsters.size();
+		for (UINT i = 0; i < monsters.size(); ++i)
+			packet.Mon_HP[i] = monsters[i]->GetProperty().hp_now;
+
+		Packet_Mgr->SendPacket(packet);
+
 	}
 	
 	SetCapture(mhMainWnd);

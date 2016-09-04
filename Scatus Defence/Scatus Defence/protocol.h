@@ -203,6 +203,8 @@ struct CS_Attack : public HEADER
 		Size = sizeof(*this); Type = eCS::MouseInput;
 	}
 	BYTE ClientID;
+	BYTE Mon_Num;
+	DWORD Mon_HP[MAX_MONSTER];
 };
 
 #pragma pack(pop) 

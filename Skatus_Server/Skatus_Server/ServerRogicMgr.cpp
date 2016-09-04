@@ -203,7 +203,14 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 void ServerRogicMgr::ProcessMouseInput(CS_Attack & inPacket)
 {
 	auto& player = mObjectMgr.GetPlayer(inPacket.ClientID);
+	auto& monsters = mObjectMgr.GetMonsters();
+
 	player.ActionState = ActionState::Attack;
+	for (UINT i = 0; i < inPacket.Mon_Num; ++i) {
+		monsters[i].Hp = inPacket.Mon_HP[i];
+		if (monsters[i].Hp <= 0)
+			monsters[i].ActionState = ActionState::Die;
+	}
 }
 
 FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)

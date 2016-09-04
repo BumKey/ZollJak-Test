@@ -7,7 +7,7 @@
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
 #define MAX_USER			2
-#define MAX_MONSTER			100
+#define MAX_MONSTER			50
 #define MAX_OBJECT			100
 #define MAX_NPC				100
 #define WORLDSIZE			100
@@ -21,8 +21,8 @@
 
 // server -> client
 enum eSC {
-	PutPlayer,
-	RemovePlayer,
+	InitPlayer,
+	PutOtherPlayers,
 	AddMonsters,
 	PerFrame
 };
@@ -90,6 +90,14 @@ namespace CollisionState {
 		AttackCollision
 	};
 }
+
+enum eMonsterTarget {
+	Temple,
+	Player0,
+	Player1,
+	Player2
+};
+
 enum eGameState {
 	GameWaiting,
 	WaveWaiting,
@@ -114,8 +122,12 @@ struct BO_InitDesc
 
 struct SO_InitDesc : public BO_InitDesc
 {
-	SO_InitDesc() : BO_InitDesc(), Hp(100), AttackSpeed(0.0f), MoveSpeed(0.0f) {}
+	SO_InitDesc() : BO_InitDesc(), Hp(100), AttackSpeed(0.0f), MoveSpeed(0.0f)
+	{
+		ActionState = ActionState::Idle;
+	}
 	int Hp;
+	ActionState::States ActionState;
 
 	FLOAT AttackPoint;
 	FLOAT AttackSpeed;
@@ -126,7 +138,9 @@ struct SO_InitDesc : public BO_InitDesc
 
 struct ObjectInfo
 {
+	ActionState::States ActionState;
 	XMFLOAT3 Pos;
+	XMFLOAT3 Rot;
 };
 
 struct HEADER
@@ -145,8 +159,10 @@ struct SC_PerFrame : public HEADER
 	UINT RoundLevel;
 	UINT Time;
 	UINT NumOfObjects;
-	UINT ID[50];
-	ObjectInfo Objects[50];
+	UINT Roundlevel;
+	ObjectInfo Players[MAX_USER];
+	ObjectInfo Monsters[MAX_MONSTER];
+	eMonsterTarget Target[MAX_MONSTER];
 };
 
 struct SC_AddMonster : public HEADER
@@ -155,14 +171,13 @@ struct SC_AddMonster : public HEADER
 		Size = sizeof(*this); Type = eSC::AddMonsters;
 	}
 	UINT NumOfObjects;
-	UINT ID[50];
-	SO_InitDesc InitInfos[50];
+	SO_InitDesc InitInfos[MAX_MONSTER];
 };
 
-struct SC_PutPlayer : public HEADER
+struct SC_InitPlayer : public HEADER
 {
-	SC_PutPlayer() {
-		Size = sizeof(*this); Type = eSC::PutPlayer;
+	SC_InitPlayer() {
+		Size = sizeof(*this); Type = eSC::InitPlayer;
 	}
 
 	BYTE ClientID;
@@ -172,12 +187,14 @@ struct SC_PutPlayer : public HEADER
 	BO_InitDesc MapInfo[50];
 };
 
-struct SC_Remove_Player : public HEADER
+struct SC_PutOtherPlayers : public HEADER
 {
-	SC_Remove_Player() {
-		Size = sizeof(*this); Type = eSC::RemovePlayer;
+	SC_PutOtherPlayers() {
+		Size = sizeof(*this); Type = eSC::PutOtherPlayers;
 	}
-	BYTE ClientID;
+
+	BYTE CurrPlayerNum;
+	SO_InitDesc Player[MAX_USER];
 };
 
 // client -> server
@@ -189,6 +206,10 @@ struct CS_Move : public HEADER
 
 	BYTE ClientID;
 	XMFLOAT3 Pos;
+	XMFLOAT3 Rot;
+	ActionState::States ActionState;
+	FLOAT MoveSpeed;
+	FLOAT DeltaTime;
 };
 
 struct CS_Attack : public HEADER

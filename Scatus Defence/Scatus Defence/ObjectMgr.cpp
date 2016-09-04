@@ -1,12 +1,20 @@
 #include "ObjectMgr.h"
 
 // 임의의 수치임
-ObjectMgr::ObjectMgr() : mCurrPlayerNum(0)
+ObjectMgr::ObjectMgr()
 {
+	for (int i = 0; i < MAX_USER; ++i)
+		mConnected[i] = false;
 }
 
 ObjectMgr::~ObjectMgr()
 {
+}
+
+void ObjectMgr::AddPlayer(SkinnedObject * player, const UINT& id)
+{
+	mPlayers[id] = player;
+	mConnected[id] = true;
 }
 
 void ObjectMgr::AddMonster(const ObjectType::Types & type, const SO_InitDesc & desc, const UINT& id)
@@ -27,10 +35,10 @@ void ObjectMgr::AddMonster(const ObjectType::Types & type, const SO_InitDesc & d
 			goblinType = Goblin::Type::Blue;
 			break;
 		}
-		mSkinnedObjects[mCurrPlayerNum + id] = new Goblin(Resource_Mgr->GetSkinnedMesh(type), desc, goblinType);
+		mMonsters.push_back(new Goblin(Resource_Mgr->GetSkinnedMesh(type), desc, goblinType));
 		break;
 	case ObjectType::Cyclop:
-		mSkinnedObjects[mCurrPlayerNum + id] = new Cyclop(Resource_Mgr->GetSkinnedMesh(type), desc);
+		mMonsters.push_back(new Cyclop(Resource_Mgr->GetSkinnedMesh(type), desc));
 		break;
 	default:
 		assert(false, "Wrong parameter: AddMonster, type");
@@ -47,23 +55,43 @@ void ObjectMgr::AddObstacle(const ObjectType::Types & type, const BO_InitDesc & 
 		mBasicObjects.push_back(new BasicObject(Resource_Mgr->GetBasicMesh(type), desc, Label::Basic));
 }
 
+void ObjectMgr::RemovePlayer(const UINT & id)
+{
+	mConnected[id] = false;
+}
+
 void ObjectMgr::Update(const UINT & id, const ObjectInfo & info)
 {
-	mSkinnedObjects[id]->SetPos(info.Pos);
+	if (mConnected[id] && id != Packet_Mgr->GetClientID()) 
+	{
+		mPlayers[id]->SetPos(info.Pos);
+		mPlayers[id]->SetState(info.ActionState);
+		if (id != Packet_Mgr->GetClientID())
+			mPlayers[id]->SetRot(info.Rot);
+	}
 }
 
 void ObjectMgr::Update(float dt)
 {
 	mAllObjects.clear();
-	mAllObjects.reserve(mBasicObjects.size() + mSkinnedObjects.size());
+	mAllObjects.reserve(mBasicObjects.size() + MAX_USER);
 
 	for (auto i : mBasicObjects)
 		mAllObjects.push_back(i);
 
-	for (auto i : mSkinnedObjects)
+	for (int i = 0; i < MAX_USER; ++i)
 	{
-		i.second->Animate(dt);
-		mAllObjects.push_back(i.second);
+		if (mConnected[i])
+		{
+			mPlayers[i]->Animate(dt);
+			mAllObjects.push_back(mPlayers[i]);
+		}
+	}
+
+	for (auto m : mMonsters)
+	{
+		m->Animate(dt);
+		mAllObjects.push_back(m);
 	}
 
 	for (auto i : mAllObjects)

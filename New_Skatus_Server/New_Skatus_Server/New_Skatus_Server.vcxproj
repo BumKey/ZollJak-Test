@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{66CC239E-7FAE-4FF3-BB97-2E75C11396DC}</ProjectGuid>
+    <ProjectGuid>{E57C7895-5AC7-470B-AD65-14C32FD1ED8F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Skatus_Server</RootNamespace>
+    <RootNamespace>New_Skatus_Server</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -146,31 +146,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="GameStateMgr.h" />
-    <ClInclude Include="GameTimer.h" />
-    <ClInclude Include="MathHelper.h" />
-    <ClInclude Include="ObjectMgr.h" />
-    <ClInclude Include="Protocol.h" />
-    <ClInclude Include="ServerRogicMgr.h" />
-    <ClInclude Include="server.h" />
-    <ClInclude Include="Server_Collision.h" />
+    <ClInclude Include="protocol.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Threads.h" />
-    <ClInclude Include="Utility.h" />
-    <ClInclude Include="xnacollision.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameStateMgr.cpp" />
-    <ClCompile Include="GameTimer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MathHelper.cpp" />
-    <ClCompile Include="ObjectMgr.cpp" />
-    <ClCompile Include="ServerRogicMgr.cpp" />
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="Server_Collision.cpp" />
-    <ClCompile Include="Threads.cpp" />
-    <ClCompile Include="Utility.cpp" />
-    <ClCompile Include="xnacollision.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

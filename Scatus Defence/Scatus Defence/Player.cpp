@@ -54,20 +54,30 @@ void Player::Move(float walk, float strafe)
 {
 	mActionState = ActionState::Run;
 
-	if (walk != 0.0f)
+	float dt = 0.0f;
+	if (walk != 0.0f) 
+	{
 		Walk(walk);
-
+		dt = abs(walk);
+	}
 	if (strafe != 0.0f)
+	{
 		Strafe(strafe);
+		dt = abs(strafe);
+	}
 
 	if (mTimer.TotalTime() > 0.01f)
 	{
 		CS_Move packet;
 		packet.Pos = mPosition;
-
-		Packet_Mgr->SendPacket(packet);
+		packet.Pos.y = Terrain::GetInstance()->GetHeight(mPosition);
+		packet.Rot = mRotation;
+		packet.ActionState = mActionState;
+		packet.MoveSpeed = mProperty.movespeed;
+		packet.DeltaTime = dt;
+		Packet_Mgr->SetMovePacket(packet);
+		Packet_Mgr->SetSendState(PacketMgr::MOVE);
 		mTimer.Reset();
-
 	}
 	else
 		mTimer.Tick();

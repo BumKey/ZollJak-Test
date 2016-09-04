@@ -35,7 +35,6 @@ private:
 	void ReadMaterials(std::ifstream& fin, UINT numMaterials, std::vector<Y2kMaterial>& mats);
 	void ReadSubsetTable(std::ifstream& fin, UINT numSubsets, std::vector<BasicMeshData::Subset>& subsets);
 	void ReadVertices(std::ifstream& fin, UINT numVertices, std::vector<Vertex::PosNormalTexTan>& vertices);
-	void ReadSkinnedVertices(std::ifstream& fin, UINT numVertices, std::vector<Vertex::PosNormalTexSkinned>& vertices);
 	void ReadSkinnedVertices(std::ifstream& fin, UINT numVertices, std::vector<Vertex::PosNormalTexTanSkinned>& vertices);
 	void ReadIndicies(std::ifstream& fin, UINT numTriangles, std::vector<USHORT>& indices);
 	void ReadBoneFinalTransform(std::ifstream& fin, UINT numBones, std::vector<XMFLOAT4X4>& finalTransform);

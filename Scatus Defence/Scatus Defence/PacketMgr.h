@@ -11,7 +11,7 @@
 #include "Warrior.h"
 #include <iostream>
 #include <vector>
-#include"RogicTimer.h"
+#include "RogicTimer.h"
 #pragma comment (lib, "ws2_32.lib")
 
 #define Packet_Mgr PacketMgr::GetInstance()
@@ -22,22 +22,34 @@ public:
 	PacketMgr();
 	~PacketMgr();
 
+	enum eSendPacket {
+		SUCCESS,
+		MOVE,
+		ATTACK
+	};
+
 public:
 	void Init();
-	void Update();
+	bool ReadPacket();
+	void SendPacket();
 
+	void SetMovePacket(const CS_Move& packet) { mMovePacket = packet; }
+	void SetSendState(const eSendPacket state) { mSendState = state; }
+
+	char* GetPacket()				{ return mPacketBuf; }
+	int GetClientID() const { return mClientID; }
+private:
+	void ProcessPacket(char* packet);
 	template <class T>
 	void SendPacket(T& packet);
-	char* GetPacket()				{ return mPacketBuf; }
-
-private:
-	bool ReadPacket();
-	void ProcessPacket(char* packet);
-
 	void err_display(wchar_t *msg);
 
 private:
 	int mClientID;
+	bool mConnected[MAX_USER];
+
+	CS_Move mMovePacket;
+	eSendPacket mSendState;
 
 	SOCKET	mSocket;
 	WSABUF	mRecvBuf;

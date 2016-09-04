@@ -12,8 +12,6 @@ enum Sound_list_type {
 	Sound_p_warrior,//플레이어 전사
 	Sound_p_archer,
 	Sound_p_builder,
-
-
 };
 
 enum Sound_type {

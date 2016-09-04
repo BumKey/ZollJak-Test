@@ -35,15 +35,6 @@ bool GameFrameWork::Init()
 	InputLayouts::InitAll(md3dDevice);
 	RenderStates::InitAll(md3dDevice);
 
-	Scene_Mgr->Init(md3dDevice, md3dImmediateContext,
-		mDepthStencilView, mRenderTargetView, mClientWidth, mClientHeight);
-
-	Texture_Mgr->Init(md3dDevice);
-	Resource_Mgr->Init(md3dDevice);
-	mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
-	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());
-
-
 	Terrain::InitInfo tii;
 	tii.HeightMapFilename = L"Textures/terrain3.raw";
 	tii.LayerMapFilename0 = L"Textures/grass2.dds";
@@ -58,6 +49,16 @@ bool GameFrameWork::Init()
 	tii.CellSpacing = 2.0f;
 	Terrain::GetInstance()->Init(md3dDevice, md3dImmediateContext, tii);
 
+	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+
+	Scene_Mgr->Init(md3dDevice, md3dImmediateContext,
+		mDepthStencilView, mRenderTargetView,
+		mClientWidth, mClientHeight);
+
+	Texture_Mgr->Init(md3dDevice);
+	Resource_Mgr->Init(md3dDevice);
+	mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&UI_Mgr->m_backbuffer);
+	UI_Mgr->CreateD2DrenderTarget(D3DApp::MainWnd());
 	Sound_Mgr->Create_Sound(D3DApp::MainWnd());
 
 	// Giljune's Code
@@ -81,13 +82,19 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트에서 키보드, 마우스 등 이벤트가 발생한다.
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
-	G_State_Mgr->Update();
-	Packet_Mgr->Update();
-	Object_Mgr->Update(dt);
-
-	Camera::GetInstance()->Update();
-	Scene_Mgr->Update(dt);
 	
+	if (Packet_Mgr->ReadPacket())
+	{
+		G_State_Mgr->Update();
+		Object_Mgr->Update(dt);
+
+		Camera::GetInstance()->Update();
+		Scene_Mgr->Update(dt);
+
+		Packet_Mgr->SendPacket();
+	}
+	else
+		UpdateScene(dt);
 }
 
 void GameFrameWork::DrawScene()
@@ -99,15 +106,13 @@ void GameFrameWork::DrawScene()
 
 void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
-
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 	if (btnState & MK_LBUTTON) {
-		
 		Player::GetInstance()->SetAttackState();
 
 		CS_Attack packet;
-		Packet_Mgr->SendPacket(packet);
+		Packet_Mgr->SetSendState(PacketMgr::ATTACK);
 	}
 	
 	SetCapture(mhMainWnd);

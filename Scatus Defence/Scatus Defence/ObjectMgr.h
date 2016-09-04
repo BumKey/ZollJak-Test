@@ -24,9 +24,11 @@ private:
 
 	friend class Singletone<ObjectMgr>;
 public:
-	void AddPlayer(SkinnedObject* player) { mSkinnedObjects[mCurrPlayerNum++] = player; }
+	void AddPlayer(SkinnedObject* player, const UINT& id);
 	void AddMonster(const ObjectType::Types& type, const SO_InitDesc& desc, const UINT& id);
 	void AddObstacle(const ObjectType::Types& type, const BO_InitDesc& desc);
+
+	void RemovePlayer(const UINT& id);
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
 
@@ -34,10 +36,10 @@ public:
 	void Update(float dt);
 
 private:
-	UINT mCurrPlayerNum;
-
 	std::vector<GameObject*>						mAllObjects;					
 	std::vector<BasicObject*>						mBasicObjects;
-	std::unordered_map<UINT, SkinnedObject*>		mSkinnedObjects;
+	std::vector<Monster*>							mMonsters;
+	SkinnedObject*									mPlayers[MAX_USER];
+	bool											mConnected[MAX_USER];
 };
 

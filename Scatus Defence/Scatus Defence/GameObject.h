@@ -49,7 +49,9 @@ public:
 	XNA::Sphere				GetBS() const { return mBS; }
 
 	void					SetPos(const XMFLOAT3& pos) { mPosition = pos; }
+	void					SetRot(const XMFLOAT3& rot) { mRotation = rot; }
 	void					SetHP(int hp) { mProperty.hp_now = hp; }
+	void					SetState(const ActionState::States state) { mActionState = state; }
 	void					SetAttackState() { mActionState = ActionState::Attack; m_bForOneHit = true; }
 
 	bool					IsAttack() { return mActionState == ActionState::Attack ? true : false; }

@@ -83,6 +83,45 @@ float Terrain::GetHeight(const XMFLOAT3& pos)const
 	}
 }
 
+float Terrain::GetHeight(float x, float y) const
+{
+	// Transform from terrain local space to "cell" space.
+	float c = (x + 0.5f*GetWidth()) / mInfo.CellSpacing;
+	float d = (y - 0.5f*GetDepth()) / -mInfo.CellSpacing;
+
+	// Get the row and column we are in.
+	int row = (int)floorf(d);
+	int col = (int)floorf(c);
+
+	// Grab the heights of the cell we are in.
+	// A*--*B
+	//  | /|
+	//  |/ |
+	// C*--*D
+	float A = mHeightmap[row*mInfo.HeightmapWidth + col];
+	float B = mHeightmap[row*mInfo.HeightmapWidth + col + 1];
+	float C = mHeightmap[(row + 1)*mInfo.HeightmapWidth + col];
+	float D = mHeightmap[(row + 1)*mInfo.HeightmapWidth + col + 1];
+
+	// Where we are relative to the cell.
+	float s = c - (float)col;
+	float t = d - (float)row;
+
+	// If upper triangle ABC.
+	if (s + t <= 1.0f)
+	{
+		float uy = B - A;
+		float vy = C - A;
+		return A + s*uy + t*vy;
+	}
+	else // lower triangle DCB.
+	{
+		float uy = C - D;
+		float vy = B - D;
+		return D + (1.0f - s)*uy + (1.0f - t)*vy;
+	}
+}
+
 XMMATRIX Terrain::GetWorld()const
 {
 	return XMLoadFloat4x4(&mWorld);
@@ -190,6 +229,10 @@ void Terrain::DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTrans
 	// to turn off tessellation.
 	dc->HSSetShader(0, 0, 0);
 	dc->DSSetShader(0, 0, 0);
+}
+
+void Terrain::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc)
+{
 }
 
 void Terrain::LoadHeightmap()

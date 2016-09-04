@@ -227,7 +227,7 @@ void BasicObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc)
 			Effects::SsaoNormalDepthFX->SetWorldView(worldView);
 			Effects::SsaoNormalDepthFX->SetWorldInvTransposeView(worldInvTransposeView);
 			Effects::SsaoNormalDepthFX->SetWorldViewProj(worldViewProj);
-			Effects::SsaoNormalDepthFX->SetTexTransform(XMMatrixIdentity());
+			Effects::SsaoNormalDepthFX->SetTexTransform(XMMatrixScaling(1.0f, 2.0f, 1.0f));
 
 			tech->GetPassByIndex(p)->Apply(0, dc);
 			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)

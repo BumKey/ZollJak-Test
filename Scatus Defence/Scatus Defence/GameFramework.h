@@ -8,9 +8,7 @@
 #include "Singletone.h"
 #include "Camera.h"
 #include "Player.h"
-
 #include "GameStateMgr.h"
-
 class GameFrameWork : public D3DApp
 {
 public:

@@ -88,7 +88,6 @@ private:
 	ID3D11RenderTargetView* mAmbientRTV1;
 	ID3D11ShaderResourceView* mAmbientSRV1;
 
-
 	UINT mRenderTargetWidth;
 	UINT mRenderTargetHeight;
 

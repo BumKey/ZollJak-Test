@@ -46,6 +46,7 @@ public:
 	float GetWidth()const;
 	float GetDepth()const;
 	float GetHeight(const XMFLOAT3& pos)const;
+	float GetHeight(float x, float y)const;
 
 	XMMATRIX GetWorld()const;
 	void SetWorld(CXMMATRIX M);
@@ -54,6 +55,7 @@ public:
 
 	void DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform,
 		ID3D11ShaderResourceView* shadowMapSRV, const DirectionalLight lights[3]);
+	void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc);
 
 private:
 	void LoadHeightmap();

@@ -455,6 +455,7 @@
       <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AssemblyCode</AssemblerOutput>
       <AssemblerOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">fxc</AssemblerOutputFile>
     </FxCompile>
+    <FxCompile Include="FX\TreeSprite.fx" />
     <FxCompile Include="FX\WireFrame.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

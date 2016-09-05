@@ -6,7 +6,7 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
-#define MAX_USER			1
+#define MAX_USER			3
 #define MAX_MONSTER			50
 #define MAX_OBJECT			100
 #define MAX_NPC				100
@@ -25,6 +25,7 @@ enum eSC {
 	RemovePlayer,
 	PutOtherPlayers,
 	AddMonsters,
+	ReleaseAllMons,
 	PlayerInfo,
 	MonInfo
 };
@@ -177,6 +178,12 @@ struct SC_AddMonster : public HEADER
 	SO_InitDesc InitInfos[MAX_MONSTER];
 };
 
+struct SC_ReleaseAllMonsters : public HEADER
+{
+	SC_ReleaseAllMonsters() {
+		Size = sizeof(*this); Type = eSC::ReleaseAllMons;
+	}
+};
 struct SC_InitPlayer : public HEADER
 {
 	SC_InitPlayer() {

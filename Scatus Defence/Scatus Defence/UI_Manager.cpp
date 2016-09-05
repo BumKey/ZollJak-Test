@@ -237,12 +237,6 @@ void UI_Manager::Load_All_Image()
 	{
 			m_Image_list.push_back(temp);
 	}
-	Image_info *temp2 = new Image_info(L"¸Þ½ÃÁö¹Ú½º", Scene_Ingame, UI_ingame_chat_box,100, 100, 400,400,0.9, UI_Frame_null);
-	hr = LoadPNG2DDBitmap(TEXT("ÄñÃ´ÄñÃ´ÆÄ¿ÀÈÄ.jpg"), temp2->Image);
-	if (SUCCEEDED(hr))
-	{
-	m_Image_list.push_back(temp2);
-	}
 
 	/* Á¤°¡¿îµ¥ ¹Ú½º
 	Image_info *temp3 = new Image_info(L"Title_Menu_Box", (rc.left+rc.right)/2 -150 , (rc.top + rc.bottom) / 2 -150 , 

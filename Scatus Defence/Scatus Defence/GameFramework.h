@@ -6,7 +6,9 @@
 #include "ResourceMgr.h"
 #include "Sound_Manager.h"
 #include "Singletone.h"
+#include "GameStateMgr.h"
 #include "Player.h"
+
 //#include "GameStateMgr.h"
 class GameFrameWork : public D3DApp
 {

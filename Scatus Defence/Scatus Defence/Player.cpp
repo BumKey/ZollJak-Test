@@ -1,5 +1,5 @@
 #include "Player.h"
-
+#include "Sound_Manager.h"
 Player::Player() : SkinnedObject()
 {
 	mProperty.name = "Player";
@@ -14,6 +14,7 @@ Player::Player() : SkinnedObject()
 	mAnimNames[Anims::walk] = "walk";
 
 	mTimer.Reset();
+	mTimer_s.Reset();
 }
 
 
@@ -76,6 +77,7 @@ void Player::Move(float walk, float strafe)
 
 	if (mTimer.TotalTime() > 0.2f)
 	{
+		Sound_Mgr->Play3DEffect(Sound_p_footstep1, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 		CS_Move packet;
 		packet.Pos = mPosition;
 		packet.Pos.y = Terrain::GetInstance()->GetHeight(mPosition);
@@ -89,6 +91,14 @@ void Player::Move(float walk, float strafe)
 	}
 	else
 		mTimer.Tick();
+
+	//if (((mTimer.TotalTime()) / 3.0f) > 1.0f)
+	{
+		Sound_Mgr->Play3DEffect(Sound_p_footstep1, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+
+	}
+	
+
 }
 
 void Player::ProccessKeyInput(float dt)

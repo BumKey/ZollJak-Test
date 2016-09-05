@@ -263,7 +263,6 @@ void ServerRogicMgr::SendPacektPlayerInfo()
 	for (UINT i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].is_connected) {
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
-			players[i].ActionState = ActionState::Idle;
 		}
 	}
 }

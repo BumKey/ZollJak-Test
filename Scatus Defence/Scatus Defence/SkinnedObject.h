@@ -41,6 +41,7 @@ public:
 	void					SetNextMove(XMFLOAT3 pos) { pos.y = -0.1f; mTargetPos = pos; }
 	void					SetTarget(SkinnedObject* target);
 	void					SetNoTarget() { mTarget = 0; mHasTarget = false; }
+	void					SetAttackState() { mActionState = ActionState::Attack; }
 
 	ActionState::States		GetActionState() const { return mActionState; }
 	virtual std::string		GetAnimName(Anims& eAnim); const

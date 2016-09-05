@@ -77,7 +77,8 @@ void ObjectMgr::UpdatePlayer(const UINT & id, const PlayerInfos & info)
 	mPlayers[id]->SetNextMove(info.Pos);;
 	mPlayers[id]->SetRot(info.Rot);
 
-	mPlayers[id]->ChangeActionState(info.ActionState);
+	if (info.ActionState == ActionState::Attack)
+		mPlayers[id]->SetAttackState();
 }
 
 void ObjectMgr::UpdateMonster(const UINT & id, const MonInfos & info)

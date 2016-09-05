@@ -114,11 +114,11 @@ void ObjectMgr::Update(float dt)
 	{
 		m->Animate(dt);
 		m->Update(dt);
-		for (auto m2 : mMonsters)
+	/*	for (auto m2 : mMonsters)
 		{
 			if (MathHelper::DistanceVector(m->GetPos(), m2->GetPos()) <= 3.0f)
 				m->MovingCollision(m2->GetPos(), dt);
-		}
+		}*/
 		mAllObjects.push_back(m);
 	}
 

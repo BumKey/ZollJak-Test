@@ -3,14 +3,14 @@
 ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(1), mCurrPlayerNum(0),
 mNewID(-1)
 {
-	mPerWaveMonsterNum[1][ObjectType::Goblin] = 15;
-	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 5;
+	mPerWaveMonsterNum[1][ObjectType::Goblin] = 5;
+	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 1;
 
-	mPerWaveMonsterNum[2][ObjectType::Goblin] = 20;
-	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 5;
+	mPerWaveMonsterNum[2][ObjectType::Goblin] = 10;
+	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 2;
 
-	mPerWaveMonsterNum[3][ObjectType::Goblin] = 40;
-	mPerWaveMonsterNum[3][ObjectType::Cyclop] = 10;
+	mPerWaveMonsterNum[3][ObjectType::Goblin] = 15;
+	mPerWaveMonsterNum[3][ObjectType::Cyclop] = 3;
 
 	mGameTimer.Reset();
 }

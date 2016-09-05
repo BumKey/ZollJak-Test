@@ -104,12 +104,6 @@ void ServerRogicMgr::Update()
 	}
 
 	mRogicTimer.Tick();
-
-	// 이것을 외부로하고
-	// 몬스터 정보를 1초단위로
-	// 플레이어 위치 정보는 더 짧게
-	// 패킷 구조체를 나누어야 하나?
-	//SendPacketPerFrame();
 }
 
 void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& newID)
@@ -251,6 +245,8 @@ void ServerRogicMgr::SendPacketMonInfo()
 	for (UINT i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].is_connected) 
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
+
+		players[i].ActionState = ActionState::Idle;
 	}
 }
 
@@ -269,8 +265,6 @@ void ServerRogicMgr::SendPacektPlayerInfo()
 	for (UINT i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].is_connected)
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
-
-		players[i].ActionState = ActionState::Idle;
 	}
 }
 

@@ -12,6 +12,8 @@ enum Sound_list_type {
 	Sound_p_warrior,//플레이어 전사
 	Sound_p_archer,
 	Sound_p_builder,
+
+
 };
 
 enum Sound_type {
@@ -23,16 +25,50 @@ enum Sound_type {
 
 enum Sound_effect_type {
 
-	Sound_click1
+	Sound_click1,
+	Sound_open,
+	Sound_wave_start
 
 };
 
-enum Sound_3D_effect_type {
+enum Sound_3Deffect_type {
 	Sound_null,
-	Sound_die,
-	Sound_attack,
-	Sound_idle,
+
 	
+	Sound_idle,
+	Sound_Goblin_footstep,
+	Sound_Goblin_roar,
+	Sound_Goblin_die,
+	Sound_Goblin_damage,
+	Sound_Goblin_roar2,
+	Sound_p_walk,
+	Sound_mop_growl,
+	Sound_p_shout,
+	Sound_p_shout2,
+	Sound_p_almostdie,
+	Sound_attack,
+	Sound_p_damage,
+	Sound_p_damage2,
+	Sound_p_swing,
+	Sound_p_die,
+	Sound_p_footstep1,
+	Sound_Giant_footstep,
+	Sound_Giant_footstep2,
+	Sound_Giant_roar1,
+	Sound_Giant_damage1,
+	Sound_Giant_damage2,
+	Sound_Giant_roar2,
+	Sound_Giant_idle,
+	Sound_Giant_swing,
+	Sound_Giant_swing2,
+	Sound_Giant_attack1,
+	Sound_Giant_attack2,
+	Sound_Giant_attack3,
+	Sound_Giant_die,
+	Sound_impact,
+
+	Sound_earthqueke
+
 
 };
 
@@ -67,10 +103,15 @@ struct Sound_Effects
 
 struct Sound_3DEffects
 {
-	Sound_3D_effect_type Sounds_effect_type;
-	IDirectSound3DBuffer* Sound_buffer;
+	Sound_3Deffect_type Sounds_3Deffect_type;
+	IDirectSoundBuffer8* Sound_buffer_3D;
+	IDirectSound3DBuffer8* m_secondary3DBuffer1;
 	bool isActive;
 	DSBUFFERDESC   dsBuffDesc;
+	Sound_3DEffects() {
+		IDirectSoundBuffer8* Sound_buffer_3D= nullptr;
+		IDirectSound3DBuffer8* m_secondary3DBuffer1 = nullptr;
+	}
 
 
 
@@ -81,23 +122,37 @@ struct Sound_3DEffects
 class Sound_Manager
 {
 private:
-	IDirectSound*                   pDSnd;
-	DS3DLISTENER			        m_DsLsn;                                    //// Listener properties (Dest)
-	LPDIRECTSOUND3DBUFFER	m_pDsrc;											// 3D sound buffer
-	LPDIRECTSOUND3DLISTENER	m_pDlsn;											// 3D listener object
-	DS3DBUFFER				m_DsSrc;											// 3D buffer properties (Source)
-	LPDIRECTSOUNDBUFFER*	m_apDSBuffer;                                       //무어에 쓰는 물건인고
-	LPDIRECTSOUND8 m_pDS;//
+
+	IDirectSound8*                   pDSnd;
+	HRESULT result;
+	//We have a new listener interface for 3D sound.
+
+	IDirectSound3DListener8* m_listener;
+	IDirectSoundBuffer8* m_secondaryBuffer1;
+	//IDirectSound3DBuffer8* m_secondary3DBuffer1;
+	IDirectSoundBuffer* m_primaryBuffer;
+	////
+	IDirectSoundBuffer* tempBuffer;
 	DWORD					m_dwDSBufferSize;//
 	DWORD					m_dwNumBuffers;//
 	std::vector<Sound_BG>   Sounds_BG_list;
 	std::vector<Sound_Effects>   Sounds_Effects_list;
+	std::vector<Sound_3DEffects>   Sounds_3DEffects_list;
 	IDirectSoundBuffer* pDSSndBuffBack;
-	DSBUFFERDESC                    dsBuffDescBack;
-	DSBUFFERDESC                    dsBuffDescFront;
+	
+	DSBUFFERDESC                   bufferDesc;
+
 	HRESULT hr;
 	WinWave*                        wwBg = NULL;
-	WinWave*                        wwSelect = NULL;
+	WinWave*                        wwEffect = NULL;
+	WinWave*                        ww3DEffect = NULL;
+	void Init(HWND hwnd);
+	bool LoadWaveFile(char*, IDirectSoundBuffer8**, IDirectSound3DBuffer8**);
+	void CreateBGBuffer_Wav(const TCHAR* strFilename, Sound_BG_type type);
+	void CreateBuffer_Wav(const TCHAR* strFilename, Sound_effect_type type);
+	void Create3DBuffer_Wav(const TCHAR* strFilename, Sound_3Deffect_type type);
+	bool AllocDSound(IDirectSoundBuffer* &dsbuff, WinWave* ww, DSBUFFERDESC &dsdesc);
+	bool AllocDSound(IDirectSoundBuffer8** dsbuff, WinWave* ww, DSBUFFERDESC &dsdesc, IDirectSound3DBuffer8** secondary3DBuffer);
 public:
 	Sound_Manager();
 	~Sound_Manager();
@@ -107,10 +162,15 @@ public:
 	void Turn_Sound_BG(bool turn);
 	void PlayEffect(Sound_effect_type);
 	void PlayBG(Sound_BG_type);
-	bool AllocDSound(IDirectSoundBuffer* &dsbuff, WinWave* ww, DSBUFFERDESC &dsdesc);
-	bool AllocDSound(IDirectSound3DBuffer* &dsbuff, WinWave* ww, DSBUFFERDESC &dsdesc);
-	HRESULT Get3DBufferInterface(DWORD dwIndex, LPDIRECTSOUND3DBUFFER* ppDS3DBuffer);
-	void Creae_3DSound(HWND hwnd);
+
+	//void ShutdownWaveFile(IDirectSoundBuffer8**, IDirectSound3DBuffer8**);
+	void Play3DEffect(Sound_3Deffect_type type,FLOAT x, FLOAT y, FLOAT z);
+	void Stop_3DSound(Sound_3Deffect_type type);
+	void Stop_BGM(Sound_BG_type type);
+	void SetSoundPos(Sound_3Deffect_type type, FLOAT x, FLOAT y, FLOAT z);
+	void Set3DLinstenerPos( FLOAT x, FLOAT y, FLOAT z);
+
+
 	static Sound_Manager* Instance();
 };
 

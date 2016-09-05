@@ -1,5 +1,5 @@
 #include "SkinnedObject.h"
-#include "SceneMgr.h"
+
 
 SkinnedObject::SkinnedObject() : GameObject(), mTimePos(0.0f)
 {
@@ -108,9 +108,11 @@ void SkinnedObject::Animate(float dt)
 	// Loop animation
 	if (CurrAnimEnd())
 	{
-		if(mActionState != ActionState::Die)
+		if (mActionState != ActionState::Die)
+		{
 			mTimePos = 0.0f;
-
+		//	Sound_Mgr->Play3DEffect(Sound_p_die, this->GetPos().x, this->GetPos().y, this->GetPos().z);
+		}
 		if (mCurrClipName == mAnimNames[Anims::attack1] ||
 			mCurrClipName == mAnimNames[Anims::attack2] ||
 			mCurrClipName == mAnimNames[Anims::hit]) // attack01은 루프 안쓰는 애니메이션
@@ -257,6 +259,8 @@ void SkinnedObject::MoveToTarget(float dt)
 
 		ChangeActionState(ActionState::Run);
 	}
+
+//	Sound_Mgr->Play3DEffect(Sound_p_footstep1, this->GetPos().x, this->GetPos().y, this->GetPos().z);
 }
 
 void SkinnedObject::SetClip()
@@ -319,6 +323,7 @@ void SkinnedObject::Attack(SkinnedObject * target)
 {
 	if (target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
 	{
+
 		int mTarget_hp = target->GetProperty().hp_now;
 		int armor = target->GetProperty().guardpoint;
 		float damage = mProperty.attakpoint;

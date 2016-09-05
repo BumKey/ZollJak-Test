@@ -14,6 +14,7 @@
 #include "d3dUtil.h"
 #include "GameTimer.h"
 #include "PacketMgr.h"
+#include "UI_Manager.h"
 //#include "UI_Manager.h"
 #include <string>
 

@@ -25,5 +25,6 @@ private:
 
 private:
 	GameTimer mTimer;
+	GameTimer mTimer_s;
 };
 

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "ResourceMgr.h"
 #include "SkinnedMesh.h"
+//#include "Sound_Manager.h"
 
 enum Anims {
 	attack1, attack2, hit, dead, walk,

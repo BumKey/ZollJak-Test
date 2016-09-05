@@ -24,3 +24,14 @@
 extern HANDLE	g_hIocp;
 extern Client	g_clients[MAX_USER];
 extern BOOL		g_isshutdown;
+
+/*
+	디버그 환경에서만 cout을 출력
+*/
+
+#ifdef _DEBUG
+#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
+

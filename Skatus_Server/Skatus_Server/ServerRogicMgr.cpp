@@ -29,7 +29,7 @@ void ServerRogicMgr::WaveStart()
 	mGameStateMgr.FlowAdvance();
 	mRogicTimer.Reset();
 
-	std::cout << "Entering WaveWaiting state..." << std::endl;
+	DEBUG_MSG("Entering WaveWaiting state...");
 }
 
 /// <summary> 서버의 한 프레임: 
@@ -65,7 +65,7 @@ void ServerRogicMgr::Update()
 
 		}
 
-		std::cout << "WaveWaiting..." << std::endl;
+		DEBUG_MSG("WaveWaiting...");
 	}
 	else if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
 	{
@@ -85,8 +85,7 @@ void ServerRogicMgr::Update()
 
 		mRogicTimer.Reset();
 
-
-		std::cout << "WaveStart..." << std::endl;
+		DEBUG_MSG("WaveStart...");
 	}
 	else if (mGameStateMgr.GetCurrState() == eGameState::Waving)
 	{
@@ -101,7 +100,7 @@ void ServerRogicMgr::Update()
 			mRogicTimer.Reset();
 
 		}
-		std::cout << "Waving..." << std::endl;
+		DEBUG_MSG("Waving...");
 	}
 
 	mRogicTimer.Tick();

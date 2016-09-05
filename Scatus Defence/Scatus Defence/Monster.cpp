@@ -22,7 +22,7 @@ void Monster::MoveToTarget(float dt)
 	if (mHasTarget && mProperty.hp_now > 0 && mCollisionState == CollisionState::None && mActionState != ActionState::Attack
 		&& mActionState != ActionState::Damage && mActionState != ActionState::Die)
 	{
-		XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
+		XMVECTOR vTarget = MathHelper::TargetVector2D(mTargetPos, mPosition);
 
 		XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
 		XMVECTOR p = XMLoadFloat3(&mPosition);

@@ -42,7 +42,7 @@ void MyThreads::Accept_Thread()
 		else
 		{
 			// 소켓 성공
-			std::cout << "server connect success" << std::endl;
+			DEBUG_MSG("server connect success");
 		}
 
 		// 클라이언트에게 ID를 할당
@@ -51,14 +51,14 @@ void MyThreads::Accept_Thread()
 			if (g_clients[i].is_connected == false) {
 				new_id = i;
 				g_clients[i].is_connected = true;
-				std::cout << "New client is connected, ID : " << new_id << std::endl;
+				DEBUG_MSG("New client is connected, ID : " << new_id);
 				break;
 			}
 		}
 
 		// 클라이언트가 가득 차 더 이상 ID를 할당 받을 수 없을 때,
 		if (new_id == -1) {
-			std::cout << "Max Concurrent User excceded!\n";
+			DEBUG_MSG("Max Concurrent User excceded!");
 			closesocket(newSocket);
 			continue;
 		}
@@ -174,7 +174,7 @@ void MyThreads::Worker_Thread()
 			delete my_overlap; // 확장 오버랩 구조체 메모리 반환
 		}
 		else {
-			std::cout << "Unknown IOCP event!\n";
+			DEBUG_MSG("Unknown IOCP event!");
 			exit(-1);
 		}
 	}

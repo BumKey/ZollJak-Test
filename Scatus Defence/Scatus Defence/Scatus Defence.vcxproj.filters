@@ -193,9 +193,6 @@
     <ClCompile Include="Sound_Manager.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="PacketMgr.cpp">
-      <Filter>NetWork</Filter>
-    </ClCompile>
     <ClCompile Include="GameFramework.cpp">
       <Filter>Main</Filter>
     </ClCompile>
@@ -213,6 +210,9 @@
     </ClCompile>
     <ClCompile Include="Warrior.cpp">
       <Filter>GameObject\SkinnedObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketMgr.cpp">
+      <Filter>NetWork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -53,9 +53,10 @@ void MyServer::Send_Packet(DWORD id, char *packet) {
 	over->wsabuf.buf = over->iocp_buffer; 
 	over->wsabuf.len = header->Size;
 	memcpy(over->iocp_buffer, packet, header->Size); // IOCP버퍼에 패킷 사이즈를 복사
-	std::cout << "SendPacket: "<< string << " To " << id << std::endl;
+	
+	DEBUG_MSG("SendPacket : " << string << " To " << id);
 
-				  // (소켓, WSABUF구조체 포인터, WSABUF구조체 개수, NULL, 호출 방식, 오버랩 구조체의 포인터, 완료루틴의 포인터)
+	// (소켓, WSABUF구조체 포인터, WSABUF구조체 개수, NULL, 호출 방식, 오버랩 구조체의 포인터, 완료루틴의 포인터)
 	int ret = WSASend(g_clients[id].socket, &over->wsabuf, 1, NULL, 0, &over->original_Overlap, NULL);
 	// 에러 처리
 	if (ret != 0) { // 데이터 전송을 완료했다면 0
@@ -73,14 +74,14 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 	{
 	case eCS::KeyInput: {
 		auto info = reinterpret_cast<CS_Move*>(packet);
-		std::cout << "CS_KEYINPUT, POS : " << info->Pos.x << ", "
-			<< info->Pos.y << ", " << info->Pos.z << std::endl;
+		DEBUG_MSG("CS_KEYINPUT, POS : " << info->Pos.x << ", "
+			<< info->Pos.y << ", " << info->Pos.z);
 		rogicMgr.ProcessKeyInput(*info);
 		break;
 	}
 	case eCS::MouseInput: {
 		auto info = reinterpret_cast<CS_Attack*>(packet);
-		std::cout << "CS_MOUSEINPUT, ID : " << info->ClientID << std::endl;
+		DEBUG_MSG("CS_MOUSEINPUT, ID : " << info->ClientID);
 		rogicMgr.ProcessMouseInput(*info);
 		break;
 	}

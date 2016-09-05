@@ -6,7 +6,7 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
-#define MAX_USER			2
+#define MAX_USER			3
 #define MAX_MONSTER			50
 #define MAX_OBJECT			100
 #define MAX_NPC				100

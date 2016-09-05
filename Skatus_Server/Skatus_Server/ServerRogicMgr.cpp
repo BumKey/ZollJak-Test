@@ -95,8 +95,6 @@ void ServerRogicMgr::Update()
 		// 2. 게임 상태들(남은 몬스터, 남은시간들 등..) 처리
 		// 3. 로직 타이머 리셋
 
-		SetMonstersTarget();
-
 		if (mRogicTimer.TotalTime() > 100.0f)
 		{
 			mGameStateMgr.FlowAdvance();
@@ -154,9 +152,19 @@ void ServerRogicMgr::RemovePlayer(const UINT & id)
 {
 	--mCurrPlayerNum;
 	mObjectMgr.RemovePlayer(id);
+	g_clients[id].is_connected = false;
 
 	if (mCurrPlayerNum <= 0)
 		mGameStateMgr.Reset();
+	else
+	{
+		SC_RemovePlayer packet;
+		packet.ClientID = id;
+		for (UINT i = 0; i < MAX_USER; ++i) {
+			if (g_clients[i].is_connected)
+				MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
+		}
+	}
 }
 
 /// <summary> 현재는 충돌체크 미구현
@@ -225,11 +233,6 @@ FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)
 	return sqrtf(x*x + y*y);
 }
 
-void ServerRogicMgr::SetMonstersTarget()
-{
-	mObjectMgr.SetMonstersTarget();
-}
-
 void ServerRogicMgr::SendPacketMonInfo()
 {
 	auto players = mObjectMgr.GetPlayers();
@@ -242,8 +245,7 @@ void ServerRogicMgr::SendPacketMonInfo()
 	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
 
 	for (auto m : monsters) {
-		packet.Monsters[m.first].Pos = m.second.Pos;
-		packet.Monsters[m.first].Rot = m.second.Rot;
+		packet.Monsters[m.first].TargetID = mObjectMgr.SetMonstersTarget();
 		packet.Monsters[m.first].ActionState = m.second.ActionState;
 	}
 
@@ -268,6 +270,8 @@ void ServerRogicMgr::SendPacektPlayerInfo()
 	for (UINT i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].is_connected)
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
+
+		players[i].ActionState = ActionState::Idle;
 	}
 }
 

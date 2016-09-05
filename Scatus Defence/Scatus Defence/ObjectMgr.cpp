@@ -66,22 +66,24 @@ void ObjectMgr::AddObstacle(const ObjectType::Types & type, const BO_InitDesc & 
 
 void ObjectMgr::RemovePlayer(const UINT & id)
 {
+	delete mPlayers[id];
+	mPlayers[id] = 0;
 	Packet_Mgr->Connected[id] = false;
 }
 
-void ObjectMgr::UpdatePlayer(const UINT & id, const ObjectInfo & info)
+void ObjectMgr::UpdatePlayer(const UINT & id, const PlayerInfos & info)
 {
 	assert(id <= 3);
-	mPlayers[id]->SetTarget(info.Pos);;
+	mPlayers[id]->SetNextMove(info.Pos);;
 	mPlayers[id]->SetRot(info.Rot);
 
 	if (info.ActionState == ActionState::Attack)
 		mPlayers[id]->ChangeActionState(info.ActionState);
 }
 
-void ObjectMgr::UpdateMonster(const UINT & id, const ObjectInfo & info)
+void ObjectMgr::UpdateMonster(const UINT & id, const MonInfos & info)
 {
-	mMonsters[id]->SetTarget(info.Pos);
+	mMonsters[id]->SetTarget(mPlayers[info.TargetID]);
 	if (info.ActionState == ActionState::Die)
 		mMonsters[id]->ChangeActionState(info.ActionState);
 }
@@ -112,6 +114,11 @@ void ObjectMgr::Update(float dt)
 	{
 		m->Animate(dt);
 		m->Update(dt);
+		for (auto m2 : mMonsters)
+		{
+			if (MathHelper::DistanceVector(m->GetPos(), m2->GetPos()) <= 3.0f)
+				m->MovingCollision(m2->GetPos(), dt);
+		}
 		mAllObjects.push_back(m);
 	}
 

@@ -105,7 +105,6 @@ void MyThreads::Worker_Thread()
 			g_RogicMgr.RemovePlayer(id);
 			// 소켓 종료
 			closesocket(g_clients[id].socket);
-			g_clients[id].is_connected = false;
 		}
 		else if (my_overlap->operation == OP_RECV) { // 리시브 일때
 			char *buf_ptr = g_clients[id].recv_overlap.iocp_buffer; // IOCP 버퍼
@@ -192,14 +191,14 @@ void MyThreads::Rogic_Thread()
 		for (int i = 0; i < 2; ++i)
 			timer[i].Tick();
 
-		if (timer[MonInfo].TotalTime() > 3.0f) {
+		if (timer[MonInfo].TotalTime() > 1.0f) {
 			g_RogicMgr.Update();
 			g_RogicMgr.SendPacketMonInfo();
 
 			timer[MonInfo].Reset();
 		}
 
-		if (timer[PlayerInfo].TotalTime() > 0.3f) {
+		if (timer[PlayerInfo].TotalTime() > 0.2f) {
 			g_RogicMgr.SendPacektPlayerInfo();
 
 			timer[PlayerInfo].Reset();

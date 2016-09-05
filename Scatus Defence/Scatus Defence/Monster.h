@@ -14,6 +14,7 @@ public:
 
 	void		SetAI_State(AI_State::States state);
 
+	virtual void Attack(SkinnedObject* target);
 	virtual void AttackToTarget(float dt);
 	virtual void MoveToTarget(float dt);
 

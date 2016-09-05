@@ -49,8 +49,6 @@ public:
 	void					SetRot(const XMFLOAT3& rot) { mRotation = rot; }
 	void					SetHP(int hp) { mProperty.hp_now = hp; }
 
-	void					SetTarget(XMFLOAT3 pos) { pos.y = -0.1; mTargetPos = pos; }
-	void					SetNoTarget() { mTargetPos = mPosition; }
 	void					SetNoneCollision() { mCollisionState = CollisionState::None; }
 
 	void  PrintLocation(); //객체 위치값출력 반환
@@ -76,7 +74,6 @@ protected:
 	XMFLOAT3 mCurrLook;
 	XMFLOAT3 mPrevLook;
 	XMFLOAT3 mDirection;
-	XMFLOAT3 mTargetPos;
 
 	Properties mProperty;
 	CollisionState::States mCollisionState;

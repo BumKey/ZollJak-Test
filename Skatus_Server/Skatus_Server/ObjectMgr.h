@@ -17,7 +17,7 @@ public:
 
 	void SetPlayerRot(const UINT& id, const XMFLOAT3& rot) { mPlayers[id].Rot = rot; }
 	void SetPlayerPos(const UINT& id, XMFLOAT3 pos) { pos.y = -0.1f; mPlayers[id].Pos = pos; }
-	void SetMonstersTarget();
+	const UINT SetMonstersTarget();
 
 	std::unordered_map<UINT, SO_InitDesc>		GetPlayers();
 	std::unordered_map<UINT, SO_InitDesc>&		GetMonsters() { return mMonsters; }

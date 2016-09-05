@@ -80,7 +80,7 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 	}
 	case eCS::MouseInput: {
 		auto info = reinterpret_cast<CS_Attack*>(packet);
-		std::cout << "CS_MOUSEINPUT, ID : " << info->ClientID << std::endl;
+		std::cout << "CS_MOUSEINPUT, ID : " << (int)info->ClientID << std::endl;
 		rogicMgr.ProcessMouseInput(*info);
 		break;
 	}

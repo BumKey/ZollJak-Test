@@ -31,20 +31,20 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
 		SkinnedInfo.Rot = XMFLOAT3(0.0f, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
 		SkinnedInfo.Scale = 0.2f + MathHelper::RandF(0.1f, 0.4f);
-		SkinnedInfo.MoveSpeed = 5.5f + MathHelper::RandF(0.0f, 1.5f);
+		SkinnedInfo.MoveSpeed = 3.5f + MathHelper::RandF(-1.0f, 1.5f);
 		SkinnedInfo.AttackPoint = 10.0f;
-		SkinnedInfo.AttackSpeed = 1.0f;
-		SkinnedInfo.Hp = 30.0f;
+		SkinnedInfo.AttackSpeed = MathHelper::RandF(0.5f, 1.0f);
+		SkinnedInfo.Hp = 50.0f;
 		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
 		break;
 	case ObjectType::Cyclop:
 		SkinnedInfo.Pos = XMFLOAT3(300.0f - rand() % 200, -0.1f, -180.0f + rand() % 200);
 		SkinnedInfo.Rot = XMFLOAT3(MathHelper::Pi, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
 		SkinnedInfo.Scale = 2.5f + MathHelper::RandF(1.5f, 3.0f);
-		SkinnedInfo.MoveSpeed = 4.0f + MathHelper::RandF(0.0f, 1.5f);
-		SkinnedInfo.AttackPoint = 10.0f;
-		SkinnedInfo.AttackSpeed = 1.0f;
-		SkinnedInfo.Hp = 100.0f;
+		SkinnedInfo.MoveSpeed = 2.0f + MathHelper::RandF(0.0f, 1.0f);
+		SkinnedInfo.AttackPoint = 30.0f;
+		SkinnedInfo.AttackSpeed = MathHelper::RandF(0.5f, 1.0f);
+		SkinnedInfo.Hp = 120.0f;
 		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
 		break;
 
@@ -98,9 +98,9 @@ void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 	info.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	info.Scale = 0.05f;
 	info.MoveSpeed = 9.0f;
-	info.AttackPoint = 50.0f;
+	info.AttackPoint = 20.0f;
 	info.AttackSpeed = 2.0f;
-	info.Hp = 100;
+	info.Hp = 1000;
 
 	mPlayers[client_id] = info;
 	mConnected[client_id] = true;
@@ -115,25 +115,29 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 	mPlayers[id].ActionState = ActionState::Die;
 }
 
-void ObjectMgr::SetMonstersTarget()
+const UINT ObjectMgr::SetMonstersTarget()
 {
 	for (auto& m : mMonsters)
 	{
-		FLOAT dis[MAX_USER];
-		FLOAT minDis = FLT_MAX;
-		for (UINT i = 0; i < MAX_USER; ++i)
+		for (int i = 0; i < MAX_USER; ++i)
 		{
-			if (mConnected[i]) {
-				dis[i] = MathHelper::DistanceVector(mPlayers[i].Pos, m.second.Pos);
-				minDis = MathHelper::Min(minDis, dis[i]);
-			}
+			if (mConnected[i] &&
+				MathHelper::DistanceVector(m.second.Pos, mPlayers[i].Pos) <= 20.0f)
+				return i;
 		}
 
-		for (UINT i = 0; i < MAX_USER; ++i)
-		{
-			if (abs(dis[i] - minDis) <= 0.01f) {
-				m.second.Pos = mPlayers[i].Pos;
-				break;
+		if (mCurrPlayerNum > 0) {
+			switch (rand() % mCurrPlayerNum)
+			{
+			case 0:
+				if (mConnected[0])
+					return 0;
+			case 1:
+				if (mConnected[1])
+					return 1;
+			case 2:
+				if (mConnected[2])
+					return 2;
 			}
 		}
 	}

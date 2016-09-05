@@ -27,7 +27,6 @@ mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), m
 	mScaling = info.Scale;
 	mRotation = info.Rot;
 	mPosition = info.Pos;
-	mTargetPos = mPosition;
 
 	R = XMMatrixRotationY(info.Rot.y);
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));

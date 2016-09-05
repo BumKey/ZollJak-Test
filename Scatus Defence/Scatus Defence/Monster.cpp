@@ -1,4 +1,5 @@
 #include "Monster.h"
+#include "ObjectMgr.h"
 
 Monster::Monster() : SkinnedObject()
 {
@@ -18,10 +19,10 @@ Monster::~Monster()
 // 이 메서드는 현재 타겟이 설정되어 있다고 가정한다.
 void Monster::MoveToTarget(float dt)
 {
-	if (mCollisionState == CollisionState::None && mActionState != ActionState::Attack 
+	if (mHasTarget && mProperty.hp_now > 0 && mCollisionState == CollisionState::None && mActionState != ActionState::Attack
 		&& mActionState != ActionState::Damage && mActionState != ActionState::Die)
 	{
-		XMVECTOR vTarget = MathHelper::TargetVector2D(mTargetPos, mPosition);
+		XMVECTOR vTarget = MathHelper::TargetVector2D(mTarget->GetPos(), mPosition);
 
 		XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
 		XMVECTOR p = XMLoadFloat3(&mPosition);
@@ -42,9 +43,16 @@ void Monster::Update(float dt)
 {
 	SkinnedObject::Update(dt);
 
-	if (mActionState != ActionState::Die || mActionState != ActionState::Damage)
+	if (mProperty.hp_now <= 0)
+		mActionState == ActionState::Die;
+
+	if (mActionState != ActionState::Die || mActionState != ActionState::Damage
+		|| mActionState != ActionState::Attack)
 	{
-		MoveToTarget(dt);
+		if (MathHelper::DistanceVector(mPosition, mTargetPos) <= 3.0f)
+			AttackToTarget(dt);
+		else 
+			MoveToTarget(dt);
 	}
 }
 
@@ -73,17 +81,43 @@ void Monster::SetAI_State(AI_State::States state)
 		mAI_States = state;*/
 }
 
+void Monster::Attack(SkinnedObject * target)
+{
+	if (mHasTarget && target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
+	{
+		int mTarget_hp = target->GetProperty().hp_now;
+		int armor = target->GetProperty().guardpoint;
+		float damage = mProperty.attakpoint;
+
+		target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+		target->SetHP(mTarget_hp - damage);
+
+		printf("플레이어피격, 체력 : %d \n", target->GetProperty().hp_now);
+
+		if (target->GetProperty().hp_now <= 0)
+		{
+			//target->Die();
+			printf("타겟 사망");
+		}
+		else
+			target->ChangeActionState(ActionState::Damage);
+
+		m_bForOneHit = false;
+	}
+}
+
 void Monster::AttackToTarget(float dt)
 {
-	// 방향으로 회전
-	XMVECTOR vTarget =	MathHelper::TargetVector2D(mTargetPos, mPosition);
-	float angle =		MathHelper::AngleToTarget(vTarget, mCurrLook)*dt*MathHelper::Pi;
-
-	RotateY(angle);
-
-	if (OneHit())
+	if (mHasTarget && mProperty.hp_now > 0)
 	{
-		//Attack(mTarget);
-		//mTarget->ChangeActionState(ActionState::Damage);
+		// 방향으로 회전
+		XMVECTOR vTarget = MathHelper::TargetVector2D(mTargetPos, mPosition);
+		float angle = MathHelper::AngleToTarget(vTarget, mCurrLook)*dt*MathHelper::Pi;
+
+		RotateY(angle);
+		ChangeActionState(ActionState::Attack);
+
+		if (m_bForOneHit)
+			Attack(mTarget);
 	}
 }

@@ -10,6 +10,7 @@ mTimePos(0.0f), m_bForOneHit(false)
 {
 	mMesh = mesh;
 	mActionState = ActionState::Idle;
+
 	mFinalTransforms.resize(mesh->SkinnedData.BoneCount());
 }
 
@@ -98,8 +99,6 @@ void SkinnedObject::Animate(float dt)
 
 	if (mActionState == ActionState::Attack)
 		mTimePos += dt*mProperty.attackspeed;
-	else if (mActionState == ActionState::Damage)
-		mTimePos += dt*0.5f;
 	else
 		mTimePos += dt*mProperty.movespeed/5.0f;
 
@@ -296,7 +295,12 @@ bool SkinnedObject::IsActionStateChangeAble()
 
 void SkinnedObject::ChangeActionState(ActionState::States state)
 {
-	if (IsActionStateChangeAble())
+	if (state == ActionState::Attack && IsActionStateChangeAble())
+	{
+		m_bForOneHit = true;
+		mActionState = state;
+	}
+	else if (IsActionStateChangeAble())
 		mActionState = state;
 	else if (state == ActionState::Idle)
 		mActionState = state;
@@ -308,6 +312,15 @@ bool SkinnedObject::CurrAnimEnd()
 		return true;
 
 	return false;
+}
+
+void SkinnedObject::SetTarget(SkinnedObject * target)
+{
+	if (target) {
+		mTarget = target;
+		mHasTarget = true;
+		mTargetPos = target->GetPos();
+	}
 }
 
 std::string SkinnedObject::GetAnimName(Anims & eAnim)

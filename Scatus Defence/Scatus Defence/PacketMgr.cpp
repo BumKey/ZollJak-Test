@@ -150,7 +150,11 @@ void PacketMgr::ProcessPacket()
 		std::cout << "SC_INIT_PLAYER, ID : " << ClientID << std::endl;
 		break;
 	}
-
+	case eSC::RemovePlayer: {
+		auto *p = reinterpret_cast<SC_RemovePlayer*>(mPacketBuf);
+		Object_Mgr->RemovePlayer(p->ClientID);
+		break;
+	}
 	case eSC::PlayerInfo: {
 		auto *p = reinterpret_cast<SC_PlayerInfo*>(mPacketBuf);
 		for (UINT i = 0; i < MAX_USER; ++i) {
@@ -171,7 +175,6 @@ void PacketMgr::ProcessPacket()
 		{
 		case eGameState::WaveStart:
 			string = "WaveStart";
-
 			break;
 		case eGameState::WaveWaiting:
 			Time_Mgr->gamestate = game_waiting_wave;
@@ -208,6 +211,10 @@ void PacketMgr::ProcessPacket()
 			Object_Mgr->AddMonster(type, desc, i);
 		}
 		std::cout << "SC_ADD_MONSTER, ObjectNum : " << p->NumOfObjects << std::endl;
+		break;
+	}
+	case eSC::ReleaseAllMons: {
+		Object_Mgr->ReleaseAllMonsters();
 		break;
 	}
 

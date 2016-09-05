@@ -42,6 +42,14 @@ void Player::Update(float dt)
 	SkinnedObject::Update(dt);
 }
 
+void Player::Animate(float dt)
+{
+	if (mActionState == ActionState::Damage)
+		mTimePos += dt*mProperty.movespeed * 2.0f;
+
+	SkinnedObject::Animate(dt);
+}
+
 void Player::CollisionMoving(const XMFLOAT3& dPos, float dt)
 {
 	XMFLOAT3 target;
@@ -66,7 +74,7 @@ void Player::Move(float walk, float strafe)
 		dt = abs(strafe);
 	}
 
-	if (mTimer.TotalTime() > 1.0f)
+	if (mTimer.TotalTime() > 0.2f)
 	{
 		CS_Move packet;
 		packet.Pos = mPosition;

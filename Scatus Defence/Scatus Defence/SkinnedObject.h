@@ -37,13 +37,15 @@ public:
 	bool  CurrAnimEnd();
 
 	void					SetMovingSpeed(FLOAT speed) { mProperty.movespeed = speed; }
+	void					SetNextMove(XMFLOAT3 pos) { pos.y = -0.1f; mTargetPos = pos; }
+	void					SetTarget(SkinnedObject* target);
+	void					SetNoTarget() { mTarget = 0; mHasTarget = false; }
 
 	ActionState::States		GetActionState() const { return mActionState; }
 	virtual std::string		GetAnimName(Anims& eAnim); const
 
 	bool					IsAttack() { return mActionState == ActionState::Attack ? true : false; }
 	bool					IsDead() { return mActionState == ActionState::Die ? true : false; }
-	bool					OneHit() { return m_bForOneHit; }
 
 	void ChangeActionState(ActionState::States state);
 	bool IsActionStateChangeAble();
@@ -54,10 +56,13 @@ private:
 protected:
 	ActionState::States mActionState;
 	bool m_bForOneHit;
+	bool mHasTarget;
 
 	XNA::OrientedBox mOOBB;
 
 	FLOAT mTimePos;;
+	XMFLOAT3 mTargetPos;
+	SkinnedObject* mTarget;
 
 	std::string mCurrClipName;
 	std::unordered_map<Anims, std::string> mAnimNames;

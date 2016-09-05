@@ -6,7 +6,7 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
-#define MAX_USER			2
+#define MAX_USER			3
 #define MAX_MONSTER			50
 #define MAX_OBJECT			100
 #define MAX_NPC				100
@@ -22,15 +22,18 @@
 // server -> client
 enum eSC {
 	InitPlayer,
+	RemovePlayer,
 	PutOtherPlayers,
 	AddMonsters,
+	ReleaseAllMons,
 	PlayerInfo,
 	MonInfo
 };
 
 enum eCS {
 	KeyInput,
-	MouseInput
+	MouseInput,
+	Damage
 };
 
 namespace ObjectType {
@@ -126,11 +129,17 @@ struct SO_InitDesc : public BO_InitDesc
 	FLOAT MoveSpeed;
 };
 
-struct ObjectInfo
+struct PlayerInfos
 {
 	ActionState::States ActionState;
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
+};
+
+struct MonInfos
+{
+	ActionState::States ActionState;
+	BYTE TargetID;
 };
 
 struct HEADER
@@ -145,7 +154,7 @@ struct SC_PlayerInfo : public HEADER
 	SC_PlayerInfo() {
 		Size = sizeof(*this); Type = eSC::PlayerInfo;
 	}
-	ObjectInfo Players[MAX_USER];
+	PlayerInfos Players[MAX_USER];
 };
 
 struct SC_MonInfo : public HEADER
@@ -157,7 +166,7 @@ struct SC_MonInfo : public HEADER
 	UINT Time;
 	UINT NumOfObjects;
 	UINT Roundlevel;
-	ObjectInfo Monsters[MAX_MONSTER];
+	MonInfos Monsters[MAX_MONSTER];
 };
 
 struct SC_AddMonster : public HEADER
@@ -169,6 +178,12 @@ struct SC_AddMonster : public HEADER
 	SO_InitDesc InitInfos[MAX_MONSTER];
 };
 
+struct SC_ReleaseAllMonsters : public HEADER
+{
+	SC_ReleaseAllMonsters() {
+		Size = sizeof(*this); Type = eSC::ReleaseAllMons;
+	}
+};
 struct SC_InitPlayer : public HEADER
 {
 	SC_InitPlayer() {
@@ -180,6 +195,14 @@ struct SC_InitPlayer : public HEADER
 	SO_InitDesc Player[MAX_USER];
 	UINT NumOfObjects;
 	BO_InitDesc MapInfo[50];
+};
+
+struct SC_RemovePlayer : public HEADER
+{
+	SC_RemovePlayer() {
+		Size = sizeof(*this); Type = eSC::RemovePlayer;
+	}
+	BYTE ClientID;
 };
 
 // client -> server
@@ -205,6 +228,16 @@ struct CS_Attack : public HEADER
 	BYTE ClientID;
 	BYTE Mon_Num;
 	DWORD Mon_HP[MAX_MONSTER];
+};
+
+struct CS_Damage : public HEADER
+{
+	CS_Damage() {
+		Size = sizeof(*this); Type = eCS::Damage;
+	}
+	BYTE ClientID;
+	BYTE MonID;
+	BYTE Damage;
 };
 
 #pragma pack(pop) 

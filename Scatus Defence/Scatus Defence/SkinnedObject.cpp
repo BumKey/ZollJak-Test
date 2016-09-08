@@ -241,8 +241,8 @@ void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc)
 
 void SkinnedObject::MoveToTarget(float dt)
 {
-	if (abs(mPosition.x - mTargetPos.x) <= 0.01f &&
-		abs(mPosition.z - mTargetPos.z) <= 0.01f)
+	if (abs(mPosition.x - mTargetPos.x) <= 0.1f &&
+		abs(mPosition.z - mTargetPos.z) <= 0.1f)
 	{
 		ChangeActionState(ActionState::Idle);
 	}

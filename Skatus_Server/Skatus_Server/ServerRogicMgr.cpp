@@ -3,8 +3,8 @@
 ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(1), mCurrPlayerNum(0),
 mNewID(-1)
 {
-	mPerWaveMonsterNum[1][ObjectType::Goblin] = 5;
-	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 1;
+	mPerWaveMonsterNum[1][ObjectType::Goblin] = 10;
+	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 2;
 
 	mPerWaveMonsterNum[2][ObjectType::Goblin] = 10;
 	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 2;

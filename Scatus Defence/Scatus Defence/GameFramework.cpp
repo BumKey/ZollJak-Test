@@ -105,6 +105,10 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 	mLastMousePos.y = y;
 
 	if (btnState & MK_LBUTTON) {
+
+		Sound_Mgr->Play3DEffect(Sound_p_shout, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+
+		Sound_Mgr->Play3DEffect(Sound_p_swing, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 		Player::GetInstance()->ChangeActionState(ActionState::Attack);
 		Sound_Mgr->Play3DEffect(Sound_p_swing, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 		Sound_Mgr->Play3DEffect(Sound_p_shout, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);

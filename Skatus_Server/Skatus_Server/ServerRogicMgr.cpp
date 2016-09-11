@@ -3,14 +3,14 @@
 ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(1), mCurrPlayerNum(0),
 mNewID(-1)
 {
-	mPerWaveMonsterNum[1][ObjectType::Goblin] = 15;
-	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 5;
+	mPerWaveMonsterNum[1][ObjectType::Goblin] = 10;
+	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 2;
 
-	mPerWaveMonsterNum[2][ObjectType::Goblin] = 20;
-	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 5;
+	mPerWaveMonsterNum[2][ObjectType::Goblin] = 10;
+	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 2;
 
-	mPerWaveMonsterNum[3][ObjectType::Goblin] = 40;
-	mPerWaveMonsterNum[3][ObjectType::Cyclop] = 10;
+	mPerWaveMonsterNum[3][ObjectType::Goblin] = 15;
+	mPerWaveMonsterNum[3][ObjectType::Cyclop] = 3;
 
 	mGameTimer.Reset();
 }
@@ -104,12 +104,6 @@ void ServerRogicMgr::Update()
 	}
 
 	mRogicTimer.Tick();
-
-	// 이것을 외부로하고
-	// 몬스터 정보를 1초단위로
-	// 플레이어 위치 정보는 더 짧게
-	// 패킷 구조체를 나누어야 하나?
-	//SendPacketPerFrame();
 }
 
 void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& newID)
@@ -267,10 +261,10 @@ void ServerRogicMgr::SendPacektPlayerInfo()
 	}
 
 	for (UINT i = 0; i < MAX_USER; ++i) {
-		if (g_clients[i].is_connected)
+		if (g_clients[i].is_connected) {
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
-
-		players[i].ActionState = ActionState::Idle;
+			mObjectMgr.GetPlayer(i).ActionState = ActionState::Idle;
+		}
 	}
 }
 

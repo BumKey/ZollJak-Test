@@ -147,6 +147,7 @@ private:
 	WinWave*                        wwEffect = NULL;
 	WinWave*                        ww3DEffect = NULL;
 	void Init(HWND hwnd);
+	D3DVECTOR Calc_listener_Pos(float x, float y, float z);
 	bool LoadWaveFile(char*, IDirectSoundBuffer8**, IDirectSound3DBuffer8**);
 	void CreateBGBuffer_Wav(const TCHAR* strFilename, Sound_BG_type type);
 	void CreateBuffer_Wav(const TCHAR* strFilename, Sound_effect_type type);

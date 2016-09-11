@@ -88,6 +88,7 @@ void GameFrameWork::UpdateScene(float dt)
 	Object_Mgr->Update(dt);
 
 	Camera::GetInstance()->Update();
+	Sound_Mgr->Set3DLinstenerPos(Camera::GetInstance()->GetPosition().x, Camera::GetInstance()->GetPosition().y, Camera::GetInstance()->GetPosition().z);
 	Scene_Mgr->Update(dt);
 }
 
@@ -102,9 +103,11 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
+
 	if (btnState & MK_LBUTTON) {
 		Player::GetInstance()->ChangeActionState(ActionState::Attack);
-
+		Sound_Mgr->Play3DEffect(Sound_p_swing, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+		Sound_Mgr->Play3DEffect(Sound_p_shout, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 		auto monsters = Object_Mgr->GetMonsters();
 		const XMFLOAT3 p_pos = Player::GetInstance()->GetPos();
 		const XMFLOAT3 p_front = Player::GetInstance()->GetLook()*-3.0f;

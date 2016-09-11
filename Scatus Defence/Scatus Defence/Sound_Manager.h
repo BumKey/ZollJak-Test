@@ -154,6 +154,7 @@ private:
 	bool AllocDSound(IDirectSoundBuffer* &dsbuff, WinWave* ww, DSBUFFERDESC &dsdesc);
 	bool AllocDSound(IDirectSoundBuffer8** dsbuff, WinWave* ww, DSBUFFERDESC &dsdesc, IDirectSound3DBuffer8** secondary3DBuffer);
 public:
+	bool hpdown;
 	Sound_Manager();
 	~Sound_Manager();
 	void Create_Sound(HWND hwnd);

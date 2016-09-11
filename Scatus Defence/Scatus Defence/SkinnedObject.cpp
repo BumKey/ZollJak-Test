@@ -1,4 +1,5 @@
 #include "SkinnedObject.h"
+#include "Sound_Manager.h"
 
 
 SkinnedObject::SkinnedObject() : GameObject(), mTimePos(0.0f)
@@ -334,9 +335,11 @@ std::string SkinnedObject::GetAnimName(Anims & eAnim)
 
 void SkinnedObject::Attack(SkinnedObject * target)
 {
+
 	if (target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
 	{
 
+		Sound_Mgr->Play3DEffect(Sound_impact, target->GetPos().x, target->GetPos().y, target->GetPos().z);
 		int mTarget_hp = target->GetProperty().hp_now;
 		int armor = target->GetProperty().guardpoint;
 		float damage = mProperty.attakpoint;

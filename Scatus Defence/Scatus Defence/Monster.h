@@ -1,6 +1,6 @@
 #pragma once
 #include "SkinnedObject.h"
-
+#include "GameTimer.h"
 class Monster : public SkinnedObject
 {
 public:
@@ -20,6 +20,8 @@ public:
 
 private:
 	AI_State::States mAI_States;
+	GameTimer mTimer;
+
 
 };
 

@@ -3,6 +3,8 @@
 ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(1), mCurrPlayerNum(0),
 mNewID(-1)
 {
+	srand(time(NULL));
+
 	mPerWaveMonsterNum[1][ObjectType::Goblin] = 10;
 	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 2;
 
@@ -42,10 +44,7 @@ void ServerRogicMgr::Update()
 {
 	// 전체 게임시간은 Pause하지 않는 이상 계속 계산.
 	mGameTimer.Tick();
-
-	// 조건 인원이 접속 했을 때 Wave시작.
-	if (mCurrPlayerNum >= MAX_USER && mGameStateMgr.GetCurrState() == eGameState::GameWaiting)
-		WaveStart();
+	mRogicTimer.Tick();
 
 	if (mGameStateMgr.GetCurrState() == eGameState::WaveWaiting)
 	{
@@ -58,7 +57,7 @@ void ServerRogicMgr::Update()
 			mObjectMgr.ReleaseAllMonsters();
 
 
-		if (mRogicTimer.TotalTime() > 5.0f)
+		if (mRogicTimer.TotalTime() > 10.0f)
 		{
 			mGameStateMgr.FlowAdvance();
 
@@ -74,9 +73,8 @@ void ServerRogicMgr::Update()
 		// 2. 옵젝 정보 패킷 전송
 		// 3. 게임상태 진행
 		// 4. 로직 타이머 리셋
-		mCurrWaveLevel++;
 
-		for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel]) {
+		for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel++]) {
 				for (UINT i = 0; i < oType.second; ++i)
 				mObjectMgr.AddObject(oType.first);
 		}
@@ -102,8 +100,6 @@ void ServerRogicMgr::Update()
 		}
 		DEBUG_MSG("Waving...");
 	}
-
-	mRogicTimer.Tick();
 }
 
 void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& newID)
@@ -139,6 +135,10 @@ void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oT
 		if(g_clients[i].is_connected)
 			MyServer::Send_Packet(i, reinterpret_cast<char *>(&packet));
 	}
+
+	// 조건 인원이 접속 했을 때 Wave시작.
+	if (mCurrPlayerNum >= MAX_USER && mGameStateMgr.GetCurrState() == eGameState::GameWaiting)
+		WaveStart();
 }
 
 void ServerRogicMgr::RemovePlayer(const UINT & id)

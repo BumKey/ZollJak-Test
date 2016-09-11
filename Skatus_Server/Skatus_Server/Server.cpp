@@ -48,6 +48,9 @@ void MyServer::Send_Packet(DWORD id, char *packet) {
 	case eSC::PutOtherPlayers:
 		string = "PutOtherPlayer";
 		break;
+	case eSC::RemovePlayer:
+		string = "RemovePlayer";
+		break;
 	}
 
 	over->wsabuf.buf = over->iocp_buffer; 

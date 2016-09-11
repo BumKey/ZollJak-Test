@@ -68,6 +68,7 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 {
 	delete mPlayers[id];
 	mPlayers[id] = 0;
+	--mCurrPlayerNum;
 	Packet_Mgr->Connected[id] = false;
 }
 

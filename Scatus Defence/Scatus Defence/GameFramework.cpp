@@ -103,13 +103,15 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
+
 	if (btnState & MK_LBUTTON) {
 
 		Sound_Mgr->Play3DEffect(Sound_p_shout, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 
 		Sound_Mgr->Play3DEffect(Sound_p_swing, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 		Player::GetInstance()->ChangeActionState(ActionState::Attack);
-
+		Sound_Mgr->Play3DEffect(Sound_p_swing, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+		Sound_Mgr->Play3DEffect(Sound_p_shout, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 		auto monsters = Object_Mgr->GetMonsters();
 		const XMFLOAT3 p_pos = Player::GetInstance()->GetPos();
 		const XMFLOAT3 p_front = Player::GetInstance()->GetLook()*-3.0f;

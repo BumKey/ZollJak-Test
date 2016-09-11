@@ -1,14 +1,18 @@
 #include "Monster.h"
 #include "ObjectMgr.h"
-
+#include "Sound_Manager.h"
 Monster::Monster() : SkinnedObject()
 {
 	mAI_States = AI_State::None;
+
+	mTimer.Reset();
 }
 
 Monster::Monster(SkinnedMesh* mesh, const SO_InitDesc& info) : SkinnedObject(mesh, info)
 {
 	mAI_States = AI_State::None;
+
+	mTimer.Reset();
 }
 
 
@@ -54,6 +58,30 @@ void Monster::Update(float dt)
 		else 
 			MoveToTarget(dt);
 	}
+
+
+	if (mTimer.TotalTime() > 1.0f)
+	{
+		switch (rand() % 7)
+		{
+			case 0: 		if (this->GetObjectType() == ObjectType::Goblin)
+							{
+								Sound_Mgr->Play3DEffect(Sound_Giant_roar2,this->GetPos().x, this->GetPos().y, this->GetPos().z);
+							}
+							else if (this->GetObjectType() == ObjectType::Cyclop)
+							{
+								Sound_Mgr->Play3DEffect(Sound_Giant_roar1, this->GetPos().x,this->GetPos().y, this->GetPos().z);
+							}
+
+					break;
+			default: break;
+		}
+		mTimer.Reset();
+
+	
+	}
+	else
+		mTimer.Tick();
 }
 
 void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
@@ -93,9 +121,19 @@ void Monster::Attack(SkinnedObject * target)
 		target->SetHP(mTarget_hp - damage);
 
 		printf("ÇÃ·¹ÀÌ¾îÇÇ°Ý, Ã¼·Â : %d \n", target->GetProperty().hp_now);
+		Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+
+		if (target->GetProperty().hp_now < 100 || Sound_Mgr->hpdown == false)
+		{
+			Sound_Mgr->hpdown = true;
+			Sound_Mgr->Play3DEffect(Sound_p_almostdie, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+			//target->Die();
+			printf("Å¸°Ù »ç¸Á");
+		}
 
 		if (target->GetProperty().hp_now <= 0)
 		{
+			Sound_Mgr->Play3DEffect(Sound_p_die, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 			//target->Die();
 			printf("Å¸°Ù »ç¸Á");
 		}

@@ -11,7 +11,7 @@ Sound_Manager::Sound_Manager()
 	m_listener = 0;
 	m_secondaryBuffer1 = 0;
 	tempBuffer = nullptr;
-
+	hpdown = false;
 		//m_secondary3DBuffer1 = 0;
 }
 
@@ -188,7 +188,7 @@ void Sound_Manager::Create_Sound(HWND hwnd)
 			}
 		}
 		//temp_bg.Sound_buffer->Play(0, 0, 0);
-		Play3DEffect(Sound_Giant_footstep, 0,0,0);
+		//Play3DEffect(Sound_Giant_footstep, 0,0,0);
 
 	//pDSSndBuffBack->SetCurrentPosition(0);
 }
@@ -359,11 +359,14 @@ bool Sound_Manager::AllocDSound(IDirectSoundBuffer8** dsbuff, WinWave* ww, DSBUF
 		{
 			if (i.Sounds_3Deffect_type == type)
 			{
+				D3DVALUE dis;
+				m_listener->
 				result = i.m_secondary3DBuffer1->SetPosition(x, y, z, DS3D_IMMEDIATE);
-
+				result = i.m_secondary3DBuffer1->GetMaxDistance(&dis);
+			//	result = i.m_secondary3DBuffer1->SetMaxDistance(10000.0f, DS3D_IMMEDIATE);
 				//i.Sound_buffer_3D->SetFrequency(1000.0f);
 				//i.Sound_buffer_3D->Play(0, 0, 0);
-				i.Sound_buffer_3D->SetVolume(DSBVOLUME_MAX/2);
+				i.Sound_buffer_3D->SetVolume(DSBVOLUME_MAX);
 				i.Sound_buffer_3D->Play(0, 0, 0);
 			}
 		}
@@ -394,7 +397,7 @@ bool Sound_Manager::AllocDSound(IDirectSoundBuffer8** dsbuff, WinWave* ww, DSBUF
 	}
 	void Sound_Manager::SetSoundPos(Sound_3Deffect_type type, FLOAT x, FLOAT y, FLOAT z)
 	{
-		for (auto i : Sounds_3DEffects_list)
+		for (auto i : Sounds_3DEffects_list)2
 		{
 			if (i.Sounds_3Deffect_type == type)
 			{

@@ -397,7 +397,7 @@ bool Sound_Manager::AllocDSound(IDirectSoundBuffer8** dsbuff, WinWave* ww, DSBUF
 	}
 	void Sound_Manager::SetSoundPos(Sound_3Deffect_type type, FLOAT x, FLOAT y, FLOAT z)
 	{
-		for (auto i : Sounds_3DEffects_list)
+		for (auto i : Sounds_3DEffects_list)2
 		{
 			if (i.Sounds_3Deffect_type == type)
 			{

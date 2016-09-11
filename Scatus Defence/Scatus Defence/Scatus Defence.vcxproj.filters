@@ -214,6 +214,36 @@
     <ClCompile Include="PacketMgr.cpp">
       <Filter>NetWork</Filter>
     </ClCompile>
+    <ClCompile Include="Game_Begin.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_GameOver.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_GlobalState.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Title.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Title_Option.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Wave_Waiting .cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game_Waving.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateMgr.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Manager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Scene.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicMeshData.h">
@@ -350,6 +380,15 @@
     </ClInclude>
     <ClInclude Include="Warrior.h">
       <Filter>GameObject\SkinnedObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateMgr.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Manager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Scene.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

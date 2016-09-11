@@ -46,7 +46,7 @@ void PacketMgr::Init(HWND mainHwnd)
 
 	WSAAsyncSelect(mSocket, mainHwnd, WM_SOCKET, FD_CLOSE | FD_READ);
 
-	std::cout << "Server Connect Success" << std::endl;
+	DEBUG_MSG("Server Connect Success");
 }
 
 void PacketMgr::ReadPacket(SOCKET socket)
@@ -61,7 +61,7 @@ void PacketMgr::ReadPacket(SOCKET socket)
 	}
 
 	if (receivedBytes == 0)
-		std::cout << "receivedData == 0 " << std::endl;
+		DEBUG_MSG("receivedData == 0 ");
 
 	while (1)
 	{
@@ -147,7 +147,8 @@ void PacketMgr::ProcessPacket()
 			Object_Mgr->AddObstacle(type, desc);
 		}
 
-		std::cout << "SC_INIT_PLAYER, ID : " << ClientID << std::endl;
+		DEBUG_MSG("SC_INIT_PLAYER, ID : " << ClientID);
+
 		break;
 	}
 	case eSC::RemovePlayer: {
@@ -188,8 +189,9 @@ void PacketMgr::ProcessPacket()
 			string = "GameWaiting";
 			break;
 		}
-		std::cout << "[SC_PerFrame] CurrState : " << string <<
-			", ObjectNum : " << p->NumOfObjects << std::endl;
+		
+		DEBUG_MSG("[SC_PerFrame] CurrState : " << string << ", ObjectNum : " << p->NumOfObjects);
+		
 		Time_Mgr->Set_Wavelevel(p->Roundlevel);
 		Time_Mgr->Set_time(p->Time);
 		break;
@@ -210,7 +212,7 @@ void PacketMgr::ProcessPacket()
 
 			Object_Mgr->AddMonster(type, desc, i);
 		}
-		std::cout << "SC_ADD_MONSTER, ObjectNum : " << p->NumOfObjects << std::endl;
+		DEBUG_MSG("SC_ADD_MONSTER, ObjectNum : " << p->NumOfObjects);
 		break;
 	}
 	case eSC::ReleaseAllMons: {
@@ -219,7 +221,7 @@ void PacketMgr::ProcessPacket()
 	}
 
 	default:
-		std::cout << "Unknown packet type : " << header->Type << std::endl;
+		DEBUG_MSG("Unknown packet type : " << header->Type);
 	}
 }
 

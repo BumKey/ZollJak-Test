@@ -115,7 +115,7 @@ void SkinnedObject::Animate(float dt)
 		if (mCurrClipName == mAnimNames[Anims::attack1] ||
 			mCurrClipName == mAnimNames[Anims::attack2] ||
 			mCurrClipName == mAnimNames[Anims::hit]) // attack01은 루프 안쓰는 애니메이션
-			ChangeActionState(ActionState::Idle);
+			mActionState = ActionState::Idle;
 	}
 }
 
@@ -305,8 +305,6 @@ void SkinnedObject::ChangeActionState(ActionState::States state)
 		mActionState = state;
 	}
 	else if (IsActionStateChangeAble())
-		mActionState = state;
-	else if (mActionState != ActionState::Attack && state == ActionState::Idle)
 		mActionState = state;
 }
 

@@ -201,6 +201,7 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 	}
 
 	mObjectMgr.SetPlayerRot(inPacket.ClientID, inPacket.Rot);
+	mObjectMgr.SetCollsion(inPacket.ClientID, inPacket.Pos);
 	mObjectMgr.SetPlayerPos(inPacket.ClientID, pos);
 }
 
@@ -260,6 +261,9 @@ void ServerRogicMgr::SendPacektPlayerInfo()
 		packet.Players[id].Pos = p.second.Pos;
 		packet.Players[id].Rot = p.second.Rot;
 		packet.Players[id].ActionState = p.second.ActionState;
+
+		for (UINT i = 0; i < 10; ++i)
+			packet.Players[id].CollisionPos[i] = mObjectMgr.GetCollisionPos()[i];
 	}
 
 	for (UINT i = 0; i < MAX_USER; ++i) {

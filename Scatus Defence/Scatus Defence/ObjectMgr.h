@@ -31,10 +31,14 @@ public:
 	void RemovePlayer(const UINT& id);
 	void ReleaseAllMonsters() { mMonsters.clear(); }
 
+	void SetCollisionPos(const PlayerInfos& info);
+
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
 	SkinnedObject**						GetPlayers() { return mPlayers; }
 	std::vector<Monster*>				GetMonsters() { return mMonsters; }
 	UINT								GetCurrPlayerNum() const { return mCurrPlayerNum; }
+	XMFLOAT3*							GetCollisionPos() { return mCollisionPos; }
+
 	void UpdatePlayer(const UINT& id, const PlayerInfos& info);
 	void UpdateMonster(const UINT& id, const MonInfos& info);
 	void Update(float dt);
@@ -42,6 +46,7 @@ public:
 private:
 	UINT mCurrPlayerNum;
 
+	XMFLOAT3 mCollisionPos[COLL_OBJ_NUM];
 	std::vector<GameObject*>						mAllObjects;					
 	std::vector<BasicObject*>						mBasicObjects;
 	std::vector<Monster*>							mMonsters;

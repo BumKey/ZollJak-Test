@@ -161,6 +161,8 @@ void PacketMgr::ProcessPacket()
 		for (UINT i = 0; i < MAX_USER; ++i) {
 			if (Packet_Mgr->Connected[i] && i != Packet_Mgr->ClientID)
 				Object_Mgr->UpdatePlayer(i, p->Players[i]);
+			else if (i == Packet_Mgr->ClientID)
+				Object_Mgr->SetCollisionPos(p->Players[i]);
 		}
 		break;
 	}

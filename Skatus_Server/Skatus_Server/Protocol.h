@@ -13,10 +13,22 @@
 #define WORLDSIZE			100
 #define MONSTER_DURATION	1000
 
+#define COLL_OBJ_NUM		10
 #define OP_RECV				1
 #define OP_SEND				2
 
 #define PI					3.1415926535f
+
+/*
+디버그 환경에서만 cout을 출력
+*/
+
+#ifdef _DEBUG
+#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
+
 #pragma pack(push, 1)
 
 // server -> client
@@ -134,6 +146,7 @@ struct PlayerInfos
 	ActionState::States ActionState;
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
+	XMFLOAT3 CollisionPos[10];
 };
 
 struct MonInfos
@@ -199,7 +212,7 @@ struct SC_InitPlayer : public HEADER
 
 struct SC_RemovePlayer : public HEADER
 {
-	SC_RemovePlayer() { 
+	SC_RemovePlayer() {
 		Size = sizeof(*this); Type = eSC::RemovePlayer;
 	}
 	BYTE ClientID;

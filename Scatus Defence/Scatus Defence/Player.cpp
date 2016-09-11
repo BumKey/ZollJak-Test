@@ -105,6 +105,13 @@ void Player::ProccessKeyInput(float dt)
 {
 	if (mActionState != ActionState::Attack && mActionState != ActionState::Damage && mActionState != ActionState::Die)
 	{
+		for (UINT i = 0; i < COLL_OBJ_NUM; ++i)
+		{
+			XMFLOAT3 cp = Object_Mgr->GetCollisionPos()[i];
+			if (MathHelper::DistanceVector(mPosition, Object_Mgr->GetCollisionPos()[i]) < 3.0f)
+				CollisionMoving(Object_Mgr->GetCollisionPos()[i], dt);
+		}
+
 		if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000)) { Move(-dt, -dt);	}
 		else if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('D') & 0x8000)) { Move(-dt, dt);	}
 		else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('A') & 0x8000)) { Move(dt, -dt);	}

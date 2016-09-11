@@ -115,6 +115,27 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 	mPlayers[id].ActionState = ActionState::Die;
 }
 
+void ObjectMgr::SetCollsion(const UINT& id, const XMFLOAT3 & pos)
+{
+	UINT count(0);
+	XMFLOAT3 p = pos;
+	p.y = -0.1f;
+	for (auto o : mObstacles)
+	{
+		if (MathHelper::DistanceVector(p, o.Pos) < 10.0f)
+		{
+			if (count >= 10)
+				break;
+
+			mCollisionPos[count] = o.Pos;
+			++count;
+		}
+	}
+
+	for (UINT i = count; i < 10; ++i)
+		mCollisionPos[i] = XMFLOAT3(FLT_MAX, FLT_MAX, FLT_MAX);
+}
+
 const UINT ObjectMgr::SetMonstersTarget()
 {
 	for (auto& m : mMonsters)

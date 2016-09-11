@@ -203,6 +203,12 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 	mObjectMgr.SetPlayerRot(inPacket.ClientID, inPacket.Rot);
 	mObjectMgr.SetCollsion(inPacket.ClientID, inPacket.Pos);
 	mObjectMgr.SetPlayerPos(inPacket.ClientID, pos);
+
+	SC_CollisionInfo packet;
+	for (UINT i = 0; i < COLL_OBJ_NUM; ++i)
+		packet.CollisionPos[i] = mObjectMgr.GetCollisionPos()[i];
+
+	MyServer::Send_Packet(inPacket.ClientID, reinterpret_cast<char*>(&packet));
 }
 
 /// <summary> 현재는 충돌체크 미구현
@@ -261,9 +267,6 @@ void ServerRogicMgr::SendPacektPlayerInfo()
 		packet.Players[id].Pos = p.second.Pos;
 		packet.Players[id].Rot = p.second.Rot;
 		packet.Players[id].ActionState = p.second.ActionState;
-
-		for (UINT i = 0; i < 10; ++i)
-			packet.Players[id].CollisionPos[i] = mObjectMgr.GetCollisionPos()[i];
 	}
 
 	for (UINT i = 0; i < MAX_USER; ++i) {

@@ -72,11 +72,11 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 	Packet_Mgr->Connected[id] = false;
 }
 
-void ObjectMgr::SetCollisionPos(const PlayerInfos & info)
+void ObjectMgr::SetCollisionPos(const XMFLOAT3* info)
 {
 	for (UINT i = 0; i < COLL_OBJ_NUM; ++i)
 	{
-		mCollisionPos[i] = info.CollisionPos[i];
+		mCollisionPos[i] = info[i];
 	}
 }
 

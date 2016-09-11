@@ -31,7 +31,7 @@ public:
 	void RemovePlayer(const UINT& id);
 	void ReleaseAllMonsters() { mMonsters.clear(); }
 
-	void SetCollisionPos(const PlayerInfos& info);
+	void SetCollisionPos(const XMFLOAT3* info);
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
 	SkinnedObject**						GetPlayers() { return mPlayers; }

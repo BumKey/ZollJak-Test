@@ -547,7 +547,7 @@ void SceneMgr::BuildGrassSpritesBuffer(ID3D11Device * device)
 		float y = Terrain::GetInstance()->GetHeight(x, z);
 
 		// Move tree slightly above land height.
-		y += 1.0f;
+		y += 0.5f;
 
 		v[i].Pos = XMFLOAT3(x, y, z);
 		v[i].Size = XMFLOAT2(1.0f + MathHelper::RandF(0.0f, 2.0f),

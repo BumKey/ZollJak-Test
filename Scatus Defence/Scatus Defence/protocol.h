@@ -39,6 +39,7 @@ enum eSC {
 	AddMonsters,
 	ReleaseAllMons,
 	PlayerInfo,
+	CollisionInfo,
 	MonInfo
 };
 
@@ -146,7 +147,6 @@ struct PlayerInfos
 	ActionState::States ActionState;
 	XMFLOAT3 Pos;
 	XMFLOAT3 Rot;
-	XMFLOAT3 CollisionPos[10];
 };
 
 struct MonInfos
@@ -168,6 +168,14 @@ struct SC_PlayerInfo : public HEADER
 		Size = sizeof(*this); Type = eSC::PlayerInfo;
 	}
 	PlayerInfos Players[MAX_USER];
+};
+
+struct SC_CollisionInfo : public HEADER
+{
+	SC_CollisionInfo() {
+		Size = sizeof(*this); Type = eSC::CollisionInfo;
+	}
+	XMFLOAT3 CollisionPos[COLL_OBJ_NUM];
 };
 
 struct SC_MonInfo : public HEADER

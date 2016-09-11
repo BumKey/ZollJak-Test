@@ -42,6 +42,9 @@ void MyServer::Send_Packet(DWORD id, char *packet) {
 	case eSC::PlayerInfo:
 		string = "PlayerInfo";
 		break;
+	case eSC::CollisionInfo:
+		string = "CollisionInfo";
+		break;
 	case eSC::MonInfo:
 		string = "MonInfo";
 		break;
@@ -50,6 +53,9 @@ void MyServer::Send_Packet(DWORD id, char *packet) {
 		break;
 	case eSC::RemovePlayer:
 		string = "RemovePlayer";
+		break;
+	default:
+		string = "default";
 		break;
 	}
 

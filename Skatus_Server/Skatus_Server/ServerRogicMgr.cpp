@@ -44,7 +44,6 @@ void ServerRogicMgr::Update()
 {
 	// 전체 게임시간은 Pause하지 않는 이상 계속 계산.
 	mGameTimer.Tick();
-	mRogicTimer.Tick();
 
 	if (mGameStateMgr.GetCurrState() == eGameState::WaveWaiting)
 	{
@@ -56,13 +55,13 @@ void ServerRogicMgr::Update()
 		if (mRogicTimer.TotalTime() == 0.0f)
 			mObjectMgr.ReleaseAllMonsters();
 
-
 		if (mRogicTimer.TotalTime() > 10.0f)
 		{
 			mGameStateMgr.FlowAdvance();
-
-
 		}
+		else
+			mRogicTimer.Tick();
+
 
 		DEBUG_MSG("WaveWaiting...");
 	}
@@ -98,6 +97,9 @@ void ServerRogicMgr::Update()
 			mRogicTimer.Reset();
 
 		}
+		else
+			mRogicTimer.Tick();
+
 		DEBUG_MSG("Waving...");
 	}
 }

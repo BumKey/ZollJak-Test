@@ -60,28 +60,28 @@ void Monster::Update(float dt)
 	}
 
 
-	if (mTimer.TotalTime() > 1.0f)
-	{
-		switch (rand() % 7)
-		{
-			case 0: 		if (this->GetObjectType() == ObjectType::Goblin)
-							{
-								Sound_Mgr->Play3DEffect(Sound_Giant_roar2,this->GetPos().x, this->GetPos().y, this->GetPos().z);
-							}
-							else if (this->GetObjectType() == ObjectType::Cyclop)
-							{
-								Sound_Mgr->Play3DEffect(Sound_Giant_roar1, this->GetPos().x,this->GetPos().y, this->GetPos().z);
-							}
+	//if (mTimer.TotalTime() > 1.0f)
+	//{
+	//	switch (rand() % 7)
+	//	{
+	//		case 0: 		if (this->GetObjectType() == ObjectType::Goblin)
+	//						{
+	//							Sound_Mgr->Play3DEffect(Sound_Giant_roar2,this->GetPos().x, this->GetPos().y, this->GetPos().z);
+	//						}
+	//						else if (this->GetObjectType() == ObjectType::Cyclop)
+	//						{
+	//							Sound_Mgr->Play3DEffect(Sound_Giant_roar1, this->GetPos().x,this->GetPos().y, this->GetPos().z);
+	//						}
 
-					break;
-			default: break;
-		}
-		mTimer.Reset();
+	//				break;
+	//		default: break;
+	//	}
+	//	mTimer.Reset();
 
-	
-	}
-	else
-		mTimer.Tick();
+	//
+	//}
+	//else
+	//	mTimer.Tick();
 }
 
 void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
@@ -126,7 +126,7 @@ void Monster::Attack(SkinnedObject * target)
 		if (target->GetProperty().hp_now < 100 || Sound_Mgr->hpdown == false)
 		{
 			Sound_Mgr->hpdown = true;
-			Sound_Mgr->Play3DEffect(Sound_p_almostdie, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+			//Sound_Mgr->Play3DEffect(Sound_p_almostdie, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 			//target->Die();
 			printf("Å¸°Ù »ç¸Á");
 		}

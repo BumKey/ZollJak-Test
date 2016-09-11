@@ -111,7 +111,6 @@ void SkinnedObject::Animate(float dt)
 		if (mActionState != ActionState::Die)
 		{
 			mTimePos = 0.0f;
-		//	Sound_Mgr->Play3DEffect(Sound_p_die, this->GetPos().x, this->GetPos().y, this->GetPos().z);
 		}
 		if (mCurrClipName == mAnimNames[Anims::attack1] ||
 			mCurrClipName == mAnimNames[Anims::attack2] ||
@@ -326,6 +325,14 @@ void SkinnedObject::SetTarget(SkinnedObject * target)
 		mHasTarget = true;
 		mTargetPos = target->GetPos();
 	}
+}
+
+void SkinnedObject::SetAttackState()
+{
+	if (mActionState != ActionState::Attack)
+		mTimePos = 0.0f;
+
+	mActionState = ActionState::Attack; 
 }
 
 std::string SkinnedObject::GetAnimName(Anims & eAnim)

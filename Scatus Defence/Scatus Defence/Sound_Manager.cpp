@@ -411,8 +411,3 @@ bool Sound_Manager::AllocDSound(IDirectSoundBuffer8** dsbuff, WinWave* ww, DSBUF
 	{
 		m_listener->SetPosition(x, y, z, DS3D_IMMEDIATE);
 	}
-
-	D3DVECTOR Calc_listener_Pos(float x, float y, float z)
-	{
-	
-	}

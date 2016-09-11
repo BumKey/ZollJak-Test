@@ -57,7 +57,7 @@ void ServerRogicMgr::Update()
 
 		if (mRogicTimer.TotalTime() > 10.0f)
 		{
-			mGameStateMgr.FlowAdvance();
+			//mGameStateMgr.FlowAdvance();
 		}
 		else
 			mRogicTimer.Tick();

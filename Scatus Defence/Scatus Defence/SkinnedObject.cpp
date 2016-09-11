@@ -306,7 +306,7 @@ void SkinnedObject::ChangeActionState(ActionState::States state)
 	}
 	else if (IsActionStateChangeAble())
 		mActionState = state;
-	else if (state == ActionState::Idle)
+	else if (mActionState != ActionState::Attack && state == ActionState::Idle)
 		mActionState = state;
 }
 

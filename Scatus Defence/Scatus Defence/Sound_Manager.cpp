@@ -360,7 +360,7 @@ bool Sound_Manager::AllocDSound(IDirectSoundBuffer8** dsbuff, WinWave* ww, DSBUF
 			if (i.Sounds_3Deffect_type == type)
 			{
 				D3DVALUE dis;
-				
+				D3DVECTOR Calc_listener_Pos(float x, float y, float z);
 				result = i.m_secondary3DBuffer1->SetPosition(x, y, z, DS3D_IMMEDIATE);
 				result = i.m_secondary3DBuffer1->GetMaxDistance(&dis);
 			//	result = i.m_secondary3DBuffer1->SetMaxDistance(10000.0f, DS3D_IMMEDIATE);
@@ -410,4 +410,9 @@ bool Sound_Manager::AllocDSound(IDirectSoundBuffer8** dsbuff, WinWave* ww, DSBUF
 	void Sound_Manager::Set3DLinstenerPos(FLOAT x, FLOAT y, FLOAT z)
 	{
 		m_listener->SetPosition(x, y, z, DS3D_IMMEDIATE);
+	}
+
+	D3DVECTOR Calc_listener_Pos(float x, float y, float z)
+	{
+	
 	}

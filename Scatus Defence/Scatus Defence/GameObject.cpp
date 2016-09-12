@@ -76,7 +76,7 @@ void GameObject::RotateY(float angle)
 
 void  GameObject::PrintLocation()
 {
-	printf("%s 위치 출력: <%f, %f, %f> \n",
+	DEBUG_MSG("%s 위치 출력: <%f, %f, %f> \n",
 		mProperty.name, mPosition.x, mPosition.y, mPosition.z);
 }
 

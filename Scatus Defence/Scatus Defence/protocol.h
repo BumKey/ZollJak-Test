@@ -2,6 +2,7 @@
 #include <d3dx11.h>
 #include <xnamath.h>
 #include <vector>
+#include <iostream>
 
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000

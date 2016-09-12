@@ -120,7 +120,7 @@ void Monster::Attack(SkinnedObject * target)
 		target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
 		target->SetHP(mTarget_hp - damage);
 
-		printf("ÇÃ·¹ÀÌ¾îÇÇ°Ý, Ã¼·Â : %d \n", target->GetProperty().hp_now);
+		DEBUG_MSG("ÇÃ·¹ÀÌ¾îÇÇ°Ý, Ã¼·Â : " << target->GetProperty().hp_now);
 		Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 
 		if (target->GetProperty().hp_now < 100 || Sound_Mgr->hpdown == false)
@@ -128,14 +128,14 @@ void Monster::Attack(SkinnedObject * target)
 			Sound_Mgr->hpdown = true;
 			//Sound_Mgr->Play3DEffect(Sound_p_almostdie, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 			//target->Die();
-			printf("Å¸°Ù »ç¸Á");
+			DEBUG_MSG("Å¸°Ù »ç¸Á");
 		}
 
 		if (target->GetProperty().hp_now <= 0)
 		{
 			Sound_Mgr->Play3DEffect(Sound_p_die, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 			//target->Die();
-			printf("Å¸°Ù »ç¸Á");
+			DEBUG_MSG("Å¸°Ù »ç¸Á");
 		}
 		else
 			target->ChangeActionState(ActionState::Damage);

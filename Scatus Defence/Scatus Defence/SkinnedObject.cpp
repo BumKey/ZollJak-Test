@@ -352,12 +352,12 @@ void SkinnedObject::Attack(SkinnedObject * target)
 		target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
 		target->SetHP(mTarget_hp - damage);
 
-		printf("공격을 성공했습니다. 상대의 체력 : %d \n", target->GetProperty().hp_now);
+		DEBUG_MSG("공격을 성공했습니다. 상대의 체력 : " << target->GetProperty().hp_now);
 
 		if (target->GetProperty().hp_now <= 0)
 		{
 			//target->Die();
-			printf("타겟 사망");
+			DEBUG_MSG("타겟 사망");
 		}
 		else
 			target->ChangeActionState(ActionState::Damage);

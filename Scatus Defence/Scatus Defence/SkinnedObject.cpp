@@ -7,7 +7,7 @@ SkinnedObject::SkinnedObject() : GameObject(), mTimePos(0.0f)
 }
 
 SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const SO_InitDesc& info) : GameObject(mesh, info),
-mTimePos(0.0f), m_bForOneHit(false)
+mTimePos(0.0f), m_bForOneHit(false), mHasTarget(false)
 {
 	mMesh = mesh;
 	mActionState = ActionState::Idle;

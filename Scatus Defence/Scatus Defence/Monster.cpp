@@ -50,10 +50,10 @@ void Monster::Update(float dt)
 	if (mProperty.hp_now <= 0)
 		mActionState == ActionState::Die;
 
-	if (mActionState != ActionState::Die || mActionState != ActionState::Damage
-		|| mActionState != ActionState::Attack)
+	if ((mActionState != ActionState::Die || mActionState != ActionState::Damage
+		|| mActionState != ActionState::Attack) && mHasTarget)
 	{
-		if (MathHelper::DistanceVector(mPosition, mTargetPos) <= 3.0f)
+		if (MathHelper::DistanceVector(mPosition, mTarget->GetPos()) <= 3.0f)
 			AttackToTarget(dt);
 		else 
 			MoveToTarget(dt);

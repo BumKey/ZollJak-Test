@@ -141,6 +141,7 @@ struct SO_InitDesc : public BO_InitDesc
 	FLOAT AttackPoint;
 	FLOAT AttackSpeed;
 	FLOAT MoveSpeed;
+	UINT TargetID;
 };
 
 struct PlayerInfos
@@ -152,6 +153,10 @@ struct PlayerInfos
 
 struct MonInfos
 {
+	MonInfos() : TargetID(0), TargetPos(0.0f, 0.0f, 0.0f)
+	{
+		ActionState = ActionState::Idle;
+	}
 	ActionState::States ActionState;
 	BYTE TargetID;
 	XMFLOAT3 TargetPos;

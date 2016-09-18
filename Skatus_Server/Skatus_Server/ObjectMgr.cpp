@@ -28,6 +28,7 @@ void ObjectMgr::UpdateMonsters()
 		XMFLOAT3 targetF;
 		XMStoreFloat3(&targetF, targetV);
 		m.second.Pos = m.second.Pos + targetF*m.second.MoveSpeed;
+		m.second.TargetID = targetID;
 	}
 }
 

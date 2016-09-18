@@ -78,6 +78,7 @@ void ServerRogicMgr::Update()
 				mObjectMgr.AddObject(oType.first);
 		}
 		SendPacketToCreateMonsters();
+		mObjectMgr.UpdateMonsters();
 		mGameStateMgr.FlowAdvance();
 
 		mRogicTimer.Reset();
@@ -250,6 +251,7 @@ void ServerRogicMgr::SendPacketFrameInfo()
 
 	for (auto m : monsters) {
 		packet.Monsters[m.first].TargetPos = m.second.Pos;
+		packet.Monsters[m.first].TargetID = m.second.TargetID;
 		packet.Monsters[m.first].ActionState = m.second.ActionState;
 	}
 

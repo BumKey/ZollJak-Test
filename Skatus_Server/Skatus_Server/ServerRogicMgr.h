@@ -24,6 +24,7 @@ public:
 	void SendPacektPlayerInfo();
 
 private:
+	void SendPacketMonInfo();
 	void SendPacketToCreateMonsters();
 
 	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);

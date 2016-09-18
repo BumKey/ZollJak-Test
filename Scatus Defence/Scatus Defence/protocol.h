@@ -40,6 +40,7 @@ enum eSC {
 	AddMonsters,
 	ReleaseAllMons,
 	PlayerInfo,
+	MonInfo,
 	CollisionInfo,
 	FrameInfo
 };
@@ -158,7 +159,7 @@ struct MonInfos
 		ActionState = ActionState::Idle;
 	}
 	ActionState::States ActionState;
-	UINT TargetID;
+	BYTE TargetID;
 	XMFLOAT3 TargetPos;
 };
 
@@ -194,6 +195,14 @@ struct SC_FrameInfo : public HEADER
 	UINT Time;
 	UINT NumOfObjects;
 	UINT Roundlevel;
+};
+
+struct SC_MonInfo : public HEADER
+{
+	SC_MonInfo() {
+		Size = sizeof(*this); Type = eSC::MonInfo;
+	}
+	UINT NumOfMonsters;
 	MonInfos Monsters[MAX_MONSTER];
 };
 

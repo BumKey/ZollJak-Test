@@ -164,6 +164,13 @@ void PacketMgr::ProcessPacket()
 		}
 		break;
 	}
+	case eSC::MonInfo: {
+		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
+		for (UINT i = 0; i < p->NumOfMonsters; ++i) {
+			Object_Mgr->UpdateMonster(i, p->Monsters[i]);
+		}
+		break;
+	}
 	case eSC::CollisionInfo: {
 		auto *p = reinterpret_cast<SC_CollisionInfo*>(mPacketBuf);
 		Object_Mgr->SetCollisionPos(p->CollisionPos);
@@ -174,10 +181,6 @@ void PacketMgr::ProcessPacket()
 
 		if (Object_Mgr->GetMonsters().size() == 0)
 			break;
-
-		for (UINT i = 0; i < p->NumOfObjects - Object_Mgr->GetCurrPlayerNum(); ++i) {
-			Object_Mgr->UpdateMonster(i, p->Monsters[i]);
-		}
 
 		char* string;
 		switch (p->GameState)

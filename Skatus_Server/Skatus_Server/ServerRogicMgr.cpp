@@ -55,7 +55,7 @@ void ServerRogicMgr::Update()
 		if (mRogicTimer.TotalTime() == 0.0f)
 			mObjectMgr.ReleaseAllMonsters();
 
-		if (mRogicTimer.TotalTime() > 10.0f)
+		if (mRogicTimer.TotalTime() > 5.0f)
 		{
 			mGameStateMgr.FlowAdvance();
 		}
@@ -100,6 +100,7 @@ void ServerRogicMgr::Update()
 		}
 		else {
 			mObjectMgr.UpdateMonsters();
+			SendPacketMonInfo();
 			mRogicTimer.Tick();
 		}
 
@@ -249,12 +250,6 @@ void ServerRogicMgr::SendPacketFrameInfo()
 	packet.Roundlevel = mCurrWaveLevel;
 	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
 
-	for (auto m : monsters) {
-		packet.Monsters[m.first].TargetPos = m.second.Pos;
-		packet.Monsters[m.first].TargetID = m.second.TargetID;
-		packet.Monsters[m.first].ActionState = m.second.ActionState;
-	}
-
 	for (UINT i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].is_connected) 
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
@@ -278,6 +273,22 @@ void ServerRogicMgr::SendPacektPlayerInfo()
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
 			mObjectMgr.GetPlayer(i).ActionState = ActionState::Idle;
 		}
+	}
+}
+
+void ServerRogicMgr::SendPacketMonInfo()
+{
+	SC_MonInfo packet;
+	for (auto m : mObjectMgr.GetMonsters()) {
+		packet.Monsters[m.first].TargetPos = m.second.Pos;
+		packet.Monsters[m.first].TargetID = m.second.TargetID;
+		packet.Monsters[m.first].ActionState = m.second.ActionState;
+	}
+
+	packet.NumOfMonsters = mObjectMgr.GetMonsters().size();
+	for (UINT i = 0; i < MAX_USER; ++i) {
+		if (g_clients[i].is_connected)
+			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
 	}
 }
 

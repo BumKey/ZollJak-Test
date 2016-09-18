@@ -17,6 +17,20 @@ ObjectMgr::~ObjectMgr()
 {
 }
 
+void ObjectMgr::UpdateMonsters()
+{
+	for (auto& m : mMonsters)
+	{
+		const UINT targetID = SetMonstersTarget(m.second.Pos);
+		const XMFLOAT3 targetPos = mPlayers[targetID].Pos;
+
+		XMVECTOR targetV = MathHelper::TargetVector2D(targetPos, m.second.Pos);
+		XMFLOAT3 targetF;
+		XMStoreFloat3(&targetF, targetV);
+		m.second.Pos = m.second.Pos + targetF*m.second.MoveSpeed;
+	}
+}
+
 void ObjectMgr::AddObject(ObjectType::Types oType)
 {
 	BO_InitDesc BasicInfo;
@@ -136,30 +150,26 @@ void ObjectMgr::SetCollsion(const UINT& id, const XMFLOAT3 & pos)
 		mCollisionPos[i] = XMFLOAT3(FLT_MAX, FLT_MAX, FLT_MAX);
 }
 
-const UINT ObjectMgr::SetMonstersTarget()
+const UINT ObjectMgr::SetMonstersTarget(const XMFLOAT3& pos)
 {
-	for (auto& m : mMonsters)
+	for (int i = 0; i < MAX_USER; ++i)
 	{
-		for (int i = 0; i < MAX_USER; ++i)
-		{
-			if (mConnected[i] &&
-				MathHelper::DistanceVector(m.second.Pos, mPlayers[i].Pos) <= 20.0f)
-				return i;
-		}
+		if (mConnected[i] && MathHelper::DistanceVector(pos, mPlayers[i].Pos) <= 10.0f)
+			return i;
+	}
 
-		if (mCurrPlayerNum > 0) {
-			switch (rand() % mCurrPlayerNum)
-			{
-			case 0:
-				if (mConnected[0])
-					return 0;
-			case 1:
-				if (mConnected[1])
-					return 1;
-			case 2:
-				if (mConnected[2])
-					return 2;
-			}
+	if (mCurrPlayerNum > 0) {
+		switch (rand() % mCurrPlayerNum)
+		{
+		case 0:
+			if (mConnected[0])
+				return 0;
+		case 1:
+			if (mConnected[1])
+				return 1;
+		case 2:
+			if (mConnected[2])
+				return 2;
 		}
 	}
 }

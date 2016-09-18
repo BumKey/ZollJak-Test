@@ -20,7 +20,7 @@ public:
 
 	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
 
-	void SendPacketMonInfo();
+	void SendPacketFrameInfo();
 	void SendPacektPlayerInfo();
 
 private:

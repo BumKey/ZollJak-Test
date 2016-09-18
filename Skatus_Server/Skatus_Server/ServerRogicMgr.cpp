@@ -97,8 +97,10 @@ void ServerRogicMgr::Update()
 			mRogicTimer.Reset();
 
 		}
-		else
+		else {
+			mObjectMgr.UpdateMonsters();
 			mRogicTimer.Tick();
+		}
 
 		DEBUG_MSG("Waving...");
 	}
@@ -235,19 +237,19 @@ FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)
 	return sqrtf(x*x + y*y);
 }
 
-void ServerRogicMgr::SendPacketMonInfo()
+void ServerRogicMgr::SendPacketFrameInfo()
 {
 	auto players = mObjectMgr.GetPlayers();
 	auto monsters = mObjectMgr.GetMonsters();
 
-	SC_MonInfo packet;
+	SC_FrameInfo packet;
 	packet.GameState = mGameStateMgr.GetCurrState();
 	packet.Time = mRogicTimer.TotalTime();
 	packet.Roundlevel = mCurrWaveLevel;
 	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
 
 	for (auto m : monsters) {
-		packet.Monsters[m.first].TargetID = mObjectMgr.SetMonstersTarget();
+		packet.Monsters[m.first].TargetPos = m.second.Pos;
 		packet.Monsters[m.first].ActionState = m.second.ActionState;
 	}
 

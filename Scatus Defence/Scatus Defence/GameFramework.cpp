@@ -23,9 +23,11 @@ GameFrameWork::~GameFrameWork()
 bool GameFrameWork::Init()
 {
 	//콘솔창 띄우기
+#ifdef _DEBUG
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
 	freopen("CON", "w", stdout); 
+#endif
 
 	if (!D3DApp::Init())
 		return false;
@@ -101,9 +103,6 @@ void GameFrameWork::DrawScene()
 
 void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
-
 	if (btnState & MK_LBUTTON) {
 
 		Sound_Mgr->Play3DEffect(Sound_p_shout, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
@@ -141,7 +140,8 @@ void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 
 void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 {
-	if ((btnState & MK_RBUTTON) != 0)
+	static bool button(false);
+	if (button)
 	{
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
@@ -153,9 +153,14 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 		//mCam.RotateY(dx/3.0f);
 		Player::GetInstance()->RotateY(dx*2.0f);
 
+	}
+	else
+	{
 		mLastMousePos.x = x;
 		mLastMousePos.y = y;
 	}
+
+	button = !button;
 
 	//static bool switcher(false);
 	//if(switcher)

@@ -117,7 +117,7 @@ void Monster::Attack(SkinnedObject * target)
 		int armor = target->GetProperty().guardpoint;
 		float damage = mProperty.attakpoint;
 
-		target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+		//target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
 		target->SetHP(mTarget_hp - damage);
 
 		DEBUG_MSG("플레이어피격, 체력 : " << target->GetProperty().hp_now);

@@ -93,6 +93,7 @@ void ObjectMgr::UpdatePlayer(const UINT & id, const PlayerInfos & info)
 void ObjectMgr::UpdateMonster(const UINT & id, const MonInfos & info)
 {
 	mMonsters[id]->SetTarget(mPlayers[info.TargetID]);
+	mMonsters[id]->SetTargetPos(info.TargetPos);
 	if (info.ActionState == ActionState::Die)
 		mMonsters[id]->ChangeActionState(info.ActionState);
 }

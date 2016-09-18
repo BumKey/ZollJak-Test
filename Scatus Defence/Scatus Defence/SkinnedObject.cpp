@@ -321,7 +321,6 @@ void SkinnedObject::SetTarget(SkinnedObject * target)
 	if (target) {
 		mTarget = target;
 		mHasTarget = true;
-		mTargetPos = target->GetPos();
 	}
 }
 
@@ -349,7 +348,7 @@ void SkinnedObject::Attack(SkinnedObject * target)
 		int armor = target->GetProperty().guardpoint;
 		float damage = mProperty.attakpoint;
 
-		target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+		//target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
 		target->SetHP(mTarget_hp - damage);
 
 		DEBUG_MSG("공격을 성공했습니다. 상대의 체력 : " << target->GetProperty().hp_now);

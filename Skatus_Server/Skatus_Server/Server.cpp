@@ -45,8 +45,8 @@ void MyServer::Send_Packet(DWORD id, char *packet) {
 	case eSC::CollisionInfo:
 		string = "CollisionInfo";
 		break;
-	case eSC::MonInfo:
-		string = "MonInfo";
+	case eSC::FrameInfo:
+		string = "FrameInfo";
 		break;
 	case eSC::PutOtherPlayers:
 		string = "PutOtherPlayer";

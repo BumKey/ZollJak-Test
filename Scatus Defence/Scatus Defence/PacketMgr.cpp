@@ -169,10 +169,10 @@ void PacketMgr::ProcessPacket()
 		Object_Mgr->SetCollisionPos(p->CollisionPos);
 		break;
 	}
-	case eSC::MonInfo: {
-		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
+	case eSC::FrameInfo: {
+		auto *p = reinterpret_cast<SC_FrameInfo*>(mPacketBuf);
 
-		if (Object_Mgr->GetMonsters().size == 0)
+		if (Object_Mgr->GetMonsters().size() == 0)
 			break;
 
 		for (UINT i = 0; i < p->NumOfObjects - Object_Mgr->GetCurrPlayerNum(); ++i) {

@@ -27,5 +27,6 @@ public:
 	void OnKeyDown(WPARAM keyState);
 
 private:
+	bool				mAfterInit;
 	POINT				mLastMousePos;
 };

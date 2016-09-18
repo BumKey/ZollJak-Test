@@ -193,7 +193,7 @@ void MyThreads::Rogic_Thread()
 
 		if (timer[MonInfo].TotalTime() > 1.0f) {
 			g_RogicMgr.Update();
-			g_RogicMgr.SendPacketMonInfo();
+			g_RogicMgr.SendPacketFrameInfo();
 
 			timer[MonInfo].Reset();
 		}

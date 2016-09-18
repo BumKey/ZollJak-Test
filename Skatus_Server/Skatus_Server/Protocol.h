@@ -1,6 +1,7 @@
 #pragma once
 #include <d3dx11.h>
 #include <xnamath.h>
+#include <iostream>
 #include <vector>
 
 #define SERVER_PORT			4000
@@ -40,7 +41,7 @@ enum eSC {
 	ReleaseAllMons,
 	PlayerInfo,
 	CollisionInfo,
-	MonInfo
+	FrameInfo
 };
 
 enum eCS {
@@ -153,6 +154,7 @@ struct MonInfos
 {
 	ActionState::States ActionState;
 	BYTE TargetID;
+	XMFLOAT3 TargetPos;
 };
 
 struct HEADER
@@ -178,10 +180,10 @@ struct SC_CollisionInfo : public HEADER
 	XMFLOAT3 CollisionPos[COLL_OBJ_NUM];
 };
 
-struct SC_MonInfo : public HEADER
+struct SC_FrameInfo : public HEADER
 {
-	SC_MonInfo() {
-		Size = sizeof(*this); Type = eSC::MonInfo;
+	SC_FrameInfo() {
+		Size = sizeof(*this); Type = eSC::FrameInfo;
 	}
 	eGameState GameState;
 	UINT Time;

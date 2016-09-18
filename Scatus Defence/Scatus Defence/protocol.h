@@ -153,7 +153,7 @@ struct PlayerInfos
 struct MonInfos
 {
 	ActionState::States ActionState;
-	BYTE TargetID;
+	UINT TargetID;
 	XMFLOAT3 TargetPos;
 };
 

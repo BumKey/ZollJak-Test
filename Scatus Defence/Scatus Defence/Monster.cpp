@@ -121,7 +121,7 @@ void Monster::Attack(SkinnedObject * target)
 		target->SetHP(mTarget_hp - damage);
 
 		DEBUG_MSG("플레이어피격, 체력 : " << target->GetProperty().hp_now);
-		Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+		//Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 
 		if (target->GetProperty().hp_now < 100 || Sound_Mgr->hpdown == false)
 		{
@@ -133,7 +133,7 @@ void Monster::Attack(SkinnedObject * target)
 
 		if (target->GetProperty().hp_now <= 0)
 		{
-			Sound_Mgr->Play3DEffect(Sound_p_die, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+			//Sound_Mgr->Play3DEffect(Sound_p_die, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 			//target->Die();
 			DEBUG_MSG("타겟 사망");
 		}

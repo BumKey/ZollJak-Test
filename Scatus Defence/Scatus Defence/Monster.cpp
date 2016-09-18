@@ -23,7 +23,11 @@ Monster::~Monster()
 // 이 메서드는 현재 타겟이 설정되어 있다고 가정한다.
 void Monster::MoveToTarget(float dt)
 {
-	if (mHasTarget && mProperty.hp_now > 0 && mCollisionState == CollisionState::None && mActionState != ActionState::Attack
+	if (MathHelper::Float3Equal(mPosition, mTargetPos))
+	{
+		ChangeActionState(ActionState::Idle);
+	}
+	else if (mHasTarget && mProperty.hp_now > 0 && mCollisionState == CollisionState::None && mActionState != ActionState::Attack
 		&& mActionState != ActionState::Damage && mActionState != ActionState::Die)
 	{
 		XMVECTOR vTarget = MathHelper::TargetVector2D(mTargetPos, mPosition);

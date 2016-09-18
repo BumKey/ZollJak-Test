@@ -52,6 +52,15 @@ FLOAT MathHelper::DistanceVector(XMFLOAT3 l, XMFLOAT3 r)
 	return sqrtf(a*a + b*b + c*c);
 }
 
+bool MathHelper::Float3Equal(XMFLOAT3 l, XMFLOAT3 r)
+{
+	if (abs(l.x - r.x) <= 0.03f &&
+		abs(l.z - r.z) <= 0.03f)
+		return true;
+	else
+		return false;
+}
+
 XMVECTOR MathHelper::TargetVector2D(XMFLOAT3 target, XMFLOAT3 origin)
 {
 	XMFLOAT3 fTarget(target.x - origin.x, 0, target.z - origin.z);

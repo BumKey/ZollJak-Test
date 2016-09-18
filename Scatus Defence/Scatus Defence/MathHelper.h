@@ -56,6 +56,7 @@ public:
 
 	static XMVECTOR TargetVector2D(XMFLOAT3 target, XMFLOAT3 origin);
 	static FLOAT DistanceVector(XMFLOAT3 l, XMFLOAT3 r);
+	static bool Float3Equal(XMFLOAT3 l, XMFLOAT3 r);
 
 	static XMMATRIX InverseTranspose(CXMMATRIX M)
 	{

@@ -27,7 +27,7 @@ void ObjectMgr::UpdateMonsters()
 		XMVECTOR targetV = MathHelper::TargetVector2D(targetPos, m.second.Pos);
 		XMFLOAT3 targetF;
 		XMStoreFloat3(&targetF, targetV);
-		m.second.Pos = m.second.Pos + targetF*m.second.MoveSpeed;
+		m.second.Pos = m.second.Pos + targetF*m.second.MoveSpeed*3.0f;
 		m.second.TargetID = targetID;
 	}
 }

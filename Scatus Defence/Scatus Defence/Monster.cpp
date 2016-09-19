@@ -52,7 +52,7 @@ void Monster::Update(float dt)
 	SkinnedObject::Update(dt);
 
 	if (mProperty.hp_now <= 0)
-		mActionState == ActionState::Die;
+		mActionState = ActionState::Die;
 
 	if ((mActionState != ActionState::Die || mActionState != ActionState::Damage
 		|| mActionState != ActionState::Attack) && mHasTarget)

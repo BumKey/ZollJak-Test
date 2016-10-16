@@ -38,7 +38,7 @@ void PacketMgr::Init(HWND mainHwnd)
 	memset(&recv_addr, 0, sizeof(recv_addr));
 	recv_addr.sin_family = AF_INET;
 	recv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	recv_addr.sin_port = htons(SERVER_PORT);
+	recv_addr.sin_port = htons(SERVER_PORT);  
 
 	// connect()
 	if (connect(mSocket, (SOCKADDR*)&recv_addr, sizeof(recv_addr)) == SOCKET_ERROR)

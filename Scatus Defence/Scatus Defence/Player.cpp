@@ -61,14 +61,12 @@ void Player::Update(float dt)
 
 void Player::Damage(float damage)
 {
-	//target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
-	mProperty.hp_now -= damage;
-	Time_Mgr->Set_P_HP(mProperty.hp_now);
+	SkinnedObject::Damage(damage);
 
+	Time_Mgr->Set_P_HP(mProperty.hp_now);
 	Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);
-	
-	ChangeActionState(ActionState::Damage);
+
 	DEBUG_MSG("플레이어피격, 체력 : " << mProperty.hp_now);
 }
 

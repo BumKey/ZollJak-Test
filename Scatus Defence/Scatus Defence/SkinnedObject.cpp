@@ -374,6 +374,17 @@ void SkinnedObject::Attack(SkinnedObject * target)
 	}
 }
 
+void SkinnedObject::Damage(float damage)
+{
+	//target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+	mProperty.hp_now -= damage;
+
+	Sound_Mgr->Play3DEffect(Sound_impact, mPosition.x, mPosition.y, mPosition.z);
+	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);
+
+	ChangeActionState(ActionState::Damage);
+}
+
 void SkinnedObject::DrawToShadowMap(ID3D11DeviceContext * dc, const XMMATRIX & lightViewProj)
 {
 	const Camera& cam = *Camera::GetInstance();

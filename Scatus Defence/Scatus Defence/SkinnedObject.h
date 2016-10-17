@@ -27,6 +27,7 @@ public:
 	virtual void Animate(float dt);
 
 	virtual void Attack(SkinnedObject* target);
+	virtual void Damage(float damage);
 	virtual void Die();
 
 	virtual void DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform);

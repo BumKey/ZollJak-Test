@@ -135,7 +135,7 @@ void Monster::Attack(SkinnedObject * target)
 		int armor = target->GetProperty().guardpoint;
 		float damage = mProperty.attakpoint;
 
-		dynamic_cast<Player*>(target)->Damage(damage);
+		target->Damage(damage);
 		m_bForOneHit = false;
 	}
 }

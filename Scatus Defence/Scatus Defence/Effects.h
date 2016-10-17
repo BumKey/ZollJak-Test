@@ -331,6 +331,8 @@ public:
 	ID3DX11EffectTechnique* Light2TexTech;
 	ID3DX11EffectTechnique* Light3TexTech;
 
+	ID3DX11EffectTechnique* TempleTech;
+
 	ID3DX11EffectTechnique* Light0TexAlphaClipTech;
 	ID3DX11EffectTechnique* Light1TexAlphaClipTech;
 	ID3DX11EffectTechnique* Light2TexAlphaClipTech;

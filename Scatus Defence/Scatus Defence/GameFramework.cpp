@@ -105,6 +105,9 @@ void GameFrameWork::DrawScene()
 
 void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 {
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
+
 	if (btnState & MK_LBUTTON) {
 
 		Sound_Mgr->Play3DEffect(Sound_p_shout, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
@@ -142,8 +145,7 @@ void GameFrameWork::OnMouseUp(WPARAM btnState, int x, int y)
 
 void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 {
-	static bool button(false);
-	if (button)
+	if ((btnState & MK_RBUTTON) != 0)
 	{
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
@@ -151,18 +153,13 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 
 		// Update안의 LookAt 세번째 변수 mUp으로 해주면
 		// 어지럽지만 나름 멋있는 효과가?!
-		Camera::GetInstance()->Pitch(dy);			
+		Camera::GetInstance()->Pitch(dy);
 		//mCam.RotateY(dx/3.0f);
 		Player::GetInstance()->RotateY(dx*2.0f);
 
-	}
-	else
-	{
 		mLastMousePos.x = x;
 		mLastMousePos.y = y;
 	}
-
-	button = !button;
 
 	//static bool switcher(false);
 	//if(switcher)

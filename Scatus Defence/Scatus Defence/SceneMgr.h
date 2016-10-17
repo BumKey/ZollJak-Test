@@ -14,7 +14,7 @@
 #include "Ssao.h"
 #include <list>
 
-#define SMapSize		2046
+#define SMapSize		4092
 #define Scene_Mgr SceneMgr::GetInstance()
 
 struct BoundingSphere

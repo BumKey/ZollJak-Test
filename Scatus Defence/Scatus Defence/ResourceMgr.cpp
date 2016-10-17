@@ -9,6 +9,7 @@ ResourceMgr::ResourceMgr()
 ResourceMgr::~ResourceMgr()
 {
 	SafeDelete(mTreeMesh);
+	SafeDelete(mTempleMesh);
 	/*SafeDelete(BaseMesh);
 	SafeDelete(StairsMesh);
 	SafeDelete(Pillar1Mesh);
@@ -22,7 +23,7 @@ void ResourceMgr::Init(ID3D11Device * dc)
 {
 	mDevice = dc;
 
-	mTempleMesh = new BasicMesh(mDevice, "Models\\house1.y2k", L"Textures\\house1\\");
+	mTempleMesh = new BasicMesh(mDevice, "Models\\Temple.y2k", L"Textures\\Temple\\");
 	mTreeMesh = new BasicMesh(mDevice, "Models\\tree.y2k", L"Textures\\");
 	//BaseMesh = new BasicMesh(dc, texMgr, "Meshs\\base.m3d", L"Textures\\");
 	//StairsMesh = new BasicMesh(dc, texMgr, "Meshs\\stairs.m3d", L"Textures\\");

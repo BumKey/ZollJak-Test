@@ -258,6 +258,76 @@ float4 PS(VertexOut pin,
     return litColor;
 }
 
+float4 TemplePS(VertexOut pin) : SV_Target
+{
+	// Interpolating normal can unnormalize it, so normalize it.
+	pin.NormalW = normalize(pin.NormalW);
+
+	// The toEye vector is used in lighting.
+	float3 toEye = gEyePosW - pin.PosW;
+
+	// Cache the distance to the eye from this surface point.
+	float distToEye = length(toEye);
+
+	// Normalize.
+	toEye /= distToEye;
+
+	// Default to multiplicative identity.
+	float4 texColor = float4(1, 1, 1, 1);
+
+	// Sample texture.
+	texColor = gDiffuseMap.Sample(samLinear, pin.Tex);
+
+	//
+	// Normal mapping
+	//
+
+	float3 normalMapSample = gNormalMap.Sample(samLinear, pin.Tex).rgb;
+	float3 bumpedNormalW = NormalSampleToWorldSpace(normalMapSample, pin.NormalW, pin.TangentW);
+
+	//
+	// Lighting.
+	//
+
+	float4 litColor = texColor;
+
+	// Start with a sum of zero. 
+	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// Only the first light casts a shadow.
+	float3 shadow = float3(1.0f, 1.0f, 1.0f);
+	shadow[0] = CalcShadowFactor(samShadow, gShadowMap, pin.ShadowPosH);
+
+	// Finish texture projection and sample SSAO map.
+	pin.SsaoPosH /= pin.SsaoPosH.w;
+	float ambientAccess = gSsaoMap.Sample(samLinear, pin.SsaoPosH.xy, 0.0f).r;
+
+	if (ambientAccess < 0.8f)
+		ambientAccess = 0.8f;
+
+	// Sum the light contribution from each light source.  
+	[unroll]
+	for (int i = 0; i < 2; ++i)
+	{
+		float4 A, D, S;
+		ComputeDirectionalLight(gMaterial, gDirLights[i], bumpedNormalW, toEye,
+			A, D, S);
+
+		ambient += ambientAccess*A;
+		diffuse += shadow[i] * D;
+		spec += shadow[i] * S;
+	}
+
+	litColor = texColor*(ambient + diffuse) + spec;
+
+	// Common to take alpha from diffuse material and texture.
+	litColor.a = gMaterial.Diffuse.a * texColor.a;
+
+	return litColor;
+}
+
 technique11 Light1
 {
     pass P0
@@ -326,6 +396,16 @@ technique11 Light3Tex
 		SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_5_0, PS(3, true, false, false, false) ) );
     }
+}
+
+technique11 TempleTech
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_5_0, VS()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_5_0, TemplePS()));
+	}
 }
 
 technique11 Light0TexAlphaClip

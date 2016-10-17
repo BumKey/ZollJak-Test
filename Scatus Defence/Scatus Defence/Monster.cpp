@@ -64,32 +64,34 @@ void Monster::Update(float dt)
 			MoveToTarget(dt);
 	}
 
-
-	if (mTimer.TotalTime() > 1.0f)
+	if (this->GetActionState() != ActionState::Die)
 	{
-		switch (rand() % 7)
+		if (mTimer.TotalTime() > 1.0f)
 		{
+
+			switch (rand() % 7)
+			{
 			case 0: 		if (this->GetObjectType() == ObjectType::Goblin)
-							{
-								Sound_Mgr->Play3DEffect(Sound_Giant_roar2,this->GetPos().x, this->GetPos().y, this->GetPos().z);
-							}
+			{
+				Sound_Mgr->Play3DEffect(Sound_Giant_roar2, this->GetPos().x, this->GetPos().y, this->GetPos().z);
+			}
 							else if (this->GetObjectType() == ObjectType::Cyclop)
 							{
-								Sound_Mgr->Play3DEffect(Sound_Giant_roar1, this->GetPos().x,this->GetPos().y, this->GetPos().z);
+								Sound_Mgr->Play3DEffect(Sound_Giant_roar1, this->GetPos().x, this->GetPos().y, this->GetPos().z);
 							}
 
-					break;
+							break;
 			default: break;
+			}
+			mTimer.Reset();
+
+
 		}
-		mTimer.Reset();
-
-	
+		else
+			mTimer.Tick();
 	}
-	else
-		mTimer.Tick();
-
 	
-	if (mDamage_Timer_flag) // 몬스터가 공격에 성공하면 틱타이머가 돌기시작한다.
+	if (mDamage_Timer_flag && !Sound_Mgr->hpdown) // 몬스터가 공격에 성공하면 틱타이머가 돌기시작한다.
 	{
 		if (!(UI_Mgr->Tick_dmage_Timer()))  // 참을 리턴하면 0.5초가 안지난것 false를 리턴하면 0.5초 지난 것
 		{
@@ -144,8 +146,9 @@ void Monster::Attack(SkinnedObject * target)
 		DEBUG_MSG("플레이어피격, 체력 : " << target->GetProperty().hp_now);
 		Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);
-		if (target->GetProperty().hp_now < 200 || Sound_Mgr->hpdown == false)
+		if (Time_Mgr->Get_P_HP() < 200 && Sound_Mgr->hpdown == false)
 		{
+			
 			Sound_Mgr->hpdown = true;
 			Sound_Mgr->Play3DEffect(Sound_p_almostdie, Camera::GetInstance()->GetPosition().x,
 				Camera::GetInstance()->GetPosition().y, Camera::GetInstance()->GetPosition().z);

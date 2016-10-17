@@ -344,6 +344,15 @@ void SkinnedObject::Attack(SkinnedObject * target)
 	{
 
 		Sound_Mgr->Play3DEffect(Sound_impact, target->GetPos().x, target->GetPos().y, target->GetPos().z);
+		if (target->GetID() == ObjectType::Goblin)
+		{
+			Sound_Mgr->Play3DEffect(Sound_Giant_damage1, target->GetPos().x, target->GetPos().y, target->GetPos().z);
+		}
+		else if(target->GetID() == ObjectType::Cyclop)
+		{
+			Sound_Mgr->Play3DEffect(Sound_Giant_damage1, target->GetPos().x, target->GetPos().y, target->GetPos().z);
+		}
+		//Sound_Mgr->Play3DEffect(Sound_Giant_damage1, target->GetPos().x, target->GetPos().y, target->GetPos().z);
 		int mTarget_hp = target->GetProperty().hp_now;
 		int armor = target->GetProperty().guardpoint;
 		float damage = mProperty.attakpoint;

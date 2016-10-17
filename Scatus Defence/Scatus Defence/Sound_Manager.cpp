@@ -367,7 +367,11 @@ bool Sound_Manager::AllocDSound(IDirectSoundBuffer8** dsbuff, WinWave* ww, DSBUF
 				//i.Sound_buffer_3D->SetFrequency(1000.0f);
 				//i.Sound_buffer_3D->Play(0, 0, 0);
 				i.Sound_buffer_3D->SetVolume(DSBVOLUME_MAX);
-				i.Sound_buffer_3D->Play(0, 0, 0);
+				if(i.Sounds_3Deffect_type == Sound_p_almostdie)
+				i.Sound_buffer_3D->Play(0, 0, DSBPLAY_LOOPING);
+				else
+				i.Sound_buffer_3D->Play(0, 0, 0); 
+								
 			}
 		}
 	}

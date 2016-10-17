@@ -153,14 +153,16 @@ void GameFrameWork::OnMouseMove(WPARAM btnState, int x, int y)
 		//mCam.RotateY(dx/3.0f);
 		Player::GetInstance()->RotateY(dx*2.0f);
 
+		button = false;
 	}
 	else
 	{
 		mLastMousePos.x = x;
 		mLastMousePos.y = y;
+
+		button = true;
 	}
 
-	button = !button;
 
 	//static bool switcher(false);
 	//if(switcher)

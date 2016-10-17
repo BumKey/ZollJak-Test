@@ -1,5 +1,7 @@
 #include "Player.h"
 #include "Sound_Manager.h"
+#include "UI_Manager.h"
+
 Player::Player() : SkinnedObject()
 {
 	mProperty.name = "Player";
@@ -40,25 +42,11 @@ void Player::Update(float dt)
 		&& CurrAnimEnd())
 		mActionState = ActionState::Idle;
 
-	SkinnedObject::Update(dt);
-}
-
-void Player::Damage(float damage)
-{
-	//target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
-	mProperty.hp_now -= damage;
-
-	DEBUG_MSG("플레이어피격, 체력 : " << target->GetProperty().hp_now);
-	Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
-	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);
-	if (mProperty.hp_now < 200 || Sound_Mgr->hpdown == false)
+	if (mProperty.hp_now < 200)
 	{
-		Sound_Mgr->hpdown = true;
 		Sound_Mgr->Play3DEffect(Sound_p_almostdie, Camera::GetInstance()->GetPosition().x,
 			Camera::GetInstance()->GetPosition().y, Camera::GetInstance()->GetPosition().z);
-		//target->Die();
-		DEBUG_MSG("타겟 사망");
-		Time_Mgr->Set_P_HP((mProperty.hp_now));
+		UI_Mgr->Active_damage_Screen(true, true);
 	}
 
 	if (mProperty.hp_now <= 0)
@@ -67,9 +55,21 @@ void Player::Damage(float damage)
 		//target->Die();
 		DEBUG_MSG("타겟 사망");
 	}
-	else
-		ChangeActionState(ActionState::Damage);
 
+	SkinnedObject::Update(dt);
+}
+
+void Player::Damage(float damage)
+{
+	//target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+	mProperty.hp_now -= damage;
+	Time_Mgr->Set_P_HP(mProperty.hp_now);
+
+	Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);
+	
+	ChangeActionState(ActionState::Damage);
+	DEBUG_MSG("플레이어피격, 체력 : " << mProperty.hp_now);
 }
 
 void Player::Animate(float dt)

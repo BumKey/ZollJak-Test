@@ -50,55 +50,53 @@ void Monster::MoveToTarget(float dt)
 
 void Monster::Update(float dt)
 {
-	SkinnedObject::Update(dt);
-
 	if (mProperty.hp_now <= 0)
 		mActionState = ActionState::Die;
 
-	if ((mActionState != ActionState::Die || mActionState != ActionState::Damage
-		|| mActionState != ActionState::Attack) && mHasTarget)
+	if (mActionState != ActionState::Die)
 	{
-		if (MathHelper::DistanceVector(mPosition, mTarget->GetPos()) <= 3.0f)
-			AttackToTarget(dt);
-		else 
-			MoveToTarget(dt);
-	}
-
-
-	if (mTimer.TotalTime() > 1.0f)
-	{
-		switch (rand() % 7)
+		if ((mActionState != ActionState::Damage || mActionState != ActionState::Attack)
+			&& mHasTarget)
 		{
+			if (MathHelper::DistanceVector(mPosition, mTarget->GetPos()) <= 3.0f)
+				AttackToTarget(dt);
+			else
+				MoveToTarget(dt);
+		}
+
+		if (mTimer.TotalTime() > 1.0f)
+		{
+			switch (rand() % 7)
+			{
 			case 0: 		if (this->GetObjectType() == ObjectType::Goblin)
-							{
-								Sound_Mgr->Play3DEffect(Sound_Giant_roar2,this->GetPos().x, this->GetPos().y, this->GetPos().z);
-							}
+			{
+				Sound_Mgr->Play3DEffect(Sound_Giant_roar2, this->GetPos().x, this->GetPos().y, this->GetPos().z);
+			}
 							else if (this->GetObjectType() == ObjectType::Cyclop)
 							{
-								Sound_Mgr->Play3DEffect(Sound_Giant_roar1, this->GetPos().x,this->GetPos().y, this->GetPos().z);
+								Sound_Mgr->Play3DEffect(Sound_Giant_roar1, this->GetPos().x, this->GetPos().y, this->GetPos().z);
 							}
 
-					break;
+							break;
 			default: break;
+			}
+			mTimer.Reset();
+
 		}
-		mTimer.Reset();
+		else
+			mTimer.Tick();
 
-	
-	}
-	else
-		mTimer.Tick();
-
-	
-	if (mDamage_Timer_flag) // 몬스터가 공격에 성공하면 틱타이머가 돌기시작한다.
-	{
-		if (!(UI_Mgr->Tick_dmage_Timer()))  // 참을 리턴하면 0.5초가 안지난것 false를 리턴하면 0.5초 지난 것
+		if (mDamage_Timer_flag) // 몬스터가 공격에 성공하면 틱타이머가 돌기시작한다.
 		{
-			UI_Mgr->Active_damage_Screen(false); // 0.5초가 지나면 맞은 화면을 끈다. Timer reset도 함께 된다.
-			mDamage_Timer_flag = false;
-		}	
+			if (!(UI_Mgr->Tick_dmage_Timer()))  // 참을 리턴하면 0.5초가 안지난것 false를 리턴하면 0.5초 지난 것
+			{
+				UI_Mgr->Active_damage_Screen(false); // 0.5초가 지나면 맞은 화면을 끈다. Timer reset도 함께 된다.
+				mDamage_Timer_flag = false;
+			}
+		}
 
+		SkinnedObject::Update(dt);
 	}
-	
 }
 
 void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
@@ -130,7 +128,6 @@ void Monster::Attack(SkinnedObject * target)
 {
 	if (mHasTarget && target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
 	{
-		Time_Mgr->Set_P_HP((target->GetProperty().hp_now));
 		mDamage_Timer_flag = true;
 		UI_Mgr->Active_damage_Screen(true); //Timer reset도 함께된다.
 	

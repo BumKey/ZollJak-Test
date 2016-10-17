@@ -11,7 +11,6 @@ Sound_Manager::Sound_Manager()
 	m_listener = 0;
 	m_secondaryBuffer1 = 0;
 	tempBuffer = nullptr;
-	hpdown = false;
 		//m_secondary3DBuffer1 = 0;
 }
 

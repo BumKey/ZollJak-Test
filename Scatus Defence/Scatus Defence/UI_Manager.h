@@ -186,7 +186,7 @@ public:
 	void InGame_UI(int x, int y);
 	void InTitle_Option(int x, int y);
 	void UI_Scene_Mgr(int x, int y);
-	void Active_damage_Screen(bool Active);
+	void Active_damage_Screen(bool Active, bool Hp200 = false);
 	bool Tick_dmage_Timer();
 	IDXGISurface* m_backbuffer;
 	void Set_nMessageID(UINT nMessageID) { m_nMessageID = nMessageID; }

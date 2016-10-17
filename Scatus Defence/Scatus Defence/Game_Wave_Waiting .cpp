@@ -18,7 +18,6 @@ Game_Wave_Waiting* Game_Wave_Waiting::Instance()
 }
 void Game_Wave_Waiting::Enter()
 {
-	//Sound_Mgr->hpdown = false;
 	//Sound_Mgr->Stop_3DSound(Sound_p_almostdie);
 	Time_Mgr->SetWaveTimer(); //웨이브스위치 작동
 	Time_Mgr->Set_P_HP(1000);

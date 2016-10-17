@@ -892,9 +892,11 @@ Image_info* UI_Manager::GetImagePtr(UI_ID ui_id)
 		}
 	}
 }
-void UI_Manager::Active_damage_Screen(bool Active) {
+void UI_Manager::Active_damage_Screen(bool Active, bool Hp200) {
 
-	mDamage_Timer.Reset();
+	if(!Hp200)
+		mDamage_Timer.Reset();
+
 	for (auto i : m_Image_list)
 	{
 

@@ -91,7 +91,9 @@ void GameFrameWork::UpdateScene(float dt)
 
 	Camera::GetInstance()->Update();
 	Sound_Mgr->Set3DLinstenerPos(Camera::GetInstance()->GetPosition().x, Camera::GetInstance()->GetPosition().y, Camera::GetInstance()->GetPosition().z);
+	//Sound_Mgr->Set3DLinstenerPos(Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 	Scene_Mgr->Update(dt);
+	G_State_Mgr->Update();
 }
 
 void GameFrameWork::DrawScene()

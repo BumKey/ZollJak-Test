@@ -1,6 +1,7 @@
 #pragma once
 #include "SkinnedObject.h"
 #include "GameTimer.h"
+
 class Monster : public SkinnedObject
 {
 public:
@@ -19,6 +20,7 @@ public:
 	virtual void MoveToTarget(float dt);
 
 private:
+	bool mDamage_Timer_flag;
 	AI_State::States mAI_States;
 	GameTimer mTimer;
 

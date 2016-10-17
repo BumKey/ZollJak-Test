@@ -151,7 +151,7 @@ void Sound_Manager::Create_Sound(HWND hwnd)
 		Create3DBuffer_Wav(TEXT("Sound\\Footstep01.wav"), Sound_p_footstep1);
 		Create3DBuffer_Wav(TEXT("Sound\\전사사망.wav"), Sound_p_die);
 		Create3DBuffer_Wav(TEXT("Sound\\전사피격.wav"), Sound_p_damage);
-		Create3DBuffer_Wav(TEXT("Sound\\죽어갈.wav"), Sound_p_almostdie);
+		Create3DBuffer_Wav(TEXT("Sound\\죽어갈_mono.wav"), Sound_p_almostdie);
 		Create3DBuffer_Wav(TEXT("Sound\\기합.wav"), Sound_p_shout);
 		Create3DBuffer_Wav(TEXT("Sound\\swing.wav"), Sound_p_swing);
 		//자이언트

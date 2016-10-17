@@ -30,6 +30,7 @@ void Game_Waving::Execute()
 
 	//UI_Mgr->Change_HP_TEXT(50);
 	UI_Mgr->Change_Time_TEXT(game_waving);
+	UI_Mgr->Change_HP_TEXT(Time_Mgr->Get_P_HP());
 	if (Time_Mgr->gamestate == game_waiting_wave)
 	{
 		G_State_Mgr->ChangeState(Game_Wave_Waiting::Instance());

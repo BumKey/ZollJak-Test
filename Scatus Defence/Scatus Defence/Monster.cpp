@@ -1,10 +1,11 @@
 #include "Monster.h"
 #include "ObjectMgr.h"
 #include "Sound_Manager.h"
+#include "UI_Manager.h"
 Monster::Monster() : SkinnedObject()
 {
 	mAI_States = AI_State::None;
-
+	mDamage_Timer_flag = false;
 	mTimer.Reset();
 }
 
@@ -64,28 +65,40 @@ void Monster::Update(float dt)
 	}
 
 
-	//if (mTimer.TotalTime() > 1.0f)
-	//{
-	//	switch (rand() % 7)
-	//	{
-	//		case 0: 		if (this->GetObjectType() == ObjectType::Goblin)
-	//						{
-	//							Sound_Mgr->Play3DEffect(Sound_Giant_roar2,this->GetPos().x, this->GetPos().y, this->GetPos().z);
-	//						}
-	//						else if (this->GetObjectType() == ObjectType::Cyclop)
-	//						{
-	//							Sound_Mgr->Play3DEffect(Sound_Giant_roar1, this->GetPos().x,this->GetPos().y, this->GetPos().z);
-	//						}
+	if (mTimer.TotalTime() > 1.0f)
+	{
+		switch (rand() % 7)
+		{
+			case 0: 		if (this->GetObjectType() == ObjectType::Goblin)
+							{
+								Sound_Mgr->Play3DEffect(Sound_Giant_roar2,this->GetPos().x, this->GetPos().y, this->GetPos().z);
+							}
+							else if (this->GetObjectType() == ObjectType::Cyclop)
+							{
+								Sound_Mgr->Play3DEffect(Sound_Giant_roar1, this->GetPos().x,this->GetPos().y, this->GetPos().z);
+							}
 
-	//				break;
-	//		default: break;
-	//	}
-	//	mTimer.Reset();
+					break;
+			default: break;
+		}
+		mTimer.Reset();
 
-	//
-	//}
-	//else
-	//	mTimer.Tick();
+	
+	}
+	else
+		mTimer.Tick();
+
+	
+	if (mDamage_Timer_flag) // 몬스터가 공격에 성공하면 틱타이머가 돌기시작한다.
+	{
+		if (!(UI_Mgr->Tick_dmage_Timer()))  // 참을 리턴하면 0.5초가 안지난것 false를 리턴하면 0.5초 지난 것
+		{
+			UI_Mgr->Active_damage_Screen(false); // 0.5초가 지나면 맞은 화면을 끈다. Timer reset도 함께 된다.
+			mDamage_Timer_flag = false;
+		}	
+
+	}
+	
 }
 
 void Monster::MovingCollision(const XMFLOAT3& crushedObjectPos, float dt)
@@ -117,6 +130,10 @@ void Monster::Attack(SkinnedObject * target)
 {
 	if (mHasTarget && target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
 	{
+		Time_Mgr->Set_P_HP((target->GetProperty().hp_now));
+		mDamage_Timer_flag = true;
+		UI_Mgr->Active_damage_Screen(true); //Timer reset도 함께된다.
+	
 		int mTarget_hp = target->GetProperty().hp_now;
 		int armor = target->GetProperty().guardpoint;
 		float damage = mProperty.attakpoint;
@@ -125,14 +142,16 @@ void Monster::Attack(SkinnedObject * target)
 		target->SetHP(mTarget_hp - damage);
 
 		DEBUG_MSG("플레이어피격, 체력 : " << target->GetProperty().hp_now);
-		//Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
-
-		if (target->GetProperty().hp_now < 100 || Sound_Mgr->hpdown == false)
+		Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);
+		if (target->GetProperty().hp_now < 200 || Sound_Mgr->hpdown == false)
 		{
 			Sound_Mgr->hpdown = true;
-			//Sound_Mgr->Play3DEffect(Sound_p_almostdie, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+			Sound_Mgr->Play3DEffect(Sound_p_almostdie, Camera::GetInstance()->GetPosition().x,
+				Camera::GetInstance()->GetPosition().y, Camera::GetInstance()->GetPosition().z);
 			//target->Die();
 			DEBUG_MSG("타겟 사망");
+			Time_Mgr->Set_P_HP((target->GetProperty().hp_now));
 		}
 
 		if (target->GetProperty().hp_now <= 0)

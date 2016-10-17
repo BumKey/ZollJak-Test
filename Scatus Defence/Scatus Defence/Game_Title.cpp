@@ -32,5 +32,5 @@ void Game_Title::Execute()
 }
 void Game_Title::Exit()
 {
-
+	Sound_Mgr->PlayEffect(Sound_open);
 }

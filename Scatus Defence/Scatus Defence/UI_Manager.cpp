@@ -357,6 +357,13 @@ void UI_Manager::Load_All_Image()
 		m_Image_list.push_back(temp16);
 	}
 
+	
+	Image_info *temp17 = new Image_info(L"타이틀화면", Scene_Ingame, UI_ingame_demage, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, 1, UI_Frame_null);
+	hr = LoadPNG2DDBitmap(TEXT("스카투스_피격_UI.PNG"), temp17->Image);
+	if (SUCCEEDED(hr))
+	{
+		m_Image_list.push_back(temp17);
+	}
 
 	
 }
@@ -592,7 +599,10 @@ void UI_Manager::Set_Scene_UI(type_Scene Scenetype)
 		{
 			if (Scenetype == i_image->m_type_scene)
 			{
+
+				if (i_image->UI_id != UI_ingame_demage) // 데미지 입는 UI아니면 켬
 				i_image->Active = true;
+			
 			
 			}
 
@@ -882,8 +892,33 @@ Image_info* UI_Manager::GetImagePtr(UI_ID ui_id)
 		}
 	}
 }
+void UI_Manager::Active_damage_Screen(bool Active) {
+
+	mDamage_Timer.Reset();
+	for (auto i : m_Image_list)
+	{
 
 
+		if (UI_ingame_demage == i->UI_id)
+		{
+			i->Active = Active;
+		
+		}
+	}
+}
+
+bool UI_Manager::Tick_dmage_Timer()
+{
+	mDamage_Timer.Tick();
+	if (mDamage_Timer.TotalTime() <= 0.5)
+	{
+		return true;
+	}
+	else {
+		Active_damage_Screen(false);
+		return false;
+	}
+}
 void UI_Manager::InputID_PW()
 {
 	Text_info * temp;

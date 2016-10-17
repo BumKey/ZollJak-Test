@@ -9,6 +9,7 @@
 #include "Goblin.h"
 #include "Cyclop.h"
 #include "Warrior.h"
+#include "Temple.h"
 
 #define Object_Mgr ObjectMgr::GetInstance()
 

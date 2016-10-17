@@ -60,6 +60,10 @@ void ObjectMgr::AddObstacle(const ObjectType::Types & type, const BO_InitDesc & 
 	assert(type >= ObjectType::Obstacle);
 	if (type == ObjectType::Tree)
 		mBasicObjects.push_back(new BasicObject(Resource_Mgr->GetBasicMesh(type), desc, Label::AlphaBasic));
+	else if (type == ObjectType::Temple) {
+		Temple::GetInstance()->Init(Resource_Mgr->GetBasicMesh(type), desc);
+		mBasicObjects.push_back(Temple::GetInstance());
+	}
 	else
 		mBasicObjects.push_back(new BasicObject(Resource_Mgr->GetBasicMesh(type), desc, Label::Basic));
 }

@@ -2,7 +2,7 @@
 
 // 임의의 수치임
 ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0), mMonsterGeneratedNum(0),
-mCurrPlayerNum(0), mTemplePos(XMFLOAT3(230.0f, -0.01f, -370.0f))
+mCurrPlayerNum(0), mTemplePos(XMFLOAT3(200.0f, 9.5f, -370.0f))
 {
 	mMaxMonsters = mStage * 200;
 	mMaxStructures = mStage * 5;
@@ -90,8 +90,8 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		break;
 	case ObjectType::Temple:
 		BasicInfo.Pos = mTemplePos;
-		BasicInfo.Rot.y = 0.0f;
-		BasicInfo.Scale = 0.3f;
+		BasicInfo.Rot = XMFLOAT3(-MathHelper::Pi/2.0f, -MathHelper::Pi / 18.0f, 0.0f);
+		BasicInfo.Scale = 0.017f;
 		mObstacles.push_back(BasicInfo);
 		break;
 

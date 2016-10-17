@@ -2,7 +2,7 @@
 #include "FBXExporter.h"
 
 //#define INPUT_FILE_PATH "FBX Models\\"
-#define INPUT_FILE_PATH "C:\\Users\\Administrator\\Desktop\\Temple_1\\"
+#define INPUT_FILE_PATH "C:\\Users\\Administrator\\Desktop\\"
 //#define INPUT_FILE_PATH "C:\\Users\\Administrator\\Documents\\Test\\Assets\\goblin\\fbx\\"
 //#define INPUT_FILE_PATH "C:\\Users\\Administrator\\Documents\\Test\\Assets\\hammer warrior\\hammer_warrior_LOD0_TM\\"
 //#define INPUT_FILE_PATH "C:\\Users\\Administrator\\Documents\\Test\\Assets\\player\\golem\\"
@@ -18,7 +18,7 @@ void main()
 	std::string outFileName = "Temple.m3d";
 	std::ofstream fout(OUTPUT_FILE_PATH + outFileName);
 	FBXExporter myExporter;
-	myExporter.SetClipNum(10);
+	//myExporter.SetClipNum(10);
 
 	//FrameInfo frameInfo;
 	//frameInfo[std::string("idle")] = std::make_pair(149, 187);
@@ -31,7 +31,7 @@ void main()
 
 	//myExporter.AllInOneTakeMode(frameInfo);
 
-	inFileName = "Temple_1.fbx";
+	inFileName = "Temple.fbx";
 	myExporter.LoadFile(INPUT_FILE_PATH + inFileName);
 	myExporter.Export(outFileName, "", fout);
 

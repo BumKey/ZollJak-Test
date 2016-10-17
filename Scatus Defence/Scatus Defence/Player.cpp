@@ -43,6 +43,35 @@ void Player::Update(float dt)
 	SkinnedObject::Update(dt);
 }
 
+void Player::Damage(float damage)
+{
+	//target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+	mProperty.hp_now -= damage;
+
+	DEBUG_MSG("ÇÃ·¹ÀÌ¾îÇÇ°Ý, Ã¼·Â : " << target->GetProperty().hp_now);
+	Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);
+	if (mProperty.hp_now < 200 || Sound_Mgr->hpdown == false)
+	{
+		Sound_Mgr->hpdown = true;
+		Sound_Mgr->Play3DEffect(Sound_p_almostdie, Camera::GetInstance()->GetPosition().x,
+			Camera::GetInstance()->GetPosition().y, Camera::GetInstance()->GetPosition().z);
+		//target->Die();
+		DEBUG_MSG("Å¸°Ù »ç¸Á");
+		Time_Mgr->Set_P_HP((mProperty.hp_now));
+	}
+
+	if (mProperty.hp_now <= 0)
+	{
+		//Sound_Mgr->Play3DEffect(Sound_p_die, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
+		//target->Die();
+		DEBUG_MSG("Å¸°Ù »ç¸Á");
+	}
+	else
+		ChangeActionState(ActionState::Damage);
+
+}
+
 void Player::Animate(float dt)
 {
 	if (mActionState == ActionState::Damage)

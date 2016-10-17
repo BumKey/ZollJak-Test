@@ -195,6 +195,7 @@ struct SC_FrameInfo : public HEADER
 	UINT Time;
 	UINT NumOfObjects;
 	UINT Roundlevel;
+
 };
 
 struct SC_MonInfo : public HEADER

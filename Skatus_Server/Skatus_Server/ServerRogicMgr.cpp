@@ -101,6 +101,7 @@ void ServerRogicMgr::Update()
 		else {
 			mObjectMgr.UpdateMonsters();
 			SendPacketMonInfo();
+			int a = mRogicTimer.TotalTime();
 			mRogicTimer.Tick();
 		}
 

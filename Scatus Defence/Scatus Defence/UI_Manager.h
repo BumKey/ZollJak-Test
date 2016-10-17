@@ -7,6 +7,7 @@
 #include "UI_Scene.h"
 #include "Sound_Manager.h"
 #include "RogicTimer.h"
+#include "GameTimer.h"
 #define UI_Mgr  UI_Manager::Instance()
 using namespace std;
 enum UI_ID {
@@ -51,6 +52,7 @@ enum UI_frame_type {
 	UI_Frame_null,
 	UI_Frame_White,
 	UI_Frame_Black
+
 };
 
 template <class T> inline void SafeRelease(T **ppT)
@@ -142,6 +144,7 @@ private:UI_Manager();
 		bool UI_ClickOn;
 		UINT m_nMessageID;
 		type_Scene m_gamescene;
+		GameTimer mDamage_Timer;
 
 public:
 	RECT rc;
@@ -183,6 +186,8 @@ public:
 	void InGame_UI(int x, int y);
 	void InTitle_Option(int x, int y);
 	void UI_Scene_Mgr(int x, int y);
+	void Active_damage_Screen(bool Active);
+	bool Tick_dmage_Timer();
 	IDXGISurface* m_backbuffer;
 	void Set_nMessageID(UINT nMessageID) { m_nMessageID = nMessageID; }
 	UINT Get_nMessageID() { return m_nMessageID; }
@@ -190,7 +195,7 @@ public:
 	WPARAM Get_wParam() { return m_wParam; }
 	void Set_Gamescene(type_Scene gamestat) { m_gamescene = gamestat; }
 	int Get_Gamescene() { return m_gamescene; }
-
+	
 	Image_info* GetImagePtr(UI_ID ui_id);
 	void Change_HP_TEXT(int player_hp);
 	void Change_Round_TEXT(int Round);

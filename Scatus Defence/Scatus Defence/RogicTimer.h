@@ -32,6 +32,7 @@ private :
 		  double attacktimer;
 		  int m_wave_level;
 		  int m_time;
+		  int m_p_hp;
 
 public:
 	
@@ -53,8 +54,10 @@ public:
 	int GetPlayTime();
 	int Get_Wavelevel() { return m_wave_level; }
 	int Get_time() { return m_time; }
-	 void Set_Wavelevel(int num) { m_wave_level = num; }
+	int Get_P_HP() { return m_p_hp; }
+	void Set_Wavelevel(int num) { m_wave_level = num; }
 	void Set_time(int num) {m_time = num; }
+	void Set_P_HP(int num) { m_p_hp = num; }
 	RogicTimer();
 	~RogicTimer();
 	bool WaveTimer();

@@ -147,7 +147,7 @@ void PacketMgr::ProcessPacket()
 			Object_Mgr->AddObstacle(type, desc);
 		}
 
-		DEBUG_MSG("SC_INIT_PLAYER, ID : " << ClientID);
+		DEBUG_MSG("SC_INIT_PLAYER, ID : " << p->ClientID);
 
 		break;
 	}
@@ -166,8 +166,10 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::MonInfo: {
 		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
-		for (UINT i = 0; i < p->NumOfMonsters; ++i) {
-			Object_Mgr->UpdateMonster(i, p->Monsters[i]);
+		if (Object_Mgr->GetMonsters().size() > 0) 
+		{
+			for (UINT i = 0; i < p->NumOfMonsters; ++i) 
+				Object_Mgr->UpdateMonster(i, p->Monsters[i]);
 		}
 		break;
 	}

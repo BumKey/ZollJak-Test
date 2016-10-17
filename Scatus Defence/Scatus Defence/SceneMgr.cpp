@@ -603,7 +603,7 @@ void SceneMgr::ComputeSceneBoundingBox()
 
 	float halfW = Terrain::GetInstance()->GetWidth() / 2.0f;
 	float halfD = Terrain::GetInstance()->GetDepth() / 2.0f;
-	mSceneBounds.Radius = sqrtf((halfW*halfW) + (halfD*halfD))/5.0f;
+	mSceneBounds.Radius = sqrtf((halfW*halfW) + (halfD*halfD))/3.0f;
 	mSceneBounds.Center = playerPos;
 }
 

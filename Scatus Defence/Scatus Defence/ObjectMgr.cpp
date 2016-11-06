@@ -96,13 +96,15 @@ void ObjectMgr::UpdatePlayer(const UINT & id, const PlayerInfos & info)
 
 void ObjectMgr::UpdateMonster(const UINT & id, const MonInfos & info)
 {
-	mMonsters[id]->SetTarget(mPlayers[info.TargetID]);
-	mMonsters[id]->SetTargetPos(mPlayers[info.TargetID]->GetPos());
+	if (mCurrPlayerNum >= 2) {
+		mMonsters[id]->SetTarget(mPlayers[info.TargetID]);
+		mMonsters[id]->SetTargetPos(mPlayers[info.TargetID]->GetPos());
 
-	if (MathHelper::DistanceVector(mMonsters[id]->GetPos(), info.TargetPos) > 10.0f)
-		mMonsters[id]->SlowDown();
-	else
-		mMonsters[id]->SlowDownOff();
+		if (MathHelper::DistanceVector(mMonsters[id]->GetPos(), info.TargetPos) > 10.0f)
+			mMonsters[id]->SlowDown();
+		else
+			mMonsters[id]->SlowDownOff();
+	}
 
 	if (info.ActionState == ActionState::Die)
 		mMonsters[id]->ChangeActionState(info.ActionState);

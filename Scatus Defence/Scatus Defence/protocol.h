@@ -7,7 +7,7 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
-#define MAX_USER			1
+#define MAX_USER			2
 #define MAX_MONSTER			50
 #define MAX_OBJECT			100
 #define MAX_NPC				100
@@ -49,6 +49,7 @@ enum eCS {
 	KeyInput,
 	MouseInput,
 	ReAddMonsters,
+	RePutPlayers,
 	Damage
 };
 
@@ -273,6 +274,14 @@ struct CS_ReAddMonsters : public HEADER
 {
 	CS_ReAddMonsters() {
 		Size = sizeof(*this); Type = eCS::ReAddMonsters;
+	}
+	BYTE ClientID;
+};
+
+struct CS_RePutPlayers : public HEADER
+{
+	CS_RePutPlayers() {
+		Size = sizeof(*this); Type = eCS::RePutPlayers;
 	}
 	BYTE ClientID;
 };

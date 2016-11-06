@@ -1,5 +1,5 @@
 #include "ObjectMgr.h"
-
+#include <xnacollision.h>
 // 임의의 수치임
 ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0), mMonsterGeneratedNum(0),
 mCurrPlayerNum(0), mTemplePos(XMFLOAT3(200.0f, 9.5f, -370.0f))
@@ -150,7 +150,11 @@ void ObjectMgr::SetCollsion(const UINT& id, const XMFLOAT3 & pos)
 	for (UINT i = count; i < 10; ++i)
 		mCollisionPos[i] = XMFLOAT3(FLT_MAX, FLT_MAX, FLT_MAX);
 }
-
+void SetTemple_Collision(const UINT& id, const XMFLOAT3& pos)
+{
+	XMFLOAT3 p = pos;
+	
+}
 const UINT ObjectMgr::SetMonstersTarget(const XMFLOAT3& pos)
 {
 	for (int i = 0; i < MAX_USER; ++i)

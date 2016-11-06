@@ -44,7 +44,7 @@ for (int i = 0; i < 30; i++)
 		printf("\n\n");
 	}
 	*/
-printf("\n신전 위치 %f %f\n",temple_loc.x, temple_loc.y);
+//printf("\n신전 위치 %f %f\n",temple_loc.x, temple_loc.y);
 }
 
 void Map::Load(char* FileName)
@@ -75,18 +75,18 @@ void Map::Load(char* FileName)
 
 		ch = fgetc(ifp);
 		if (ch == EOF || ch == 'e' || y==30) break;
-		temp_wall.m_vPosition.x = x* size_cell;
-		temp_wall.m_vPosition.y = y* size_cell;
+		//temp_wall.m_vPosition.x = x* size_cell;
+	//	temp_wall.m_vPosition.y = y* size_cell;
 		{
 			printf("%c", ch); 
 			switch (ch)
 			{
 			case 51: m_Walls.push_back(temp_wall);
 				break;
-			case 52/*map_temple*/: temple_loc = temp_wall.m_vPosition;
-				break;
-			case 53: enemy_loc = temp_wall.m_vPosition;
-				break;
+		//	case 52/*map_temple*/: temple_loc = temp_wall.m_vPosition;
+		//		break;
+		//	case 53: enemy_loc = temp_wall.m_vPosition;
+	//			break;
 			default:
 				break;
 			}

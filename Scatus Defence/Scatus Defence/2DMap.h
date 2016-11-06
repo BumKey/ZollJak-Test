@@ -1,6 +1,6 @@
 #pragma once
 #include<vector>
-#include "2d/Vector2D.h"
+
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -18,7 +18,7 @@ enum map_entity {
 };
 struct Wall2D
 {
-	Vector2D m_vPosition;
+	//Vector2D m_vPosition;
 
 };
 
@@ -27,8 +27,8 @@ class Map
 public:
 	vector<Wall2D> m_Walls;
 	
-	Vector2D temple_loc;
-	Vector2D enemy_loc;
+	//Vector2D temple_loc;
+	//Vector2D enemy_loc;
 	Map();
 	~Map();
 	void Map::print();

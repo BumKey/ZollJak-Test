@@ -103,6 +103,7 @@ void MyThreads::Worker_Thread()
 		if (iosize == 0)
 		{
 			g_RogicMgr.RemovePlayer(id);
+			g_RogicMgr.Reset();
 			// 소켓 종료
 			closesocket(g_clients[id].socket);
 		}
@@ -192,8 +193,8 @@ void MyThreads::Rogic_Thread()
 			timer[i].Tick();
 
 		if (timer[MonInfo].TotalTime() > 1.0f) {
-			g_RogicMgr.Update();
 			g_RogicMgr.SendPacketFrameInfo();
+			g_RogicMgr.Update();
 
 			timer[MonInfo].Reset();
 		}
@@ -203,6 +204,5 @@ void MyThreads::Rogic_Thread()
 
 			timer[PlayerInfo].Reset();
 		}
-		
 	}
 }

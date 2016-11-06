@@ -66,7 +66,7 @@ private:
 
 private:
 	float mLightRotationAngle;
-	static const UINT TreeCount = 500;
+	static const UINT TreeCount = 1000;
 	static const UINT GrassCount = 2000;
 
 	ID3D11DeviceContext* md3dImmediateContext;

@@ -90,8 +90,8 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		break;
 	case ObjectType::Temple:
 		BasicInfo.Pos = mTemplePos;
-		BasicInfo.Rot = XMFLOAT3(-MathHelper::Pi/2.0f, -MathHelper::Pi / 18.0f, 0.0f);
-		BasicInfo.Scale = 0.017f;
+		BasicInfo.Rot = XMFLOAT3(0.0f, -MathHelper::Pi / 18.0f, 0.0f);
+		BasicInfo.Scale = 1.0f;
 		mObstacles.push_back(BasicInfo);
 		break;
 
@@ -109,7 +109,7 @@ void ObjectMgr::AddPlayer(ObjectType::Types oType, DWORD client_id)
 
 	SO_InitDesc info;
 	info.ObjectType = oType;
-	info.Pos = XMFLOAT3(rand() % 20 + 200.0f, -0.1f, rand() % 20 - 280.0f);
+	info.Pos = XMFLOAT3(rand() % 20 + 0.0f, -0.1f, rand() % 20 - 0.0f);
 	info.Rot = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	info.Scale = 0.05f;
 	info.MoveSpeed = 9.0f;
@@ -213,11 +213,11 @@ void ObjectMgr::CreateMap()
 {
 	AddObject(ObjectType::Temple);
 
-	for (UINT i = 0; i < 20; ++i)
+	for (UINT i = 0; i < 40; ++i)
 		AddObject(ObjectType::Tree);
 
-	for (UINT i = 0; i < 20; ++i)
-		AddObject(ObjectType::Rock);
+	/*for (UINT i = 0; i < 20; ++i)
+		AddObject(ObjectType::Rock);*/
 }
 
 

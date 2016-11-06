@@ -1,6 +1,6 @@
 #include "ServerRogicMgr.h"
 
-ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(1), mCurrPlayerNum(0),
+ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(0), mCurrPlayerNum(0),
 mNewID(-1)
 {
 	srand(time(NULL));
@@ -62,7 +62,6 @@ void ServerRogicMgr::Update()
 		else
 			mRogicTimer.Tick();
 
-
 		DEBUG_MSG("WaveWaiting...");
 	}
 	else if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
@@ -96,12 +95,10 @@ void ServerRogicMgr::Update()
 		{
 			mGameStateMgr.FlowAdvance();
 			mRogicTimer.Reset();
-
 		}
 		else {
 			mObjectMgr.UpdateMonsters();
 			SendPacketMonInfo();
-			int a = mRogicTimer.TotalTime();
 			mRogicTimer.Tick();
 		}
 
@@ -232,6 +229,14 @@ void ServerRogicMgr::ProcessMouseInput(CS_Attack & inPacket)
 	}
 }
 
+void ServerRogicMgr::Reset()
+{
+	mCurrWaveLevel = 0;
+	mGameTimer.Reset();
+	mRogicTimer.Reset();
+	mObjectMgr.ReleaseAllMonsters();
+}
+
 FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)
 {
 	float x = a.x - b.x;
@@ -246,8 +251,15 @@ void ServerRogicMgr::SendPacketFrameInfo()
 	auto monsters = mObjectMgr.GetMonsters();
 
 	SC_FrameInfo packet;
+
+	if (mGameStateMgr.GetCurrState() == eGameState::WaveWaiting)
+		packet.Time = 5.0f - mRogicTimer.TotalTime();
+	else if (mGameStateMgr.GetCurrState() == eGameState::Waving)
+		packet.Time = 100.0f - mRogicTimer.TotalTime();
+	else
+		packet.Time = mRogicTimer.TotalTime();
+
 	packet.GameState = mGameStateMgr.GetCurrState();
-	packet.Time = mRogicTimer.TotalTime();
 	packet.Roundlevel = mCurrWaveLevel;
 	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
 

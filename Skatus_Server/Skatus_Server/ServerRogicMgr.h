@@ -17,6 +17,7 @@ public:
 	void RemovePlayer(const UINT& id);
 	void ProcessKeyInput(CS_Move& inPacket);
 	void ProcessMouseInput(CS_Attack& inPacket);
+	void Reset();
 
 	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
 

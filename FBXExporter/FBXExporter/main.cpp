@@ -15,7 +15,7 @@
 void main()
 {
 	std::string inFileName;
-	std::string outFileName = "Temple.m3d";
+	std::string outFileName = "sample.m3d";
 	std::ofstream fout(OUTPUT_FILE_PATH + outFileName);
 	FBXExporter myExporter;
 	//myExporter.SetClipNum(10);
@@ -31,7 +31,7 @@ void main()
 
 	//myExporter.AllInOneTakeMode(frameInfo);
 
-	inFileName = "Temple.fbx";
+	inFileName = "sample.fbx";
 	myExporter.LoadFile(INPUT_FILE_PATH + inFileName);
 	myExporter.Export(outFileName, "", fout);
 

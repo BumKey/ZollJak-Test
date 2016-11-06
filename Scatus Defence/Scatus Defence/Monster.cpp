@@ -33,7 +33,12 @@ void Monster::MoveToTarget(float dt)
 	{
 		XMVECTOR vTarget = MathHelper::TargetVector2D(mTargetPos, mPosition);
 
-		XMVECTOR s = XMVectorReplicate(dt*mProperty.movespeed);
+		XMVECTOR s;
+		if(m_bSlowDown)
+			s = XMVectorReplicate(dt*mProperty.movespeed/2.0f);
+		else
+			s = XMVectorReplicate(dt*mProperty.movespeed);
+
 		XMVECTOR p = XMLoadFloat3(&mPosition);
 
 		// 방향으로 이동

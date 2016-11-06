@@ -19,15 +19,17 @@ public:
 	void ProcessMouseInput(CS_Attack& inPacket);
 	void Reset();
 
-	const SO_InitDesc& GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
+	const SO_InitDesc&			GetPlayerInfo(UINT id) { return mObjectMgr.GetPlayer(id); }
+	const UINT					GetPlayerNum() { return mCurrPlayerNum; }
+	const eGameState			GetCurrGameState() { return mGameStateMgr.GetCurrState(); }
 
 	void SendPacketFrameInfo();
 	void SendPacektPlayerInfo();
-
-private:
 	void SendPacketMonInfo();
 	void SendPacketToCreateMonsters();
+	void SendPacketToCreateMonsters(const UINT& id);
 
+private:
 	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);
 
 private:

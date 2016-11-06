@@ -103,7 +103,6 @@ void MyThreads::Worker_Thread()
 		if (iosize == 0)
 		{
 			g_RogicMgr.RemovePlayer(id);
-			g_RogicMgr.Reset();
 			// 소켓 종료
 			closesocket(g_clients[id].socket);
 		}
@@ -182,27 +181,35 @@ void MyThreads::Worker_Thread()
 
 void MyThreads::Rogic_Thread()
 {
-	GameTimer timer[2];
-	enum eTimer { MonInfo = 0, PlayerInfo };
+	GameTimer timer[3];
+	enum eTimer { MonInfo = 0, PlayerInfo, FrameInfo };
 	timer[MonInfo].Reset();
+	timer[FrameInfo].Reset();
 	timer[PlayerInfo].Reset();
 
 	while (1)
 	{
-		for (int i = 0; i < 2; ++i)
-			timer[i].Tick();
+		if (g_RogicMgr.GetPlayerNum() > 0) {
 
-		if (timer[MonInfo].TotalTime() > 1.0f) {
-			g_RogicMgr.SendPacketFrameInfo();
+			for (int i = 0; i < 3; ++i)
+				timer[i].Tick();
+
 			g_RogicMgr.Update();
 
-			timer[MonInfo].Reset();
-		}
+			if (timer[PlayerInfo].TotalTime() > 0.2f) {
+				g_RogicMgr.SendPacektPlayerInfo();
+				timer[PlayerInfo].Reset();
+			}
 
-		if (timer[PlayerInfo].TotalTime() > 0.2f) {
-			g_RogicMgr.SendPacektPlayerInfo();
+			if (timer[MonInfo].TotalTime() > 0.5f) {
+				g_RogicMgr.SendPacketMonInfo();
+				timer[MonInfo].Reset();
+			}
 
-			timer[PlayerInfo].Reset();
+			if (timer[FrameInfo].TotalTime() > 1.0f) {
+				g_RogicMgr.SendPacketFrameInfo();
+				timer[FrameInfo].Reset();
+			}
 		}
 	}
 }

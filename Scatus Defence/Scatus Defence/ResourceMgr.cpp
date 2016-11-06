@@ -23,14 +23,14 @@ void ResourceMgr::Init(ID3D11Device * dc)
 {
 	mDevice = dc;
 
-	//mTempleMesh = new BasicMesh(mDevice, "Models\\house1.y2k", L"Textures\\house1\\");
+	mTempleMesh = new BasicMesh(mDevice, "Models\\house1.y2k", L"Textures\\house1\\");
 	mTreeMesh = new BasicMesh(mDevice, "Models\\tree.y2k", L"Textures\\");
-	mBaseMesh = new BasicMesh(mDevice, "Models\\base.y2k", L"Textures\\");
+	/*mBaseMesh = new BasicMesh(mDevice, "Models\\base.y2k", L"Textures\\");
 	mStairsMesh = new BasicMesh(mDevice, "Models\\stairs.y2k", L"Textures\\");
 	mPillar1Mesh = new BasicMesh(mDevice, "Models\\pillar1.y2k", L"Textures\\");
 	mPillar2Mesh = new BasicMesh(mDevice, "Models\\pillar2.y2k", L"Textures\\");
 	mPillar3Mesh = new BasicMesh(mDevice, "Models\\pillar5.y2k", L"Textures\\");
-	mPillar4Mesh = new BasicMesh(mDevice, "Models\\pillar6.y2k", L"Textures\\");
+	mPillar4Mesh = new BasicMesh(mDevice, "Models\\pillar6.y2k", L"Textures\\");*/
 	mRockMesh = new BasicMesh(mDevice, "Models\\rock.y2k", L"Textures\\");
 
 }
@@ -69,7 +69,7 @@ BasicMesh * ResourceMgr::GetBasicMesh(ObjectType::Types oType)
 	switch (oType)
 	{
 	case ObjectType::Temple:
-		return mBaseMesh;
+		return mTempleMesh;
 		break;
 	case ObjectType::Tree:
 		return mTreeMesh;

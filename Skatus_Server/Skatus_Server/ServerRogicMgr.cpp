@@ -5,8 +5,8 @@ mNewID(-1)
 {
 	srand(time(NULL));
 
-	mPerWaveMonsterNum[1][ObjectType::Goblin] = 10;
-	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 2;
+	mPerWaveMonsterNum[1][ObjectType::Goblin] = 5;
+	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 1;
 
 	mPerWaveMonsterNum[2][ObjectType::Goblin] = 10;
 	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 2;
@@ -62,7 +62,7 @@ void ServerRogicMgr::Update()
 		else
 			mRogicTimer.Tick();
 
-		DEBUG_MSG("WaveWaiting...");
+		//DEBUG_MSG("WaveWaiting...");
 	}
 	else if (mGameStateMgr.GetCurrState() == eGameState::WaveStart)
 	{
@@ -72,17 +72,19 @@ void ServerRogicMgr::Update()
 		// 3. 게임상태 진행
 		// 4. 로직 타이머 리셋
 
-		for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel++]) {
+		++mCurrWaveLevel;
+
+		for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel]) {
 				for (UINT i = 0; i < oType.second; ++i)
 				mObjectMgr.AddObject(oType.first);
 		}
+
 		SendPacketToCreateMonsters();
-		mObjectMgr.UpdateMonsters();
 		mGameStateMgr.FlowAdvance();
 
 		mRogicTimer.Reset();
 
-		DEBUG_MSG("WaveStart...");
+		//DEBUG_MSG("WaveStart...");
 	}
 	else if (mGameStateMgr.GetCurrState() == eGameState::Waving)
 	{
@@ -97,12 +99,10 @@ void ServerRogicMgr::Update()
 			mRogicTimer.Reset();
 		}
 		else {
-			mObjectMgr.UpdateMonsters();
-			SendPacketMonInfo();
 			mRogicTimer.Tick();
 		}
 
-		DEBUG_MSG("Waving...");
+		//DEBUG_MSG("Waving...");
 	}
 }
 
@@ -151,8 +151,9 @@ void ServerRogicMgr::RemovePlayer(const UINT & id)
 	mObjectMgr.RemovePlayer(id);
 	g_clients[id].is_connected = false;
 
-	if (mCurrPlayerNum <= 0)
-		mGameStateMgr.Reset();
+	if (mCurrPlayerNum <= 0) {
+		Reset();
+	}
 	else
 	{
 		SC_RemovePlayer packet;
@@ -234,6 +235,7 @@ void ServerRogicMgr::Reset()
 	mCurrWaveLevel = 0;
 	mGameTimer.Reset();
 	mRogicTimer.Reset();
+	mGameStateMgr.Reset();
 	mObjectMgr.ReleaseAllMonsters();
 }
 
@@ -291,17 +293,22 @@ void ServerRogicMgr::SendPacektPlayerInfo()
 
 void ServerRogicMgr::SendPacketMonInfo()
 {
-	SC_MonInfo packet;
-	for (auto m : mObjectMgr.GetMonsters()) {
-		packet.Monsters[m.first].TargetPos = m.second.Pos;
-		packet.Monsters[m.first].TargetID = m.second.TargetID;
-		packet.Monsters[m.first].ActionState = m.second.ActionState;
-	}
+	if (mObjectMgr.GetMonsters().size() > 0)
+	{
+		mObjectMgr.UpdateMonsters();
 
-	packet.NumOfMonsters = mObjectMgr.GetMonsters().size();
-	for (UINT i = 0; i < MAX_USER; ++i) {
-		if (g_clients[i].is_connected)
-			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
+		SC_MonInfo packet;
+		for (auto m : mObjectMgr.GetMonsters()) {
+			packet.Monsters[m.first].TargetPos = m.second.Pos;
+			packet.Monsters[m.first].TargetID = m.second.TargetID;
+			packet.Monsters[m.first].ActionState = m.second.ActionState;
+		}
+
+		packet.NumOfMonsters = mObjectMgr.GetMonsters().size();
+		for (UINT i = 0; i < MAX_USER; ++i) {
+			if (g_clients[i].is_connected)
+				MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
+		}
 	}
 }
 
@@ -321,4 +328,19 @@ void ServerRogicMgr::SendPacketToCreateMonsters()
 		if (g_clients[i].is_connected)
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
 	}
+}
+
+void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& id)
+{
+	auto monsters = mObjectMgr.GetMonsters();
+
+	SC_AddMonster packet;
+	packet.NumOfObjects = monsters.size();
+
+	UINT count(0);
+	for (auto m : monsters) {
+		packet.InitInfos[m.first] = m.second;
+	}
+
+	MyServer::Send_Packet(id, reinterpret_cast<char*>(&packet));
 }

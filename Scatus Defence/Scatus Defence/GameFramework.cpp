@@ -45,10 +45,10 @@ bool GameFrameWork::Init()
 	tii.LayerMapFilename3 = L"Textures/lightdirt.dds";
 	tii.LayerMapFilename4 = L"Textures/dirt.dds";
 	tii.BlendMapFilename = L"Textures/blend.dds";
-	tii.HeightScale = 40.0f;
+	tii.HeightScale = 20.0f;
 	tii.HeightmapWidth = 257;
 	tii.HeightmapHeight = 257;
-	tii.CellSpacing = 3.0f;
+	tii.CellSpacing = 1.5f;
 	Terrain::GetInstance()->Init(md3dDevice, md3dImmediateContext, tii);
 
 	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);

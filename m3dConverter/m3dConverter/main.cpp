@@ -10,8 +10,8 @@ int main()
 	std::string outFileName;
 	Y2KExporter exporter;
 
-	inFileName = "Temple.m3d";
-	outFileName = "Temple.y2k";
+	inFileName = "sample.m3d";
+	outFileName = "sample.y2k";
 	exporter.LoadM3D(IN_PATH + inFileName, false);
 	exporter.ExportY2K(OUT_PATH + outFileName);
 

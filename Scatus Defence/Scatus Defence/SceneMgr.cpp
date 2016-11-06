@@ -75,10 +75,10 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 		device, md3dImmediateContext, treeFilenames, DXGI_FORMAT_R8G8B8A8_UNORM);
 
 	std::vector<std::wstring> grassFilenames;
-	grassFilenames.push_back(L"Textures/grass01.png");
-	grassFilenames.push_back(L"Textures/grass02.png");
-
-
+	grassFilenames.push_back(L"Textures/grass03.png");
+	grassFilenames.push_back(L"Textures/grass04.png");
+	grassFilenames.push_back(L"Textures/grass05.png");
+	
 	mGrassTextureMapArraySRV = d3dHelper::CreateTexture2DArraySRV(
 		device, md3dImmediateContext, grassFilenames, DXGI_FORMAT_R8G8B8A8_UNORM);
 
@@ -513,16 +513,54 @@ void SceneMgr::BuildTreeSpritesBuffer(ID3D11Device * device)
 
 	for (UINT i = 0; i < TreeCount; ++i)
 	{
-		float x = MathHelper::RandF(-200.0f, 200.0f);
-		float z = MathHelper::RandF(100.0f, 200.0f);
-		float y = Terrain::GetInstance()->GetHeight(x, z);
+		if (i < TreeCount / 4) {
+			float x = MathHelper::RandF(-190.0f, 190.0f);
+			float z = MathHelper::RandF(-120.0f, -190.0f);
+			float y = Terrain::GetInstance()->GetHeight(x, z);
 
-		// Move tree slightly above land height.
-		y += 5.1f;
+			// Move tree slightly above land height.
+			y += 5.1f;
 
-		v[i].Pos = XMFLOAT3(x, y, z);
-		v[i].Size = XMFLOAT2(10.0f + MathHelper::RandF(0.0f, 10.0f),
-			10.0f + MathHelper::RandF(0.0f, 10.0f));
+			v[i].Pos = XMFLOAT3(x, y, z);
+			v[i].Size = XMFLOAT2(10.0f + MathHelper::RandF(0.0f, 10.0f),
+				10.0f + MathHelper::RandF(0.0f, 10.0f));
+		}
+		else if (i >= TreeCount / 4 && i < TreeCount / 2) {
+			float x = MathHelper::RandF(190.0f, 120.0f);
+			float z = MathHelper::RandF(190.0f, -190.0f);
+			float y = Terrain::GetInstance()->GetHeight(x, z);
+
+			// Move tree slightly above land height.
+			y += 5.1f;
+
+			v[i].Pos = XMFLOAT3(x, y, z);
+			v[i].Size = XMFLOAT2(10.0f + MathHelper::RandF(0.0f, 10.0f),
+				10.0f + MathHelper::RandF(0.0f, 10.0f));
+		}
+		else if (i >= TreeCount / 2 && i < TreeCount / 4 * 3) {
+			float x = MathHelper::RandF(-190.0f, 190.0f);
+			float z = MathHelper::RandF(190.0f, 120.0f);
+			float y = Terrain::GetInstance()->GetHeight(x, z);
+
+			// Move tree slightly above land height.
+			y += 5.1f;
+
+			v[i].Pos = XMFLOAT3(x, y, z);
+			v[i].Size = XMFLOAT2(10.0f + MathHelper::RandF(0.0f, 10.0f),
+				10.0f + MathHelper::RandF(0.0f, 10.0f));
+		}
+		else {
+			float x = MathHelper::RandF(-190.0f, -120.0f);
+			float z = MathHelper::RandF(190.0f, -190.0f);
+			float y = Terrain::GetInstance()->GetHeight(x, z);
+
+			// Move tree slightly above land height.
+			y += 5.1f;
+
+			v[i].Pos = XMFLOAT3(x, y, z);
+			v[i].Size = XMFLOAT2(10.0f + MathHelper::RandF(0.0f, 10.0f),
+				10.0f + MathHelper::RandF(0.0f, 10.0f));
+		}
 	}
 
 	D3D11_BUFFER_DESC vbd;
@@ -542,16 +580,16 @@ void SceneMgr::BuildGrassSpritesBuffer(ID3D11Device * device)
 
 	for (UINT i = 0; i < GrassCount; ++i)
 	{
-		float x = MathHelper::RandF(-300.0f, 300.0f);
-		float z = MathHelper::RandF(-450.0f, 200.0f);
+		float x = MathHelper::RandF(-120.0f, 120.0f);
+		float z = MathHelper::RandF(-120.0f, 120.0f);
 		float y = Terrain::GetInstance()->GetHeight(x, z);
 
 		// Move tree slightly above land height.
-		y += 0.5f;
+		y += 0.6f;
 
 		v[i].Pos = XMFLOAT3(x, y, z);
-		v[i].Size = XMFLOAT2(1.0f + MathHelper::RandF(0.0f, 2.0f),
-			1.0f + MathHelper::RandF(0.0f, 2.0f));
+		v[i].Size = XMFLOAT2(2.0f + MathHelper::RandF(0.0f, 1.0f),
+			1.0f + MathHelper::RandF(0.0f, 1.0f));
 	}
 
 	D3D11_BUFFER_DESC vbd;
@@ -603,7 +641,7 @@ void SceneMgr::ComputeSceneBoundingBox()
 
 	float halfW = Terrain::GetInstance()->GetWidth() / 2.0f;
 	float halfD = Terrain::GetInstance()->GetDepth() / 2.0f;
-	mSceneBounds.Radius = sqrtf((halfW*halfW) + (halfD*halfD))/3.0f;
+	mSceneBounds.Radius = sqrtf((halfW*halfW) + (halfD*halfD))/2.0f;
 	mSceneBounds.Center = playerPos;
 }
 

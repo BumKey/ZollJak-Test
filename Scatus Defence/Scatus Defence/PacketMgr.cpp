@@ -147,7 +147,7 @@ void PacketMgr::ProcessPacket()
 			Object_Mgr->AddObstacle(type, desc);
 		}
 
-		DEBUG_MSG("SC_INIT_PLAYER, ID : " << p->ClientID);
+		DEBUG_MSG("SC_INIT_PLAYER, ID : " << (int)p->ClientID);
 
 		break;
 	}
@@ -166,11 +166,19 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::MonInfo: {
 		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
-		if (Object_Mgr->GetMonsters().size() > 0) 
+		if (p->NumOfMonsters != Object_Mgr->GetMonsters().size())
+		{
+			CS_ReAddMonsters packet;
+			packet.ClientID = ClientID;
+			SendPacket(packet);
+		}
+		else
 		{
 			for (UINT i = 0; i < p->NumOfMonsters; ++i) 
 				Object_Mgr->UpdateMonster(i, p->Monsters[i]);
 		}
+
+		DEBUG_MSG("[MonInfo] : " << p->NumOfMonsters);
 		break;
 	}
 	case eSC::CollisionInfo: {
@@ -180,9 +188,6 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::FrameInfo: {
 		auto *p = reinterpret_cast<SC_FrameInfo*>(mPacketBuf);
-
-		if (Object_Mgr->GetMonsters().size() == 0)
-			break;
 
 		char* string;
 		switch (p->GameState)

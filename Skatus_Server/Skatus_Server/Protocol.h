@@ -48,6 +48,7 @@ enum eSC {
 enum eCS {
 	KeyInput,
 	MouseInput,
+	ReAddMonsters,
 	Damage
 };
 
@@ -266,6 +267,14 @@ struct CS_Attack : public HEADER
 	BYTE ClientID;
 	BYTE Mon_Num;
 	DWORD Mon_HP[MAX_MONSTER];
+};
+
+struct CS_ReAddMonsters : public HEADER
+{
+	CS_ReAddMonsters() {
+		Size = sizeof(*this); Type = eCS::ReAddMonsters;
+	}
+	BYTE ClientID;
 };
 
 struct CS_Damage : public HEADER

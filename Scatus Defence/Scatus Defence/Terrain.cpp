@@ -193,9 +193,9 @@ void Terrain::DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTrans
 	Effects::TerrainFX->SetFogColor(Colors::Silver);
 	Effects::TerrainFX->SetFogStart(15.0f);
 	Effects::TerrainFX->SetFogRange(175.0f);
-	Effects::TerrainFX->SetMinDist(150.0f);
-	Effects::TerrainFX->SetMaxDist(500.0f);
-	Effects::TerrainFX->SetMinTess(0.0f);
+	Effects::TerrainFX->SetMinDist(100.0f);
+	Effects::TerrainFX->SetMaxDist(400.0f);
+	Effects::TerrainFX->SetMinTess(2.0f);
 	Effects::TerrainFX->SetMaxTess(6.0f);
 	Effects::TerrainFX->SetTexelCellSpaceU(1.0f / mInfo.HeightmapWidth);
 	Effects::TerrainFX->SetTexelCellSpaceV(1.0f / mInfo.HeightmapHeight);

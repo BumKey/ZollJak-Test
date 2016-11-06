@@ -36,7 +36,12 @@ public:
 
 	virtual void MoveToTarget(float dt);
 
-	bool  CurrAnimEnd();
+	void SlowDown() { m_bSlowDown = true; }
+	void SlowDownOff() { m_bSlowDown = false; }
+	bool CurrAnimEnd();
+
+	ActionState::States		GetActionState() const { return mActionState; }
+	virtual std::string		GetAnimName(Anims& eAnim); const
 
 	void					SetMovingSpeed(FLOAT speed) { mProperty.movespeed = speed; }
 	void					SetNextMove(XMFLOAT3 pos) { pos.y = -0.1f; mTargetPos = pos; }
@@ -44,9 +49,6 @@ public:
 	void					SetTarget(SkinnedObject* target);
 	void					SetNoTarget() { mTarget = 0; mHasTarget = false; }
 	void					SetAttackState();
-
-	ActionState::States		GetActionState() const { return mActionState; }
-	virtual std::string		GetAnimName(Anims& eAnim); const
 
 	bool					IsAttack() { return mActionState == ActionState::Attack ? true : false; }
 	bool					IsDead() { return mActionState == ActionState::Die ? true : false; }
@@ -60,6 +62,7 @@ private:
 protected:
 	ActionState::States mActionState;
 	bool m_bForOneHit;
+	bool m_bSlowDown;
 	bool mHasTarget;
 
 	XNA::OrientedBox mOOBB;

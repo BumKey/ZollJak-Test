@@ -54,8 +54,8 @@ FLOAT MathHelper::DistanceVector(XMFLOAT3 l, XMFLOAT3 r)
 
 bool MathHelper::Float3Equal(XMFLOAT3 l, XMFLOAT3 r)
 {
-	if (abs(l.x - r.x) <= 0.03f &&
-		abs(l.z - r.z) <= 0.03f)
+	if (abs(l.x - r.x) <= 0.01f &&
+		abs(l.z - r.z) <= 0.01f)
 		return true;
 	else
 		return false;

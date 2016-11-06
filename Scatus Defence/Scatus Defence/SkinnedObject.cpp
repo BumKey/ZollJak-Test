@@ -7,7 +7,7 @@ SkinnedObject::SkinnedObject() : GameObject(), mTimePos(0.0f)
 }
 
 SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const SO_InitDesc& info) : GameObject(mesh, info),
-mTimePos(0.0f), m_bForOneHit(false), mHasTarget(false)
+mTimePos(0.0f), m_bForOneHit(false), mHasTarget(false), m_bSlowDown(false)
 {
 	mMesh = mesh;
 	mActionState = ActionState::Idle;
@@ -84,7 +84,7 @@ void SkinnedObject::Update(float dt)
 
 	XMMATRIX S = XMMatrixScaling(mScaling, mScaling, mScaling);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(mRotation.x, mRotation.y, mRotation.z);
-	XMVECTOR Q = XMQuaternionRotationMatrix(R);
+	//XMVECTOR Q = XMQuaternionRotationMatrix(R);
 	XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
@@ -99,6 +99,8 @@ void SkinnedObject::Animate(float dt)
 	SetClip();
 
 	if (mActionState == ActionState::Attack)
+		mTimePos += dt*mProperty.attackspeed;
+	else if(mActionState == ActionState::Die)
 		mTimePos += dt*mProperty.attackspeed;
 	else
 		mTimePos += dt*mProperty.movespeed/5.0f;

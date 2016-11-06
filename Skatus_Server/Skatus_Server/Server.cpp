@@ -48,6 +48,9 @@ void MyServer::Send_Packet(DWORD id, char *packet) {
 	case eSC::FrameInfo:
 		string = "FrameInfo";
 		break;
+	case eSC::MonInfo:
+		string = "MonInfo";
+		break;
 	case eSC::PutOtherPlayers:
 		string = "PutOtherPlayer";
 		break;
@@ -92,6 +95,11 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 		auto info = reinterpret_cast<CS_Attack*>(packet);
 		DEBUG_MSG("CS_MOUSEINPUT, ID : " << info->ClientID);
 		rogicMgr.ProcessMouseInput(*info);
+		break;
+	}
+	case eCS::ReAddMonsters: {
+		auto info = reinterpret_cast<CS_ReAddMonsters*>(packet);
+		rogicMgr.SendPacketToCreateMonsters(info->ClientID);
 		break;
 	}
 	default:

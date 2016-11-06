@@ -23,14 +23,14 @@ void ResourceMgr::Init(ID3D11Device * dc)
 {
 	mDevice = dc;
 
-	mTempleMesh = new BasicMesh(mDevice, "Models\\Temple.y2k", L"Textures\\Temple\\");
+	mTempleMesh = new BasicMesh(mDevice, "Models\\house1.y2k", L"Textures\\house1\\");
 	mTreeMesh = new BasicMesh(mDevice, "Models\\tree.y2k", L"Textures\\");
-	//BaseMesh = new BasicMesh(dc, texMgr, "Meshs\\base.m3d", L"Textures\\");
-	//StairsMesh = new BasicMesh(dc, texMgr, "Meshs\\stairs.m3d", L"Textures\\");
-	//Pillar1Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar1.m3d", L"Textures\\");
-	//Pillar2Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar2.m3d", L"Textures\\");
-	//Pillar3Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar5.m3d", L"Textures\\");
-	//Pillar4Mesh = new BasicMesh(dc, texMgr, "Meshs\\pillar6.m3d", L"Textures\\");
+	/*mBaseMesh = new BasicMesh(mDevice, "Models\\base.y2k", L"Textures\\");
+	mStairsMesh = new BasicMesh(mDevice, "Models\\stairs.y2k", L"Textures\\");
+	mPillar1Mesh = new BasicMesh(mDevice, "Models\\pillar1.y2k", L"Textures\\");
+	mPillar2Mesh = new BasicMesh(mDevice, "Models\\pillar2.y2k", L"Textures\\");
+	mPillar3Mesh = new BasicMesh(mDevice, "Models\\pillar5.y2k", L"Textures\\");
+	mPillar4Mesh = new BasicMesh(mDevice, "Models\\pillar6.y2k", L"Textures\\");*/
 	mRockMesh = new BasicMesh(mDevice, "Models\\rock.y2k", L"Textures\\");
 
 }

@@ -134,7 +134,6 @@ void Monster::Attack(SkinnedObject * target)
 	if (mHasTarget && target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
 	{
 		mDamage_Timer_flag = true;
-		UI_Mgr->Active_damage_Screen(true); //Timer reset도 함께된다.
 	
 		int mTarget_hp = target->GetProperty().hp_now;
 		int armor = target->GetProperty().guardpoint;

@@ -63,6 +63,7 @@ void Player::Damage(float damage)
 {
 	SkinnedObject::Damage(damage);
 
+	UI_Mgr->Active_damage_Screen(true); //Timer reset도 함께된다.
 	Time_Mgr->Set_P_HP(mProperty.hp_now);
 	Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);

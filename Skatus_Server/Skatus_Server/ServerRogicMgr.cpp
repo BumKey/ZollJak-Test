@@ -93,7 +93,7 @@ void ServerRogicMgr::Update()
 		// 2. 게임 상태들(남은 몬스터, 남은시간들 등..) 처리
 		// 3. 로직 타이머 리셋
 
-		if (mRogicTimer.TotalTime() > 100.0f)
+		if (mRogicTimer.TotalTime() > 20.0f)
 		{
 			mGameStateMgr.FlowAdvance();
 			mRogicTimer.Reset();

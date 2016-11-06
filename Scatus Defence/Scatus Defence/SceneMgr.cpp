@@ -77,7 +77,6 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 	std::vector<std::wstring> grassFilenames;
 	grassFilenames.push_back(L"Textures/grass03.png");
 	grassFilenames.push_back(L"Textures/grass04.png");
-	grassFilenames.push_back(L"Textures/grass05.png");
 	
 	mGrassTextureMapArraySRV = d3dHelper::CreateTexture2DArraySRV(
 		device, md3dImmediateContext, grassFilenames, DXGI_FORMAT_R8G8B8A8_UNORM);

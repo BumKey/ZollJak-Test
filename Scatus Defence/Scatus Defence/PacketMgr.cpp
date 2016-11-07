@@ -166,7 +166,7 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::MonInfo: {
 		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
-		if (p->NumOfMonsters != Object_Mgr->GetMonsters().size())
+		if (p->NumOfMonsters > 0 && Object_Mgr->GetMonsters().size() == 0)
 		{
 			CS_ReAddMonsters packet;
 			SendPacket(packet);

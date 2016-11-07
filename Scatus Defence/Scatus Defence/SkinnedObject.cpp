@@ -13,6 +13,9 @@ mTimePos(0.0f), m_bForOneHit(false), mHasTarget(false), m_bSlowDown(false)
 	mActionState = ActionState::Idle;
 
 	mFinalTransforms.resize(mesh->SkinnedData.BoneCount());
+
+	XNA::ComputeBoundingOrientedBoxFromPoints(&mOOBB, mesh->Vertices.size(),
+		&mesh->Vertices[0].Pos, sizeof(Vertex::PosNormalTexTanSkinned));
 }
 
 SkinnedObject::~SkinnedObject()
@@ -28,6 +31,9 @@ void SkinnedObject::Die()
 void SkinnedObject::Init(SkinnedMesh * mesh, const SO_InitDesc & info)
 {
 	mMesh = mesh;
+
+	XNA::ComputeBoundingOrientedBoxFromPoints(&mOOBB, mesh->Vertices.size(),
+		&mesh->Vertices[0].Pos, sizeof(Vertex::PosNormalTexTanSkinned));
 
 	XMMATRIX S = XMMatrixScaling(info.Scale, info.Scale, info.Scale);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(info.Rot.x, info.Rot.y, info.Rot.z);

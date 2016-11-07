@@ -138,6 +138,10 @@ void Player::ProccessKeyInput(float dt)
 				CollisionMoving(Object_Mgr->GetCollisionPos()[i], dt);
 		}
 
+		auto temple = Temple::GetInstance()->GetAABB();
+		if (XNA::IntersectAxisAlignedBoxAxisAlignedBox(&temple, &mAABB))
+			CollisionMoving(Object_Mgr->GetTemplePos(), dt);
+
 		if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000)) { Move(-dt, -dt);	}
 		else if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('D') & 0x8000)) { Move(-dt, dt);	}
 		else if ((GetAsyncKeyState('S') & 0x8000) && (GetAsyncKeyState('A') & 0x8000)) { Move(dt, -dt);	}

@@ -49,6 +49,9 @@ void GameObject::Walk(float d)
 	XMVECTOR l = XMLoadFloat3(&mCurrLook);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
+
+	if(BoundaryCheck())
+		XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, -l, p));
 }
 
 void GameObject::Strafe(float d)
@@ -60,6 +63,9 @@ void GameObject::Strafe(float d)
 	XMVECTOR r = XMLoadFloat3(&mRight);
 	XMVECTOR p = XMLoadFloat3(&mPosition);
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, r, p));
+
+	if (BoundaryCheck())
+		XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, -r, p));
 }
 
 void GameObject::RotateY(float angle)
@@ -108,6 +114,15 @@ void GameObject::UpdateBoundingObject()
 	//mAABB.Center.y += mExtentY;
 	mBS.Center = mAABB.Center;
 	//mBS.Center.y += mExtentY;
+}
+
+bool GameObject::BoundaryCheck()
+{
+	if ((mPosition.x > 188.0f || mPosition.x < -188.0f)
+		|| (mPosition.z > 188.0f || mPosition.z < -188.0f))
+		return true;
+	else
+		return false;
 }
 
 void GameObject::Release()

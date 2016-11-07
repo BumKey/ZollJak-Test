@@ -56,6 +56,7 @@ public:
 protected:
 	void InitBoundingObject();
 	void UpdateBoundingObject();
+	bool BoundaryCheck();
 
 protected:
 	XMFLOAT4X4	mWorld;

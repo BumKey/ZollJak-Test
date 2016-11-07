@@ -125,8 +125,6 @@ void Player::Move(float walk, float strafe)
 		Sound_Mgr->Play3DEffect(Sound_p_footstep1, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 
 	}
-	
-
 }
 
 void Player::ProccessKeyInput(float dt)

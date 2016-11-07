@@ -39,7 +39,7 @@ public:
 	std::vector<Monster*>				GetMonsters() { return mMonsters; }
 	UINT								GetCurrPlayerNum() const { return mCurrPlayerNum; }
 	XMFLOAT3*							GetCollisionPos() { return mCollisionPos; }
-
+	const XMFLOAT3						GetTemplePos() { return mTemplePos; }
 	void UpdatePlayer(const UINT& id, const PlayerInfos& info);
 	void UpdateMonster(const UINT& id, const MonInfos& info);
 	void Update(float dt);
@@ -48,6 +48,8 @@ private:
 	UINT mCurrPlayerNum;
 
 	XMFLOAT3 mCollisionPos[COLL_OBJ_NUM];
+	XMFLOAT3 mTemplePos;
+
 	std::vector<GameObject*>						mAllObjects;					
 	std::vector<BasicObject*>						mBasicObjects;
 	std::vector<Monster*>							mMonsters;

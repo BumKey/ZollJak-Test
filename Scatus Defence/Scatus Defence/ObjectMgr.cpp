@@ -63,6 +63,7 @@ void ObjectMgr::AddObstacle(const ObjectType::Types & type, const BO_InitDesc & 
 	else if (type == ObjectType::Temple) {
 		Temple::GetInstance()->Init(Resource_Mgr->GetBasicMesh(type), desc);
 		mBasicObjects.push_back(Temple::GetInstance());
+		mTemplePos = desc.Pos;
 	}
 	else
 		mBasicObjects.push_back(new BasicObject(Resource_Mgr->GetBasicMesh(type), desc, Label::Basic));

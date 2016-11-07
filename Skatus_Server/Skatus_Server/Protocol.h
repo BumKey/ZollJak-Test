@@ -49,6 +49,7 @@ enum eCS {
 	KeyInput,
 	MouseInput,
 	ReAddMonsters,
+	RePutPlayers,
 	Damage
 };
 
@@ -194,9 +195,8 @@ struct SC_FrameInfo : public HEADER
 	}
 	eGameState GameState;
 	UINT Time;
-	UINT NumOfObjects;
-	UINT Roundlevel;
-
+	BYTE NumOfPlayers;
+	BYTE Roundlevel;
 };
 
 struct SC_MonInfo : public HEADER
@@ -273,6 +273,14 @@ struct CS_ReAddMonsters : public HEADER
 {
 	CS_ReAddMonsters() {
 		Size = sizeof(*this); Type = eCS::ReAddMonsters;
+	}
+	BYTE ClientID;
+};
+
+struct CS_RePutPlayers : public HEADER
+{
+	CS_RePutPlayers() {
+		Size = sizeof(*this); Type = eCS::RePutPlayers;
 	}
 	BYTE ClientID;
 };

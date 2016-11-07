@@ -93,7 +93,7 @@ void ServerRogicMgr::Update()
 		// 2. 게임 상태들(남은 몬스터, 남은시간들 등..) 처리
 		// 3. 로직 타이머 리셋
 
-		if (mRogicTimer.TotalTime() > 20.0f)
+		if (mRogicTimer.TotalTime() > 100.0f)
 		{
 			mGameStateMgr.FlowAdvance();
 			mRogicTimer.Reset();
@@ -143,6 +143,21 @@ void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oT
 	// 조건 인원이 접속 했을 때 Wave시작.
 	if (mCurrPlayerNum >= MAX_USER && mGameStateMgr.GetCurrState() == eGameState::GameWaiting)
 		WaveStart();
+}
+
+void ServerRogicMgr::AddPlayer(const UINT & id)
+{
+	SC_InitPlayer packet;
+	packet.ClientID = id;
+	packet.CurrPlayerNum = mCurrPlayerNum;
+	for (int i = 0; i < mCurrPlayerNum; ++i)
+		packet.Player[i] = mObjectMgr.GetPlayer(i);
+
+	packet.NumOfObjects = mObjectMgr.GetAllBasicObjects().size();
+	for (UINT i = 0; i < packet.NumOfObjects; ++i)
+		packet.MapInfo[i] = mObjectMgr.GetAllBasicObjects()[i];
+
+	MyServer::Send_Packet(id, reinterpret_cast<char *>(&packet));
 }
 
 void ServerRogicMgr::RemovePlayer(const UINT & id)
@@ -263,7 +278,7 @@ void ServerRogicMgr::SendPacketFrameInfo()
 
 	packet.GameState = mGameStateMgr.GetCurrState();
 	packet.Roundlevel = mCurrWaveLevel;
-	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
+	packet.NumOfPlayers = mObjectMgr.GetCurrPlayerNum();
 
 	for (UINT i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].is_connected) 

@@ -195,9 +195,8 @@ struct SC_FrameInfo : public HEADER
 	}
 	eGameState GameState;
 	UINT Time;
-	UINT NumOfObjects;
-	UINT Roundlevel;
-
+	BYTE NumOfPlayers;
+	BYTE Roundlevel;
 };
 
 struct SC_MonInfo : public HEADER

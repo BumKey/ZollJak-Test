@@ -312,6 +312,8 @@ void SkinnedObject::ChangeActionState(ActionState::States state)
 		m_bForOneHit = true;
 		mActionState = state;
 	}
+	else if (state == ActionState::Die)
+		mActionState = state;
 	else if (IsActionStateChangeAble())
 		mActionState = state;
 }

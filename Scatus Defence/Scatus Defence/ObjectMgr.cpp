@@ -126,7 +126,7 @@ void ObjectMgr::Update(float dt)
 			mPlayers[i]->Animate(dt);
 			if (i != Packet_Mgr->ClientID) {
 				mPlayers[i]->MoveToTarget(dt);
-				mPlayers[i]->Update(dt);
+				//mPlayers[i]->Update(dt);
 			}
 
 			mAllObjects.push_back(mPlayers[i]);
@@ -136,7 +136,7 @@ void ObjectMgr::Update(float dt)
 	for (auto m : mMonsters)
 	{
 		m->Animate(dt);
-		m->Update(dt);
+		//m->Update(dt);
 	/*	for (auto m2 : mMonsters)
 		{
 			if (MathHelper::DistanceVector(m->GetPos(), m2->GetPos()) <= 3.0f)

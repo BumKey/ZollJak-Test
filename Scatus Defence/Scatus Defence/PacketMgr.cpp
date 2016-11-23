@@ -166,10 +166,10 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::MonInfo: {
 		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
-		if (p->NumOfMonsters != Object_Mgr->GetMonsters().size())
+		if (p->NumOfMonsters > 0 && Object_Mgr->GetMonsters().size() == 0
+			&& Time_Mgr->GetGameState() == game_waving)
 		{
 			CS_ReAddMonsters packet;
-			packet.ClientID = ClientID;
 			SendPacket(packet);
 		}
 		else
@@ -188,6 +188,11 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::FrameInfo: {
 		auto *p = reinterpret_cast<SC_FrameInfo*>(mPacketBuf);
+
+		if (p->NumOfPlayers != Object_Mgr->GetCurrPlayerNum()) {
+			CS_RePutPlayers packet;
+			SendPacket(packet);
+		}
 
 		char* string;
 		switch (p->GameState)
@@ -208,7 +213,7 @@ void PacketMgr::ProcessPacket()
 			break;
 		}
 		
-		DEBUG_MSG("[SC_PerFrame] CurrState : " << string << ", ObjectNum : " << p->NumOfObjects);
+		DEBUG_MSG("[SC_PerFrame] CurrState : " << string << ", PlayerNum : " << p->NumOfPlayers);
 		
 		Time_Mgr->Set_Wavelevel(p->Roundlevel);
 		Time_Mgr->Set_time(p->Time);

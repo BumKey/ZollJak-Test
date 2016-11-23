@@ -24,7 +24,7 @@ Goblin::Goblin(SkinnedMesh* mesh, const SO_InitDesc& info, Type type)
 	mAnimNames[Anims::walk] = "walk";
 	mAnimNames[Anims::look_around] = "stand2";
 
-	mExtentY = mAABB.Extents.x;
+	// mExtentY = mAABB.Extents.x;
 }
 
 Goblin::~Goblin()

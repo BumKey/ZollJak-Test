@@ -15,6 +15,8 @@ cbuffer cbPerFrame
 	float  gFogStart;
 	float  gFogRange;
 	float4 gFogColor;
+
+	float4 gWorldFrustumPlanes[6];
 };
 
 cbuffer cbPerObject
@@ -69,6 +71,39 @@ struct GeoOut
     uint   PrimID  : SV_PrimitiveID;
 };
 
+// Returns true if the box is completely behind (in negative half space) of plane.
+bool AabbBehindPlaneTest(float3 center, float3 extents, float4 plane)
+{
+	float3 n = abs(plane.xyz);
+
+	// This is always positive.
+	float r = dot(extents, n);
+
+	// signed distance from center point to plane.
+	float s = dot(float4(center, 1.0f), plane);
+
+	// If the center point of the box is a distance of e or more behind the
+	// plane (in which case s is negative since it is behind the plane),
+	// then the box is completely in the negative half space of the plane.
+	return (s + r) < 0.0f;
+}
+
+// Returns true if the box is completely outside the frustum.
+bool AabbOutsideFrustumTest(float3 center, float3 extents, float4 frustumPlanes[6])
+{
+	for (int i = 0; i < 6; ++i)
+	{
+		// If the box is completely behind any of the frustum planes
+		// then it is outside the frustum.
+		if (AabbBehindPlaneTest(center, extents, frustumPlanes[i]))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout;
@@ -88,43 +123,56 @@ void GS(point VertexOut gin[1],
         inout TriangleStream<GeoOut> triStream)
 {	
 	//
-	// Compute the local coordinate system of the sprite relative to the world
-	// space such that the billboard is aligned with the y-axis and faces the eye.
-	//
-
-	float3 up = float3(0.0f, 1.0f, 0.0f);
-	float3 look = gEyePosW - gin[0].CenterW;
-	look.y = 0.0f; // y-axis aligned, so project to xz-plane
-	look = normalize(look);
-	float3 right = cross(up, look);
-
-	//
 	// Compute triangle strip vertices (quad) in world space.
 	//
-	float halfWidth  = 0.5f*gin[0].SizeW.x;
+	float halfWidth = 0.5f*gin[0].SizeW.x;
 	float halfHeight = 0.5f*gin[0].SizeW.y;
-	
-	float4 v[4];
-	v[0] = float4(gin[0].CenterW + halfWidth*right - halfHeight*up, 1.0f);
-	v[1] = float4(gin[0].CenterW + halfWidth*right + halfHeight*up, 1.0f);
-	v[2] = float4(gin[0].CenterW - halfWidth*right - halfHeight*up, 1.0f);
-	v[3] = float4(gin[0].CenterW - halfWidth*right + halfHeight*up, 1.0f);
 
-	//
-	// Transform quad vertices to world space and output 
-	// them as a triangle strip.
-	//
 	GeoOut gout;
-	[unroll]
-	for(int i = 0; i < 4; ++i)
+	if (AabbOutsideFrustumTest(gin[0].CenterW, halfWidth, gWorldFrustumPlanes))
 	{
-		gout.PosH     = mul(v[i], gViewProj);
-		gout.PosW     = v[i].xyz;
-		gout.NormalW  = look;
-		gout.Tex      = gTexC[i];
-		gout.PrimID   = primID;
-		
+		gout.PosH = float4(0.0f, 0.0f, 0.0f, 0.0f);
+		gout.PosW = float3(0.0f, 0.0f, 0.0f);
+		gout.NormalW = float3(0.0f, 0.0f, 0.0f);
+		gout.Tex = float2(0.0f, 0.0f);
+		gout.PrimID = 0;
+
 		triStream.Append(gout);
+	}
+	else
+	{
+		//
+		// Compute the local coordinate system of the sprite relative to the world
+		// space such that the billboard is aligned with the y-axis and faces the eye.
+		//
+
+		float3 up = float3(0.0f, 1.0f, 0.0f);
+		float3 look = gEyePosW - gin[0].CenterW;
+		look.y = 0.0f; // y-axis aligned, so project to xz-plane
+		look = normalize(look);
+		float3 right = cross(up, look);
+
+		float4 v[4];
+		v[0] = float4(gin[0].CenterW + halfWidth*right - halfHeight*up, 1.0f);
+		v[1] = float4(gin[0].CenterW + halfWidth*right + halfHeight*up, 1.0f);
+		v[2] = float4(gin[0].CenterW - halfWidth*right - halfHeight*up, 1.0f);
+		v[3] = float4(gin[0].CenterW - halfWidth*right + halfHeight*up, 1.0f);
+
+		//
+		// Transform quad vertices to world space and output 
+		// them as a triangle strip.
+		//
+		[unroll]
+		for (int i = 0; i < 4; ++i)
+		{
+			gout.PosH = mul(v[i], gViewProj);
+			gout.PosW = v[i].xyz;
+			gout.NormalW = look;
+			gout.Tex = gTexC[i];
+			gout.PrimID = primID;
+
+			triStream.Append(gout);
+		}
 	}
 }
 
@@ -210,6 +258,16 @@ float4 PS(GeoOut pin, uniform int gLightCount, uniform bool gUseTexure, uniform 
 // Techniques--just define the ones our demo needs; you can define the other 
 //   variations as needed.
 //---------------------------------------------------------------------------------------
+technique11 Light1TexAlphaClip
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_5_0, VS()));
+		SetGeometryShader(CompileShader(gs_5_0, GS()));
+		SetPixelShader(CompileShader(ps_5_0, PS(1, true, true, false)));
+	}
+}
+
 technique11 Light3
 {
     pass P0

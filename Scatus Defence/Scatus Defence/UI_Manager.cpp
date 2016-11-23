@@ -917,7 +917,7 @@ bool UI_Manager::Tick_dmage_Timer()
 		return true;
 	}
 	else {
-		Active_damage_Screen(false);
+		//Active_damage_Screen(false);
 		return false;
 	}
 }

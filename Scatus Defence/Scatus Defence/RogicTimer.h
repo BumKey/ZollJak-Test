@@ -55,6 +55,7 @@ public:
 	int Get_Wavelevel() { return m_wave_level; }
 	int Get_time() { return m_time; }
 	int Get_P_HP() { return m_p_hp; }
+	Gamestate_type GetGameState() { return gamestate; }
 	void Set_Wavelevel(int num) { m_wave_level = num; }
 	void Set_time(int num) {m_time = num; }
 	void Set_P_HP(int num) { m_p_hp = num; }

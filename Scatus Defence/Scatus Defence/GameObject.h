@@ -27,7 +27,7 @@ public:
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj) = 0;
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc) = 0;
 
-	virtual void MoveToTarget(float dt) {}
+	virtual void MoveToTarget(float dt) {};
 
 	virtual void Release();
 
@@ -42,8 +42,8 @@ public:
 	Properties				GetProperty() const { return mProperty; }
 	ObjectType::Types		GetObjectType() const { return mObjectType; }
 	CollisionState::States  GetCollisionState() const { return mCollisionState; }
-	XNA::AxisAlignedBox		GetAABB() const { return mAABB; }
-	XNA::Sphere				GetBS() const { return mBS; }
+	XNA::AxisAlignedBox		GetAABB() const { return mMesh->GetAABB(); }
+	// XNA::Sphere				GetBS() const { return mBS; }
 
 	void					SetPos(const XMFLOAT3& pos) { mPosition = pos; }
 	void					SetRot(const XMFLOAT3& rot) { mRotation = rot; }
@@ -54,16 +54,18 @@ public:
 	void  PrintLocation(); //객체 위치값출력 반환
 
 protected:
-	void InitBoundingObject();
-	void UpdateBoundingObject();
+	bool BoundaryCheck();
+	virtual void  FrustumCulling();
 
 protected:
 	XMFLOAT4X4	mWorld;
 	GameMesh*	mMesh;
 
+	int mFrustumCull;
+
 	FLOAT		mExtentY;
-	XNA::Sphere mBS;
-	XNA::AxisAlignedBox mAABB;
+	//XNA::Sphere mBS;
+	//XNA::AxisAlignedBox mAABB;
 
 	FLOAT	 mScaling;
 	XMFLOAT3 mRotation;

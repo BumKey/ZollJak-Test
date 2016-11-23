@@ -15,7 +15,7 @@ SceneMgr::SceneMgr() : mLightRotationAngle(0.0f), mScreenQuadVB(0), mScreenQuadI
 	mDirLights[2].Ambient = XMFLOAT4(0.1f, 0.2f, 0.1f, 1.0f);
 	mDirLights[2].Diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	mDirLights[2].Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	mDirLights[2].Direction = XMFLOAT3(0.0f, 0.0, -1.0f);
+	mDirLights[2].Direction = XMFLOAT3(-0.38f, -0.38f, -0.23f);
 
 	mOriginalLightDir[0] = mDirLights[0].Direction;
 	mOriginalLightDir[1] = mDirLights[1].Direction;
@@ -77,7 +77,6 @@ void SceneMgr::Init(ID3D11Device* device, ID3D11DeviceContext * dc,
 	std::vector<std::wstring> grassFilenames;
 	grassFilenames.push_back(L"Textures/grass03.png");
 	grassFilenames.push_back(L"Textures/grass04.png");
-	grassFilenames.push_back(L"Textures/grass05.png");
 	
 	mGrassTextureMapArraySRV = d3dHelper::CreateTexture2DArraySRV(
 		device, md3dImmediateContext, grassFilenames, DXGI_FORMAT_R8G8B8A8_UNORM);
@@ -124,11 +123,9 @@ void SceneMgr::DrawScene()
 	Effects::NormalMapFX->SetFogRange(300.0f);
 
 	// Draw Objects
-	for (auto i : allObjects) {
-		XMFLOAT3 pos = i->GetPos();
+	for (auto i : allObjects) 
 		i->DrawToScene(md3dImmediateContext, mShadowTransform);
-	}
-
+	
 	md3dImmediateContext->RSSetState(0);
 	md3dImmediateContext->OMSetDepthStencilState(0, 0);
 
@@ -138,8 +135,8 @@ void SceneMgr::DrawScene()
 	DrawTreeSprites();
 	DrawGrassSprites();
 
-	if (GetAsyncKeyState('X') & 0x8000)
-		DrawBS();
+	//if (GetAsyncKeyState('X') & 0x8000)
+	//	DrawBS();
 
 	if(GetAsyncKeyState('Z') & 0x8000)
 		DrawScreenQuadSsao();
@@ -183,10 +180,8 @@ void SceneMgr::CreateSsaoMap()
 	md3dImmediateContext->RSSetViewports(1, &mScreenViewport);
 	mSsao->SetNormalDepthRenderTarget(mDepthStencilView);
 
-	for (auto i : allObjects) {
-		XMFLOAT3 pos = i->GetPos();
-		i->DrawToSsaoNormalDepthMap(md3dImmediateContext);
-	}
+	for (auto i : allObjects) 
+			i->DrawToSsaoNormalDepthMap(md3dImmediateContext);
 
 	//
 	// Now compute the ambient occlusion.
@@ -207,10 +202,8 @@ void SceneMgr::CreateShadowMap()
 	XMMATRIX proj = XMLoadFloat4x4(&mLightProj);
 	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
 
-	for (auto i : allObjects) {
-		XMFLOAT3 pos = i->GetPos();
+	for (auto i : allObjects) 
 		i->DrawToShadowMap(md3dImmediateContext, viewProj);
-	}
 
 	md3dImmediateContext->RSSetState(0);
 }
@@ -218,6 +211,9 @@ void SceneMgr::CreateShadowMap()
 void SceneMgr::DrawTreeSprites()
 {
 	const Camera& cam = *Camera::GetInstance();
+
+	XMFLOAT4 worldPlanes[6];
+	ExtractFrustumPlanes(worldPlanes, Camera::GetInstance()->ViewProj());
 
 	Effects::TreeSpriteFX->SetDirLights(mDirLights);
 	Effects::TreeSpriteFX->SetEyePosW(cam.GetPosition());
@@ -227,6 +223,7 @@ void SceneMgr::DrawTreeSprites()
 	Effects::TreeSpriteFX->SetViewProj(cam.ViewProj());
 	Effects::TreeSpriteFX->SetMaterial(mTreeMat);
 	Effects::TreeSpriteFX->SetTreeTextureMapArray(mTreeTextureMapArraySRV);
+	Effects::TreeSpriteFX->SetWorldFrustumPlanes(worldPlanes);
 
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	md3dImmediateContext->IASetInputLayout(InputLayouts::TreePointSprite);
@@ -234,7 +231,7 @@ void SceneMgr::DrawTreeSprites()
 	UINT offset = 0;
 
 	ID3DX11EffectTechnique* treeTech;
-	treeTech = Effects::TreeSpriteFX->Light3TexAlphaClipTech;
+	treeTech = Effects::TreeSpriteFX->Light1TexAlphaClipTech;
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	treeTech->GetDesc(&techDesc);
@@ -255,6 +252,9 @@ void SceneMgr::DrawGrassSprites()
 {
 	const Camera& cam = *Camera::GetInstance();
 
+	XMFLOAT4 worldPlanes[6];
+	ExtractFrustumPlanes(worldPlanes, Camera::GetInstance()->ViewProj());
+
 	Effects::TreeSpriteFX->SetDirLights(mDirLights);
 	Effects::TreeSpriteFX->SetEyePosW(cam.GetPosition());
 	Effects::TreeSpriteFX->SetFogColor(Colors::Silver);
@@ -263,6 +263,7 @@ void SceneMgr::DrawGrassSprites()
 	Effects::TreeSpriteFX->SetViewProj(cam.ViewProj());
 	Effects::TreeSpriteFX->SetMaterial(mGrassMat);
 	Effects::TreeSpriteFX->SetTreeTextureMapArray(mGrassTextureMapArraySRV);
+	Effects::TreeSpriteFX->SetWorldFrustumPlanes(worldPlanes);
 
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	md3dImmediateContext->IASetInputLayout(InputLayouts::TreePointSprite);
@@ -270,7 +271,7 @@ void SceneMgr::DrawGrassSprites()
 	UINT offset = 0;
 
 	ID3DX11EffectTechnique* treeTech;
-	treeTech = Effects::TreeSpriteFX->Light3TexAlphaClipTech;
+	treeTech = Effects::TreeSpriteFX->Light1TexAlphaClipTech;
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	treeTech->GetDesc(&techDesc);
@@ -350,40 +351,40 @@ void SceneMgr::DrawScreenQuadShadow()
 	}
 }
 
-void SceneMgr::DrawBS()
-{
-	UINT stride = sizeof(XMFLOAT3);
-	UINT offset = 0;
-
-	md3dImmediateContext->IASetInputLayout(InputLayouts::Pos);
-	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	md3dImmediateContext->IASetVertexBuffers(0, 1, &mDebugSphereVB, &stride, &offset);
-	md3dImmediateContext->IASetIndexBuffer(mDebugSphereIB, DXGI_FORMAT_R32_UINT, 0);
-
-	for (auto iterO : Object_Mgr->GetAllObjects())
-	{
-		FLOAT s = iterO->GetBS().Radius;
-		XMFLOAT3 p = iterO->GetBS().Center;
-		p.y += Terrain::GetInstance()->GetHeight(p);
-
-		XMMATRIX S = XMMatrixScaling(s, s, s);
-		XMMATRIX T = XMMatrixTranslation(p.x, p.y, p.z);
-		XMMATRIX world = S*T;
-
-		ID3DX11EffectTechnique* tech = Effects::WireFX->WireFrameTech;
-		D3DX11_TECHNIQUE_DESC techDesc;
-
-		Effects::WireFX->SetWorldViewProj(world * Camera::GetInstance()->ViewProj());
-
-		tech->GetDesc(&techDesc);
-		for (UINT p = 0; p < techDesc.Passes; ++p)
-		{
-			tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-			md3dImmediateContext->DrawIndexed(mDSIndicesNum, 0, 0);
-		}
-	}
-	md3dImmediateContext->RSSetState(0);
-}
+//void SceneMgr::DrawBS()
+//{
+//	UINT stride = sizeof(XMFLOAT3);
+//	UINT offset = 0;
+//
+//	md3dImmediateContext->IASetInputLayout(InputLayouts::Pos);
+//	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+//	md3dImmediateContext->IASetVertexBuffers(0, 1, &mDebugSphereVB, &stride, &offset);
+//	md3dImmediateContext->IASetIndexBuffer(mDebugSphereIB, DXGI_FORMAT_R32_UINT, 0);
+//
+//	for (auto iterO : Object_Mgr->GetAllObjects())
+//	{
+//		FLOAT s = iterO->GetBS().Radius;
+//		XMFLOAT3 p = iterO->GetBS().Center;
+//		p.y += Terrain::GetInstance()->GetHeight(p);
+//
+//		XMMATRIX S = XMMatrixScaling(s, s, s);
+//		XMMATRIX T = XMMatrixTranslation(p.x, p.y, p.z);
+//		XMMATRIX world = S*T;
+//
+//		ID3DX11EffectTechnique* tech = Effects::WireFX->WireFrameTech;
+//		D3DX11_TECHNIQUE_DESC techDesc;
+//
+//		Effects::WireFX->SetWorldViewProj(world * Camera::GetInstance()->ViewProj());
+//
+//		tech->GetDesc(&techDesc);
+//		for (UINT p = 0; p < techDesc.Passes; ++p)
+//		{
+//			tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+//			md3dImmediateContext->DrawIndexed(mDSIndicesNum, 0, 0);
+//		}
+//	}
+//	md3dImmediateContext->RSSetState(0);
+//}
 
 void SceneMgr::BuildShadowTransform()
 {

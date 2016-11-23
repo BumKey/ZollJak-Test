@@ -18,9 +18,10 @@ public:
 	virtual void Attack(SkinnedObject* target);
 	virtual void AttackToTarget(float dt);
 	virtual void MoveToTarget(float dt);
-
+	
 private:
-	bool mDamage_Timer_flag;
+	virtual void FrustumCulling();
+
 	AI_State::States mAI_States;
 	GameTimer mTimer;
 

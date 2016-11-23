@@ -9,8 +9,6 @@ GameFrameWork::GameFrameWork(HINSTANCE hInstance)
 
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
-
-	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 }
 
 GameFrameWork::~GameFrameWork()
@@ -51,7 +49,7 @@ bool GameFrameWork::Init()
 	tii.CellSpacing = 1.5f;
 	Terrain::GetInstance()->Init(md3dDevice, md3dImmediateContext, tii);
 
-	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 300.0f);
 
 	Scene_Mgr->Init(md3dDevice, md3dImmediateContext,
 		mDepthStencilView, mRenderTargetView,
@@ -75,7 +73,7 @@ void GameFrameWork::OnResize()
 {
 	D3DApp::OnResize();
 
-	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	Camera::GetInstance()->SetLens(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 300.0f);
 	Scene_Mgr->OnResize(mClientWidth, mClientHeight, mDepthStencilView, mRenderTargetView);
 }
 
@@ -86,10 +84,10 @@ void GameFrameWork::UpdateScene(float dt)
 	// 3. 클라이언트에서 키보드, 마우스 등 이벤트가 발생한다.
 	// 3. 클라이언트가 그에 따라 갱신된 데이터를 서버로 보낸다.
 	// 4. 서버는 각 클라이언트에서 받은 정보를 동기화한다.
-	
-	Object_Mgr->Update(dt);
 
 	Camera::GetInstance()->Update();
+
+	Object_Mgr->Update(dt);
 	Sound_Mgr->Set3DLinstenerPos(Camera::GetInstance()->GetPosition().x, Camera::GetInstance()->GetPosition().y, Camera::GetInstance()->GetPosition().z);
 	//Sound_Mgr->Set3DLinstenerPos(Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 	Scene_Mgr->Update(dt);

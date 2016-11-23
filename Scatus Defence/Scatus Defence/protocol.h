@@ -7,7 +7,7 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
-#define MAX_USER			2
+#define MAX_USER			1
 #define MAX_MONSTER			50
 #define MAX_OBJECT			100
 #define MAX_NPC				100
@@ -19,6 +19,9 @@
 #define OP_SEND				2
 
 #define PI					3.1415926535f
+#define TICK_MONINFO		0.5f
+#define TICK_PLAYERINFO     0.2f
+#define TICK_FRAMEINFO		1.0f
 
 /*
 디버그 환경에서만 cout을 출력
@@ -195,9 +198,8 @@ struct SC_FrameInfo : public HEADER
 	}
 	eGameState GameState;
 	UINT Time;
-	UINT NumOfObjects;
-	UINT Roundlevel;
-
+	BYTE NumOfPlayers;
+	BYTE Roundlevel;
 };
 
 struct SC_MonInfo : public HEADER

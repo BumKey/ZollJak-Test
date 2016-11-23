@@ -36,8 +36,8 @@ public:
 
 	virtual void MoveToTarget(float dt);
 
-	void SlowDown() { m_bSlowDown = true; }
-	void SlowDownOff() { m_bSlowDown = false; }
+	void DoubleSpeed() { m_bDoubleSpeed = true; }
+	void DoubleSpeedOff() { m_bDoubleSpeed = false; }
 	bool CurrAnimEnd();
 
 	ActionState::States		GetActionState() const { return mActionState; }
@@ -62,10 +62,8 @@ private:
 protected:
 	ActionState::States mActionState;
 	bool m_bForOneHit;
-	bool m_bSlowDown;
+	bool m_bDoubleSpeed;
 	bool mHasTarget;
-
-	XNA::OrientedBox mOOBB;
 
 	FLOAT mTimePos;;
 	XMFLOAT3 mTargetPos;

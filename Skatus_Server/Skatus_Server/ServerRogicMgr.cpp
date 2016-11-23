@@ -1,7 +1,7 @@
 #include "ServerRogicMgr.h"
 
 ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(0), mCurrPlayerNum(0),
-mNewID(-1)
+mNewID(-1), mAddMonPacketSended(false)
 {
 	srand(time(NULL));
 
@@ -79,6 +79,8 @@ void ServerRogicMgr::Update()
 				mObjectMgr.AddObject(oType.first);
 		}
 
+		mAddMonPacketSended = false;
+
 		SendPacketToCreateMonsters();
 		mGameStateMgr.FlowAdvance();
 
@@ -143,6 +145,21 @@ void ServerRogicMgr::AddPlayer(const SOCKET& socket, const ObjectType::Types& oT
 	// 조건 인원이 접속 했을 때 Wave시작.
 	if (mCurrPlayerNum >= MAX_USER && mGameStateMgr.GetCurrState() == eGameState::GameWaiting)
 		WaveStart();
+}
+
+void ServerRogicMgr::AddPlayer(const UINT & id)
+{
+	SC_InitPlayer packet;
+	packet.ClientID = id;
+	packet.CurrPlayerNum = mCurrPlayerNum;
+	for (int i = 0; i < mCurrPlayerNum; ++i)
+		packet.Player[i] = mObjectMgr.GetPlayer(i);
+
+	packet.NumOfObjects = mObjectMgr.GetAllBasicObjects().size();
+	for (UINT i = 0; i < packet.NumOfObjects; ++i)
+		packet.MapInfo[i] = mObjectMgr.GetAllBasicObjects()[i];
+
+	MyServer::Send_Packet(id, reinterpret_cast<char *>(&packet));
 }
 
 void ServerRogicMgr::RemovePlayer(const UINT & id)
@@ -263,7 +280,7 @@ void ServerRogicMgr::SendPacketFrameInfo()
 
 	packet.GameState = mGameStateMgr.GetCurrState();
 	packet.Roundlevel = mCurrWaveLevel;
-	packet.NumOfObjects = mObjectMgr.GetCurrPlayerNum() + monsters.size();
+	packet.NumOfPlayers = mObjectMgr.GetCurrPlayerNum();
 
 	for (UINT i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].is_connected) 
@@ -318,7 +335,7 @@ void ServerRogicMgr::SendPacketToCreateMonsters()
 
 	SC_AddMonster packet;
 	packet.NumOfObjects = monsters.size();
-	
+
 	UINT count(0);
 	for (auto m : monsters) {
 		packet.InitInfos[m.first] = m.second;
@@ -332,15 +349,18 @@ void ServerRogicMgr::SendPacketToCreateMonsters()
 
 void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& id)
 {
-	auto monsters = mObjectMgr.GetMonsters();
+	if (mAddMonPacketSended == false) {
+		auto monsters = mObjectMgr.GetMonsters();
 
-	SC_AddMonster packet;
-	packet.NumOfObjects = monsters.size();
+		SC_AddMonster packet;
+		packet.NumOfObjects = monsters.size();
 
-	UINT count(0);
-	for (auto m : monsters) {
-		packet.InitInfos[m.first] = m.second;
+		UINT count(0);
+		for (auto m : monsters) {
+			packet.InitInfos[m.first] = m.second;
+		}
+
+		MyServer::Send_Packet(id, reinterpret_cast<char*>(&packet));
+		mAddMonPacketSended = true;
 	}
-
-	MyServer::Send_Packet(id, reinterpret_cast<char*>(&packet));
 }

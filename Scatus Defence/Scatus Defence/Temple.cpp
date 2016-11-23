@@ -28,7 +28,7 @@ void Temple::Init(BasicMesh * mesh, const BO_InitDesc & info)
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 
-	InitBoundingObject();
+	// InitBoundingObject();
 }
 
 void Temple::DrawToScene(ID3D11DeviceContext * dc, const XMFLOAT4X4 & shadowTransform)

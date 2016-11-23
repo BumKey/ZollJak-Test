@@ -63,6 +63,7 @@ void ObjectMgr::AddObstacle(const ObjectType::Types & type, const BO_InitDesc & 
 	else if (type == ObjectType::Temple) {
 		Temple::GetInstance()->Init(Resource_Mgr->GetBasicMesh(type), desc);
 		mBasicObjects.push_back(Temple::GetInstance());
+		mTemplePos = desc.Pos;
 	}
 	else
 		mBasicObjects.push_back(new BasicObject(Resource_Mgr->GetBasicMesh(type), desc, Label::Basic));
@@ -96,14 +97,14 @@ void ObjectMgr::UpdatePlayer(const UINT & id, const PlayerInfos & info)
 
 void ObjectMgr::UpdateMonster(const UINT & id, const MonInfos & info)
 {
-	if (mCurrPlayerNum >= 2) {
+	if (mCurrPlayerNum >= MAX_USER) {
 		mMonsters[id]->SetTarget(mPlayers[info.TargetID]);
 		mMonsters[id]->SetTargetPos(mPlayers[info.TargetID]->GetPos());
 
 		if (MathHelper::DistanceVector(mMonsters[id]->GetPos(), info.TargetPos) > 10.0f)
-			mMonsters[id]->SlowDown();
+			mMonsters[id]->DoubleSpeed();
 		else
-			mMonsters[id]->SlowDownOff();
+			mMonsters[id]->DoubleSpeedOff();
 	}
 
 	if (info.ActionState == ActionState::Die)
@@ -125,7 +126,7 @@ void ObjectMgr::Update(float dt)
 			mPlayers[i]->Animate(dt);
 			if (i != Packet_Mgr->ClientID) {
 				mPlayers[i]->MoveToTarget(dt);
-				mPlayers[i]->Update(dt);
+				//mPlayers[i]->Update(dt);
 			}
 
 			mAllObjects.push_back(mPlayers[i]);
@@ -135,7 +136,7 @@ void ObjectMgr::Update(float dt)
 	for (auto m : mMonsters)
 	{
 		m->Animate(dt);
-		m->Update(dt);
+		//m->Update(dt);
 	/*	for (auto m2 : mMonsters)
 		{
 			if (MathHelper::DistanceVector(m->GetPos(), m2->GetPos()) <= 3.0f)

@@ -7,7 +7,7 @@ SkinnedObject::SkinnedObject() : GameObject(), mTimePos(0.0f)
 }
 
 SkinnedObject::SkinnedObject(SkinnedMesh* mesh, const SO_InitDesc& info) : GameObject(mesh, info),
-mTimePos(0.0f), m_bForOneHit(false), mHasTarget(false), m_bSlowDown(false)
+mTimePos(0.0f), m_bForOneHit(false), mHasTarget(false), m_bDoubleSpeed(false)
 {
 	mMesh = mesh;
 	mActionState = ActionState::Idle;
@@ -43,8 +43,6 @@ void SkinnedObject::Init(SkinnedMesh * mesh, const SO_InitDesc & info)
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
-
-	InitBoundingObject();
 
 	mFinalTransforms.resize(mesh->SkinnedData.BoneCount());
 }
@@ -89,7 +87,7 @@ void SkinnedObject::Update(float dt)
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
 
-	UpdateBoundingObject();
+	FrustumCulling();
 }
 
 void SkinnedObject::Animate(float dt)
@@ -123,120 +121,125 @@ void SkinnedObject::Animate(float dt)
 
 void SkinnedObject::DrawToScene(ID3D11DeviceContext * dc, const XMFLOAT4X4& shadowTransform)
 {
-	const Camera& cam = *Camera::GetInstance();
-
-	XMMATRIX view = cam.View();
-	XMMATRIX proj = cam.Proj();
-	XMMATRIX viewProj = cam.ViewProj();
-
-	ID3DX11EffectTechnique* tech = Effects::NormalMapFX->Light3TexTech;
-	ID3DX11EffectTechnique* alphaClippedTech = Effects::NormalMapFX->Light3TexAlphaClipTech;
-
-	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	if (GetAsyncKeyState('1') & 0x8000)
-		dc->RSSetState(RenderStates::WireframeRS);
-
-	XMMATRIX world;
-	XMMATRIX worldInvTranspose;
-	XMMATRIX worldViewProj;
-
-	// Transform NDC space [-1,+1]^2 to texture space [0,1]^2
-	XMMATRIX toTexSpace(
-		0.5f, 0.0f, 0.0f, 0.0f,
-		0.0f, -0.5f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.5f, 0.5f, 0.0f, 1.0f);
-
-	XMMATRIX st = XMLoadFloat4x4(&shadowTransform);
-
-	if (GetAsyncKeyState('1') & 0x8000)
-		dc->RSSetState(RenderStates::WireframeRS);
-
-	ID3DX11EffectTechnique* activeSkinnedTech = Effects::NormalMapFX->Light3TexSkinnedTech;
-	dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
-
-	float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
-
-	// Draw the animated characters.
-	D3DX11_TECHNIQUE_DESC techDesc;
-	activeSkinnedTech->GetDesc(&techDesc);
-	for (UINT p = 0; p < techDesc.Passes; ++p)
+	if (mFrustumCull != 0)
 	{
-		world = XMLoadFloat4x4(&mWorld);
-		world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
-		worldInvTranspose = MathHelper::InverseTranspose(world);
-		worldViewProj = world*view*proj;
+		const Camera& cam = *Camera::GetInstance();
 
-		Effects::NormalMapFX->SetWorld(world);
-		Effects::NormalMapFX->SetWorldInvTranspose(worldInvTranspose);
-		Effects::NormalMapFX->SetWorldViewProj(worldViewProj);
-		Effects::NormalMapFX->SetWorldViewProjTex(worldViewProj*toTexSpace);
-		Effects::NormalMapFX->SetShadowTransform(world*st);
-		Effects::NormalMapFX->SetTexTransform(XMMatrixScaling(1.0f, 1.0f, 1.0f));
-		Effects::NormalMapFX->SetBoneTransforms(
-			&mFinalTransforms[0],
-			mFinalTransforms.size());
+		XMMATRIX view = cam.View();
+		XMMATRIX proj = cam.Proj();
+		XMMATRIX viewProj = cam.ViewProj();
 
-		for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
+		ID3DX11EffectTechnique* tech = Effects::NormalMapFX->Light3TexTech;
+
+		dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		if (GetAsyncKeyState('1') & 0x8000)
+			dc->RSSetState(RenderStates::WireframeRS);
+
+		XMMATRIX world;
+		XMMATRIX worldInvTranspose;
+		XMMATRIX worldViewProj;
+
+		// Transform NDC space [-1,+1]^2 to texture space [0,1]^2
+		XMMATRIX toTexSpace(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f);
+
+		XMMATRIX st = XMLoadFloat4x4(&shadowTransform);
+
+		if (GetAsyncKeyState('1') & 0x8000)
+			dc->RSSetState(RenderStates::WireframeRS);
+
+		ID3DX11EffectTechnique* activeSkinnedTech = Effects::NormalMapFX->Light3TexSkinnedTech;
+		dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
+
+		float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
+
+		// Draw the animated characters.
+		D3DX11_TECHNIQUE_DESC techDesc;
+		activeSkinnedTech->GetDesc(&techDesc);
+		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{
-			Effects::NormalMapFX->SetMaterial(mMesh->Mat[subset]);
-			Effects::NormalMapFX->SetDiffuseMap(mMesh->DiffuseMapSRV[subset]);
-			Effects::NormalMapFX->SetNormalMap(mMesh->NormalMapSRV[subset]);
+			world = XMLoadFloat4x4(&mWorld);
+			world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
+			worldInvTranspose = MathHelper::InverseTranspose(world);
+			worldViewProj = world*view*proj;
 
-			activeSkinnedTech->GetPassByIndex(p)->Apply(0, dc);
-			mMesh->MeshData.Draw(dc, subset);
+			Effects::NormalMapFX->SetWorld(world);
+			Effects::NormalMapFX->SetWorldInvTranspose(worldInvTranspose);
+			Effects::NormalMapFX->SetWorldViewProj(worldViewProj);
+			Effects::NormalMapFX->SetWorldViewProjTex(worldViewProj*toTexSpace);
+			Effects::NormalMapFX->SetShadowTransform(world*st);
+			Effects::NormalMapFX->SetTexTransform(XMMatrixScaling(1.0f, 1.0f, 1.0f));
+			Effects::NormalMapFX->SetBoneTransforms(
+				&mFinalTransforms[0],
+				mFinalTransforms.size());
+
+			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
+			{
+				Effects::NormalMapFX->SetMaterial(mMesh->Mat[subset]);
+				Effects::NormalMapFX->SetDiffuseMap(mMesh->DiffuseMapSRV[subset]);
+				Effects::NormalMapFX->SetNormalMap(mMesh->NormalMapSRV[subset]);
+
+				activeSkinnedTech->GetPassByIndex(p)->Apply(0, dc);
+				mMesh->MeshData.Draw(dc, subset);
+			}
 		}
 	}
 }
 
 void SkinnedObject::DrawToSsaoNormalDepthMap(ID3D11DeviceContext * dc)
 {
-	const Camera& cam = *Camera::GetInstance();
-
-	XMMATRIX view = cam.View();
-	XMMATRIX proj = cam.Proj();
-	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-
-	ID3DX11EffectTechnique* animatedTech = Effects::SsaoNormalDepthFX->NormalDepthSkinnedTech;
-
-	XMMATRIX world;
-	XMMATRIX worldInvTranspose;
-	XMMATRIX worldView;
-	XMMATRIX worldInvTransposeView;
-	XMMATRIX worldViewProj;
-
-	dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
-
-	if (GetAsyncKeyState('1') & 0x8000)
-		dc->RSSetState(RenderStates::WireframeRS);
-
-	float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
-
-	D3DX11_TECHNIQUE_DESC techDesc;
-	animatedTech->GetDesc(&techDesc);
-	for (UINT p = 0; p < techDesc.Passes; ++p)
+	if (mFrustumCull != 0)
 	{
-		world = XMLoadFloat4x4(&mWorld);
-		world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
-		worldInvTranspose = MathHelper::InverseTranspose(world);
-		worldView = world*view;
-		worldInvTransposeView = worldInvTranspose*view;
-		worldViewProj = world*view*proj;
+		const Camera& cam = *Camera::GetInstance();
 
-		Effects::SsaoNormalDepthFX->SetWorldView(worldView);
-		Effects::SsaoNormalDepthFX->SetWorldInvTransposeView(worldInvTransposeView);
-		Effects::SsaoNormalDepthFX->SetWorldViewProj(worldViewProj);
-		Effects::SsaoNormalDepthFX->SetTexTransform(XMMatrixIdentity());
-		Effects::SsaoNormalDepthFX->SetBoneTransforms(
-			&mFinalTransforms[0],
-			mFinalTransforms.size());
+		XMMATRIX view = cam.View();
+		XMMATRIX proj = cam.Proj();
+		XMMATRIX viewProj = XMMatrixMultiply(view, proj);
 
-		animatedTech->GetPassByIndex(p)->Apply(0, dc);
+		ID3DX11EffectTechnique* animatedTech = Effects::SsaoNormalDepthFX->NormalDepthSkinnedTech;
 
-		for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
+		XMMATRIX world;
+		XMMATRIX worldInvTranspose;
+		XMMATRIX worldView;
+		XMMATRIX worldInvTransposeView;
+		XMMATRIX worldViewProj;
+
+		dc->IASetInputLayout(InputLayouts::PosNormalTexTanSkinned);
+
+		if (GetAsyncKeyState('1') & 0x8000)
+			dc->RSSetState(RenderStates::WireframeRS);
+
+		float tHeight = Terrain::GetInstance()->GetHeight(mPosition);
+
+		D3DX11_TECHNIQUE_DESC techDesc;
+		animatedTech->GetDesc(&techDesc);
+		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{
-			mMesh->MeshData.Draw(dc, subset);
+			world = XMLoadFloat4x4(&mWorld);
+			world = XMMatrixMultiply(world, XMMatrixTranslation(0.0f, tHeight, 0.0f));
+			worldInvTranspose = MathHelper::InverseTranspose(world);
+			worldView = world*view;
+			worldInvTransposeView = worldInvTranspose*view;
+			worldViewProj = world*view*proj;
+
+			Effects::SsaoNormalDepthFX->SetWorldView(worldView);
+			Effects::SsaoNormalDepthFX->SetWorldInvTransposeView(worldInvTransposeView);
+			Effects::SsaoNormalDepthFX->SetWorldViewProj(worldViewProj);
+			Effects::SsaoNormalDepthFX->SetTexTransform(XMMatrixIdentity());
+			Effects::SsaoNormalDepthFX->SetBoneTransforms(
+				&mFinalTransforms[0],
+				mFinalTransforms.size());
+
+			animatedTech->GetPassByIndex(p)->Apply(0, dc);
+
+			for (UINT subset = 0; subset < mMesh->SubsetCount; ++subset)
+			{
+				mMesh->MeshData.Draw(dc, subset);
+			}
 		}
 	}
 }
@@ -306,6 +309,8 @@ void SkinnedObject::ChangeActionState(ActionState::States state)
 		m_bForOneHit = true;
 		mActionState = state;
 	}
+	else if (state == ActionState::Die)
+		mActionState = state;
 	else if (IsActionStateChangeAble())
 		mActionState = state;
 }

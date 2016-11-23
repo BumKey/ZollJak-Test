@@ -68,6 +68,11 @@ XMFLOAT3 Camera::GetLook()const
 	return mLook;
 }
 
+XNA::Frustum Camera::GetCamFrustum() const
+{
+	return mCamFrustum;
+}
+
 float Camera::GetNearZ()const
 {
 	return mNearZ;
@@ -127,6 +132,8 @@ void Camera::SetLens(float fovY, float aspect, float zn, float zf)
 
 	XMMATRIX P = XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
 	XMStoreFloat4x4(&mProj, P);
+
+	XNA::ComputeFrustumFromProjection(&mCamFrustum, &P);
 }
 
 void Camera::LookAt(FXMVECTOR pos, FXMVECTOR target, FXMVECTOR worldUp)
@@ -268,7 +275,7 @@ void Camera::Update()
 	camPos.y = playerPos.y + fCamT.y*12.0f;
 	camPos.z = playerPos.z + fCamT.z*12.0f;
 
-	camPos.y += Terrain::GetInstance()->GetHeight(camPos);
+	camPos.y += (Terrain::GetInstance()->GetHeight(camPos) + Terrain::GetInstance()->GetHeight(playerPos)) /2.0f;
 
 	lookPos.x = playerPos.x;
 	lookPos.y = playerPos.y + Terrain::GetInstance()->GetHeight(playerPos) - mRot*10.0f;

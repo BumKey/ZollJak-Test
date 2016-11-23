@@ -2,7 +2,7 @@
 #include "Sound_Manager.h"
 #include "UI_Manager.h"
 
-Player::Player() : SkinnedObject()
+Player::Player() : SkinnedObject(), mDamage_Timer_flag(false)
 {
 	mProperty.name = "Player";
 
@@ -24,13 +24,14 @@ Player::~Player()
 {
 }
 
-void Player::Init(SkinnedMesh * mesh, const SO_InitDesc & info)
+void Player::Init(SkinnedMesh * mesh, const SO_InitDesc & info) 
 {
 	mProperty.attackspeed = info.AttackSpeed;
 	mProperty.movespeed = info.MoveSpeed;
 	mProperty.hp_now = info.Hp;
 	mProperty.attakpoint = info.AttackPoint;
 
+	mDamage_Timer_flag = false;
 	SkinnedObject::Init(mesh, info);
 }
 
@@ -56,6 +57,15 @@ void Player::Update(float dt)
 		DEBUG_MSG("타겟 사망");
 	}
 
+	if (mDamage_Timer_flag) // 몬스터가 공격에 성공하면 틱타이머가 돌기시작한다.
+	{
+		if (!(UI_Mgr->Tick_dmage_Timer()))  // 참을 리턴하면 0.5초가 안지난것 false를 리턴하면 0.5초 지난 것
+		{
+			UI_Mgr->Active_damage_Screen(false); // 0.5초가 지나면 맞은 화면을 끈다. Timer reset도 함께 된다.
+			mDamage_Timer_flag = false;
+		}
+	}
+
 	SkinnedObject::Update(dt);
 }
 
@@ -63,6 +73,8 @@ void Player::Damage(float damage)
 {
 	SkinnedObject::Damage(damage);
 
+	mDamage_Timer_flag = true;
+	UI_Mgr->Active_damage_Screen(true); //Timer reset도 함께된다.
 	Time_Mgr->Set_P_HP(mProperty.hp_now);
 	Sound_Mgr->Play3DEffect(Sound_impact, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);
@@ -124,8 +136,6 @@ void Player::Move(float walk, float strafe)
 		Sound_Mgr->Play3DEffect(Sound_p_footstep1, Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z);
 
 	}
-	
-
 }
 
 void Player::ProccessKeyInput(float dt)
@@ -138,6 +148,10 @@ void Player::ProccessKeyInput(float dt)
 			if (MathHelper::DistanceVector(mPosition, Object_Mgr->GetCollisionPos()[i]) < 3.0f)
 				CollisionMoving(Object_Mgr->GetCollisionPos()[i], dt);
 		}
+
+		//auto temple = Temple::GetInstance()->GetAABB();
+		//if (XNA::IntersectAxisAlignedBoxAxisAlignedBox(&temple, &mAABB))
+		//	CollisionMoving(Object_Mgr->GetTemplePos(), dt);
 
 		if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('A') & 0x8000)) { Move(-dt, -dt);	}
 		else if ((GetAsyncKeyState('W') & 0x8000) && (GetAsyncKeyState('D') & 0x8000)) { Move(-dt, dt);	}

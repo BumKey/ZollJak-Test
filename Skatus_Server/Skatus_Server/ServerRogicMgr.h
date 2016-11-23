@@ -14,6 +14,7 @@ public:
 	void Update();
 	void WaveStart();
 	void AddPlayer(const SOCKET& socket, const ObjectType::Types& oType, const UINT& id);
+	void AddPlayer(const UINT& id);
 	void RemovePlayer(const UINT& id);
 	void ProcessKeyInput(CS_Move& inPacket);
 	void ProcessMouseInput(CS_Attack& inPacket);
@@ -33,6 +34,7 @@ private:
 	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);
 
 private:
+	bool mAddMonPacketSended;
 
 	UINT mNewID;
 	UINT mCurrWaveLevel;

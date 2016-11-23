@@ -196,18 +196,18 @@ void MyThreads::Rogic_Thread()
 
 			g_RogicMgr.Update();
 
-			if (timer[PlayerInfo].TotalTime() > 0.2f) {
+			if (timer[PlayerInfo].TotalTime() > TICK_PLAYERINFO) {
 				g_RogicMgr.SendPacektPlayerInfo();
 				timer[PlayerInfo].Reset();
 			}
 
-			if (timer[MonInfo].TotalTime() > 0.5f
+			if (timer[MonInfo].TotalTime() > TICK_MONINFO
 				&& g_RogicMgr.GetCurrGameState() == eGameState::Waving) {
 				g_RogicMgr.SendPacketMonInfo();
 				timer[MonInfo].Reset();
 			}
 
-			if (timer[FrameInfo].TotalTime() > 1.0f) {
+			if (timer[FrameInfo].TotalTime() > TICK_FRAMEINFO) {
 				g_RogicMgr.SendPacketFrameInfo();
 				timer[FrameInfo].Reset();
 			}

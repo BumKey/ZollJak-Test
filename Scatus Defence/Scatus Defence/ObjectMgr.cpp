@@ -102,9 +102,9 @@ void ObjectMgr::UpdateMonster(const UINT & id, const MonInfos & info)
 		mMonsters[id]->SetTargetPos(mPlayers[info.TargetID]->GetPos());
 
 		if (MathHelper::DistanceVector(mMonsters[id]->GetPos(), info.TargetPos) > 10.0f)
-			mMonsters[id]->SlowDown();
+			mMonsters[id]->DoubleSpeed();
 		else
-			mMonsters[id]->SlowDownOff();
+			mMonsters[id]->DoubleSpeedOff();
 	}
 
 	if (info.ActionState == ActionState::Die)

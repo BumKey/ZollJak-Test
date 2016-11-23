@@ -212,6 +212,9 @@ void SceneMgr::DrawTreeSprites()
 {
 	const Camera& cam = *Camera::GetInstance();
 
+	XMFLOAT4 worldPlanes[6];
+	ExtractFrustumPlanes(worldPlanes, Camera::GetInstance()->ViewProj());
+
 	Effects::TreeSpriteFX->SetDirLights(mDirLights);
 	Effects::TreeSpriteFX->SetEyePosW(cam.GetPosition());
 	Effects::TreeSpriteFX->SetFogColor(Colors::Silver);
@@ -220,6 +223,7 @@ void SceneMgr::DrawTreeSprites()
 	Effects::TreeSpriteFX->SetViewProj(cam.ViewProj());
 	Effects::TreeSpriteFX->SetMaterial(mTreeMat);
 	Effects::TreeSpriteFX->SetTreeTextureMapArray(mTreeTextureMapArraySRV);
+	Effects::TreeSpriteFX->SetWorldFrustumPlanes(worldPlanes);
 
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	md3dImmediateContext->IASetInputLayout(InputLayouts::TreePointSprite);
@@ -248,6 +252,9 @@ void SceneMgr::DrawGrassSprites()
 {
 	const Camera& cam = *Camera::GetInstance();
 
+	XMFLOAT4 worldPlanes[6];
+	ExtractFrustumPlanes(worldPlanes, Camera::GetInstance()->ViewProj());
+
 	Effects::TreeSpriteFX->SetDirLights(mDirLights);
 	Effects::TreeSpriteFX->SetEyePosW(cam.GetPosition());
 	Effects::TreeSpriteFX->SetFogColor(Colors::Silver);
@@ -256,6 +263,7 @@ void SceneMgr::DrawGrassSprites()
 	Effects::TreeSpriteFX->SetViewProj(cam.ViewProj());
 	Effects::TreeSpriteFX->SetMaterial(mGrassMat);
 	Effects::TreeSpriteFX->SetTreeTextureMapArray(mGrassTextureMapArraySRV);
+	Effects::TreeSpriteFX->SetWorldFrustumPlanes(worldPlanes);
 
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	md3dImmediateContext->IASetInputLayout(InputLayouts::TreePointSprite);

@@ -198,6 +198,7 @@ TreeSpriteEffect::TreeSpriteEffect(ID3D11Device* device, const std::wstring& fil
 	FogRange = mFX->GetVariableByName("gFogRange")->AsScalar();
 	DirLights = mFX->GetVariableByName("gDirLights");
 	Mat = mFX->GetVariableByName("gMaterial");
+	WorldFrustumPlanes = mFX->GetVariableByName("gWorldFrustumPlanes")->AsVector();
 	TreeTextureMapArray = mFX->GetVariableByName("gTreeMapArray")->AsShaderResource();
 }
 

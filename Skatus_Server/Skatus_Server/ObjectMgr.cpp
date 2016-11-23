@@ -52,7 +52,7 @@ void ObjectMgr::UpdateMonsters()
 			targetF = Float3Normalize(targetF);
 		}
 
-		m.second.Pos = m.second.Pos + targetF*m.second.MoveSpeed;
+		m.second.Pos = m.second.Pos + targetF*m.second.MoveSpeed*TICK_MONINFO;
 		m.second.TargetID = targetID;
 	}
 }

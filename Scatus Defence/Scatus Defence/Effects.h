@@ -214,6 +214,7 @@ public:
 	void SetDirLights(const DirectionalLight* lights) { DirLights->SetRawValue(lights, 0, 3 * sizeof(DirectionalLight)); }
 	void SetMaterial(const Material& mat) { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
 	void SetTreeTextureMapArray(ID3D11ShaderResourceView* tex) { TreeTextureMapArray->SetResource(tex); }
+	void SetWorldFrustumPlanes(XMFLOAT4 planes[6]) { WorldFrustumPlanes->SetFloatVectorArray(reinterpret_cast<float*>(planes), 0, 6); }
 
 	ID3DX11EffectTechnique* Light1TexAlphaClipTech;
 	ID3DX11EffectTechnique* Light3Tech;
@@ -225,6 +226,7 @@ public:
 	ID3DX11EffectVectorVariable* FogColor;
 	ID3DX11EffectScalarVariable* FogStart;
 	ID3DX11EffectScalarVariable* FogRange;
+	ID3DX11EffectVectorVariable* WorldFrustumPlanes;
 	ID3DX11EffectVariable* DirLights;
 	ID3DX11EffectVariable* Mat;
 

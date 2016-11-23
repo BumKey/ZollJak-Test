@@ -34,6 +34,7 @@ private:
 	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);
 
 private:
+	bool mAddMonPacketSended;
 
 	UINT mNewID;
 	UINT mCurrWaveLevel;

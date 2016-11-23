@@ -104,7 +104,7 @@ void MyServer::Process_Packet(char* packet, ServerRogicMgr& rogicMgr)
 	}
 	case eCS::RePutPlayers: {
 		auto info = reinterpret_cast<CS_RePutPlayers*>(packet);
-		rogicMgr.SendPacketToCreateMonsters(info->ClientID);
+		//rogicMgr.SendPacketToCreateMonsters(info->ClientID);
 		break;
 	}
 	default:

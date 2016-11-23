@@ -1,7 +1,7 @@
 #include "ServerRogicMgr.h"
 
 ServerRogicMgr::ServerRogicMgr() : mCurrWaveLevel(0), mCurrPlayerNum(0),
-mNewID(-1)
+mNewID(-1), mAddMonPacketSended(false)
 {
 	srand(time(NULL));
 
@@ -78,6 +78,8 @@ void ServerRogicMgr::Update()
 				for (UINT i = 0; i < oType.second; ++i)
 				mObjectMgr.AddObject(oType.first);
 		}
+
+		mAddMonPacketSended = false;
 
 		SendPacketToCreateMonsters();
 		mGameStateMgr.FlowAdvance();
@@ -333,7 +335,7 @@ void ServerRogicMgr::SendPacketToCreateMonsters()
 
 	SC_AddMonster packet;
 	packet.NumOfObjects = monsters.size();
-	
+
 	UINT count(0);
 	for (auto m : monsters) {
 		packet.InitInfos[m.first] = m.second;
@@ -347,15 +349,18 @@ void ServerRogicMgr::SendPacketToCreateMonsters()
 
 void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& id)
 {
-	auto monsters = mObjectMgr.GetMonsters();
+	if (mAddMonPacketSended == false) {
+		auto monsters = mObjectMgr.GetMonsters();
 
-	SC_AddMonster packet;
-	packet.NumOfObjects = monsters.size();
+		SC_AddMonster packet;
+		packet.NumOfObjects = monsters.size();
 
-	UINT count(0);
-	for (auto m : monsters) {
-		packet.InitInfos[m.first] = m.second;
+		UINT count(0);
+		for (auto m : monsters) {
+			packet.InitInfos[m.first] = m.second;
+		}
+
+		MyServer::Send_Packet(id, reinterpret_cast<char*>(&packet));
+		mAddMonPacketSended = true;
 	}
-
-	MyServer::Send_Packet(id, reinterpret_cast<char*>(&packet));
 }

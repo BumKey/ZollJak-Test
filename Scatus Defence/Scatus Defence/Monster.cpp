@@ -33,8 +33,8 @@ void Monster::MoveToTarget(float dt)
 		XMVECTOR vTarget = MathHelper::TargetVector2D(mTargetPos, mPosition);
 
 		XMVECTOR s;
-		if(m_bSlowDown)
-			s = XMVectorReplicate(dt*mProperty.movespeed/2.0f);
+		if(m_bDoubleSpeed)
+			s = XMVectorReplicate(dt*mProperty.movespeed*2.0f);
 		else
 			s = XMVectorReplicate(dt*mProperty.movespeed);
 
@@ -74,7 +74,7 @@ void Monster::FrustumCulling()
 	}
 
 	XMMATRIX W = XMLoadFloat4x4(&mWorld);
-	XMMATRIX T = XMMatrixTranslation(0.0f, Terrain::GetInstance()->GetHeight(mPosition), 0.0f);
+	XMMATRIX T = XMMatrixTranslation(0.0f, Terrain::GetInstance()->GetHeight(mPosition)+max*mScaling, 0.0f);
 	W = XMMatrixMultiply(W, T);
 
 	XMVECTOR v = XMLoadFloat3(&m.Center);

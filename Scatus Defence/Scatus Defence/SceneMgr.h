@@ -62,12 +62,12 @@ private:
 	void DrawGrassSprites();
 	void DrawScreenQuadSsao();
 	void DrawScreenQuadShadow();
-	void DrawBS();
+	// void DrawBS();
 
 private:
 	float mLightRotationAngle;
 	static const UINT TreeCount = 1200;
-	static const UINT GrassCount = 20000;
+	static const UINT GrassCount = 200;
 
 	ID3D11DeviceContext* md3dImmediateContext;
 	ID3D11DepthStencilView* mDepthStencilView;

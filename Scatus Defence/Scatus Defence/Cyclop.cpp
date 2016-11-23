@@ -22,7 +22,7 @@ Cyclop::Cyclop(SkinnedMesh* mesh, const SO_InitDesc& info) : Monster(mesh, info)
 	mAnimNames[Anims::idle] = "idle";
 	mAnimNames[Anims::walk] = "walk";
 
-	mExtentY = mAABB.Extents.x;
+	// mExtentY = mAABB.Extents.x;
 }
 
 

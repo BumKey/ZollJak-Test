@@ -210,6 +210,16 @@ float4 PS(GeoOut pin, uniform int gLightCount, uniform bool gUseTexure, uniform 
 // Techniques--just define the ones our demo needs; you can define the other 
 //   variations as needed.
 //---------------------------------------------------------------------------------------
+technique11 Light1TexAlphaClip
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_5_0, VS()));
+		SetGeometryShader(CompileShader(gs_5_0, GS()));
+		SetPixelShader(CompileShader(ps_5_0, PS(1, true, true, false)));
+	}
+}
+
 technique11 Light3
 {
     pass P0

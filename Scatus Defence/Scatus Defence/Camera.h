@@ -10,6 +10,7 @@
 
 #pragma once
 #include "d3dUtil.h"
+#include "xnacollision.h"
 #include "Singletone.h"
 
 class Camera : public Singletone<Camera>
@@ -35,6 +36,7 @@ public:
 	XMFLOAT3 GetLook()const;
 
 	// Get frustum properties.
+	XNA::Frustum GetCamFrustum()const;
 	float GetNearZ()const;
 	float GetFarZ()const;
 	float GetAspect()const;
@@ -92,4 +94,6 @@ private:
 	// Cache View/Proj matrices.
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
+
+	XNA::Frustum mCamFrustum;
 };

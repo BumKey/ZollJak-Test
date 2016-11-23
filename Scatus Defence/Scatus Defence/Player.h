@@ -26,6 +26,7 @@ private:
 	void Move(float walk, float strafe);
 
 private:
+	bool mDamage_Timer_flag;
 	GameTimer mTimer;
 	GameTimer mTimer_s;
 };

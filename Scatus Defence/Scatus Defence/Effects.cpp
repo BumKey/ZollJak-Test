@@ -186,6 +186,7 @@ BasicEffect::~BasicEffect()
 TreeSpriteEffect::TreeSpriteEffect(ID3D11Device* device, const std::wstring& filename)
 	: Effect(device, filename)
 {
+	Light1TexAlphaClipTech = mFX->GetTechniqueByName("Light1TexAlphaClip");
 	Light3Tech = mFX->GetTechniqueByName("Light3");
 	Light3TexAlphaClipTech = mFX->GetTechniqueByName("Light3TexAlphaClip");
 	Light3TexAlphaClipFogTech = mFX->GetTechniqueByName("Light3TexAlphaClipFog");

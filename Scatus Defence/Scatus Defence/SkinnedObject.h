@@ -65,8 +65,6 @@ protected:
 	bool m_bSlowDown;
 	bool mHasTarget;
 
-	XNA::OrientedBox mOOBB;
-
 	FLOAT mTimePos;;
 	XMFLOAT3 mTargetPos;
 	SkinnedObject* mTarget;

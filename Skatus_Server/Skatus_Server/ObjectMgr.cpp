@@ -71,7 +71,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		SkinnedInfo.Pos = XMFLOAT3(rand() % 100, -0.1f, rand() % 100);
 		SkinnedInfo.Rot = XMFLOAT3(0.0f, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
 		SkinnedInfo.Scale = 0.2f + MathHelper::RandF(0.1f, 0.4f);
-		SkinnedInfo.MoveSpeed = 3.5f + MathHelper::RandF(-1.0f, 1.5f);
+		SkinnedInfo.MoveSpeed = 6.5f + MathHelper::RandF(-1.0f, 1.5f);
 		SkinnedInfo.AttackPoint = 10.0f;
 		SkinnedInfo.AttackSpeed = MathHelper::RandF(0.5f, 1.0f);
 		SkinnedInfo.Hp = 50.0f;
@@ -81,7 +81,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		SkinnedInfo.Pos = XMFLOAT3(rand() % 100, -0.1f, rand() % 100);
 		SkinnedInfo.Rot = XMFLOAT3(MathHelper::Pi, MathHelper::RandF(0.0f, MathHelper::Pi), 0.0f);
 		SkinnedInfo.Scale = 2.5f + MathHelper::RandF(1.5f, 3.0f);
-		SkinnedInfo.MoveSpeed = 2.0f + MathHelper::RandF(0.0f, 1.0f);
+		SkinnedInfo.MoveSpeed = 4.0f + MathHelper::RandF(0.0f, 1.0f);
 		SkinnedInfo.AttackPoint = 30.0f;
 		SkinnedInfo.AttackSpeed = MathHelper::RandF(0.5f, 1.0f);
 		SkinnedInfo.Hp = 120.0f;

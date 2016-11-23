@@ -5,7 +5,6 @@
 Monster::Monster() : SkinnedObject()
 {
 	mAI_States = AI_State::None;
-	mDamage_Timer_flag = false;
 	mTimer.Reset();
 }
 
@@ -53,6 +52,59 @@ void Monster::MoveToTarget(float dt)
 	}
 }
 
+void Monster::FrustumCulling()
+{
+	auto m = mMesh->GetAABB();
+	const Camera& cam = *Camera::GetInstance();
+
+	XMVECTOR detView = XMMatrixDeterminant(cam.View());
+	XMMATRIX invView = XMMatrixInverse(&detView, cam.View());
+
+	// 현재 모델은 어떻게 누워있는지 통일되어 있지 않다.
+	float max = -MathHelper::Infinity;
+	max = MathHelper::Max(max, m.Extents.x);
+	max = MathHelper::Max(max, m.Extents.y);
+	max = MathHelper::Max(max, m.Extents.z);
+
+	if (max != m.Extents.y)
+	{
+		m.Extents.x = m.Extents.y;
+		m.Extents.y = max;
+		m.Extents.z = m.Extents.x;
+	}
+
+	XMMATRIX W = XMLoadFloat4x4(&mWorld);
+	XMMATRIX T = XMMatrixTranslation(0.0f, Terrain::GetInstance()->GetHeight(mPosition), 0.0f);
+	W = XMMatrixMultiply(W, T);
+
+	XMVECTOR v = XMLoadFloat3(&m.Center);
+	v = XMVector3TransformCoord(v, W);
+	
+	// Decompose the matrix into its individual parts.
+	XMVECTOR scale;
+	XMVECTOR rotQuat;
+	XMVECTOR translation;
+	XMMatrixDecompose(&scale, &rotQuat, &translation, W);
+
+	XNA::OrientedBox ob;
+	XMStoreFloat3(&ob.Center, v);
+	ob.Extents.x = m.Extents.x * mScaling;
+	ob.Extents.y = max * mScaling;
+	ob.Extents.z = m.Extents.z * mScaling;
+	XMStoreFloat4(&ob.Orientation, rotQuat);
+
+	XMMatrixDecompose(&scale, &rotQuat, &translation, invView);
+
+	// Transform the camera frustum from view space to the object's local space.
+	XNA::Frustum worldspaceFrustum;
+	XNA::TransformFrustum(&worldspaceFrustum, &cam.GetCamFrustum(), XMVectorGetX(scale), rotQuat, translation);
+
+	// Perform the box/frustum intersection test in local space.
+	mFrustumCull = XNA::IntersectOrientedBoxFrustum(&ob, &worldspaceFrustum);
+	if (mFrustumCull == 0)
+		int a = 0;
+}
+
 void Monster::Update(float dt)
 {
 	if (mProperty.hp_now <= 0)
@@ -91,15 +143,6 @@ void Monster::Update(float dt)
 		else
 			mTimer.Tick();
 
-		if (mDamage_Timer_flag) // 몬스터가 공격에 성공하면 틱타이머가 돌기시작한다.
-		{
-			if (!(UI_Mgr->Tick_dmage_Timer()))  // 참을 리턴하면 0.5초가 안지난것 false를 리턴하면 0.5초 지난 것
-			{
-				UI_Mgr->Active_damage_Screen(false); // 0.5초가 지나면 맞은 화면을 끈다. Timer reset도 함께 된다.
-				mDamage_Timer_flag = false;
-			}
-		}
-
 		SkinnedObject::Update(dt);
 	}
 }
@@ -133,8 +176,6 @@ void Monster::Attack(SkinnedObject * target)
 {
 	if (mHasTarget && target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
 	{
-		mDamage_Timer_flag = true;
-	
 		int mTarget_hp = target->GetProperty().hp_now;
 		int armor = target->GetProperty().guardpoint;
 		float damage = mProperty.attakpoint;

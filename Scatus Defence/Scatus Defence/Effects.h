@@ -215,6 +215,7 @@ public:
 	void SetMaterial(const Material& mat) { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
 	void SetTreeTextureMapArray(ID3D11ShaderResourceView* tex) { TreeTextureMapArray->SetResource(tex); }
 
+	ID3DX11EffectTechnique* Light1TexAlphaClipTech;
 	ID3DX11EffectTechnique* Light3Tech;
 	ID3DX11EffectTechnique* Light3TexAlphaClipTech;
 	ID3DX11EffectTechnique* Light3TexAlphaClipFogTech;

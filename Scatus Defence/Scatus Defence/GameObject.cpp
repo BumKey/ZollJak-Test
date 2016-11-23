@@ -3,7 +3,7 @@
 
 UINT GameObject::GeneratedCount = 0;
 
-GameObject::GameObject() : mExtentY(0.0f),
+GameObject::GameObject() : mExtentY(0.0f), mFrustumCull(false),
 mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f),
 mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
 {
@@ -11,7 +11,7 @@ mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), m
 	mCollisionState = CollisionState::None;
 }
 
-GameObject::GameObject(GameMesh* mesh, const BO_InitDesc& info) : mMesh(mesh),
+GameObject::GameObject(GameMesh* mesh, const BO_InitDesc& info) : mMesh(mesh), mFrustumCull(false),
 mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f), mRotation(0.0f, 0.0f, 0.0f), mDirection(0.0f, 0.0f, 0.0f), mExtentY(0.0f),
 mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), mPrevLook(0.0f, 0.0f, -1.0f)
 {
@@ -32,8 +32,6 @@ mRight(1.0f, 0.0f, 0.0f), mUp(0.0f, 1.0f, 0.0f), mCurrLook(0.0f, 0.0f, -1.0f), m
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
-
-	InitBoundingObject();
 }
 
 GameObject::~GameObject()
@@ -86,34 +84,30 @@ void  GameObject::PrintLocation()
 		mProperty.name, mPosition.x, mPosition.y, mPosition.z);
 }
 
-void GameObject::InitBoundingObject()
+void GameObject::FrustumCulling()
 {
-	XMFLOAT3 fp = mMesh->GetAABB().Center;
-	XMVECTOR vp = XMLoadFloat3(&fp);
-	vp = XMVector3TransformCoord(vp, XMLoadFloat4x4(&mWorld));
-	
-	XMStoreFloat3(&mAABB.Center, vp);
-	mAABB.Extents = mMesh->GetAABB().Extents * mScaling;
+	XMVECTOR detView = XMMatrixDeterminant(Camera::GetInstance()->View());
+	XMMATRIX invView = XMMatrixInverse(&detView, Camera::GetInstance()->View());
 
-	mBS.Center = mAABB.Center;
+	XMMATRIX W = XMLoadFloat4x4(&mWorld);
+	XMMATRIX T = XMMatrixTranslation(0.0f, Terrain::GetInstance()->GetHeight(mPosition), 0.0f);
+	W = XMMatrixMultiply(W, T);
 
-	FLOAT max = mAABB.Extents.x;
-	if (max < mAABB.Extents.y) max = mAABB.Extents.y;
-	else if (max < mAABB.Extents.z) max = mAABB.Extents.z;
-	mBS.Radius = max;
-}
+	XMMATRIX invW = XMMatrixInverse(&XMMatrixDeterminant(W), W);
 
-void GameObject::UpdateBoundingObject()
-{
-	XMFLOAT3 fp = mMesh->GetAABB().Center;
-	XMVECTOR vp = XMLoadFloat3(&fp);
-	vp = XMVector3TransformCoord(vp, XMLoadFloat4x4(&mWorld));
+	XMMATRIX toLocal = XMMatrixMultiply(invView, invW);
 
-	XMStoreFloat3(&mAABB.Center, vp);
+	// Decompose the matrix into its individual parts.
+	XMVECTOR scale;
+	XMVECTOR rotQuat;
+	XMVECTOR translation;
+	XMMatrixDecompose(&scale, &rotQuat, &translation, toLocal);
 
-	//mAABB.Center.y += mExtentY;
-	mBS.Center = mAABB.Center;
-	//mBS.Center.y += mExtentY;
+	// Transform the camera frustum from view space to the object's local space.
+	XNA::Frustum localspaceFrustum;
+	XNA::TransformFrustum(&localspaceFrustum, &Camera::GetInstance()->GetCamFrustum(), XMVectorGetX(scale), rotQuat, translation);
+
+	mFrustumCull = XNA::IntersectAxisAlignedBoxFrustum(&mMesh->GetAABB(), &localspaceFrustum);
 }
 
 bool GameObject::BoundaryCheck()

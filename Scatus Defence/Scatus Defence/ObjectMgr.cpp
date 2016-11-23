@@ -97,7 +97,7 @@ void ObjectMgr::UpdatePlayer(const UINT & id, const PlayerInfos & info)
 
 void ObjectMgr::UpdateMonster(const UINT & id, const MonInfos & info)
 {
-	if (mCurrPlayerNum >= 2) {
+	if (mCurrPlayerNum >= MAX_USER) {
 		mMonsters[id]->SetTarget(mPlayers[info.TargetID]);
 		mMonsters[id]->SetTargetPos(mPlayers[info.TargetID]->GetPos());
 

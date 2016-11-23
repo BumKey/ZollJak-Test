@@ -201,7 +201,8 @@ void MyThreads::Rogic_Thread()
 				timer[PlayerInfo].Reset();
 			}
 
-			if (timer[MonInfo].TotalTime() > 0.5f) {
+			if (timer[MonInfo].TotalTime() > 0.5f
+				&& g_RogicMgr.GetCurrGameState() == eGameState::Waving) {
 				g_RogicMgr.SendPacketMonInfo();
 				timer[MonInfo].Reset();
 			}

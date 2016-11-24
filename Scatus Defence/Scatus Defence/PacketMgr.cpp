@@ -222,7 +222,6 @@ void PacketMgr::ProcessPacket()
 		
 		Time_Mgr->Set_Wavelevel(p->Roundlevel);
 		Time_Mgr->Set_time(p->Time);
-	
 		break;
 	}
 	case eSC::AddMonsters: {

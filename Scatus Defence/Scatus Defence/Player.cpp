@@ -91,14 +91,6 @@ void Player::Animate(float dt)
 	SkinnedObject::Animate(dt);
 }
 
-void Player::CollisionMoving(const XMFLOAT3& dPos, float dt)
-{
-	XMFLOAT3 target;
-	XMStoreFloat3(&target, MathHelper::TargetVector2D(dPos, mPosition));
-
-	mPosition = mPosition - target*dt*mProperty.movespeed;
-}
-
 void Player::Move(float walk, float strafe)
 {
 	mActionState = ActionState::Run;
@@ -147,9 +139,11 @@ void Player::ProccessKeyInput(float dt)
 		{
 			const XMFLOAT3& cp = Collision_Mgr->PlayerCollPos[i];
 			if (MathHelper::DistanceVector(mPosition, cp) < 3.0f)
-				CollisionMoving(cp, dt);
+				Collision_Mgr->CollisionMoving(mPosition, cp, mProperty.movespeed, dt);
 		}
 
+		if (Collision_Mgr->CollisionCheckOOBB(this, Temple::GetInstance()))
+			Collision_Mgr->CollisionMoving(mPosition, Temple::GetInstance()->GetPos(), mProperty.movespeed, dt);
 
 		//auto temple = Temple::GetInstance()->GetAABB();
 		//if (XNA::IntersectAxisAlignedBoxAxisAlignedBox(&temple, &mAABB))

@@ -52,13 +52,12 @@ void Monster::MoveToTarget(float dt)
 		{
 			const XMFLOAT3& cp = Collision_Mgr->MonCollPos[mMonID][i];
 			if (MathHelper::DistanceVector(mPosition, cp) < 3.0f)
-			{
-				XMFLOAT3 target;
-				XMStoreFloat3(&target, MathHelper::TargetVector2D(cp, mPosition));
-
-				mPosition = mPosition - target*dt*mProperty.movespeed;
-			}
+				Collision_Mgr->CollisionMoving(mPosition, cp, mProperty.movespeed, dt);
 		}
+
+		XMFLOAT3 tp = Temple::GetInstance()->GetPos();
+		if (MathHelper::DistanceVector(mPosition, tp) < 25.0f)
+			Collision_Mgr->CollisionMoving(mPosition, tp, mProperty.movespeed, dt);
 
 		ChangeActionState(ActionState::Walk);
 	}
@@ -132,9 +131,9 @@ void Monster::SetAI_State(AI_State::States state)
 		mAI_States = state;*/
 }
 
-void Monster::Attack(SkinnedObject * target)
+void Monster::Attack(GameObject * target)
 {
-	if (mHasTarget && target->GetActionState() != ActionState::Die && target->GetActionState() != ActionState::Damage)
+	if (mHasTarget)
 	{
 		int mTarget_hp = target->GetProperty().hp_now;
 		int armor = target->GetProperty().guardpoint;

@@ -28,6 +28,7 @@ void Temple::Init(BasicMesh * mesh, const BO_InitDesc & info)
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
 	XMStoreFloat3(&mCurrLook, XMVector3TransformNormal(XMLoadFloat3(&mCurrLook), R));
 
+	mProperty.hp_now = 1000;
 	// InitBoundingObject();
 }
 

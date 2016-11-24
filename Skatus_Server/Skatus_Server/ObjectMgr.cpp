@@ -94,10 +94,10 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 
 	case ObjectType::Obstacle:
 	case ObjectType::Tree:
-		BasicInfo.Scale = 1.0f + MathHelper::RandF(0.7f, 1.5f);
+		BasicInfo.Scale = 0.7f + MathHelper::RandF(0.7f, 1.5f);
 		BasicInfo.Rot.y = MathHelper::RandF(0.0f, MathHelper::Pi * 2);
-		BasicInfo.Pos = XMFLOAT3(MathHelper::RandF(-100.0f, 100.0f), -0.1f*BasicInfo.Scale,
-			MathHelper::RandF(100.0f, -100.0f));
+		BasicInfo.Pos = XMFLOAT3(MathHelper::RandF(-90.0f, 90.0f), -0.1f*BasicInfo.Scale,
+			MathHelper::RandF(90.0f, -90.0f));
 		mObstacles.push_back(BasicInfo);
 		break;
 	case ObjectType::Base:

@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "Sound_Manager.h"
 #include "SceneMgr.h"
 
 UINT GameObject::GeneratedCount = 0;
@@ -91,6 +92,15 @@ bool GameObject::BoundaryCheck()
 		return true;
 	else
 		return false;
+}
+
+void GameObject::Damage(float damage)
+{
+	//target->SetHP(mTarget_hp + (damage*(1 - (armor*0.06)) / (1 + 0.06*armor)));
+	mProperty.hp_now -= damage;
+
+	Sound_Mgr->Play3DEffect(Sound_impact, mPosition.x, mPosition.y, mPosition.z);
+	//	Sound_Mgr->Play3DEffect(Sound_Giant_attack1, GetPos().x, GetPos().y, GetPos().z);
 }
 
 void GameObject::Release()

@@ -94,3 +94,61 @@ bool CollisionMgr::MonsterFrustumCulling(GameObject* obj)
 	// Perform the box/frustum intersection test in local space.
 	return XNA::IntersectOrientedBoxFrustum(&ob, &worldspaceFrustum);
 }
+
+bool CollisionMgr::CollisionCheckOOBB(GameObject * obj1, GameObject * obj2)
+{
+	const Camera& cam = *Camera::GetInstance();
+
+	XMFLOAT4X4 world1 = obj1->GetWorld();
+	XMFLOAT4X4 world2 = obj2->GetWorld();
+	XNA::AxisAlignedBox aabb1 = obj1->GetAABB();
+	XNA::AxisAlignedBox aabb2 = obj2->GetAABB();
+
+	XMVECTOR detView = XMMatrixDeterminant(cam.View());
+	XMMATRIX invView = XMMatrixInverse(&detView, cam.View());
+
+	XMMATRIX W1 = XMLoadFloat4x4(&world1);
+	XMMATRIX W2 = XMLoadFloat4x4(&world2);
+	XMMATRIX T1 = XMMatrixTranslation(0.0f, Terrain::GetInstance()->GetHeight(obj1->GetPos()), 0.0f);
+	XMMATRIX T2 = XMMatrixTranslation(0.0f, Terrain::GetInstance()->GetHeight(obj2->GetPos()), 0.0f);
+	W1 = XMMatrixMultiply(W1, T1);
+	W2 = XMMatrixMultiply(W2, T2);
+
+	XMVECTOR v1 = XMLoadFloat3(&aabb1.Center);
+	XMVECTOR v2 = XMLoadFloat3(&aabb2.Center);
+
+	v1 = XMVector3TransformCoord(v1, W1);
+	v2 = XMVector3TransformCoord(v2, W2);
+
+	// Decompose the matrix into its individual parts.
+	XMVECTOR s1, s2;
+	XMVECTOR r1, r2;
+	XMVECTOR t1, t2;
+	XMMatrixDecompose(&s1, &r1, &t1, W1);
+	XMMatrixDecompose(&s2, &r2, &t2, W2);
+
+	XNA::OrientedBox ob1, ob2;
+	XMStoreFloat3(&ob1.Center, v1);
+	XMStoreFloat3(&ob2.Center, v2);
+
+	ob1.Extents.x = aabb1.Extents.x * obj1->GetScale();
+	ob1.Extents.y = aabb1.Extents.y * obj1->GetScale();
+	ob1.Extents.z = aabb1.Extents.z * obj1->GetScale();
+	ob2.Extents.x = aabb2.Extents.x * obj2->GetScale();
+	ob2.Extents.y = aabb2.Extents.y * obj2->GetScale();
+	ob2.Extents.z = aabb2.Extents.z * obj2->GetScale();
+
+	XMStoreFloat4(&ob1.Orientation, r1);
+	XMStoreFloat4(&ob2.Orientation, r2);
+
+	return XNA::IntersectOrientedBoxOrientedBox(&ob1, &ob2);
+}
+
+void CollisionMgr::CollisionMoving(XMFLOAT3 & outPos, const XMFLOAT3 & dPos, FLOAT moveSpeed, FLOAT dt)
+{
+	XMFLOAT3 target;
+	XMStoreFloat3(&target, MathHelper::TargetVector2D(dPos, outPos));
+
+	outPos = outPos - target*dt*moveSpeed;
+}
+

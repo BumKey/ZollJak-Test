@@ -46,7 +46,7 @@ public:
 	void					SetMovingSpeed(FLOAT speed) { mProperty.movespeed = speed; }
 	void					SetNextMove(XMFLOAT3 pos) { pos.y = -0.1f; mTargetPos = pos; }
 	void					SetTargetPos(const XMFLOAT3& pos) { mTargetPos = pos; }
-	void					SetTarget(SkinnedObject* target);
+	void					SetTarget(GameObject* target);
 	void					SetNoTarget() { mTarget = 0; mHasTarget = false; }
 	void					SetAttackState();
 
@@ -67,7 +67,7 @@ protected:
 
 	FLOAT mTimePos;;
 	XMFLOAT3 mTargetPos;
-	SkinnedObject* mTarget;
+	GameObject* mTarget;
 
 	std::string mCurrClipName;
 	std::unordered_map<Anims, std::string> mAnimNames;

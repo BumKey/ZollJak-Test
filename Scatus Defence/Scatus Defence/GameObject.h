@@ -27,6 +27,7 @@ public:
 	virtual void DrawToShadowMap(ID3D11DeviceContext* dc, const XMMATRIX& lightViewProj) = 0;
 	virtual void DrawToSsaoNormalDepthMap(ID3D11DeviceContext* dc) = 0;
 
+	virtual void Damage(float damage);
 	virtual void MoveToTarget(float dt) {};
 
 	virtual void Release();

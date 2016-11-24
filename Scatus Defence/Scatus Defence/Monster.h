@@ -16,13 +16,12 @@ public:
 	void		SetAI_State(AI_State::States state);
 	void		SetMonID(const UINT& id) { mMonID = id; }
 
-	virtual void Attack(SkinnedObject* target);
+	virtual void Attack(GameObject* target);
 	virtual void AttackToTarget(float dt);
 	virtual void MoveToTarget(float dt);
 	
 private:
 	UINT mMonID;
-
 	AI_State::States mAI_States;
 	GameTimer mTimer;
 

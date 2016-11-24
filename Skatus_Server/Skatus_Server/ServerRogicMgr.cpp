@@ -57,7 +57,7 @@ void ServerRogicMgr::Update()
 			SendPacketReleaseDeadMonsters();
 		}
 
-		if (mRogicTimer.TotalTime() > 5.0f)
+		if (mRogicTimer.TotalTime() > TIME_WAVE_WAITING)
 		{
 			mGameStateMgr.FlowAdvance();
 		}
@@ -97,7 +97,7 @@ void ServerRogicMgr::Update()
 		// 2. 게임 상태들(남은 몬스터, 남은시간들 등..) 처리
 		// 3. 로직 타이머 리셋
 
-		if (mRogicTimer.TotalTime() > 100.0f)
+		if (mRogicTimer.TotalTime() > TIME_WAVING)
 		{
 			mGameStateMgr.FlowAdvance();
 			mRogicTimer.Reset();
@@ -244,9 +244,9 @@ void ServerRogicMgr::SendPacketFrameInfo()
 	SC_FrameInfo packet;
 
 	if (mGameStateMgr.GetCurrState() == eGameState::WaveWaiting)
-		packet.Time = 5.0f - mRogicTimer.TotalTime();
+		packet.Time = TIME_WAVE_WAITING - mRogicTimer.TotalTime();
 	else if (mGameStateMgr.GetCurrState() == eGameState::Waving)
-		packet.Time = 100.0f - mRogicTimer.TotalTime();
+		packet.Time = TIME_WAVING - mRogicTimer.TotalTime();
 	else
 		packet.Time = mRogicTimer.TotalTime();
 

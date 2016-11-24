@@ -516,7 +516,7 @@ void SceneMgr::BuildTreeSpritesBuffer(ID3D11Device * device)
 	{
 		if (i < TreeCount / 4) {
 			float x = MathHelper::RandF(-190.0f, 190.0f);
-			float z = MathHelper::RandF(-120.0f, -190.0f);
+			float z = MathHelper::RandF(-150.0f, -190.0f);
 			float y = Terrain::GetInstance()->GetHeight(x, z);
 
 			// Move tree slightly above land height.
@@ -527,7 +527,7 @@ void SceneMgr::BuildTreeSpritesBuffer(ID3D11Device * device)
 				10.0f + MathHelper::RandF(0.0f, 10.0f));
 		}
 		else if (i >= TreeCount / 4 && i < TreeCount / 2) {
-			float x = MathHelper::RandF(190.0f, 120.0f);
+			float x = MathHelper::RandF(190.0f, 150.0f);
 			float z = MathHelper::RandF(190.0f, -190.0f);
 			float y = Terrain::GetInstance()->GetHeight(x, z);
 
@@ -540,7 +540,7 @@ void SceneMgr::BuildTreeSpritesBuffer(ID3D11Device * device)
 		}
 		else if (i >= TreeCount / 2 && i < TreeCount / 4 * 3) {
 			float x = MathHelper::RandF(-190.0f, 190.0f);
-			float z = MathHelper::RandF(190.0f, 120.0f);
+			float z = MathHelper::RandF(190.0f, 150.0f);
 			float y = Terrain::GetInstance()->GetHeight(x, z);
 
 			// Move tree slightly above land height.
@@ -551,7 +551,7 @@ void SceneMgr::BuildTreeSpritesBuffer(ID3D11Device * device)
 				10.0f + MathHelper::RandF(0.0f, 10.0f));
 		}
 		else {
-			float x = MathHelper::RandF(-190.0f, -120.0f);
+			float x = MathHelper::RandF(-190.0f, -150.0f);
 			float z = MathHelper::RandF(190.0f, -190.0f);
 			float y = Terrain::GetInstance()->GetHeight(x, z);
 

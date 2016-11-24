@@ -5,8 +5,8 @@ mNewID(-1), mAddMonPacketSended(false)
 {
 	srand(time(NULL));
 
-	mPerWaveMonsterNum[1][ObjectType::Goblin] = 5;
-	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 1;
+	mPerWaveMonsterNum[1][ObjectType::Goblin] = 25;
+	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 5;
 
 	mPerWaveMonsterNum[2][ObjectType::Goblin] = 10;
 	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 2;
@@ -52,8 +52,10 @@ void ServerRogicMgr::Update()
 		// 2. 5초의 시간동안 대기, 시간 정보 패킷 전송
 		// 3. 게임상태 진행
 		// 4. 로직 타이머 리셋
-		if (mRogicTimer.TotalTime() == 0.0f)
-			mObjectMgr.ReleaseAllMonsters();
+		if (mRogicTimer.TotalTime() == 0.0f) {
+			mObjectMgr.ReleaseDeadMonsters();
+			SendPacketReleaseDeadMonsters();
+		}
 
 		if (mRogicTimer.TotalTime() > 5.0f)
 		{
@@ -190,39 +192,9 @@ void ServerRogicMgr::ProcessKeyInput(CS_Move & inPacket)
 {
 	auto player = mObjectMgr.GetPlayer(inPacket.ClientID);
 
-	float destY = inPacket.Pos.y;
-	float currY = player.Pos.y;
-	float yDiff = destY - currY;
-	float slowFactor = 5.0f * (yDiff);
-
-	XMFLOAT3 dir, pos;
-
-	if (currY < 0.0f)
-	{
-		dir = Float3Normalize(inPacket.Pos - player.Pos);
-		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f;
-		pos.y = destY;
-	}
-	else if (yDiff >= 0.3f && yDiff < 0.6f)
-	{
-		dir = Float3Normalize(inPacket.Pos - player.Pos);
-		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f/slowFactor;
-		pos.y = destY;
-	}
-	else if (yDiff >= 0.8f)
-	{
-		pos = player.Pos;
-	}
-	else 
-	{
-		dir = Float3Normalize(inPacket.Pos - player.Pos);
-		pos = inPacket.Pos + dir*inPacket.MoveSpeed*inPacket.DeltaTime*5.0f;
-		pos.y = destY;
-	}
-
 	mObjectMgr.SetPlayerRot(inPacket.ClientID, inPacket.Rot);
 	mObjectMgr.SetCollsion(inPacket.ClientID, inPacket.Pos);
-	mObjectMgr.SetPlayerPos(inPacket.ClientID, pos);
+	mObjectMgr.SetPlayerPos(inPacket.ClientID, inPacket.Pos);
 
 	SC_CollisionInfo packet;
 	for (UINT i = 0; i < COLL_OBJ_NUM; ++i)
@@ -253,7 +225,7 @@ void ServerRogicMgr::Reset()
 	mGameTimer.Reset();
 	mRogicTimer.Reset();
 	mGameStateMgr.Reset();
-	mObjectMgr.ReleaseAllMonsters();
+	mObjectMgr.Reset();
 }
 
 FLOAT ServerRogicMgr::Distance2D(const XMFLOAT3 & a, const XMFLOAT3 & b)
@@ -321,6 +293,19 @@ void ServerRogicMgr::SendPacketMonInfo()
 			packet.Monsters[m.first].ActionState = m.second.ActionState;
 		}
 
+		int count(0);
+		for (auto m : mObjectMgr.GetMonsters()) {
+			count = 0;
+			for (auto o : mObjectMgr.GetAllBasicObjects())
+			{
+				if (MathHelper::DistanceVector(m.second.Pos, o.Pos) <= 10.0f) {
+					packet.Coll_Ob_Mon[m.first][count++] = o.Pos;
+					if (count > COLL_OBJ_NUM-1)
+						break;
+				}
+			}
+		}
+
 		packet.NumOfMonsters = mObjectMgr.GetMonsters().size();
 		for (UINT i = 0; i < MAX_USER; ++i) {
 			if (g_clients[i].is_connected)
@@ -362,5 +347,14 @@ void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& id)
 
 		MyServer::Send_Packet(id, reinterpret_cast<char*>(&packet));
 		mAddMonPacketSended = true;
+	}
+}
+
+void ServerRogicMgr::SendPacketReleaseDeadMonsters()
+{
+	SC_ReleaseDeadMonsters packet;
+	for (UINT i = 0; i < MAX_USER; ++i) {
+		if (g_clients[i].is_connected)
+			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
 	}
 }

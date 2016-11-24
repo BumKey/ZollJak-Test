@@ -48,61 +48,20 @@ void Monster::MoveToTarget(float dt)
 
 		RotateY(angle);
 
+		for (UINT i = 0; i < COLL_OBJ_NUM; ++i)
+		{
+			const XMFLOAT3& cp = Collision_Mgr->MonCollPos[mMonID][i];
+			if (MathHelper::DistanceVector(mPosition, cp) < 3.0f)
+			{
+				XMFLOAT3 target;
+				XMStoreFloat3(&target, MathHelper::TargetVector2D(cp, mPosition));
+
+				mPosition = mPosition - target*dt*mProperty.movespeed;
+			}
+		}
+
 		ChangeActionState(ActionState::Walk);
 	}
-}
-
-void Monster::FrustumCulling()
-{
-	auto m = mMesh->GetAABB();
-	const Camera& cam = *Camera::GetInstance();
-
-	XMVECTOR detView = XMMatrixDeterminant(cam.View());
-	XMMATRIX invView = XMMatrixInverse(&detView, cam.View());
-
-	// 현재 모델은 어떻게 누워있는지 통일되어 있지 않다.
-	float max = -MathHelper::Infinity;
-	max = MathHelper::Max(max, m.Extents.x);
-	max = MathHelper::Max(max, m.Extents.y);
-	max = MathHelper::Max(max, m.Extents.z);
-
-	if (max != m.Extents.y)
-	{
-		m.Extents.x = m.Extents.y;
-		m.Extents.y = max;
-		m.Extents.z = m.Extents.x;
-	}
-
-	XMMATRIX W = XMLoadFloat4x4(&mWorld);
-	XMMATRIX T = XMMatrixTranslation(0.0f, Terrain::GetInstance()->GetHeight(mPosition)+max*mScaling, 0.0f);
-	W = XMMatrixMultiply(W, T);
-
-	XMVECTOR v = XMLoadFloat3(&m.Center);
-	v = XMVector3TransformCoord(v, W);
-	
-	// Decompose the matrix into its individual parts.
-	XMVECTOR scale;
-	XMVECTOR rotQuat;
-	XMVECTOR translation;
-	XMMatrixDecompose(&scale, &rotQuat, &translation, W);
-
-	XNA::OrientedBox ob;
-	XMStoreFloat3(&ob.Center, v);
-	ob.Extents.x = m.Extents.x * mScaling;
-	ob.Extents.y = max * mScaling;
-	ob.Extents.z = m.Extents.z * mScaling;
-	XMStoreFloat4(&ob.Orientation, rotQuat);
-
-	XMMatrixDecompose(&scale, &rotQuat, &translation, invView);
-
-	// Transform the camera frustum from view space to the object's local space.
-	XNA::Frustum worldspaceFrustum;
-	XNA::TransformFrustum(&worldspaceFrustum, &cam.GetCamFrustum(), XMVectorGetX(scale), rotQuat, translation);
-
-	// Perform the box/frustum intersection test in local space.
-	mFrustumCull = XNA::IntersectOrientedBoxFrustum(&ob, &worldspaceFrustum);
-	if (mFrustumCull == 0)
-		int a = 0;
 }
 
 void Monster::Update(float dt)
@@ -144,6 +103,7 @@ void Monster::Update(float dt)
 			mTimer.Tick();
 
 		SkinnedObject::Update(dt);
+		mFrustumCull = Collision_Mgr->FrustumAABBCulling(this);
 	}
 }
 

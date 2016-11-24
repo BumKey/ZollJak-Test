@@ -244,6 +244,9 @@
     <ClCompile Include="UI_Scene.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="CollisionMgr.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicMeshData.h">
@@ -389,6 +392,9 @@
     </ClInclude>
     <ClInclude Include="UI_Scene.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionMgr.h">
+      <Filter>Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

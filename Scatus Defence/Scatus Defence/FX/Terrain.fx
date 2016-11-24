@@ -49,6 +49,15 @@ SamplerState samLinear
 	AddressV = WRAP;
 };
 
+SamplerState samAnisotropic
+{
+	Filter = ANISOTROPIC;
+	MaxAnisotropy = 4;
+
+	AddressU = WRAP;
+	AddressV = WRAP;
+};
+
 SamplerState samHeightmap
 {
 	Filter = MIN_MAG_LINEAR_MIP_POINT;
@@ -318,16 +327,16 @@ float4 PS(DomainOut pin,
 	//
 	// Texturing
 	//
-	
+
 	// Sample layers in texture array.
-	float4 c0 = gLayerMapArray.Sample( samLinear, float3(pin.TiledTex, 0.0f) );
-	float4 c1 = gLayerMapArray.Sample( samLinear, float3(pin.TiledTex, 1.0f) );
-	float4 c2 = gLayerMapArray.Sample( samLinear, float3(pin.TiledTex, 2.0f) );
-	float4 c3 = gLayerMapArray.Sample( samLinear, float3(pin.TiledTex, 3.0f) );
-	float4 c4 = gLayerMapArray.Sample( samLinear, float3(pin.TiledTex, 4.0f) ); 
+	float4 c0 = gLayerMapArray.Sample( samAnisotropic, float3(pin.TiledTex, 0.0f) );
+	float4 c1 = gLayerMapArray.Sample( samAnisotropic, float3(pin.TiledTex, 1.0f) );
+	float4 c2 = gLayerMapArray.Sample( samAnisotropic, float3(pin.TiledTex, 2.0f) );
+	float4 c3 = gLayerMapArray.Sample( samAnisotropic, float3(pin.TiledTex, 3.0f) );
+	float4 c4 = gLayerMapArray.Sample( samAnisotropic, float3(pin.TiledTex, 4.0f) );
 	
 	// Sample the blend map.
-	float4 t  = gBlendMap.Sample( samLinear, pin.Tex ); 
+	float4 t  = gBlendMap.Sample( samAnisotropic, pin.Tex );
     
     // Blend the layers on top of each other.
     float4 texColor = c0;

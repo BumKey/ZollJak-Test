@@ -77,11 +77,14 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 	Packet_Mgr->Connected[id] = false;
 }
 
-void ObjectMgr::SetCollisionPos(const XMFLOAT3* info)
+void ObjectMgr::ReleaseDeadMonsters()
 {
-	for (UINT i = 0; i < COLL_OBJ_NUM; ++i)
+	for (auto m = mMonsters.begin(); m < mMonsters.end();)
 	{
-		mCollisionPos[i] = info[i];
+		if ((*m)->GetActionState() == ActionState::Die)
+			mMonsters.erase(m);
+		else
+			++m;
 	}
 }
 
@@ -98,8 +101,14 @@ void ObjectMgr::UpdatePlayer(const UINT & id, const PlayerInfos & info)
 void ObjectMgr::UpdateMonster(const UINT & id, const MonInfos & info)
 {
 	if (mCurrPlayerNum >= MAX_USER) {
-		mMonsters[id]->SetTarget(mPlayers[info.TargetID]);
-		mMonsters[id]->SetTargetPos(mPlayers[info.TargetID]->GetPos());
+		mMonsters[id]->SetMonID(id);
+
+		if (info.TargetID == COLL_TARGET)
+			mMonsters[id]->SetTargetPos(info.TargetPos);
+		else {
+			mMonsters[id]->SetTarget(mPlayers[info.TargetID]);
+			mMonsters[id]->SetTargetPos(mPlayers[info.TargetID]->GetPos());
+		}
 
 		if (MathHelper::DistanceVector(mMonsters[id]->GetPos(), info.TargetPos) > 10.0f)
 			mMonsters[id]->DoubleSpeed();

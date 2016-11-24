@@ -28,8 +28,10 @@ void ObjectMgr::UpdateMonsters()
 			if (m.first == coll.first)
 				continue;
 
-			if (MathHelper::DistanceVector(m.second.Pos, coll.second.Pos) <= 2.0f)
+			if (MathHelper::DistanceVector(m.second.Pos, coll.second.Pos) <= 3.0f) {
 				collision = coll.first;
+				break;
+			}
 		}
 
 		const UINT targetID = SetMonstersTarget(m.second.Pos);
@@ -43,6 +45,8 @@ void ObjectMgr::UpdateMonsters()
 			XMStoreFloat3(&targetF, targetV);
 			targetF = Float3Normalize(targetF);
 
+			m.second.Pos = m.second.Pos + targetF*m.second.MoveSpeed*TICK_MONINFO;
+			m.second.TargetID = targetID;
 		}
 		else {
 			const XMFLOAT3 targetPos = mMonsters[collision].Pos;
@@ -50,10 +54,10 @@ void ObjectMgr::UpdateMonsters()
 			targetV = -MathHelper::TargetVector2D(targetPos, m.second.Pos);
 			XMStoreFloat3(&targetF, targetV);
 			targetF = Float3Normalize(targetF);
-		}
 
-		m.second.Pos = m.second.Pos + targetF*m.second.MoveSpeed*TICK_MONINFO;
-		m.second.TargetID = targetID;
+			m.second.Pos = m.second.Pos + targetF*m.second.MoveSpeed*TICK_MONINFO;
+			m.second.TargetID = COLL_TARGET;
+		}
 	}
 }
 
@@ -90,9 +94,10 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 
 	case ObjectType::Obstacle:
 	case ObjectType::Tree:
-		BasicInfo.Scale = ((float)(rand()) / (float)RAND_MAX)*2.0f +  0.5f;
+		BasicInfo.Scale = 1.0f + MathHelper::RandF(0.7f, 1.5f);
 		BasicInfo.Rot.y = MathHelper::RandF(0.0f, MathHelper::Pi * 2);
-		BasicInfo.Pos = XMFLOAT3(100.0f + rand() % 60, -0.1f*BasicInfo.Scale, -50.0f + rand() % 60);
+		BasicInfo.Pos = XMFLOAT3(MathHelper::RandF(-100.0f, 100.0f), -0.1f*BasicInfo.Scale,
+			MathHelper::RandF(100.0f, -100.0f));
 		mObstacles.push_back(BasicInfo);
 		break;
 	case ObjectType::Base:
@@ -229,16 +234,27 @@ SO_InitDesc & ObjectMgr::GetPlayer(const UINT & id)
 	return mPlayers[id];
 }
 
-void ObjectMgr::ReleaseAllMonsters()
+void ObjectMgr::Reset()
 {
+	mObstacles.clear();
 	mMonsters.clear();
+	mCurrPlayerNum = 0;
+}
+
+void ObjectMgr::ReleaseDeadMonsters()
+{
+	for (auto& m : mMonsters)
+	{
+		if (m.second.ActionState == ActionState::Die)
+			mMonsters.erase(m.first);
+	}
 }
 
 void ObjectMgr::CreateMap()
 {
 	AddObject(ObjectType::Temple);
 
-	for (UINT i = 0; i < 40; ++i)
+	for (UINT i = 0; i < MAX_OBSTACLE-1; ++i)
 		AddObject(ObjectType::Tree);
 
 	/*for (UINT i = 0; i < 20; ++i)

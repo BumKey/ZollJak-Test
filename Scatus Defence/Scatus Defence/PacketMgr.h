@@ -12,6 +12,7 @@
 #include "protocol.h"
 #include "Singletone.h"
 #include "ObjectMgr.h"
+#include "CollisionMgr.h"
 #include "Player.h"
 #include "RogicTimer.h"
 #pragma comment (lib, "ws2_32.lib")

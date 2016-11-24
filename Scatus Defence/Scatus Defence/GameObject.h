@@ -37,6 +37,7 @@ public:
 	XMFLOAT3				GetLook() const { return mCurrLook; }
 	XMFLOAT3				GetRight() const { return mRight; }
 	XMFLOAT3				GetUp() const { return mUp; }
+	FLOAT					GetScale() const { return mScaling; }
 	UINT					GetID() const { return mID; }
 	UINT					GetObjectGeneratedCount() const { return GeneratedCount; }
 	Properties				GetProperty() const { return mProperty; }
@@ -55,7 +56,6 @@ public:
 
 protected:
 	bool BoundaryCheck();
-	virtual void  FrustumCulling();
 
 protected:
 	XMFLOAT4X4	mWorld;

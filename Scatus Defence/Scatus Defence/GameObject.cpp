@@ -84,32 +84,6 @@ void  GameObject::PrintLocation()
 		mProperty.name, mPosition.x, mPosition.y, mPosition.z);
 }
 
-void GameObject::FrustumCulling()
-{
-	XMVECTOR detView = XMMatrixDeterminant(Camera::GetInstance()->View());
-	XMMATRIX invView = XMMatrixInverse(&detView, Camera::GetInstance()->View());
-
-	XMMATRIX W = XMLoadFloat4x4(&mWorld);
-	XMMATRIX T = XMMatrixTranslation(0.0f, Terrain::GetInstance()->GetHeight(mPosition), 0.0f);
-	W = XMMatrixMultiply(W, T);
-
-	XMMATRIX invW = XMMatrixInverse(&XMMatrixDeterminant(W), W);
-
-	XMMATRIX toLocal = XMMatrixMultiply(invView, invW);
-
-	// Decompose the matrix into its individual parts.
-	XMVECTOR scale;
-	XMVECTOR rotQuat;
-	XMVECTOR translation;
-	XMMatrixDecompose(&scale, &rotQuat, &translation, toLocal);
-
-	// Transform the camera frustum from view space to the object's local space.
-	XNA::Frustum localspaceFrustum;
-	XNA::TransformFrustum(&localspaceFrustum, &Camera::GetInstance()->GetCamFrustum(), XMVectorGetX(scale), rotQuat, translation);
-
-	mFrustumCull = XNA::IntersectAxisAlignedBoxFrustum(&mMesh->GetAABB(), &localspaceFrustum);
-}
-
 bool GameObject::BoundaryCheck()
 {
 	if ((mPosition.x > 188.0f || mPosition.x < -188.0f)

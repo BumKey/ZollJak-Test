@@ -67,6 +67,7 @@ void Player::Update(float dt)
 	}
 
 	SkinnedObject::Update(dt);
+	mFrustumCull = Collision_Mgr->FrustumAABBCulling(this);
 }
 
 void Player::Damage(float damage)
@@ -144,10 +145,11 @@ void Player::ProccessKeyInput(float dt)
 	{
 		for (UINT i = 0; i < COLL_OBJ_NUM; ++i)
 		{
-			XMFLOAT3 cp = Object_Mgr->GetCollisionPos()[i];
-			if (MathHelper::DistanceVector(mPosition, Object_Mgr->GetCollisionPos()[i]) < 3.0f)
-				CollisionMoving(Object_Mgr->GetCollisionPos()[i], dt);
+			const XMFLOAT3& cp = Collision_Mgr->PlayerCollPos[i];
+			if (MathHelper::DistanceVector(mPosition, cp) < 3.0f)
+				CollisionMoving(cp, dt);
 		}
+
 
 		//auto temple = Temple::GetInstance()->GetAABB();
 		//if (XNA::IntersectAxisAlignedBoxAxisAlignedBox(&temple, &mAABB))

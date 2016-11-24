@@ -86,8 +86,6 @@ void SkinnedObject::Update(float dt)
 	XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 
 	XMStoreFloat4x4(&mWorld, S*R*T);
-
-	FrustumCulling();
 }
 
 void SkinnedObject::Animate(float dt)

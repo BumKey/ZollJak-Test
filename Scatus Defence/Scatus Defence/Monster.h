@@ -14,13 +14,14 @@ public:
 	virtual void MovingCollision(const XMFLOAT3& crushedObjectPos , float dt);
 
 	void		SetAI_State(AI_State::States state);
+	void		SetMonID(const UINT& id) { mMonID = id; }
 
 	virtual void Attack(SkinnedObject* target);
 	virtual void AttackToTarget(float dt);
 	virtual void MoveToTarget(float dt);
 	
 private:
-	virtual void FrustumCulling();
+	UINT mMonID;
 
 	AI_State::States mAI_States;
 	GameTimer mTimer;

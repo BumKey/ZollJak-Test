@@ -9,12 +9,13 @@
 #define MAX_PACKET_SIZE		4000
 #define MAX_USER			1
 #define MAX_MONSTER			50
-#define MAX_OBJECT			100
+#define MAX_OBSTACLE		50
 #define MAX_NPC				100
 #define WORLDSIZE			100
 #define MONSTER_DURATION	1000
 
-#define COLL_OBJ_NUM		10
+#define COLL_OBJ_NUM		5
+#define COLL_TARGET			11
 #define OP_RECV				1
 #define OP_SEND				2
 
@@ -41,7 +42,7 @@ enum eSC {
 	RemovePlayer,
 	PutOtherPlayers,
 	AddMonsters,
-	ReleaseAllMons,
+	ReleaseDeadMons,
 	PlayerInfo,
 	MonInfo,
 	CollisionInfo,
@@ -209,6 +210,7 @@ struct SC_MonInfo : public HEADER
 	}
 	UINT NumOfMonsters;
 	MonInfos Monsters[MAX_MONSTER];
+	XMFLOAT3 Coll_Ob_Mon[MAX_MONSTER][COLL_OBJ_NUM];
 };
 
 struct SC_AddMonster : public HEADER
@@ -220,10 +222,10 @@ struct SC_AddMonster : public HEADER
 	SO_InitDesc InitInfos[MAX_MONSTER];
 };
 
-struct SC_ReleaseAllMonsters : public HEADER
+struct SC_ReleaseDeadMonsters : public HEADER
 {
-	SC_ReleaseAllMonsters() {
-		Size = sizeof(*this); Type = eSC::ReleaseAllMons;
+	SC_ReleaseDeadMonsters() {
+		Size = sizeof(*this); Type = eSC::ReleaseDeadMons;
 	}
 };
 struct SC_InitPlayer : public HEADER
@@ -236,7 +238,7 @@ struct SC_InitPlayer : public HEADER
 	BYTE CurrPlayerNum;
 	SO_InitDesc Player[MAX_USER];
 	UINT NumOfObjects;
-	BO_InitDesc MapInfo[50];
+	BO_InitDesc MapInfo[MAX_OBSTACLE];
 };
 
 struct SC_RemovePlayer : public HEADER

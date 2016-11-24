@@ -31,7 +31,8 @@ public:
 	void										SetPlayerPos(const UINT& id, XMFLOAT3 pos) { pos.y = -0.1f; mPlayers[id].Pos = pos; }
 	void										SetCollsion(const UINT& id, const XMFLOAT3& pos);
 
-	void ReleaseAllMonsters();
+	void Reset();
+	void ReleaseDeadMonsters();
 	void RemovePlayer(const UINT& id);
 
 private:

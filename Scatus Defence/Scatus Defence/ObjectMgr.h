@@ -30,16 +30,14 @@ public:
 	void AddObstacle(const ObjectType::Types& type, const BO_InitDesc& desc);
 
 	void RemovePlayer(const UINT& id);
-	void ReleaseAllMonsters() { mMonsters.clear(); }
-
-	void SetCollisionPos(const XMFLOAT3* info);
+	void ReleaseDeadMonsters();
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
 	SkinnedObject**						GetPlayers() { return mPlayers; }
 	std::vector<Monster*>				GetMonsters() { return mMonsters; }
 	UINT								GetCurrPlayerNum() const { return mCurrPlayerNum; }
-	XMFLOAT3*							GetCollisionPos() { return mCollisionPos; }
 	const XMFLOAT3						GetTemplePos() { return mTemplePos; }
+
 	void UpdatePlayer(const UINT& id, const PlayerInfos& info);
 	void UpdateMonster(const UINT& id, const MonInfos& info);
 	void Update(float dt);
@@ -47,7 +45,6 @@ public:
 private:
 	UINT mCurrPlayerNum;
 
-	XMFLOAT3 mCollisionPos[COLL_OBJ_NUM];
 	XMFLOAT3 mTemplePos;
 
 	std::vector<GameObject*>						mAllObjects;					

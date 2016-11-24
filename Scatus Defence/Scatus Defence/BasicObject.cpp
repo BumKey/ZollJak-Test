@@ -1,4 +1,5 @@
 #include "BasicObject.h"
+#include "CollisionMgr.h"
 
 BasicObject::BasicObject() : GameObject()
 {
@@ -20,7 +21,7 @@ BasicObject::~BasicObject()
 
 void BasicObject::Update(float dt)
 {
-	FrustumCulling();
+	mFrustumCull = Collision_Mgr->FrustumAABBCulling(this);
 }
 
 void BasicObject::DrawToScene(ID3D11DeviceContext* dc, const XMFLOAT4X4& shadowTransform)

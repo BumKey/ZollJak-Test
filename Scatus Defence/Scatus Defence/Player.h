@@ -16,7 +16,7 @@ private:
 public:
 	virtual void Init(SkinnedMesh* mesh, const SO_InitDesc& info);
 
-	void Update(float dt);
+	virtual void Update(float dt);
 	void Damage(float damage);
 	virtual void Animate(float dt);
 	void CollisionMoving(const XMFLOAT3& dPos, float dt);

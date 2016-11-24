@@ -1,6 +1,5 @@
 #include "Warrior.h"
-
-
+#include "CollisionMgr.h"
 
 Warrior::Warrior(SkinnedMesh* mesh, const SO_InitDesc& info) : SkinnedObject(mesh, info)
 {
@@ -24,4 +23,10 @@ Warrior::Warrior(SkinnedMesh* mesh, const SO_InitDesc& info) : SkinnedObject(mes
 
 Warrior::~Warrior()
 {
+}
+
+void Warrior::Update(float dt)
+{
+	SkinnedObject::Update(dt);
+	mFrustumCull = Collision_Mgr->FrustumAABBCulling(this);
 }

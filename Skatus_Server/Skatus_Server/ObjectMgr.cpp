@@ -1,7 +1,7 @@
 #include "ObjectMgr.h"
 
 // 임의의 수치임
-ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0), mMonsterGeneratedNum(0),
+ObjectMgr::ObjectMgr() : mStage(1), mTotalObjectNum(0), mMonsterCount(0),
 mCurrPlayerNum(0), mTemplePos(XMFLOAT3(-30.0f, -1.0f, 50.0f))
 {
 	mMaxMonsters = mStage * 200;
@@ -79,7 +79,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		SkinnedInfo.AttackPoint = 10.0f;
 		SkinnedInfo.AttackSpeed = MathHelper::RandF(0.5f, 1.0f);
 		SkinnedInfo.Hp = 50.0f;
-		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
+		mMonsters[mMonsterCount++] = SkinnedInfo;
 		break;
 	case ObjectType::Cyclop:
 		SkinnedInfo.Pos = XMFLOAT3(rand() % 100, -0.1f, rand() % 100);
@@ -89,7 +89,7 @@ void ObjectMgr::AddObject(ObjectType::Types oType)
 		SkinnedInfo.AttackPoint = 30.0f;
 		SkinnedInfo.AttackSpeed = MathHelper::RandF(0.5f, 1.0f);
 		SkinnedInfo.Hp = 120.0f;
-		mMonsters[mMonsterGeneratedNum++] = SkinnedInfo;
+		mMonsters[mMonsterCount++] = SkinnedInfo;
 		break;
 
 	case ObjectType::Obstacle:
@@ -241,13 +241,16 @@ void ObjectMgr::Reset()
 	mCurrPlayerNum = 0;
 }
 
-void ObjectMgr::ReleaseDeadMonsters()
+void ObjectMgr::ReleaseMonsters()
 {
-	for (auto& m : mMonsters)
-	{
-		if (m.second.ActionState == ActionState::Die)
-			mMonsters.erase(m.first);
-	}
+	//for (auto& m : mMonsters)
+	//{
+	//	if (m.second.ActionState == ActionState::Die)
+	//		mMonsters.erase(m.first);
+	//}
+
+	mMonsters.clear();
+	mMonsterCount = 0;
 }
 
 void ObjectMgr::CreateMap()

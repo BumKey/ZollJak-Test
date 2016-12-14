@@ -7,9 +7,9 @@
 #define SERVER_PORT			4000
 #define MAX_BUFF_SIZE		4000
 #define MAX_PACKET_SIZE		4000
-#define MAX_USER			1
+#define MAX_USER			2
 #define MAX_MONSTER			50
-#define MAX_OBSTACLE		50
+#define MAX_OBSTACLE		30
 #define MAX_NPC				100
 #define WORLDSIZE			100
 #define MONSTER_DURATION	1000
@@ -23,6 +23,8 @@
 #define TICK_MONINFO		0.5f
 #define TICK_PLAYERINFO     0.2f
 #define TICK_FRAMEINFO		1.0f
+#define TIME_WAVE_WAITING	10.0f
+#define TIME_WAVING			30.0f
 
 /*
 디버그 환경에서만 cout을 출력
@@ -42,7 +44,7 @@ enum eSC {
 	RemovePlayer,
 	PutOtherPlayers,
 	AddMonsters,
-	ReleaseDeadMons,
+	ReleaseMons,
 	PlayerInfo,
 	MonInfo,
 	CollisionInfo,
@@ -222,10 +224,10 @@ struct SC_AddMonster : public HEADER
 	SO_InitDesc InitInfos[MAX_MONSTER];
 };
 
-struct SC_ReleaseDeadMonsters : public HEADER
+struct SC_ReleaseMonsters : public HEADER
 {
-	SC_ReleaseDeadMonsters() {
-		Size = sizeof(*this); Type = eSC::ReleaseDeadMons;
+	SC_ReleaseMonsters() {
+		Size = sizeof(*this); Type = eSC::ReleaseMons;
 	}
 };
 struct SC_InitPlayer : public HEADER

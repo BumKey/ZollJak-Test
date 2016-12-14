@@ -29,7 +29,7 @@ public:
 	void SendPacketMonInfo();
 	void SendPacketToCreateMonsters();
 	void SendPacketToCreateMonsters(const UINT& id);
-	void SendPacketReleaseDeadMonsters();
+	void SendPacketReleaseMonsters();
 
 private:
 	FLOAT Distance2D(const XMFLOAT3& a, const XMFLOAT3& b);

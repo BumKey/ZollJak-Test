@@ -119,8 +119,8 @@ void GameFrameWork::OnMouseDown(WPARAM btnState, int x, int y)
 		const XMFLOAT3 p_front = Player::GetInstance()->GetLook()*-3.0f;
 		for (auto& m : monsters)
 		{
-			if (MathHelper::DistanceVector(p_pos+p_front, m->GetPos()) <= 3.5f) {
-				Player::GetInstance()->Attack(m);
+			if (MathHelper::DistanceVector(p_pos+p_front, m.second->GetPos()) <= 3.5f) {
+				Player::GetInstance()->Attack(m.second);
 			}
 		}
 

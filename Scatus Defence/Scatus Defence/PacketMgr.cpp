@@ -226,27 +226,29 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::AddMonsters: {
 		auto *p = reinterpret_cast<SC_AddMonster*>(mPacketBuf);
-		if (Object_Mgr->GetMonsters().size() == 0) {
-			for (UINT i = 0; i < p->NumOfObjects; ++i)
-			{
-				SO_InitDesc desc;
-				desc.Pos = p->InitInfos[i].Pos;
-				desc.Rot = p->InitInfos[i].Rot;
-				desc.Scale = p->InitInfos[i].Scale;
-				desc.AttackSpeed = p->InitInfos[i].AttackSpeed;
-				desc.MoveSpeed = p->InitInfos[i].MoveSpeed;
-				desc.Hp = p->InitInfos[i].Hp;
-				desc.AttackPoint = p->InitInfos[i].AttackPoint;
-				auto type = p->InitInfos[i].ObjectType;
+		
+		Object_Mgr->ReleaseMonsters();
 
-				Object_Mgr->AddMonster(type, desc, i);
-			}
+		for (UINT i = 0; i < p->NumOfObjects; ++i)
+		{
+			SO_InitDesc desc;
+			desc.Pos = p->InitInfos[i].Pos;
+			desc.Rot = p->InitInfos[i].Rot;
+			desc.Scale = p->InitInfos[i].Scale;
+			desc.AttackSpeed = p->InitInfos[i].AttackSpeed;
+			desc.MoveSpeed = p->InitInfos[i].MoveSpeed;
+			desc.Hp = p->InitInfos[i].Hp;
+			desc.AttackPoint = p->InitInfos[i].AttackPoint;
+			auto type = p->InitInfos[i].ObjectType;
+
+			Object_Mgr->AddMonster(type, desc, i);
 		}
+		
 		DEBUG_MSG("SC_ADD_MONSTER, ObjectNum : " << p->NumOfObjects);
 		break;
 	}
-	case eSC::ReleaseDeadMons: {
-		Object_Mgr->ReleaseDeadMonsters();
+	case eSC::ReleaseMons: {
+		Object_Mgr->KillAllMonsteres();
 		break;
 	}
 

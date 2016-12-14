@@ -30,11 +30,12 @@ public:
 	void AddObstacle(const ObjectType::Types& type, const BO_InitDesc& desc);
 
 	void RemovePlayer(const UINT& id);
-	void ReleaseDeadMonsters();
+	void ReleaseMonsters();
+	void KillAllMonsteres();
 
 	const std::vector<GameObject*>&		GetAllObjects() { return mAllObjects; }
 	SkinnedObject**						GetPlayers() { return mPlayers; }
-	std::vector<Monster*>				GetMonsters() { return mMonsters; }
+	std::unordered_map<UINT, Monster*>	GetMonsters() { return mMonsters; }
 	UINT								GetCurrPlayerNum() const { return mCurrPlayerNum; }
 	const XMFLOAT3						GetTemplePos() { return mTemplePos; }
 
@@ -49,7 +50,7 @@ private:
 
 	std::vector<GameObject*>						mAllObjects;					
 	std::vector<BasicObject*>						mBasicObjects;
-	std::vector<Monster*>							mMonsters;
+	std::unordered_map<UINT, Monster*>				mMonsters;
 	SkinnedObject*									mPlayers[MAX_USER];
 };
 

@@ -5,14 +5,35 @@ mNewID(-1), mAddMonPacketSended(false)
 {
 	srand(time(NULL));
 
-	mPerWaveMonsterNum[1][ObjectType::Goblin] = 25;
-	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 5;
+	mPerWaveMonsterNum[1][ObjectType::Goblin] = 5;
+	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 1;
 
 	mPerWaveMonsterNum[2][ObjectType::Goblin] = 10;
 	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 2;
 
 	mPerWaveMonsterNum[3][ObjectType::Goblin] = 15;
 	mPerWaveMonsterNum[3][ObjectType::Cyclop] = 3;
+
+	mPerWaveMonsterNum[4][ObjectType::Goblin] = 20;
+	mPerWaveMonsterNum[4][ObjectType::Cyclop] = 4;
+
+	mPerWaveMonsterNum[5][ObjectType::Goblin] = 25;
+	mPerWaveMonsterNum[5][ObjectType::Cyclop] = 5;
+
+	mPerWaveMonsterNum[6][ObjectType::Goblin] = 30;
+	mPerWaveMonsterNum[6][ObjectType::Cyclop] = 6;
+
+	mPerWaveMonsterNum[7][ObjectType::Goblin] = 35;
+	mPerWaveMonsterNum[7][ObjectType::Cyclop] = 7;
+
+	mPerWaveMonsterNum[8][ObjectType::Goblin] = 40;
+	mPerWaveMonsterNum[8][ObjectType::Cyclop] = 8;
+
+	mPerWaveMonsterNum[9][ObjectType::Goblin] = 45;
+	mPerWaveMonsterNum[9][ObjectType::Cyclop] = 9;
+
+	mPerWaveMonsterNum[10][ObjectType::Goblin] = 50;
+	mPerWaveMonsterNum[10][ObjectType::Cyclop] = 10;
 
 	mGameTimer.Reset();
 }
@@ -53,8 +74,8 @@ void ServerRogicMgr::Update()
 		// 3. 게임상태 진행
 		// 4. 로직 타이머 리셋
 		if (mRogicTimer.TotalTime() == 0.0f) {
-			mObjectMgr.ReleaseDeadMonsters();
-			SendPacketReleaseDeadMonsters();
+			mObjectMgr.ReleaseMonsters();
+			SendPacketReleaseMonsters();
 		}
 
 		if (mRogicTimer.TotalTime() > TIME_WAVE_WAITING)
@@ -350,9 +371,9 @@ void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& id)
 	}
 }
 
-void ServerRogicMgr::SendPacketReleaseDeadMonsters()
+void ServerRogicMgr::SendPacketReleaseMonsters()
 {
-	SC_ReleaseDeadMonsters packet;
+	SC_ReleaseMonsters packet;
 	for (UINT i = 0; i < MAX_USER; ++i) {
 		if (g_clients[i].is_connected)
 			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));

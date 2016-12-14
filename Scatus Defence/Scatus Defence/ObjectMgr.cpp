@@ -44,10 +44,10 @@ void ObjectMgr::AddMonster(const ObjectType::Types & type, const SO_InitDesc & d
 			goblinType = Goblin::Type::Blue;
 			break;
 		}
-		mMonsters.push_back(new Goblin(Resource_Mgr->GetSkinnedMesh(type), desc, goblinType));
+		mMonsters[id] = (new Goblin(Resource_Mgr->GetSkinnedMesh(type), desc, goblinType));
 		break;
 	case ObjectType::Cyclop:
-		mMonsters.push_back(new Cyclop(Resource_Mgr->GetSkinnedMesh(type), desc));
+		mMonsters[id] = (new Cyclop(Resource_Mgr->GetSkinnedMesh(type), desc));
 		break;
 	default:
 		assert(false, "Wrong parameter: AddMonster, type");
@@ -77,14 +77,16 @@ void ObjectMgr::RemovePlayer(const UINT & id)
 	Packet_Mgr->Connected[id] = false;
 }
 
-void ObjectMgr::ReleaseDeadMonsters()
+void ObjectMgr::ReleaseMonsters()
 {
-	for (auto m = mMonsters.begin(); m < mMonsters.end();)
+	mMonsters.clear();
+}
+
+void ObjectMgr::KillAllMonsteres()
+{
+	for (auto& m : mMonsters)
 	{
-		if ((*m)->GetActionState() == ActionState::Die)
-			mMonsters.erase(m);
-		else
-			++m;
+		m.second->Die();
 	}
 }
 
@@ -142,16 +144,14 @@ void ObjectMgr::Update(float dt)
 		}
 	}
 
-	for (auto m : mMonsters)
+	for (auto& m : mMonsters)
 	{
-		m->Animate(dt);
-		//m->Update(dt);
-	/*	for (auto m2 : mMonsters)
-		{
-			if (MathHelper::DistanceVector(m->GetPos(), m2->GetPos()) <= 3.0f)
-				m->MovingCollision(m2->GetPos(), dt);
-		}*/
-		mAllObjects.push_back(m);
+		m.second->Animate(dt);
+		if (m.second->GetActionState() == ActionState::Die &&
+			m.second->CurrAnimEnd())
+			continue;
+		else 
+			mAllObjects.push_back(m.second);
 	}
 
 	for (auto i : mAllObjects)

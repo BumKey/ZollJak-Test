@@ -32,7 +32,7 @@ public:
 	void										SetCollsion(const UINT& id, const XMFLOAT3& pos);
 
 	void Reset();
-	void ReleaseDeadMonsters();
+	void ReleaseMonsters();
 	void RemovePlayer(const UINT& id);
 
 private:
@@ -44,7 +44,7 @@ private:
 	UINT mMaxMonsters;
 	UINT mMaxStructures;
 	UINT mTotalObjectNum;
-	UINT mMonsterGeneratedNum;
+	UINT mMonsterCount;
 	UINT mCurrPlayerNum;
 
 	const XMFLOAT3 mTemplePos;

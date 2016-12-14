@@ -166,7 +166,7 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::MonInfo: {
 		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
-		if (p->NumOfMonsters > 0 && Object_Mgr->GetMonsters().size() == 0
+		if (p->NumOfMonsters > 0 && p->NumOfMonsters != Object_Mgr->GetMonsters().size()
 			&& Time_Mgr->GetGameState() == game_waving)
 		{
 			CS_ReAddMonsters packet;
@@ -249,6 +249,7 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::ReleaseMons: {
 		Object_Mgr->KillAllMonsteres();
+		DEBUG_MSG("SC_ReleaseMons");
 		break;
 	}
 

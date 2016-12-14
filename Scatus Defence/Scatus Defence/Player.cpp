@@ -94,6 +94,7 @@ void Player::Animate(float dt)
 void Player::Move(float walk, float strafe)
 {
 	mActionState = ActionState::Run;
+	static UINT frame = 0;
 
 	float dt = 0.0f;
 	if (walk != 0.0f) 

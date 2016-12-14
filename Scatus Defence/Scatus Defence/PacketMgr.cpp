@@ -166,8 +166,7 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::MonInfo: {
 		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
-		if (p->NumOfMonsters > 0 && p->NumOfMonsters != Object_Mgr->GetMonsters().size()
-			&& Time_Mgr->GetGameState() == game_waving)
+		if (p->NumOfMonsters > 0 && p->NumOfMonsters != Object_Mgr->GetMonsters().size())
 		{
 			CS_ReAddMonsters packet;
 			SendPacket(packet);
@@ -207,6 +206,7 @@ void PacketMgr::ProcessPacket()
 			break;
 		case eGameState::WaveWaiting:
 			Time_Mgr->gamestate = game_waiting_wave;
+			Object_Mgr->KillAllMonsteres();
 			string = "WaveWaiting";
 			break;
 		case eGameState::Waving:
@@ -248,7 +248,6 @@ void PacketMgr::ProcessPacket()
 		break;
 	}
 	case eSC::ReleaseMons: {
-		Object_Mgr->KillAllMonsteres();
 		DEBUG_MSG("SC_ReleaseMons");
 		break;
 	}

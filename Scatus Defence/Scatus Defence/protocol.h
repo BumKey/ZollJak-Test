@@ -44,7 +44,6 @@ enum eSC {
 	RemovePlayer,
 	PutOtherPlayers,
 	AddMonsters,
-	ReleaseMons,
 	PlayerInfo,
 	MonInfo,
 	CollisionInfo,
@@ -224,12 +223,6 @@ struct SC_AddMonster : public HEADER
 	SO_InitDesc InitInfos[MAX_MONSTER];
 };
 
-struct SC_ReleaseMonsters : public HEADER
-{
-	SC_ReleaseMonsters() {
-		Size = sizeof(*this); Type = eSC::ReleaseMons;
-	}
-};
 struct SC_InitPlayer : public HEADER
 {
 	SC_InitPlayer() {

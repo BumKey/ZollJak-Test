@@ -247,10 +247,6 @@ void PacketMgr::ProcessPacket()
 		DEBUG_MSG("SC_ADD_MONSTER, ObjectNum : " << p->NumOfObjects);
 		break;
 	}
-	case eSC::ReleaseMons: {
-		DEBUG_MSG("SC_ReleaseMons");
-		break;
-	}
 
 	default:
 		DEBUG_MSG("Unknown packet type : " << header->Type);

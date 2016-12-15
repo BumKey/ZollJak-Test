@@ -75,7 +75,6 @@ void ServerRogicMgr::Update()
 		// 4. 로직 타이머 리셋
 		if (mRogicTimer.TotalTime() == 0.0f) {
 			mObjectMgr.ReleaseMonsters();
-			SendPacketReleaseMonsters();
 		}
 
 		if (mRogicTimer.TotalTime() > TIME_WAVE_WAITING)
@@ -368,14 +367,5 @@ void ServerRogicMgr::SendPacketToCreateMonsters(const UINT& id)
 
 		MyServer::Send_Packet(id, reinterpret_cast<char*>(&packet));
 		mAddMonPacketSended = true;
-	}
-}
-
-void ServerRogicMgr::SendPacketReleaseMonsters()
-{
-	SC_ReleaseMonsters packet;
-	for (UINT i = 0; i < MAX_USER; ++i) {
-		if (g_clients[i].is_connected)
-			MyServer::Send_Packet(i, reinterpret_cast<char*>(&packet));
 	}
 }

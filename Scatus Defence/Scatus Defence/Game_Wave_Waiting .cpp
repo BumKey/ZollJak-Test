@@ -38,7 +38,7 @@ void Game_Wave_Waiting::Execute()
 	//UI_Mgr->Change_HP_TEXT(100);
 	UI_Mgr->Change_Time_TEXT(game_waiting_wave);
 	UI_Mgr->Change_HP_TEXT(Time_Mgr->Get_P_HP());
-	if (Time_Mgr->Get_Wavelevel()==10 && Object_Mgr->GetMonsters().size() == 0)
+	if (Time_Mgr->Get_Wavelevel()==10)
 	{
 		UI_Mgr->Change_Round_TEXT(Time_Mgr->Get_Wavelevel());
 		UI_Mgr->Set_Text_Active(L"게임 클리어", true);

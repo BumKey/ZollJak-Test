@@ -20,11 +20,11 @@
 #define OP_SEND				2
 
 #define PI					3.1415926535f
-#define TICK_MONINFO		0.5f
-#define TICK_PLAYERINFO     0.2f
+#define TICK_MONINFO		0.7f
+#define TICK_PLAYERINFO     0.3f
 #define TICK_FRAMEINFO		1.0f
-#define TIME_WAVE_WAITING	10.0f
-#define TIME_WAVING			30.0f
+#define TIME_WAVE_WAITING	2.0f
+#define TIME_WAVING			3.0f
 
 /*
 디버그 환경에서만 cout을 출력
@@ -33,7 +33,7 @@
 #ifdef _DEBUG
 #define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
 #else
-#define DEBUG_MSG(str) //do { } while ( false )
+#define DEBUG_MSG(str) do { } while ( false )
 #endif
 
 #pragma pack(push, 1)
@@ -121,6 +121,7 @@ enum eGameState {
 	WaveWaiting,
 	WaveStart,
 	Waving,
+	GameClear,
 	GameOver
 };
 

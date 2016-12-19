@@ -217,6 +217,9 @@ void PacketMgr::ProcessPacket()
 		case eGameState::GameWaiting:
 			string = "GameWaiting";
 			break;
+		case eGameState::GameClear:
+			Object_Mgr->KillAllMonsteres();
+			break;
 		}
 		
 		DEBUG_MSG("[SC_PerFrame] CurrState : " << string << ", PlayerNum : " << p->NumOfPlayers);

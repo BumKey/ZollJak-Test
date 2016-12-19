@@ -144,7 +144,7 @@ void Player::ProccessKeyInput(float dt)
 		}
 
 		if (Collision_Mgr->CollisionCheckOOBB(this, Temple::GetInstance()))
-			Collision_Mgr->CollisionMoving(mPosition, Temple::GetInstance()->GetPos(), mProperty.movespeed, dt);
+			Collision_Mgr->AABB_CollisionMoving(mPosition, Temple::GetInstance()->GetPos(), mProperty.movespeed, dt);
 
 		//auto temple = Temple::GetInstance()->GetAABB();
 		//if (XNA::IntersectAxisAlignedBoxAxisAlignedBox(&temple, &mAABB))

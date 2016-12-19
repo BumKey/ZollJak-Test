@@ -152,3 +152,11 @@ void CollisionMgr::CollisionMoving(XMFLOAT3 & outPos, const XMFLOAT3 & dPos, FLO
 	outPos = outPos - target*dt*moveSpeed;
 }
 
+void CollisionMgr::AABB_CollisionMoving(XMFLOAT3 & outPos, const XMFLOAT3 & dPos, FLOAT moveSpeed, FLOAT dt)
+{
+	XMFLOAT3 target;
+	XMStoreFloat3(&target, MathHelper::TargetVector2D(dPos, outPos));
+
+	outPos = outPos - target*dt*moveSpeed*2.0f;
+}
+

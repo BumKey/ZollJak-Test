@@ -26,14 +26,14 @@ mNewID(-1), mAddMonPacketSended(false)
 	mPerWaveMonsterNum[7][ObjectType::Goblin] = 35;
 	mPerWaveMonsterNum[7][ObjectType::Cyclop] = 7;
 
-	mPerWaveMonsterNum[8][ObjectType::Goblin] = 40;
-	mPerWaveMonsterNum[8][ObjectType::Cyclop] = 8;
+	mPerWaveMonsterNum[8][ObjectType::Goblin] = 36;
+	mPerWaveMonsterNum[8][ObjectType::Cyclop] = 7;
 
-	mPerWaveMonsterNum[9][ObjectType::Goblin] = 45;
-	mPerWaveMonsterNum[9][ObjectType::Cyclop] = 9;
+	mPerWaveMonsterNum[9][ObjectType::Goblin] = 37;
+	mPerWaveMonsterNum[9][ObjectType::Cyclop] = 8;
 
-	mPerWaveMonsterNum[10][ObjectType::Goblin] = 50;
-	mPerWaveMonsterNum[10][ObjectType::Cyclop] = 10;
+	mPerWaveMonsterNum[10][ObjectType::Goblin] = 38;
+	mPerWaveMonsterNum[10][ObjectType::Cyclop] = 8;
 
 	mGameTimer.Reset();
 }

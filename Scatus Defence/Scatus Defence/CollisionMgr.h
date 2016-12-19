@@ -21,6 +21,8 @@ public:
 	bool CollisionCheckOOBB(GameObject* obj1, GameObject*obj2);
 
 	void CollisionMoving(XMFLOAT3& outPos, const XMFLOAT3& dPos, FLOAT moveSpeed, FLOAT dt);
+	void AABB_CollisionMoving(XMFLOAT3& outPos, const XMFLOAT3& dPos, FLOAT moveSpeed, FLOAT dt);
+
 public:
 	XMFLOAT3 PlayerCollPos[COLL_OBJ_NUM];
 	XMFLOAT3 MonCollPos[MAX_MONSTER][COLL_OBJ_NUM];

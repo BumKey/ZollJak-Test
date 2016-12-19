@@ -88,6 +88,7 @@ public:
 	void Execute();
 	void Enter();
 	void Exit();
+	GameTimer UI_Wavetimer;
 	static Game_Waving* Instance();
 };
 
@@ -100,6 +101,7 @@ public:
 	void Execute();
 	void Enter();
 	void Exit();
+	GameTimer UI_wavetimer;
 	static Game_Wave_Waiting* Instance();
 };
 

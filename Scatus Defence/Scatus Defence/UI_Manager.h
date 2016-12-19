@@ -30,6 +30,8 @@ enum UI_ID {
 	UI_ingame_demage,
 	UI_ingame_cross,
 	UI_ingame_Round,
+	UI_ingame_WaveStart,
+	UI_ingame_WaveEnd,
 	UI_Gameover,
 	Text_title_login,
 	Text_title_register,
@@ -128,6 +130,7 @@ private:UI_Manager();
 		IDWriteTextLayout * m_pdwTextLayout1;
 		IDWriteTextLayout * m_pdwTextLayout2;
 		IDWriteTextFormat* pTextFormat_;
+		IDWriteTextFormat* pWaveTextFormat;
 		IDWriteFontCollection* pFontCollection;
 		FLOAT m_dpiX_;
 		FLOAT m_dpiY_;

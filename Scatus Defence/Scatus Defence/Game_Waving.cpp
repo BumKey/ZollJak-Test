@@ -19,15 +19,19 @@ Game_Waving* Game_Waving::Instance()
 void Game_Waving::Enter()
 {
 
-	
+	UI_Mgr->Set_Text_Active(L"웨이브 시작", true);
 	UI_Mgr->Change_Round_TEXT(Time_Mgr->Get_Wavelevel());
+	UI_Wavetimer.Reset();
 	//Time_Mgr->SetWaveTimer(); //웨이브스위치 작동
 	
 }
 
 void Game_Waving::Execute()
 {
-
+	UI_Wavetimer.Tick();
+	if (UI_Wavetimer.TotalTime() > 2.0f) {
+		UI_Mgr->Delete_Text(L"웨이브 시작");
+	}
 	//UI_Mgr->Change_HP_TEXT(50);
 	UI_Mgr->Change_Time_TEXT(game_waving);
 	UI_Mgr->Change_HP_TEXT(Time_Mgr->Get_P_HP());
@@ -48,7 +52,7 @@ void Game_Waving::Execute()
 void Game_Waving::Exit()
 {
 
-
+	UI_Mgr->Delete_Text(L"웨이브 시작");
 	//맵 내부의 모든적 삭제
 
 }

@@ -7,8 +7,8 @@ void calcimgputrc(D2D1_RECT_F* rcf, int x, int y, int w, int h)
 	{
 		rcf->left = float(x);
 		rcf->top = float(y);
-		rcf->right = float(x)+float(w);
-		rcf->bottom = float(y)+float(h);
+		rcf->right = float(x) + float(w);
+		rcf->bottom = float(y) + float(h);
 	}
 
 }
@@ -105,6 +105,16 @@ void UI_Manager::CreateD2DrenderTarget(HWND hwnd) {
 		L"en-us",
 		&pTextFormat_
 		);
+	pDWriteFactory->CreateTextFormat(
+		L"Arial",                // Font family name.
+		NULL,                       // Font collection (NULL sets it to use the system font collection).
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		55.0f,
+		L"en-us",
+		&pWaveTextFormat
+		);
 
 
 	// Center align (horizontally) the text.
@@ -112,19 +122,23 @@ void UI_Manager::CreateD2DrenderTarget(HWND hwnd) {
 	{
 		hr = pTextFormat_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	}
+	if (SUCCEEDED(hr))
+	{
+		hr = pWaveTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	}
 	/*
 	if (SUCCEEDED(hr))
 	{
-		hr = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	hr = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	}*/
 
-		pD2DFactory_->GetDesktopDpi(&m_dpiX_, &m_dpiY_);
+	pD2DFactory_->GetDesktopDpi(&m_dpiX_, &m_dpiY_);
 
 
 
 	pD2DFactory_->CreateDxgiSurfaceRenderTarget(m_backbuffer,
-	D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
-	D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), m_dpiX_, m_dpiY_), &m_d2dRenderTarget);
+		D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
+			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), m_dpiX_, m_dpiY_), &m_d2dRenderTarget);
 	if (m_backbuffer)m_backbuffer->Release();
 
 
@@ -151,7 +165,7 @@ void UI_Manager::CreateD2DrenderTarget(HWND hwnd) {
 
 
 
-	
+
 
 }
 
@@ -169,12 +183,12 @@ void UI_Manager::Print_All_UI()
 	Print_All_Image();
 	Print_All_Text();
 
-	
+
 }
 void UI_Manager::Print_All_Text()
 {
 
-	
+
 
 	//GetClientRect(hwnd_, &rc);
 
@@ -187,67 +201,70 @@ void UI_Manager::Print_All_Text()
 	{
 		if (i->Active == true)
 		{
+
 			wchar_t* wszText_ = i->_wszText_;
 			cTextLength_ = (UINT32)wcslen(wszText_);
 			/*
 			D2D1_RECT_F layoutRect = D2D1::RectF(
-				static_cast<FLOAT>((rc.left) / m_dpiX_) + 100,
-				static_cast<FLOAT>((rc.top) / m_dpiY_) + 100,
-				static_cast<FLOAT>(rc.right - rc.left) / m_dpiX_,
-				static_cast<FLOAT>(rc.bottom - rc.top) / m_dpiY_
-				);*/
+			static_cast<FLOAT>((rc.left) / m_dpiX_) + 100,
+			static_cast<FLOAT>((rc.top) / m_dpiY_) + 100,
+			static_cast<FLOAT>(rc.right - rc.left) / m_dpiX_,
+			static_cast<FLOAT>(rc.bottom - rc.top) / m_dpiY_
+			);*/
 			D2D1_RECT_F layoutRect = D2D1::RectF(
 				static_cast<FLOAT>(i->x),
 				static_cast<FLOAT>(i->y),
-				static_cast<FLOAT>(i->x+300),
-				static_cast<FLOAT>(i->y+100)
-				); 
+				static_cast<FLOAT>(i->x + 300),
+				static_cast<FLOAT>(i->y + 100)
+				);
 
-			m_d2dRenderTarget->DrawText(
-				wszText_,        // The string to render.
-				cTextLength_,    // The string's length.
-				pTextFormat_,    // The text format.
-				layoutRect,       // The region of the window where the text will be rendered.
-				pWhiteBrush_     // The brush used to draw the text.
-			);
+			if (i->UI_id == UI_ID::UI_ingame_WaveEnd || i->UI_id == UI_ID::UI_ingame_WaveStart)
+			{
+				m_d2dRenderTarget->DrawText(
+					wszText_,        // The string to render.
+					cTextLength_,    // The string's length.
+					pWaveTextFormat,    // The text format.
+					layoutRect,       // The region of the window where the text will be rendered.
+					pWhiteBrush_     // The brush used to draw the text.
+					);
+			}
+			else
+			{
+				m_d2dRenderTarget->DrawText(
+					wszText_,        // The string to render.
+					cTextLength_,    // The string's length.
+					pTextFormat_,    // The text format.
+					layoutRect,       // The region of the window where the text will be rendered.
+					pWhiteBrush_     // The brush used to draw the text.
+					);
+			}
 		}
 	}
 
 
 	HRESULT hr = m_d2dRenderTarget->EndDraw();
-
-
-
-
-
-
-
-
-
-
-
 }
 
 void UI_Manager::Load_All_Image()
 {
 
-	Image_info *temp = new Image_info(L"타이틀화면", Scene_Title, UI_title_BG,rc.left , rc.top,rc.right-rc.left,rc.bottom-rc.top, 1, UI_Frame_null);
-	hr= LoadPNG2DDBitmap(TEXT("title.jpg"),temp->Image);
+	Image_info *temp = new Image_info(L"타이틀화면", Scene_Title, UI_title_BG, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, 1, UI_Frame_null);
+	hr = LoadPNG2DDBitmap(TEXT("title.jpg"), temp->Image);
 	if (SUCCEEDED(hr))
 	{
-			m_Image_list.push_back(temp);
+		m_Image_list.push_back(temp);
 	}
 
 	/* 정가운데 박스
-	Image_info *temp3 = new Image_info(L"Title_Menu_Box", (rc.left+rc.right)/2 -150 , (rc.top + rc.bottom) / 2 -150 , 
-		300, +300, 1);
+	Image_info *temp3 = new Image_info(L"Title_Menu_Box", (rc.left+rc.right)/2 -150 , (rc.top + rc.bottom) / 2 -150 ,
+	300, +300, 1);
 	hr = LoadPNG2DDBitmap(TEXT("sony.jpg"), temp3->Image);
 	if (SUCCEEDED(hr))
 	{
-		m_Image_list.push_back(temp3);
+	m_Image_list.push_back(temp3);
 	}
 	*/
-	Image_info *temp3 = new Image_info(L"Title_Menu_Box", Scene_Title, UI_title_menubox,(rc.left + rc.right) / 2 - 150, (rc.top + rc.bottom) / 2 - 50,
+	Image_info *temp3 = new Image_info(L"Title_Menu_Box", Scene_Title, UI_title_menubox, (rc.left + rc.right) / 2 - 150, (rc.top + rc.bottom) / 2 - 50,
 		300, +200, 0.4, UI_Frame_null);
 	hr = LoadPNG2DDBitmap(TEXT("sony.jpg"), temp3->Image);
 	if (SUCCEEDED(hr))
@@ -263,7 +280,7 @@ void UI_Manager::Load_All_Image()
 		m_Image_list.push_back(temp4);
 	}
 
-	Image_info *temp5 = new Image_info(L"패스워드 입력", Scene_Title, UI_title_button_PW, (rc.left + rc.right) / 2 - 130, (rc.top + rc.bottom) / 2 +25,
+	Image_info *temp5 = new Image_info(L"패스워드 입력", Scene_Title, UI_title_button_PW, (rc.left + rc.right) / 2 - 130, (rc.top + rc.bottom) / 2 + 25,
 		260, 40, 0.5, UI_Frame_Black);
 	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp5->Image);
 	if (SUCCEEDED(hr))
@@ -272,7 +289,7 @@ void UI_Manager::Load_All_Image()
 	}
 
 
-	Image_info *temp6 = new Image_info(L"로그인", Scene_Title, UI_title_button_login, (rc.left + rc.right) / 2 - 130, (rc.top + rc.bottom) / 2 +75,
+	Image_info *temp6 = new Image_info(L"로그인", Scene_Title, UI_title_button_login, (rc.left + rc.right) / 2 - 130, (rc.top + rc.bottom) / 2 + 75,
 		125, 40, 0.5, UI_Frame_Black);
 	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp6->Image);
 	if (SUCCEEDED(hr))
@@ -280,7 +297,7 @@ void UI_Manager::Load_All_Image()
 		m_Image_list.push_back(temp6);
 	}
 
-	Image_info *temp7 = new Image_info(L"회원가입", Scene_Title, UI_title_button_register,(rc.left + rc.right) / 2+5, (rc.top + rc.bottom) / 2 +75,
+	Image_info *temp7 = new Image_info(L"회원가입", Scene_Title, UI_title_button_register, (rc.left + rc.right) / 2 + 5, (rc.top + rc.bottom) / 2 + 75,
 		125, 40, 0.5, UI_Frame_Black);
 	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp7->Image);
 	if (SUCCEEDED(hr))
@@ -288,21 +305,21 @@ void UI_Manager::Load_All_Image()
 		m_Image_list.push_back(temp7);
 	}
 
-	Image_info *temp8 = new Image_info(L"타이틀_옵션아이콘", Scene_Title, UI_title_button_option,rc.right - 50, rc.top +  10,
+	Image_info *temp8 = new Image_info(L"타이틀_옵션아이콘", Scene_Title, UI_title_button_option, rc.right - 50, rc.top + 10,
 		40, 40, 0.8, UI_Frame_null);
 	hr = LoadPNG2DDBitmap(TEXT("option.png"), temp8->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp8);
 	}
-	Image_info *temp9 = new Image_info(L"크로스헤더", Scene_Ingame,UI_ingame_cross, (rc.left + rc.right)/2-15, (rc.top + rc.bottom)/2-15,
+	Image_info *temp9 = new Image_info(L"크로스헤더", Scene_Ingame, UI_ingame_cross, (rc.left + rc.right) / 2 - 15, (rc.top + rc.bottom) / 2 - 15,
 		30, 30, 0.7, UI_Frame_null);
 	hr = LoadPNG2DDBitmap(TEXT("크로스헤더.png"), temp9->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp9);
 	}
-	Image_info *temp10 = new Image_info(L"체력", Scene_Ingame, UI_ingame_hp, rc.left +30, (rc.bottom-60),
+	Image_info *temp10 = new Image_info(L"체력", Scene_Ingame, UI_ingame_hp, rc.left + 30, (rc.bottom - 60),
 		100, 30, 0.8, UI_Frame_Black);
 	hr = LoadPNG2DDBitmap(TEXT("ui_box_basic.png"), temp10->Image);
 	if (SUCCEEDED(hr))
@@ -326,7 +343,7 @@ void UI_Manager::Load_All_Image()
 		m_Image_list.push_back(temp12);
 	}
 
-	Image_info *temp13 = new Image_info(L"배경음on", Scene_Title_Setting, UI_title_BGMOn, (rc.left + rc.right) / 2 +30, (rc.top + rc.bottom) / 2 - 15,
+	Image_info *temp13 = new Image_info(L"배경음on", Scene_Title_Setting, UI_title_BGMOn, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 - 15,
 		50, 50, 0.8, UI_Frame_null);
 	hr = LoadPNG2DDBitmap(TEXT("MusicOn.png"), temp13->Image);
 	if (SUCCEEDED(hr))
@@ -334,7 +351,7 @@ void UI_Manager::Load_All_Image()
 		m_Image_list.push_back(temp13);
 	}
 
-	Image_info *temp14 = new Image_info(L"배경음off", Scene_Title_Setting,UI_title_BGMOff, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 - 15,
+	Image_info *temp14 = new Image_info(L"배경음off", Scene_Title_Setting, UI_title_BGMOff, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 - 15,
 		50, 50, 0.8, UI_Frame_null);
 	hr = LoadPNG2DDBitmap(TEXT("MusicOff.png"), temp14->Image);
 	if (SUCCEEDED(hr))
@@ -342,14 +359,14 @@ void UI_Manager::Load_All_Image()
 		m_Image_list.push_back(temp14);
 	}
 
-	Image_info *temp15 = new Image_info(L"효과음on", Scene_Title_Setting, UI_title_SoundOn, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 +50,
+	Image_info *temp15 = new Image_info(L"효과음on", Scene_Title_Setting, UI_title_SoundOn, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 + 50,
 		50, 50, 0.8, UI_Frame_null);
 	hr = LoadPNG2DDBitmap(TEXT("효과음.png"), temp15->Image);
 	if (SUCCEEDED(hr))
 	{
 		m_Image_list.push_back(temp15);
 	}
-	Image_info *temp16 = new Image_info(L"효과음off", Scene_Title_Setting, UI_title_SoundOff, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 +50,
+	Image_info *temp16 = new Image_info(L"효과음off", Scene_Title_Setting, UI_title_SoundOff, (rc.left + rc.right) / 2 + 30, (rc.top + rc.bottom) / 2 + 50,
 		50, 50, 0.8, UI_Frame_null);
 	hr = LoadPNG2DDBitmap(TEXT("효과음제거.png"), temp16->Image);
 	if (SUCCEEDED(hr))
@@ -357,7 +374,7 @@ void UI_Manager::Load_All_Image()
 		m_Image_list.push_back(temp16);
 	}
 
-	
+
 	Image_info *temp17 = new Image_info(L"타이틀화면", Scene_Ingame, UI_ingame_demage, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, 1, UI_Frame_null);
 	hr = LoadPNG2DDBitmap(TEXT("스카투스_피격_UI.PNG"), temp17->Image);
 	if (SUCCEEDED(hr))
@@ -365,7 +382,7 @@ void UI_Manager::Load_All_Image()
 		m_Image_list.push_back(temp17);
 	}
 
-	
+
 }
 
 void UI_Manager::TextInit()
@@ -391,6 +408,8 @@ void UI_Manager::TextInit()
 	UI_Mgr->Add_Text(L"HP : 32", Scene_Ingame, Text_ingame_hp, rc.left - 70, (rc.bottom - 55), 1);
 	UI_Mgr->Add_Text(L"Round 0", Scene_Ingame, Text_ingame_Round, rc.left - 70, (rc.top + 15), 1);
 	UI_Mgr->Add_Text(L"Next 03:21", Scene_Ingame, Text_ingame_time, rc.right - 230, (rc.top + 15), 1);
+	UI_Mgr->Add_Text(L"웨이브 시작", Scene_Wave, UI_ID::UI_ingame_WaveStart, 800, 400, 1);
+	UI_Mgr->Add_Text(L"웨이브 종료", Scene_Wave, UI_ID::UI_ingame_WaveEnd, 800, 400, 1);
 }
 
 void UI_Manager::Print_All_Image()
@@ -398,7 +417,7 @@ void UI_Manager::Print_All_Image()
 
 
 	D2D1_RECT_F imgputrc = { 0 };
-	
+
 	m_d2dRenderTarget->BeginDraw();
 	for (auto i : m_Image_list)
 	{
@@ -407,34 +426,45 @@ void UI_Manager::Print_All_Image()
 			calcimgputrc(&imgputrc, i->x, i->y, i->scale_x, i->scale_y);
 			m_d2dRenderTarget->DrawBitmap(i->Image, imgputrc,/*투명도*/i->alpha,/*이미지 품질*/D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 				/*그릴 이미지의 부분, 널이면 전체 그림*/NULL);
-		
-				RECT rect;
-				rect.left = i->x;
-				rect.right = i->x+i->scale_x;
-				rect.top = i->y;
-				rect.bottom = i->y+i->scale_y;
-				D2D1_RECT_F layoutRect = D2D1::RectF(
-					static_cast<FLOAT>((rect.left) ),
-					static_cast<FLOAT>((rect.top)),
-					static_cast<FLOAT>(rect.right),
-					static_cast<FLOAT>(rect.bottom)
-					);
-				switch (i->m_frame_type)
-				{	
-					
-					case UI_Frame_null: break;
-					case UI_Frame_Black: 	m_d2dRenderTarget->DrawRectangle(&layoutRect, pBlackBrush_); break;
-					case UI_Frame_White : m_d2dRenderTarget->DrawRectangle(&layoutRect, pWhiteBrush_); break;
-				}
-			
-			
+
+			RECT rect;
+			rect.left = i->x;
+			rect.right = i->x + i->scale_x;
+			rect.top = i->y;
+			rect.bottom = i->y + i->scale_y;
+			D2D1_RECT_F layoutRect = D2D1::RectF(
+				static_cast<FLOAT>((rect.left)),
+				static_cast<FLOAT>((rect.top)),
+				static_cast<FLOAT>(rect.right),
+				static_cast<FLOAT>(rect.bottom)
+				);
+			switch (i->m_frame_type)
+			{
+
+			case UI_Frame_null: break;
+			case UI_Frame_Black: 	m_d2dRenderTarget->DrawRectangle(&layoutRect, pBlackBrush_); break;
+			case UI_Frame_White: m_d2dRenderTarget->DrawRectangle(&layoutRect, pWhiteBrush_); break;
+			}
+
+
 		}
 	}
 	HRESULT hr = m_d2dRenderTarget->EndDraw();
 }
-void UI_Manager::Add_Text(wchar_t* _wszText_, type_Scene type_scene, UI_ID ui_id , FLOAT x, FLOAT y, FLOAT alpha)
+
+void UI_Manager::Set_Text_Active(wchar_t* _wszText_, bool boolean)
 {
-	
+	for (auto i : m_Text_list)
+	{
+		if (i->_wszText_ == _wszText_)
+		{
+			i->Active = boolean;
+		}
+	}
+}
+void UI_Manager::Add_Text(wchar_t* _wszText_, type_Scene type_scene, UI_ID ui_id, FLOAT x, FLOAT y, FLOAT alpha)
+{
+
 	Text_info *temp = new Text_info(_wszText_, type_scene, ui_id, x, y, alpha);
 	m_Text_list.push_back(temp);
 }
@@ -460,12 +490,12 @@ void UI_Manager::Set_Image_Active(wchar_t* _wszText_, bool boolean)
 			i->Active = boolean;
 		}
 	}
-	
+
 }
 void UI_Manager::Delete_All_Image()
 {
 
-	for (auto i :m_Image_list)
+	for (auto i : m_Image_list)
 	{
 		i->Active = false;
 	}
@@ -473,15 +503,15 @@ void UI_Manager::Delete_All_Image()
 
 void  UI_Manager::Delete_Text_All()
 {
-	
+
 	for (auto i : m_Text_list)
 	{
 		i->Active = false;
 	}
 }
-bool UI_Manager::MouseOn2D(wchar_t* _wszText_,int mouse_x, int mouse_y)
+bool UI_Manager::MouseOn2D(wchar_t* _wszText_, int mouse_x, int mouse_y)
 {
-	
+
 	for (auto i : m_Image_list)
 	{
 
@@ -515,7 +545,7 @@ bool UI_Manager::MouseOn2D(wchar_t* _wszText_,int mouse_x, int mouse_y)
 					else {
 						i->alpha = 0.9;
 					}
-				
+
 				}
 				break;
 			case WM_LBUTTONUP:
@@ -546,7 +576,7 @@ bool UI_Manager::MouseOn2D(wchar_t* _wszText_,int mouse_x, int mouse_y)
 
 		}
 
-	}			
+	}
 	return false;
 
 }
@@ -588,66 +618,66 @@ void UI_Manager::SetScene()
 		}
 	}
 
-	
+
 }
 
 void UI_Manager::Set_Scene_UI(type_Scene Scenetype)
 {
 	//타이틀에 있는 모든 이미지와 텍스트의 상태를 세팅
-\
+	\
 		for (auto i_image : m_Image_list)
 		{
 			if (Scenetype == i_image->m_type_scene)
 			{
 
 				if (i_image->UI_id != UI_ingame_demage) // 데미지 입는 UI아니면 켬
-				i_image->Active = true;
-			
-			
-			}
+					i_image->Active = true;
 
-		}
-		for (auto i_Text : m_Text_list)
-		{
-			if (Scenetype == i_Text->m_type_scene)
-			{
-				i_Text->Active = true;
 
 			}
-		}
-		if (Get_input_ID_state())
-		{
-			Delete_Text(L"아이디 입력창");
-			GetImagePtr(UI_title_button_ID)->alpha = 0.2;
-		}
 
-		if (Get_input_PW_state())
-		{
-			Delete_Text(L"비밀번호 입력창");
-			GetImagePtr(UI_title_button_PW)->alpha = 0.2;
 		}
+	for (auto i_Text : m_Text_list)
+	{
+		if (Scenetype == i_Text->m_type_scene)
+		{
+			i_Text->Active = true;
 
-	
-	
+		}
+	}
+	if (Get_input_ID_state())
+	{
+		Delete_Text(L"아이디 입력창");
+		GetImagePtr(UI_title_button_ID)->alpha = 0.2;
+	}
+
+	if (Get_input_PW_state())
+	{
+		Delete_Text(L"비밀번호 입력창");
+		GetImagePtr(UI_title_button_PW)->alpha = 0.2;
+	}
+
+
+
 }
 void UI_Manager::UI_Scene_Mgr(int x, int y)
 {
-	
+
 	InputID_PW();
 	switch (m_gamescene)
 	{
 
-	case 0: 
+	case 0:
 		Set_Scene_UI(Scene_Title);
-		
+
 		//ShowCursor(FALSE);
-		InTitle_UI(x, y); 
-			break;
+		InTitle_UI(x, y);
+		break;
 	case 1:
 
 		InTitle_Option(x, y);
 		break;
-	case 2: 
+	case 2:
 		Set_Scene_UI(Scene_Ingame);
 		InGame_UI(x, y);
 
@@ -661,7 +691,7 @@ void UI_Manager::InTitle_UI(int x, int y)
 	{
 		if (GetTextptr(Text_title_PW_star)->_wszText_[0] != '\0')
 		{
-		
+
 
 			GetTextptr(Text_title_PW)->Active = false;
 			GetTextptr(Text_title_PW_star)->Active = true;
@@ -680,14 +710,14 @@ void UI_Manager::InTitle_UI(int x, int y)
 	{
 		Set_input_ID_state(true);
 		Set_input_PW_state(false);
-	//	Delete_Text(L"아이디 입력창");
-		
-		
+		//	Delete_Text(L"아이디 입력창");
 
-	}  
+
+
+	}
 	if (MouseOn2D(L"패스워드 입력", x, y))
 	{
-	//	Set_input_PW_state(true);
+		//	Set_input_PW_state(true);
 		Delete_Text(L"비밀번호 입력창");
 
 		Set_input_PW_state(true);
@@ -696,12 +726,12 @@ void UI_Manager::InTitle_UI(int x, int y)
 	}
 
 
-	
+
 	if (MouseOn2D(L"타이틀_옵션아이콘", x, y))
 	{
 		chageScene();
-		m_gamescene=Scene_Title_Setting;
-		Set_Image_Active(L"타이틀화면",true);
+		m_gamescene = Scene_Title_Setting;
+		Set_Image_Active(L"타이틀화면", true);
 		Set_Image_Active(L"타이틀_옵션아이콘", true);
 		Set_Image_Active(L"Title_Menu_Box", true);
 
@@ -709,7 +739,7 @@ void UI_Manager::InTitle_UI(int x, int y)
 		Set_Image_Active(L"효과음off", false);
 		Set_Image_Active(L"배경음off", false);
 	}
-	
+
 
 	if (UI_Mgr->MouseOn2D(L"로그인", x, y))
 	{
@@ -719,15 +749,15 @@ void UI_Manager::InTitle_UI(int x, int y)
 		Set_input_ID_state(false);
 		Set_input_PW_state(false);
 		Set_Scene_UI(Scene_Ingame);
-		m_gamescene=Scene_Ingame;
+		m_gamescene = Scene_Ingame;
 		//	UI_Mgr->Set_Image_Active(L"메시지박스", true);
 
 	}
 
 }
-	
 
-	
+
+
 
 
 void UI_Manager::InTitle_Option(int x, int y)
@@ -737,7 +767,7 @@ void UI_Manager::InTitle_Option(int x, int y)
 		chageScene();
 
 		Set_Scene_UI(Scene_Title);
-		m_gamescene=Scene_Title;
+		m_gamescene = Scene_Title;
 	}
 	if (MouseOn2D(L"효과음off", x, y))
 	{
@@ -774,19 +804,19 @@ void UI_Manager::InGame_UI(int x, int y)
 		Set_Image_Active(L"메시지박스", false);
 		SetCursor(LoadCursor(0, IDC_ARROW));
 		ShowCursor(true);
-	
+
 		//Change_HP_TEXT(43);
 	}
-	
 
-	
+
+
 
 
 }
 
 void UI_Manager::Change_HP_TEXT(int player_hp)
 {
-	
+
 	int myIntValue = player_hp;
 	Text_info* temp;
 	wchar_t temp_wchar;
@@ -797,7 +827,7 @@ void UI_Manager::Change_HP_TEXT(int player_hp)
 
 	temp->_wszText_ = m_reportFileName;
 
-	
+
 
 }
 
@@ -820,7 +850,7 @@ void UI_Manager::Change_Round_TEXT(int Round)
 
 void UI_Manager::Change_Time_TEXT(Gamestate_type type)
 {
-	
+
 	int myIntValue;
 	Text_info* temp;
 	wchar_t temp_wchar;
@@ -830,7 +860,7 @@ void UI_Manager::Change_Time_TEXT(Gamestate_type type)
 
 	if (type == game_waiting_wave)
 	{
-		
+
 		if (myIntValue % 60 < 10)
 		{
 			swprintf_s(m_reportFileName, L"Next   %d : 0%d ", myIntValue / 60, myIntValue % 60);
@@ -844,7 +874,7 @@ void UI_Manager::Change_Time_TEXT(Gamestate_type type)
 	}
 	else if (type == game_waving)
 	{
-		
+
 		if (myIntValue % 60 < 10)
 		{
 			swprintf_s(m_reportFileName, L"End   %d : 0%d", myIntValue / 60, myIntValue % 60);
@@ -859,7 +889,7 @@ void UI_Manager::Change_Time_TEXT(Gamestate_type type)
 
 	temp = GetTextptr(Text_ingame_time);
 	temp->_wszText_ = m_reportFileName;
-	
+
 
 
 }
@@ -868,12 +898,12 @@ Text_info* UI_Manager::GetTextptr(UI_ID ui_id)
 {
 	for (auto i : m_Text_list)
 	{
-		
+
 		if (ui_id == i->UI_id)
 		{
-			
+
 			return i;
-			
+
 		}
 	}
 }
@@ -882,7 +912,7 @@ Image_info* UI_Manager::GetImagePtr(UI_ID ui_id)
 {
 	for (auto i : m_Image_list)
 	{
-		
+
 
 		if (ui_id == i->UI_id)
 		{
@@ -894,7 +924,7 @@ Image_info* UI_Manager::GetImagePtr(UI_ID ui_id)
 }
 void UI_Manager::Active_damage_Screen(bool Active, bool Hp200) {
 
-	if(!Hp200)
+	if (!Hp200)
 		mDamage_Timer.Reset();
 
 	for (auto i : m_Image_list)
@@ -904,7 +934,7 @@ void UI_Manager::Active_damage_Screen(bool Active, bool Hp200) {
 		if (UI_ingame_demage == i->UI_id)
 		{
 			i->Active = Active;
-		
+
 		}
 	}
 }
@@ -936,24 +966,24 @@ void UI_Manager::InputID_PW()
 	/* 패스워드 마지막 부분 감추기
 	if (Get_input_ID_state() == true && Get_input_PW_state() == false)
 	{
-		temp3->_wszText_[PW_count] = '\0';
-		if (PW_count > 0)
-		{
-			temp3->_wszText_[PW_count - 1] = '*';
-		}
+	temp3->_wszText_[PW_count] = '\0';
+	if (PW_count > 0)
+	{
+	temp3->_wszText_[PW_count - 1] = '*';
+	}
 	}
 	*/
 	switch (m_nMessageID)
 	{
 	case WM_CHAR:
-		if (m_wParam ==  VK_TAB || m_wParam == VK_SPACE)
+		if (m_wParam == VK_TAB || m_wParam == VK_SPACE)
 		{
 		}
 		else if (Get_input_ID_state())
 		{
 			temp = GetTextptr(Text_title_ID);
 
-	
+
 
 			if (m_wParam == VK_RETURN)
 			{
@@ -1007,21 +1037,21 @@ void UI_Manager::InputID_PW()
 				wiputPWstr[PW_count] = m_wParam;
 				wiputPWstr_star[PW_count] = m_wParam;
 				if (PW_count>0)
-				wiputPWstr_star[PW_count-1] = '*';
+					wiputPWstr_star[PW_count - 1] = '*';
 				PW_count++;
-			
+
 				wiputPWstr[PW_count] = '\0';
 				if (PW_count>0)
-				wiputPWstr_star[PW_count] = '\0';
+					wiputPWstr_star[PW_count] = '\0';
 
 			}
-			
+
 			temp2->_wszText_ = wiputPWstr;
 			temp3->_wszText_ = wiputPWstr_star;
 		}
 
 		break;
-	
+
 	}
 
 }

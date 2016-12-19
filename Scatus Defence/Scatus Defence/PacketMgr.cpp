@@ -168,8 +168,9 @@ void PacketMgr::ProcessPacket()
 		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
 		if (p->NumOfMonsters > 0 && p->NumOfMonsters != Object_Mgr->GetMonsters().size())
 		{
-			CS_ReAddMonsters packet;
-			SendPacket(packet);
+			/*CS_ReAddMonsters packet;
+			SendPacket(packet);*/
+			break;
 		}
 		else
 		{

@@ -218,7 +218,8 @@ void UI_Manager::Print_All_Text()
 				static_cast<FLOAT>(i->y + 100)
 				);
 
-			if (i->UI_id == UI_ID::UI_ingame_WaveEnd || i->UI_id == UI_ID::UI_ingame_WaveStart)
+			if (i->UI_id == UI_ID::UI_ingame_WaveEnd || i->UI_id == UI_ID::UI_ingame_WaveStart
+				|| i->UI_id == UI_ID::UI_ingame_GameClear)
 			{
 				m_d2dRenderTarget->DrawText(
 					wszText_,        // The string to render.
@@ -410,6 +411,8 @@ void UI_Manager::TextInit()
 	UI_Mgr->Add_Text(L"Next 03:21", Scene_Ingame, Text_ingame_time, rc.right - 230, (rc.top + 15), 1);
 	UI_Mgr->Add_Text(L"웨이브 시작", Scene_Wave, UI_ID::UI_ingame_WaveStart, 800, 400, 1);
 	UI_Mgr->Add_Text(L"웨이브 종료", Scene_Wave, UI_ID::UI_ingame_WaveEnd, 800, 400, 1);
+	UI_Mgr->Add_Text(L"게임 클리어", Scene_Wave, UI_ID::UI_ingame_GameClear, 800, 400, 1);
+
 }
 
 void UI_Manager::Print_All_Image()

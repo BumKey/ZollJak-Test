@@ -1,9 +1,3 @@
-//=============================================================================
-// Ssao.fx by Frank Luna (C) 2011 All Rights Reserved.
-//
-// Computes SSAO map.
-//=============================================================================
-
 cbuffer cbPerFrame
 {
 	float4x4 gViewToTexSpace; // Proj*Texture
@@ -73,25 +67,6 @@ VertexOut VS(VertexIn vin)
 // of distZ.
 float OcclusionFunction(float distZ)
 {
-	//
-	// If depth(q) is "behind" depth(p), then q cannot occlude p.  Moreover, if 
-	// depth(q) and depth(p) are sufficiently close, then we also assume q cannot
-	// occlude p because q needs to be in front of p by Epsilon to occlude p.
-	//
-	// We use the following function to determine the occlusion.  
-	// 
-	//
-	//       1.0     -------------\
-	//               |           |  \
-	//               |           |    \
-	//               |           |      \ 
-	//               |           |        \
-	//               |           |          \
-	//               |           |            \
-	//  ------|------|-----------|-------------|---------|--> zv
-	//        0     Eps          z0            z1        
-	//
-	
 	float occlusion = 0.0f;
 	if(distZ > gSurfaceEpsilon)
 	{
@@ -112,19 +87,13 @@ float4 PS(VertexOut pin, uniform int gSampleCount) : SV_Target
 	// q -- a random offset from p.
 	// r -- a potential occluder that might occlude p.
 
-	// Get viewspace normal and z-coord of this pixel.  The tex-coords for
-	// the fullscreen quad we drew are already in uv-space.
 	float4 normalDepth = gNormalDepthMap.SampleLevel(samNormalDepth, pin.Tex, 0.0f);
  
 	float3 n = normalDepth.xyz;
 	float pz = normalDepth.w;
 
-	//
-	// Reconstruct full view space position (x,y,z).
-	// Find t such that p = t*pin.ToFarPlane.
 	// p.z = t*pin.ToFarPlane.z
 	// t = p.z / pin.ToFarPlane.z
-	//
 	float3 p = (pz/pin.ToFarPlane.z)*pin.ToFarPlane;
 	
 	// Extract random vector and map from [0,1] --> [-1, +1].
@@ -136,9 +105,6 @@ float4 PS(VertexOut pin, uniform int gSampleCount) : SV_Target
 	[unroll]
 	for(int i = 0; i < gSampleCount; ++i)
 	{
-		// Are offset vectors are fixed and uniformly distributed (so that our offset vectors
-		// do not clump in the same direction).  If we reflect them about a random vector
-		// then we get a random uniform distribution of offset vectors.
 		float3 offset = reflect(gOffsetVectors[i].xyz, randVec);
 	
 		// Flip offset vector if it is behind the plane defined by (p, n).
@@ -151,30 +117,12 @@ float4 PS(VertexOut pin, uniform int gSampleCount) : SV_Target
 		float4 projQ = mul(float4(q, 1.0f), gViewToTexSpace);
 		projQ /= projQ.w;
 
-		// Find the nearest depth value along the ray from the eye to q (this is not
-		// the depth of q, as q is just an arbitrary point near p and might
-		// occupy empty space).  To find the nearest depth we look it up in the depthmap.
-
 		float rz = gNormalDepthMap.SampleLevel(samNormalDepth, projQ.xy, 0.0f).a;
 
-		// Reconstruct full view space position r = (rx,ry,rz).  We know r
-		// lies on the ray of q, so there exists a t such that r = t*q.
 		// r.z = t*q.z ==> t = r.z / q.z
 
 		float3 r = (rz / q.z) * q;
-		
-		//
-		// Test whether r occludes p.
-		//   * The product dot(n, normalize(r - p)) measures how much in front
-		//     of the plane(p,n) the occluder point r is.  The more in front it is, the
-		//     more occlusion weight we give it.  This also prevents self shadowing where 
-		//     a point r on an angled plane (p,n) could give a false occlusion since they
-		//     have different depth values with respect to the eye.
-		//   * The weight of the occlusion is scaled based on how far the occluder is from
-		//     the point we are computing the occlusion of.  If the occluder r is far away
-		//     from p, then it does not occlude it.
-		// 
-		
+			
 		float distZ = p.z - r.z;
 		float dp = max(dot(n, normalize(r - p)), 0.0f);
 		float occlusion = dp * OcclusionFunction(distZ);

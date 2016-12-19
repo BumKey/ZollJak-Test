@@ -38,11 +38,16 @@ void Game_Wave_Waiting::Execute()
 	//UI_Mgr->Change_HP_TEXT(100);
 	UI_Mgr->Change_Time_TEXT(game_waiting_wave);
 	UI_Mgr->Change_HP_TEXT(Time_Mgr->Get_P_HP());
-	if (Time_Mgr->gamestate == game_waving)
+	if (Time_Mgr->Get_Wavelevel()==10)
 	{
-		G_State_Mgr->ChangeState(Game_Waving::Instance());
+		UI_Mgr->Set_Text_Active(L"게임 클리어", true);
 	}
-
+	else {
+		if (Time_Mgr->gamestate == game_waving)
+		{
+			G_State_Mgr->ChangeState(Game_Waving::Instance());
+		}
+	}
 
 }
 

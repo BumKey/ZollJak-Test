@@ -20,11 +20,11 @@
 #define OP_SEND				2
 
 #define PI					3.1415926535f
-#define TICK_MONINFO		0.5f
-#define TICK_PLAYERINFO     0.2f
+#define TICK_MONINFO		0.7f
+#define TICK_PLAYERINFO     0.3f
 #define TICK_FRAMEINFO		1.0f
-#define TIME_WAVE_WAITING	10.0f
-#define TIME_WAVING			30.0f
+#define TIME_WAVE_WAITING	5.0f
+#define TIME_WAVING			10.0f
 
 /*
 디버그 환경에서만 cout을 출력
@@ -121,6 +121,7 @@ enum eGameState {
 	WaveWaiting,
 	WaveStart,
 	Waving,
+	GameClear,
 	GameOver
 };
 

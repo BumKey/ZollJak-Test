@@ -1,14 +1,3 @@
-//=============================================================================
-// BuildShadowMap.fx by Frank Luna (C) 2011 All Rights Reserved.
-//
-// Effect used to build the shadow map.
-//
-// A lot of code is copy and pasted from DisplacementMap.fx.  When drawing 
-// depth to shadow map, we need to tessellate the geometry the same way
-// when rendering from the eye so that the shadow map records the same
-// geometry the eye sees.
-//=============================================================================
-
 cbuffer cbPerFrame
 {
 	float3 gEyePosW;
@@ -91,11 +80,8 @@ VertexOut SkinnedVS(SkinnedVertexIn vin)
 
 	float3 posL = float3(0.0f, 0.0f, 0.0f);
 	for (int i = 0; i < 4; ++i)
-	{
-		// Assume no nonuniform scaling when transforming normals, so 
-		// that we do not have to use the inverse-transpose.
 		posL += weights[i] * mul(float4(vin.PosL, 1.0f), gBoneTransforms[vin.BoneIndices[i]]).xyz;
-	}
+	
 
 	// Transform to homogeneous clip space.
 	vout.PosH = mul(float4(posL, 1.0f), gWorldViewProj);
@@ -124,13 +110,8 @@ TessVertexOut TessVS(VertexIn vin)
 
 	float d = distance(vout.PosW, gEyePosW);
 
-	// Normalized tessellation factor. 
-	// The tessellation is 
-	//   0 if d >= gMinTessDistance and
-	//   1 if d <= gMaxTessDistance.  
 	float tess = saturate((gMinTessDistance - d) / (gMinTessDistance - gMaxTessDistance));
 
-	// Rescale [0,1] --> [gMinTessFactor, gMaxTessFactor].
 	vout.TessFactor = gMinTessFactor + tess*(gMaxTessFactor - gMinTessFactor);
 
 	return vout;
@@ -147,11 +128,6 @@ PatchTess PatchHS(InputPatch<TessVertexOut, 3> patch,
 {
 	PatchTess pt;
 
-	// Average tess factors along edges, and pick an edge tess factor for 
-	// the interior tessellation.  It is important to do the tess factor
-	// calculation based on the edge properties so that edges shared by 
-	// more than one triangle will have the same tessellation factor.  
-	// Otherwise, gaps can appear.
 	pt.EdgeTess[0] = 0.5f*(patch[1].TessFactor + patch[2].TessFactor);
 	pt.EdgeTess[1] = 0.5f*(patch[2].TessFactor + patch[0].TessFactor);
 	pt.EdgeTess[2] = 0.5f*(patch[0].TessFactor + patch[1].TessFactor);
@@ -215,8 +191,6 @@ DomainOut DS(PatchTess patchTess,
 	// Displacement mapping.
 	//
 
-	// Choose the mipmap level based on distance to the eye; specifically, choose
-	// the next miplevel every MipInterval units, and clamp the miplevel in [0,6].
 	const float MipInterval = 20.0f;
 	float mipLevel = clamp((distance(dout.PosW, gEyePosW) - MipInterval) / MipInterval, 0.0f, 6.0f);
 
@@ -232,9 +206,7 @@ DomainOut DS(PatchTess patchTess,
 	return dout;
 }
 
-// This is only used for alpha cut out geometry, so that shadows 
-// show up correctly.  Geometry that does not need to sample a
-// texture can use a NULL pixel shader for depth pass.
+
 void PS(VertexOut pin)
 {
 	float4 diffuse = gDiffuseMap.Sample(samLinear, pin.Tex);
@@ -243,9 +215,6 @@ void PS(VertexOut pin)
 	clip(diffuse.a - 0.15f);
 }
 
-// This is only used for alpha cut out geometry, so that shadows 
-// show up correctly.  Geometry that does not need to sample a
-// texture can use a NULL pixel shader for depth pass.
 void TessPS(DomainOut pin)
 {
 	float4 diffuse = gDiffuseMap.Sample(samLinear, pin.Tex);

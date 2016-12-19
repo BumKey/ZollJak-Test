@@ -95,6 +95,8 @@ void ServerRogicMgr::Update()
 		// 4. 로직 타이머 리셋
 
 		++mCurrWaveLevel;
+		if (mCurrWaveLevel >= 10)
+			mGameStateMgr.GameClear();
 
 		for (auto oType : mPerWaveMonsterNum[mCurrWaveLevel]) {
 				for (UINT i = 0; i < oType.second; ++i)
@@ -127,6 +129,10 @@ void ServerRogicMgr::Update()
 		}
 
 		//DEBUG_MSG("Waving...");
+	}
+	else if (mGameStateMgr.GetCurrState() == eGameState::GameClear)
+	{
+
 	}
 }
 

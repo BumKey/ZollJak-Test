@@ -32,6 +32,7 @@ enum UI_ID {
 	UI_ingame_Round,
 	UI_ingame_WaveStart,
 	UI_ingame_WaveEnd,
+	UI_ingame_GameClear,
 	UI_Gameover,
 	Text_title_login,
 	Text_title_register,

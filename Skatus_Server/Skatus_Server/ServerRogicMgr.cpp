@@ -35,6 +35,9 @@ mNewID(-1), mAddMonPacketSended(false)
 	mPerWaveMonsterNum[10][ObjectType::Goblin] = 32;
 	mPerWaveMonsterNum[10][ObjectType::Cyclop] = 8;
 
+	mPerWaveMonsterNum[11][ObjectType::Goblin] = 0;
+	mPerWaveMonsterNum[11][ObjectType::Cyclop] = 0;
+
 	mGameTimer.Reset();
 }
 
@@ -132,7 +135,7 @@ void ServerRogicMgr::Update()
 	}
 	else if (mGameStateMgr.GetCurrState() == eGameState::GameClear)
 	{
-		mCurrWaveLevel = 10;
+		mCurrWaveLevel = 11;
 	}
 }
 

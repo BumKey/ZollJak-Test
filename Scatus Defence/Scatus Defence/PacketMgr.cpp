@@ -168,8 +168,13 @@ void PacketMgr::ProcessPacket()
 		auto *p = reinterpret_cast<SC_MonInfo*>(mPacketBuf);
 		if (p->NumOfMonsters > 0 && p->NumOfMonsters != Object_Mgr->GetMonsters().size())
 		{
-			/*CS_ReAddMonsters packet;
-			SendPacket(packet);*/
+			Object_Mgr->ReleaseMonsters();
+			break;
+		}
+		else if (p->NumOfMonsters > 0 && Object_Mgr->GetMonsters().size() == 0)
+		{
+			CS_ReAddMonsters packet;
+			SendPacket(packet);
 			break;
 		}
 		else
@@ -230,8 +235,6 @@ void PacketMgr::ProcessPacket()
 	}
 	case eSC::AddMonsters: {
 		auto *p = reinterpret_cast<SC_AddMonster*>(mPacketBuf);
-		
-		Object_Mgr->ReleaseMonsters();
 
 		for (UINT i = 0; i < p->NumOfObjects; ++i)
 		{

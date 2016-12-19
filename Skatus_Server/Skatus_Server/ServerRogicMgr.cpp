@@ -8,31 +8,31 @@ mNewID(-1), mAddMonPacketSended(false)
 	mPerWaveMonsterNum[1][ObjectType::Goblin] = 5;
 	mPerWaveMonsterNum[1][ObjectType::Cyclop] = 1;
 
-	mPerWaveMonsterNum[2][ObjectType::Goblin] = 10;
+	mPerWaveMonsterNum[2][ObjectType::Goblin] = 8;
 	mPerWaveMonsterNum[2][ObjectType::Cyclop] = 2;
 
-	mPerWaveMonsterNum[3][ObjectType::Goblin] = 15;
+	mPerWaveMonsterNum[3][ObjectType::Goblin] = 11;
 	mPerWaveMonsterNum[3][ObjectType::Cyclop] = 3;
 
-	mPerWaveMonsterNum[4][ObjectType::Goblin] = 20;
+	mPerWaveMonsterNum[4][ObjectType::Goblin] = 14;
 	mPerWaveMonsterNum[4][ObjectType::Cyclop] = 4;
 
-	mPerWaveMonsterNum[5][ObjectType::Goblin] = 25;
+	mPerWaveMonsterNum[5][ObjectType::Goblin] = 17;
 	mPerWaveMonsterNum[5][ObjectType::Cyclop] = 5;
 
-	mPerWaveMonsterNum[6][ObjectType::Goblin] = 30;
+	mPerWaveMonsterNum[6][ObjectType::Goblin] = 20;
 	mPerWaveMonsterNum[6][ObjectType::Cyclop] = 6;
 
-	mPerWaveMonsterNum[7][ObjectType::Goblin] = 35;
+	mPerWaveMonsterNum[7][ObjectType::Goblin] = 23;
 	mPerWaveMonsterNum[7][ObjectType::Cyclop] = 7;
 
-	mPerWaveMonsterNum[8][ObjectType::Goblin] = 36;
+	mPerWaveMonsterNum[8][ObjectType::Goblin] = 26;
 	mPerWaveMonsterNum[8][ObjectType::Cyclop] = 7;
 
-	mPerWaveMonsterNum[9][ObjectType::Goblin] = 37;
+	mPerWaveMonsterNum[9][ObjectType::Goblin] = 29;
 	mPerWaveMonsterNum[9][ObjectType::Cyclop] = 8;
 
-	mPerWaveMonsterNum[10][ObjectType::Goblin] = 38;
+	mPerWaveMonsterNum[10][ObjectType::Goblin] = 32;
 	mPerWaveMonsterNum[10][ObjectType::Cyclop] = 8;
 
 	mGameTimer.Reset();
@@ -73,7 +73,7 @@ void ServerRogicMgr::Update()
 		// 2. 5초의 시간동안 대기, 시간 정보 패킷 전송
 		// 3. 게임상태 진행
 		// 4. 로직 타이머 리셋
-		if (mRogicTimer.TotalTime() == 0.0f) {
+		if (mRogicTimer.TotalTime() < 1.0f) {
 			mObjectMgr.ReleaseMonsters();
 		}
 

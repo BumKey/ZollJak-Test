@@ -132,7 +132,7 @@ void ServerRogicMgr::Update()
 	}
 	else if (mGameStateMgr.GetCurrState() == eGameState::GameClear)
 	{
-
+		mCurrWaveLevel = 10;
 	}
 }
 

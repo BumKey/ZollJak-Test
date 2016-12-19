@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ObjectMgr.h"
 #include "GameStateMgr.h"
 Game_Wave_Waiting::Game_Wave_Waiting()
 {
@@ -38,8 +38,9 @@ void Game_Wave_Waiting::Execute()
 	//UI_Mgr->Change_HP_TEXT(100);
 	UI_Mgr->Change_Time_TEXT(game_waiting_wave);
 	UI_Mgr->Change_HP_TEXT(Time_Mgr->Get_P_HP());
-	if (Time_Mgr->Get_Wavelevel()==10)
+	if (Time_Mgr->Get_Wavelevel()==10 && Object_Mgr->GetMonsters().size() == 0)
 	{
+		UI_Mgr->Change_Round_TEXT(Time_Mgr->Get_Wavelevel());
 		UI_Mgr->Set_Text_Active(L"게임 클리어", true);
 	}
 	else {

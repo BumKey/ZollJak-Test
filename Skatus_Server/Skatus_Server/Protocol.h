@@ -23,8 +23,8 @@
 #define TICK_MONINFO		0.7f
 #define TICK_PLAYERINFO     0.3f
 #define TICK_FRAMEINFO		1.0f
-#define TIME_WAVE_WAITING	5.0f
-#define TIME_WAVING			10.0f
+#define TIME_WAVE_WAITING	2.0f
+#define TIME_WAVING			3.0f
 
 /*
 디버그 환경에서만 cout을 출력
